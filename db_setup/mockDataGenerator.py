@@ -6,9 +6,9 @@ This script produces mock data that can be inserted into a database.
 
 from random import randint
 
-patient_header = "INSERT INTO Patient (patient_no, name, surname, email, phone) VALUES "
-carer_header = "INSERT INTO Carer (patient_no, carer_name, email, phone, relationship) VALUES "
-lab_header = "INSERT INTO Laboratory (lab_id, name, email) VALUES "
+patient_header = "INSERT INTO Patient (patient_no, patient_name, patient_surname, patient_email, patient_phone) VALUES "
+carer_header = "INSERT INTO Carer (patient_no, carer_name, carer_email, carer_phone, relationship) VALUES "
+lab_header = "INSERT INTO Laboratory (lab_id, lab_name, lab_email) VALUES "
 test_header = "INSERT INTO Test (patient_no, first_due_date, frequency, laboratory, completed) VALUES "
 
 patient_numbers = []
@@ -28,7 +28,7 @@ def generateDate():
     if (randint(0,3) == 0):
         year = "2019"
 
-    month = str(randint(1,13))
+    month = str(randint(1,12))
     if (len(month) == 1):
         month = "0" + month
 
@@ -54,7 +54,7 @@ for num in patient_numbers:
     else:
         patients += "NULL"
 
-    patients += ")\n"
+    patients += ");\n"
 
 print("Generated patients...")
 #####################################################
@@ -73,7 +73,7 @@ for i in range(100):
         carers += "NULL"
 
     rel = ["father", "mother", "uncle", "grandparent"]
-    carers += ", '" + rel.pop(randint(0, len(rel) - 1)) + "')\n"
+    carers += ", '" + rel.pop(randint(0, len(rel) - 1)) + "');\n"
 
 print("Generated carers...")
 #####################################################
@@ -83,7 +83,7 @@ for i in range(10):
     labs += lab_header  \
         + "(" + i \
         + ", 'lab" + i    \
-        + "', 'lab" + i + "@gmail.com')\n"
+        + "', 'lab" + i + "@gmail.com');\n"
 
 print("Generated labs...")
 #####################################################
@@ -97,7 +97,7 @@ for i in range(100):
         + ", " + str(randint(0,9))
 
     completed = ["yes", "no", "in review"]
-    tests += ", '" + completed[randint(0,len(completed) - 1)] + "')\n"
+    tests += ", '" + completed[randint(0,len(completed) - 1)] + "');\n"
 
 print("Generated tests...")
 #####################################################
@@ -105,7 +105,9 @@ print("Generated tests...")
 print("Writing to file...")
 
 file = open("insert.sql", "w+")
-file.write(patients + "\n" + carers + "\n" + labs + "\n" + tests)
+file.write("-- This is a generated file. Please, do not modify it manually. \n\n" +
+    "USE BloodTestDB;\n\n"
+    + labs + "\n" + patients + "\n" + carers + "\n" + tests)
 file.close()
 
 print("Success!")
