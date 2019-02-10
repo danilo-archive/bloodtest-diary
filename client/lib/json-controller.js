@@ -17,11 +17,17 @@ module.exports = {
      */
     getJSON: function (path) {
         if (fs.existsSync(path)) {
-            let data = fs.readFileSync(path);
-            let json = JSON.parse(data);
-            return json;
-        }else{
+            const data = fs.readFileSync(path);
+            try {
+                const json = JSON.parse(data);
+                return json;
+            } catch (e) {
+                console.error(`The file at ${path} is not in JSON format`);
+                return null;
+            }
+        } else {
             console.error(`There is no JSON file at ${path}`)
+            return null;
         }
     }
 }

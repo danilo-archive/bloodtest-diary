@@ -5,6 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "express": "^4.16.4",
+    "mock-fs": "^4.8.0",
     "socket.io": "^2.2.0"
   },
   "devDependencies": {

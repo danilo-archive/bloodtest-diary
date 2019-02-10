@@ -9,6 +9,7 @@ module.exports = {
   },
   "extends": "eslint:recommended",
   "rules": {
+    "no-console" : 0,
     "no-multiple-empty-lines": "warn",
     "no-var": "error",
     "prefer-const": "error"
