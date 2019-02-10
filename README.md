@@ -45,13 +45,22 @@ Also, be sure to have `git` available in your PATH, `npm` might need it.
 <hr>
 
 ## Install
-
+client:
+```
     $ git clone https://github.kcl.ac.uk/k1764125/BloodTestDiary.git
-    $ cd BloodTestDiary
+    $ cd BloodTestDiary/client
     $ npm install
+```
+
+server:
+```
+    $ git clone https://github.kcl.ac.uk/k1764125/BloodTestDiary.git
+    $ cd BloodTestDiary/server
+    $ npm install
+```
 
 ### Configure app
-The configuration file is ```app/app_config.json```
+The configuration file is ```client/config/app_config.json```
 
 ```port``` : the port on which the local app runs<br>
 ```staticFolder``` : the static folder containing the frontend app<br>
@@ -60,7 +69,7 @@ The configuration file is ```app/app_config.json```
 ```
 {
     "port" : 4200,
-    "staticFolder" : "/ui",
+    "staticFolder" : "/public",
     "indexFile" : "index.html"
 }
 ```
