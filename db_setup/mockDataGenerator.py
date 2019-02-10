@@ -45,16 +45,18 @@ for num in patient_numbers:
     num = str(num)
     patients += patient_header  \
         + "(" + num \
-        + ", name" + num    \
-        +  ", surname" + num    \
-        + ", patient" + num + "@gmail.com, "
+        + ", 'name" + num    \
+        +  "', 'surname" + num    \
+        + "', 'patient" + num + "@gmail.com', "
 
     if (len(phone_numbers) > 0):
-        patients += str(phone_numbers.pop())
+        patients += "'" + str(phone_numbers.pop()) + "'"
     else:
         patients += "NULL"
 
     patients += ")\n"
+
+print("Generated patients...")
 #####################################################
 carers = ""
 for i in range(100):
@@ -62,24 +64,28 @@ for i in range(100):
     pat_no = patient_numbers[randint(0, len(patient_numbers) - 1)]
     carers += carer_header  \
         + "(" + str(pat_no) \
-        + ", carer" + i    \
-        + ", carer" + i + "@gmail.com, "
+        + ", 'carer" + i    \
+        + "', 'carer" + i + "@gmail.com', "
 
     if (len(phone_numbers) > 0):
-        carers += str(phone_numbers.pop())
+        carers += "'" + str(phone_numbers.pop()) + "'"
     else:
         carers += "NULL"
 
     rel = ["father", "mother", "uncle", "grandparent"]
-    carers += ", " + rel.pop(randint(0, len(rel) - 1)) + ")\n"
+    carers += ", '" + rel.pop(randint(0, len(rel) - 1)) + "')\n"
+
+print("Generated carers...")
 #####################################################
 labs = ""
 for i in range(10):
     i = str(i)
     labs += lab_header  \
         + "(" + i \
-        + ", lab" + i    \
-        + ", lab" + i + "@gmail.com)\n"
+        + ", 'lab" + i    \
+        + "', 'lab" + i + "@gmail.com')\n"
+
+print("Generated labs...")
 #####################################################
 tests = ""
 for i in range(100):
@@ -87,13 +93,19 @@ for i in range(100):
     tests += test_header  \
         + "(" + str(pat_no) \
         + ", " + generateDate()    \
-        + ", weekly"    \
+        + ", 'weekly'"    \
         + ", " + str(randint(0,9))
 
     completed = ["yes", "no", "in review"]
-    tests += ", " + completed[randint(0,len(completed) - 1)] + ")\n"
+    tests += ", '" + completed[randint(0,len(completed) - 1)] + "')\n"
+
+print("Generated tests...")
 #####################################################
+
+print("Writing to file...")
 
 file = open("insert.sql", "w+")
 file.write(patients + "\n" + carers + "\n" + labs + "\n" + tests)
 file.close()
+
+print("Success!")
