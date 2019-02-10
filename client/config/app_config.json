@@ -1,5 +1,5 @@
 {
     "port" : 4200,
-    "staticFolder" : "/ui",
+    "staticFolder" : "/public",
     "indexFile" : "index.html"
 }
