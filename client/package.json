@@ -7,9 +7,15 @@
     "express": "^4.16.4",
     "socket.io": "^2.2.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^5.13.0",
+    "mocha": "^5.2.0"
+  },
   "scripts": {
-    "test": "node app.js"
+    "eslint": "eslint",
+    "start": "node app.js",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
