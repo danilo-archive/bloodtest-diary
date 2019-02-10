@@ -81,6 +81,7 @@ To run tests in ```path/```:<br>
 ```
 
 <hr>
+
 ### Configure app
 The configuration file is ```client/config/app_config.json```
 
