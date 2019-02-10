@@ -2,7 +2,7 @@
 
 ## Requirements
 
-For development, you will only need Node.js and npm installed on your environement.
+For development, you will only need Node.js and npm installed on your environment.
 
 ### Node and npm
 
@@ -58,7 +58,29 @@ server:
     $ cd BloodTestDiary/server
     $ npm install
 ```
+<hr>
 
+### How to use code quality and testing tools
+
+#### ESLint:
+**Currently only used for node backend support**
+
+To check ```path/to/app.js```:
+
+    $ npm run -s eslint path/to/app.js
+
+
+#### Mocha & Chai
+
+To run tests in ```path/```:<br>
+- make sure the tests are in ```path/test/```
+- then run
+```
+    $ cd path
+    $ npm test
+```
+
+<hr>
 ### Configure app
 The configuration file is ```client/config/app_config.json```
 
@@ -83,6 +105,9 @@ The configuration file is ```client/config/app_config.json```
 - [NodeJS](https://nodejs.org) is used for the back-end.
 - [React](http://facebook.github.io/react) is used for UI
 - [Electron](https://electronjs.org/) is used for deploying the desktop app
+- [ESLint](https://eslint.org/) is used for linting support
+- [Mocha](https://mochajs.org/) is used for testing
+- [Chai](https://www.chaijs.com/) is used for assertions
 
 ### CSS
 
