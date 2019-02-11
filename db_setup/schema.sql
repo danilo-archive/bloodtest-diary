@@ -3,6 +3,12 @@ CREATE DATABASE IF NOT EXISTS BloodTestDB;
 
 USE BloodTestDB;
 
+-- Create user that is used in the DBMS to avoid using root.
+GRANT ALL PRIVILEGES ON BloodTestDB.*
+    TO 'bloodTestAdmin'@localhost
+    IDENTIFIED BY "Blood_admin1";
+
+
 -- Clean database in case it has been modified manually.
 DROP TABLE IF EXISTS Carer;
 DROP TABLE IF EXISTS Test;

@@ -1,0 +1,22 @@
+{
+  "name": "bloodtestdiary",
+  "version": "1.0.0",
+  "description": "\"DB controller for blood diary\"",
+  "main": "db_setup/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.kcl.ac.uk/k1764125/BloodTestDiary.git"
+  },
+  "keywords": [
+    "mySQL",
+    "node"
+  ],
+  "author": "Luka Kralj & co",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.16.0"
+  }
+}
