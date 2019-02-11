@@ -80,6 +80,20 @@ function init(conf)
     });
 }
 
+
+/**
+ * Function to be called when user needs to be authenticated
+ * @param {username: username, password: password} credentials
+ * @param callback The callback function to be called on response
+ * TODO eventually change name of the callback.
+ */
+function login(credentials, callback){
+    socket.emit('log', credentials);
+    socket.on('auth', res => {
+        callback(res);
+    });
+}
+
 /**
  * Function to be called when all patients have to be retrieved.
  * @param callback The callback function to be called on response
