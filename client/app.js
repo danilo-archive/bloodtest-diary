@@ -8,8 +8,8 @@
 
 const express = require('express');
 const app = express();
-//const server = require('http').createServer(app);
-//const io = require('socket.io')(server); // TODO remove not needed
+const server = require('http').createServer(app);
+const io = require('socket.io')(server); // TODO remove not needed
 const ioClient = require('socket.io-client'); // TODO remove not needed
 const CONFIG_FILE_PATH = __dirname + '/config/app_config.json';
 const jsonController = require('./lib/json-controller');
@@ -39,7 +39,7 @@ function init(conf)
     var indexFile = conf.indexFile;
     var server_port = conf.server_port;
     const socket = ioClient.connect("http://localhost:"+server_port);
-    //server.listen(port);
+    server.listen(port);
     /*
      * Express connection.
      */
