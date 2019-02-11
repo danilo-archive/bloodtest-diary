@@ -1,5 +1,6 @@
 {
     "port" : 4200,
     "staticFolder" : "/public",
-    "indexFile" : "index.html"
+    "indexFile" : "index.html",
+    "server_port": 3265
 }
