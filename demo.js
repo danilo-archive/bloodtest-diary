@@ -1,15 +1,13 @@
 var id_gen = require("./id_generator");
 
-var date = new Date();
-
 var all = [];
 
-for (var i = 1; i < 1000001; i++) {
-    all.push(id_gen.generateUniqueID(date));
-    if (i % 10000 === 0) {
+for (var i = 1; i < 10000001; i++) {
+    all.push(id_gen.generateUniqueID());
+    if (i % 100000 === 0) {
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
-        process.stdout.write((i / 10000) + " %");
+        process.stdout.write((i / 100000) + " %");
     }
 }
 console.log("\nall generated");

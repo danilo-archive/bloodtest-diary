@@ -9,9 +9,9 @@ function randInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
-module.exports.generateUniqueID = function(date) {
+module.exports.generateUniqueID = function() {
 
-    var formated = dateFormat(date, "yyyymmddHHMMssl");
+    var formated = dateFormat(new Date(), "yyyymmddHHMMssl");
 
     if (formated in dict) {
         var found = false;
@@ -35,6 +35,6 @@ module.exports.generateUniqueID = function(date) {
         dict[formated] = [rand];
         formated += rand;
     }
-
+    
     return formated;
 }
