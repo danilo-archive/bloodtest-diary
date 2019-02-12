@@ -17,6 +17,7 @@
   "author": "Luka Kralj & co",
   "license": "ISC",
   "dependencies": {
+    "dateformat": "^3.0.3",
     "mysql": "^2.16.0"
   }
 }
