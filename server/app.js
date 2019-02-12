@@ -24,7 +24,7 @@ io.on('connection',function(socket)
         console.log("Authorizing here...")
         //Function to get users here
         //Return the users in emit on the bottom
-        socket.emit('auth', authenticator.canLogin(user));
+        socket.emit('auth', authenticator.canLogin(user,getUserInDatabase(user.username)));
     });
 
     socket.on('getAllPatients', () => {
@@ -65,3 +65,12 @@ io.on('connection',function(socket)
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 });
+
+
+/**
+* TODO: Get user data from the database provided the username
+**/
+function getUserInDatabase(username)
+{
+  return [{id:"1", username:"admin", password:"8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"}];
+}

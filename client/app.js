@@ -14,6 +14,8 @@ const ioClient = require('socket.io-client'); // TODO remove not needed
 const CONFIG_FILE_PATH = __dirname + '/config/app_config.json';
 const jsonController = require('./lib/json-controller');
 const bodyParser = require('body-parser');
+//TODO remove; needed in the frontned
+const crypto = require('crypto');
 
 
 module.exports = {
@@ -54,7 +56,10 @@ function init(conf)
     //On post, try to login user; for now
     app.post('/',function (req,res)
     {
-        socket.emit('log', {username:req.body.username, password: req.body.password},function()
+        socket.emit('log',{username:req.body.username,
+                            //should be provided in frontend; we only receive the hash
+                            password:crypto.createHash('sha256').update(req.body.password).digest('hex')
+                          },function()
         {
 
         });
