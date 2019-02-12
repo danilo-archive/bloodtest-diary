@@ -10,9 +10,14 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
+const CONFIG_FILE_PATH = __dirname + '/config/config.json';
+const jsonController = require('./lib/json-controller');
+const conf = jsonController.getJSON(CONFIG_FILE_PATH);
+const port = conf.port;
 var authenticator = require("./lib/authenticator.js");
 
-http.listen(3265);
+http.listen(port);
 io.on('connection',function(socket)
 {
     socket.on('log', (user) => {
