@@ -2,7 +2,7 @@
  * The module responsible for all the queries on the dataabase
  * and processing of the data retrived.
  * @module server
- * @author Mateusz Nowak
+ * @author Mateusz Nowak & Jacopo Madaluni
  * @version 0.0.1
  */
 
@@ -10,60 +10,58 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-const crypto = require('crypto');
 
-http.listen(3265);
+const CONFIG_FILE_PATH = __dirname + '/config/config.json';
+const jsonController = require('./lib/json-controller');
+const conf = jsonController.getJSON(CONFIG_FILE_PATH);
+const port = conf.port;
+var authenticator = require("./lib/authenticator.js");
+
+http.listen(port);
 io.on('connection',function(socket)
 {
-    socket.on('log', function(user)
-    {
+    socket.on('log', (user) => {
         console.log("Authorizing here...")
         //Function to get users here
         //Return the users in emit on the bottom
-        socket.emit('auth', canLogin(user));
+        socket.emit('auth', authenticator.canLogin(user));
     });
+
+    socket.on('getAllPatients', () => {
+        // TODO
+        // retrive all patients and return them as json
+    });
+
+    socket.on('getAllTests', () => {
+        // TODO
+        // retrieve all tests scheduled and return them as json
+    });
+
+    socket.on('getTestsOfPatient', (patientId) => {
+        // TODO
+        // given the id of the patient, return all the tests scheduled
+        // for that patient as json
+    });
+
+    socket.on('getTestsOnDate', (date) => {
+        // TODO
+        // given a date, return all tests on that date as json
+    });
+
+    socket.on('getTestsInWeek', (date, anydayTestsOnly=false) => {
+        // TODO
+        // given a date, retrieve the tests that are scheduled on that
+        // date week, and return them as json
+        // if anydayTestsOnly is true, return only the tests that don't have
+        // a particular day assigned
+    });
+
+
+    socket.on('getOverdueTests', () => {
+        // TODO
+        // retrieve all overdue tests and return them as json
+    });
+
+    // updates of database --------------------------------
+    // TODO add endpoints for diary updates
 });
-
-/**
-*Function tha naively checks if user
-*provided right credentials
-*/
-function canLogin(user)
-{
-  //get data from database
-  //should be one record
-  var userInDatabase = getUserData(user)
-  if(userInDatabase.length!==1)
-  {
-    return false;
-  }
-  if(user.username==null||user.password==null)
-  {
-    return false;
-  }
-  if(user.username===userInDatabase[0].username)
-  {
-    var hash = crypto.pbkdf2Sync(user.password,userInDatabase[0].salt,1000,64,'sha512').toString('hex');
-    if(hash==userInDatabase[0].password)
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-  else
-  {
-    return false;
-  }
-}
-
-/**
-* TODO: Get user data from the database
-**/
-function getUserData(user)
-{
-  return [{id:"1", username:"admin", password:"abd5f9aaea246574ad8602f1acac14a053994ec48e91347bc581c473bfd79448070449ac9cc49aa032c5eb297d363a4a5e9e79e79623be7381d4d541644e1be1", salt:"33d14774647c00bf7062f80f79820816"}];
-}
-
