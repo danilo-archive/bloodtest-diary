@@ -2,7 +2,7 @@
 
 ## Requirements
 
-For development, you will only need Node.js and npm installed on your environement.
+For development, you will only need Node.js and npm installed on your environment.
 
 ### Node and npm
 
@@ -45,13 +45,45 @@ Also, be sure to have `git` available in your PATH, `npm` might need it.
 <hr>
 
 ## Install
-
+client:
+```
     $ git clone https://github.kcl.ac.uk/k1764125/BloodTestDiary.git
-    $ cd BloodTestDiary
+    $ cd BloodTestDiary/client
     $ npm install
+```
+
+server:
+```
+    $ git clone https://github.kcl.ac.uk/k1764125/BloodTestDiary.git
+    $ cd BloodTestDiary/server
+    $ npm install
+```
+<hr>
+
+### How to use code quality and testing tools
+
+#### ESLint:
+**Currently only used for node backend support**
+
+To check ```path/to/app.js```:
+
+    $ npm run -s eslint path/to/app.js
+
+
+#### Mocha & Chai
+
+To run tests in ```path/```:<br>
+- make sure the tests are in ```path/test/```
+- then run
+```
+    $ cd path
+    $ npm test
+```
+
+<hr>
 
 ### Configure app
-The configuration file is ```app/app_config.json```
+The configuration file is ```client/config/app_config.json```
 
 ```port``` : the port on which the local app runs<br>
 ```staticFolder``` : the static folder containing the frontend app<br>
@@ -60,7 +92,7 @@ The configuration file is ```app/app_config.json```
 ```
 {
     "port" : 4200,
-    "staticFolder" : "/ui",
+    "staticFolder" : "/public",
     "indexFile" : "index.html"
 }
 ```
@@ -74,6 +106,9 @@ The configuration file is ```app/app_config.json```
 - [NodeJS](https://nodejs.org) is used for the back-end.
 - [React](http://facebook.github.io/react) is used for UI
 - [Electron](https://electronjs.org/) is used for deploying the desktop app
+- [ESLint](https://eslint.org/) is used for linting support
+- [Mocha](https://mochajs.org/) is used for testing
+- [Chai](https://www.chaijs.com/) is used for assertions
 
 ### CSS
 
