@@ -17,6 +17,7 @@ DELETE FROM Laboratory;
 DELETE FROM TokenControl;
 
 """
+
 patient_header = "INSERT INTO Patient (patient_no, patient_name, patient_surname, patient_email, patient_phone) VALUES "
 carer_header = "INSERT INTO Carer (patient_no, carer_name, carer_email, carer_phone, relationship) VALUES "
 lab_header = "INSERT INTO Laboratory (lab_id, lab_name, lab_email) VALUES "
