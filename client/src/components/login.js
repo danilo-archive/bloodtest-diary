@@ -12,6 +12,11 @@ class Login extends Component {
           <form action="https://httpbin.org/post" method="POST" class="form login">
 
             <div className="form__field">
+              <label for="login__username"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"></use></svg><span class="hidden">Username</span></label>
+              <input id="login__username" type="text" name="username" class="form__input" placeholder="Username" required/>
+            </div>
+
+            <div className="form__field">
               <label for="login__password"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#lock"></use></svg><span class="hidden">Password</span></label>
               <input id="login__password" type="password" name="password" class="form__input" placeholder="Password" required/>
             </div>

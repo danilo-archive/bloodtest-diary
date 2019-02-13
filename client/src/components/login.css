@@ -118,7 +118,7 @@ a:hover {
 /* modules/form.css */
 
 :root {
-  --formFieldMargin: 1.0rem;
+  --formFieldMargin: 0.875rem;
 }
 
 input {
