@@ -1,7 +1,6 @@
 const dateFormat = require("dateformat");
 
-
-var dict = {};
+let dict = {};
 
 function randInt(min, max) {
     min = Math.ceil(min);
@@ -9,15 +8,15 @@ function randInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
-module.exports.generateUniqueID = function() {
+module.exports.generateToken = function() {
 
-    var formated = dateFormat(new Date(), "yyyymmddHHMMssl");
+    let formated = dateFormat(new Date(), "yyyymmddHHMMssl");
 
     if (formated in dict) {
-        var found = false;
-        var randomise = false;
+        let found = false;
+
         do {
-            var rand = randInt(10000, 10000000, randomise);
+            const rand = randInt(10000, 10000000);
             if (dict[formated].find((element) => {
                 return element === rand;
             }) === undefined) {
@@ -31,7 +30,7 @@ module.exports.generateUniqueID = function() {
         // Since the timestamp always changes - if value is not found it means it's because it's not in the same millisecond.
         // Hence, the previous value in the map will never be repeated again.
         dict = {}; 
-        var rand = randInt(10000, 10000000);
+        const rand = randInt(10000, 10000000);
         dict[formated] = [rand];
         formated += rand;
     }
