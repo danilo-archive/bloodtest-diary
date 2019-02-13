@@ -18,8 +18,12 @@ const WeekDaySection = props => {
   return (
     <>
       <WeekDayDiv>
-        <NotificationIcon text="1" top="15px" left="165px" />
-        <Label fontSize={"30px"}>Monday</Label>
+        <NotificationIcon
+          text={props.notificationNumber}
+          top="15px"
+          left="165px"
+        />
+        <Label fontSize={"30px"}>{props.dayName}</Label>
       </WeekDayDiv>
     </>
   );
