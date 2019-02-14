@@ -1,5 +1,9 @@
 ### Install Dependencies
- $npm i
+```
+ $ npm i
+```
 
 ### Run app
- $npm run electron-dev
+```
+ $ npm run electron-dev
+```
