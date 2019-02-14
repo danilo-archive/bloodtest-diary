@@ -5,6 +5,35 @@ import './login.css';
 //import App from '../../app.js'
 
 class Login extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: "",
+      password: ""
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleSubmit(event) {
+    alert('A username was submitted: ' + this.state.username);
+    alert('A password was submitted: ' + this.state.password);
+    event.preventDefault();
+  }
+
+
   render() {
     return (
 
@@ -12,20 +41,20 @@ class Login extends Component {
 
         <div className="grid">
 
-          <form action="" method="" class="form login">
+          <form onSubmit={this.handleSubmit} class="form login">
 
             <div className="form__field">
-              <label for="login__email"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"></use></svg><span class="hidden">Username</span></label>
-              <input id="login__email" type="text" name="email" class="form__input" placeholder="Email" required/>
+              <label for="login__username"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"></use></svg><span class="hidden">Username</span></label>
+              <input id="login__username" type="text" name="username" class="form__input" value={this.state.username} onChange={this.handleChange} placeholder="Username" required/>
             </div>
 
             <div className="form__field">
               <label for="login__password"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#lock"></use></svg><span class="hidden">Password</span></label>
-              <input id="login__password" type="password" name="password" class="form__input" placeholder="Password" required/>
+              <input id="login__password" type="password" name="password" class="form__input" value={this.state.password} onChange={this.handleChange} placeholder="Password" required/>
             </div>
 
             <div className="form__field">
-              <input type="submit" value="Sign In" id="login_button"/>
+              <input type="submit" value="Sign In"/>
 
             </div>
 
@@ -51,20 +80,8 @@ class Login extends Component {
     </body>
     );
 
-/*
-    var credentials = {username:document.getElementById('login__email').value, password:document.getElementById('login__password').value};
-    document.getElementById("login_button").onclick = function(){
-      App.login(credentials, res => {
-          if (res){
-
-            // TODO Load main page
-          }else{
-            console.log("FAAAILED");
-            // TODO show error
-          }
-      });
-    }*/
+    }
   }
-}
+
 
 export default Login;
