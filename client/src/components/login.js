@@ -10,7 +10,7 @@ class Login extends Component {
 
         <div className="grid">
 
-          <form action="https://httpbin.org/post" method="POST" class="form login">
+          <form action="" method="POST" class="form login">
 
             <div className="form__field">
               <label for="login__email"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"></use></svg><span class="hidden">Username</span></label>
@@ -23,7 +23,8 @@ class Login extends Component {
             </div>
 
             <div className="form__field">
-              <input type="submit" value="Sign In"/>
+              <input type="submit" value="Sign In" id="login_button"/>
+
             </div>
 
           </form>
@@ -47,6 +48,13 @@ class Login extends Component {
 
     </body>
     );
+
+    document.getElementById("login_button").on('click',function()=>{
+      socket.emit('log',{username:document.getElementById("login__email").value,
+                          //should be provided in frontend; we only receive the hash
+                          password:crypto.createHash('sha256').update(document.getElementById("login__password").value).digest('hex')
+                        }
+    })
   }
 }
 
