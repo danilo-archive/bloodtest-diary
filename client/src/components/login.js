@@ -2,9 +2,38 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom'
 import './login.css';
 
-//import App from '../../app.js'
+import {login} from "./../serverConnection.js";
+
+// TODO remove test login
+/*login({username:"wrong", password:"wrong"}, res => {
+    if (res){
+        console.log("nice");
+    }else{
+        console.log("niceee");
+    }
+}); */
+
 
 class Login extends Component {
+
+  signIn(){
+      console.log("Signin...");
+      let username = document.getElementById('login__email').value;
+      let password = document.getElementById('login__password').value;
+      let credentials = {username:username, password:password};
+      console.log(`username: ${username}`);
+      console.log(`password: ${password}`);
+      login(credentials, res => {
+          if (res){
+              console.log("Load main page..");
+              // TODO load main page
+          }else{
+              console.log("Wrong credentials");
+              // TODO display this better.
+          }
+      });
+  }
+
   render() {
     return (
 
@@ -12,7 +41,7 @@ class Login extends Component {
 
         <div className="grid">
 
-          <form action="" method="" class="form login">
+          <form onSubmit={this.signIn} action="" method="" class="form login">
 
             <div className="form__field">
               <label for="login__email"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"></use></svg><span class="hidden">Username</span></label>
@@ -50,20 +79,6 @@ class Login extends Component {
 
     </body>
     );
-
-/*
-    var credentials = {username:document.getElementById('login__email').value, password:document.getElementById('login__password').value};
-    document.getElementById("login_button").onclick = function(){
-      App.login(credentials, res => {
-          if (res){
-
-            // TODO Load main page
-          }else{
-            console.log("FAAAILED");
-            // TODO show error
-          }
-      });
-    }*/
   }
 }
 

@@ -18,6 +18,10 @@ const port = conf.port;
 var authenticator = require("./lib/authenticator.js");
 
 http.listen(port);
+io.on("disconnect", function(socket){
+    console.log("Disconnected");
+});
+
 io.on('connection',function(socket)
 {
     socket.on('log', (user) => {
@@ -61,7 +65,6 @@ io.on('connection',function(socket)
         // TODO
         // retrieve all overdue tests and return them as json
     });
-
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 });
