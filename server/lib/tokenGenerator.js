@@ -1,22 +1,43 @@
+/** 
+ * Unique token generator.
+ * 
+ * @module tokenGenerator
+ */
+
 const dateFormat = require("dateformat");
 
 let dict = {};
 
+/**
+ * Generates a random integer.
+ *
+ * @param {number} min Lower bound.
+ * @param {number} max Upper bound.
+ * @returns {number} Random integer.
+ */
 function randInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
-module.exports.generateToken = function() {
+/**
+ * Generates a unique sequence of numbers that can be used for identification.
+ *
+ * @returns {string} A unique sequence of numbers (usually around 20 characters long).
+ */
+function generateToken() {
 
     let formated = dateFormat(new Date(), "yyyymmddHHMMssl");
 
     if (formated in dict) {
+        // Another token requested in the same millisecond.
+
         let found = false;
 
         do {
             const rand = randInt(10000, 10000000);
+            // Verify that the random number hasn't already been used for this timestamp.
             if (dict[formated].find((element) => {
                 return element === rand;
             }) === undefined) {
@@ -27,13 +48,19 @@ module.exports.generateToken = function() {
         } while (!found);
     }
     else {
+        // First instance of token with such timestamp.
+
         // Since the timestamp always changes - if value is not found it means it's because it's not in the same millisecond.
-        // Hence, the previous value in the map will never be repeated again.
+        // Hence, the previous values in the map will never be repeated again so the map can be deleted.
         dict = {}; 
         const rand = randInt(10000, 10000000);
         dict[formated] = [rand];
         formated += rand;
     }
-    
+
     return formated;
+}
+
+module.exports = {
+    generateToken
 }

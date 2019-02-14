@@ -1,16 +1,28 @@
+/**
+ * This file contains tests that test the behaviour of tokenGenerator.js
+ * 
+ * @module testTokenGenerator
+ * @see module:tokenGenerator
+ */
+
 const expect = require("chai").expect;
 const id_gen = require("../../lib/tokenGenerator");
 
+/**
+ * Generates and compares 10000 tokens.
+ * 
+ * @returns {boolean} true if all tokens are unique, false if not.
+ */
 function testUniqueness() {
-    console.log("Testing uniqueness of 1M tokens.")
+    console.log("Testing uniqueness of 10000 tokens.")
     const all = [];
 
-    for (let i = 1; i < 1000001; i++) {
+    for (let i = 1; i < 10001; i++) {
         all.push(id_gen.generateToken());
-        if (i % 10000 === 0) {
+        if (i % 100 === 0) {
             process.stdout.clearLine();
             process.stdout.cursorTo(0);
-            process.stdout.write((i / 10000) + " %");
+            process.stdout.write((i / 100) + " %");
         }
     }
     console.log("\nall generated");
@@ -50,11 +62,8 @@ function testUniqueness() {
 
 describe("testUniqueness()", () => {
 
-    // This test will take longer to execute because there are million cases.
-    const minutes = 1; // how many minutes is the test allowed to run for
-
     it("Should return true - all tokens are unique.", (done) => {
         expect(testUniqueness()).to.be.true;
         done();
-    }).timeout(minutes*60*1000);
+    });
 })
