@@ -2,10 +2,21 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom'
 import './login.css';
 
-//import App from '../../app.js'
+import {login} from "./../serverConnection.js";
+
+// TODO remove test login
+/*login({username:"wrong", password:"wrong"}, res => {
+    if (res){
+        console.log("nice");
+    }else{
+        console.log("niceee");
+    }
+}); */
+
 
 class Login extends Component {
 
+<<<<<<< HEAD
   constructor(props) {
     super(props);
     this.state = {
@@ -34,6 +45,26 @@ class Login extends Component {
   }
 
 
+=======
+  signIn(){
+      console.log("Signin...");
+      let username = document.getElementById('login__email').value;
+      let password = document.getElementById('login__password').value;
+      let credentials = {username:username, password:password};
+      console.log(`username: ${username}`);
+      console.log(`password: ${password}`);
+      login(credentials, res => {
+          if (res){
+              console.log("Load main page..");
+              // TODO load main page
+          }else{
+              console.log("Wrong credentials");
+              // TODO display this better.
+          }
+      });
+  }
+
+>>>>>>> 02c807a0a41830d6b618e17edbe69bba0f712c10
   render() {
     return (
 
@@ -41,7 +72,11 @@ class Login extends Component {
 
         <div className="grid">
 
+<<<<<<< HEAD
           <form onSubmit={this.handleSubmit} class="form login">
+=======
+          <form onSubmit={this.signIn} action="" method="" class="form login">
+>>>>>>> 02c807a0a41830d6b618e17edbe69bba0f712c10
 
             <div className="form__field">
               <label for="login__username"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"></use></svg><span class="hidden">Username</span></label>
@@ -79,8 +114,11 @@ class Login extends Component {
 
     </body>
     );
+<<<<<<< HEAD
 
     }
+=======
+>>>>>>> 02c807a0a41830d6b618e17edbe69bba0f712c10
   }
 
 

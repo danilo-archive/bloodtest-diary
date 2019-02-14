@@ -1,89 +1,7 @@
-/**
- * The logic that works as back-end for the app's UI.
- * It communicates with an external server, queries and sends update requests.
- * @module app
- * @author Danilo Del Busso, Mateusz Nowak
- * @version 0.0.2
- */
-
-const express = require('express');
-const app = express();
-const server = require('http').createServer(app);
-const io = require('socket.io')(server); // TODO remove not needed
-const ioClient = require('socket.io-client'); // TODO remove not needed
-const CONFIG_FILE_PATH = __dirname + '/config/app_config.json';
-const jsonController = require('./lib/json-controller');
-const bodyParser = require('body-parser');
-//TODO remove; needed in the frontned
-const crypto = require('crypto');
-
-
-module.exports = {
-    init, getAllPatients, getAllTests, getTestsOfPatient, getTestsOnDate,
-    getOverdueTests, getTestsInWeek,
-}
-
-//start the app
-//init(jsonController.getJSON(CONFIG_FILE_PATH))
-
-/**
- * Initialise and start the back-end for this app using
- * the configuration settings from a specific file.
- * @param {json} conf The JSON config file
- */
- // TODO
- // completely refactor this, init should initialize the socket with the server
- // should not provide get/post endpoints
-function init(conf)
-{
-    let port = conf.port;
-    let staticFolder = conf.staticFolder;
-    var indexFile = conf.indexFile;
-    var server_port = conf.server_port;
-    const socket = ioClient.connect("http://localhost:"+server_port);
-    server.listen(port);
-    /*
-     * Express connection.
-     */
-    app.use(express.static(__dirname + staticFolder));
-    app.use(bodyParser.urlencoded({ extended: false }));
-    app.use(bodyParser.json());
-    app.get('/', function (req,res)
-    {
-        res.sendFile(__dirname +staticFolder+"/" +indexFile);
-    });
-
-    //On post, try to login user; for now
-    app.post('/',function (req,res)
-    {
-        socket.emit('log',{username:req.body.username,
-                            //should be provided in frontend; we only receive the hash
-                            password:crypto.createHash('sha256').update(req.body.password).digest('hex')
-                          },function()
-        {
-
-        });
-        socket.on('auth', function(user)
-        {
-          if(!res.headersSent)
-          {
-            console.log("Logging in here...")
-            if(user)
-            {
-                console.log("Logged");
-                //Random redirect for now
-                res.redirect('https:google.com');
-            }
-            else
-            {
-                console.log("Unsuccesful login attempt");
-                //Redirect back to login
-                res.sendFile(__dirname +staticFolder+"/" +indexFile);
-            }
-          }
-        });
-    });
-}
+import http from "http";
+import openSocket from 'socket.io-client';
+const port = "3265";
+const  socket = openSocket(`http://localhost:${port}`);
 
 
 /**
@@ -93,11 +11,13 @@ function init(conf)
  * TODO eventually change name of the callback.
  */
 function login(credentials, callback){
+    console.log("trying to log in");
     socket.emit('log', credentials);
     socket.on('auth', res => {
         callback(res);
     });
 }
+
 
 /**
  * Function to be called when all patients have to be retrieved.
@@ -180,3 +100,5 @@ function getTestsInWeek(date, anydayTestsOnly=false, callback){
         callback(res);
     });
 }
+
+export {test, login};
