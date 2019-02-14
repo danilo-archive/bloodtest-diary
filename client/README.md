@@ -1,3 +1,5 @@
-Install Dependencies using: npm i
+### Install Dependencies
+ $npm i
 
-Run app using: npm run electron-dev
+### Run app
+ $npm run electron-dev
