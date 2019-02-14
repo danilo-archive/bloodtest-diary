@@ -3,8 +3,9 @@ import { Redirect } from 'react-router-dom'
 import './login.css';
 
 import { login } from "./../serverConnection.js";
-
-
+//prevents resending form; works as a semaphore
+var responses = 0;
+const crypto = require('crypto');
 class Login extends Component {
 
   constructor(props) {
@@ -29,14 +30,20 @@ class Login extends Component {
   }
 
   handleSubmit(event) {
-    login({username: this.state.username, password: this.state.password}, res => {
-        if (res){
-            alert('Login Successfull');
-        }else{
-            alert('Login not Successfull');
+    login({username: this.state.username, password: crypto.createHash('sha256').update(this.state.password).digest('hex')}, async function(res){
+        send++;
+        if(send<2)
+        {
+          if (res){
+              alert('Login Successfull');
+          }else
+          {
+              alert('Login not Successfull');
+          }
         }
     });
     event.preventDefault();
+    send=0;
   }
 
 
