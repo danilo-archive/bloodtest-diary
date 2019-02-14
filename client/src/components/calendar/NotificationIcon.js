@@ -8,20 +8,34 @@ const Circle = styled.div`
   border-radius: 50%;
 
   display: flex;
-  width: 30px;
-  height: 30px;
+  width: ${props => props.size || `35px`};
+  height: ${props => props.size || `35px`};
   padding: 0;
   align-items: center;
   position: absolute;
   margin: auto;
   overflow: hidden;
+  transition: background-color 0.2s ease;
+  margin: auto;
+  transform: translate(-50%, -50%);
+
+  &:hover {
+    background-color: #00b0c6;
+    transition: background-color 0.2s ease;
+    z-index: 100;
+  }
 `;
 
 export default props => {
   return (
     <>
-      <Circle style={{ top: props.top, left: props.left }}>
-        <Label fontSize="23px">{props.text ? props.text : ``}</Label>
+      <Circle size={props.size} style={{ top: props.top, left: props.left }}>
+        <Label
+          style={{ left: "50%", top: "55%" }}
+          fontSize={props.fontSize || "23px"}
+        >
+          {props.text ? props.text : ``}
+        </Label>
       </Circle>
     </>
   );

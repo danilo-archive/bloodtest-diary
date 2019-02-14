@@ -9,10 +9,10 @@ const WeekDayDiv = styled.div`
   height: 11%;
   background-color: #0d4e56;
   display: flex;
-  top: 0;
   text-align: center;
   flex-direction: column;
   justify-content: center;
+  position: relative;
 `;
 const WeekDaySection = props => {
   return (
@@ -20,10 +20,12 @@ const WeekDaySection = props => {
       <WeekDayDiv>
         <NotificationIcon
           text={props.notificationNumber}
-          top="15px"
-          left="165px"
+          top="-10%"
+          left="50%"
         />
-        <Label fontSize={"30px"}>{props.dayName}</Label>
+        <Label style={{ left: "50%", top: "50%" }} fontSize={"30px"}>
+          {props.dayName}
+        </Label>
       </WeekDayDiv>
     </>
   );
