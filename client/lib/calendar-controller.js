@@ -18,7 +18,7 @@ function getNextDates(frequency, startingDate) {
     const f = frequency.split(':');
     if (f.length != 2 || f[1] < 0) {
         //console.error("The frequency format is wrong.")
-        return null;
+        return [];
     }
     const repetitions = parseInt(f[1]);
     const allDates = [];
@@ -42,6 +42,8 @@ function getNextDates(frequency, startingDate) {
  * @param {date} startingDate the starting date from which to calculate the next date
  */
 function getNextDate(frequency, startingDate) {
+    if(!validDate(startingDate))
+        return null
     if (frequency === null || frequency.split('-').length > 2 || frequency.split('-').length < 1) {
         //console.error("Error in formatting date. Date is either null or not in the right format");
         return null;
@@ -53,7 +55,7 @@ function getNextDate(frequency, startingDate) {
     }
     const f_format = frequency.split('-')[1]; // the 'Y' in '2-Y'
     let date = null;
-    let year = startingDate.getFullYear();
+    let year = startingDate.getFullYear();    
     const month = startingDate.getMonth();
     let day = startingDate.getDate()
 

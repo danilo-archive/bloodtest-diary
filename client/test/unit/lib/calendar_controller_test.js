@@ -107,20 +107,23 @@ describe("Test working frequency formats", function () {
 describe("Test not frequency formats", function () {
     it('should return null on wrong frequency formats', function () {
         const wrong_formats = [
-            Number.MAX_SAFE_INTEGER, '', 'a', '-1', 1, null, 0, true, false, [], '-1', 'ß', '1/0', 0.2,
+            '', 'a', '-1', 1, null, 0, true, false, [], '-1', 'ß', '1/0', 0.2,
             'Y-4', 'A-Y', '1-R', '/1-D', '0.5-D', 'L-D', '/1-W', '0.5-W', 'L-W',
             '/1-Y', '0.5-Y', 'L-Y'
         ]
         const wrong_n = ['1[', "s", 3, '', 'a', '-1', 1, null, 0, true, false, [], '-1', 'ß', '1/0', 0.2,
-            Number.MAX_SAFE_INTEGER, 'Y-4', 'A-Y', '1-R', '/1-D', '0.5-D', 'L-D', '/1-W', '0.5-W', 'L-W',
+            'Y-4', 'A-Y', '1-R', '/1-D', '0.5-D', 'L-D', '/1-W', '0.5-W', 'L-W',
             '/1-W', '0.5-W', 'L-W'
         ]
         wrong_formats.forEach(format => {
             wrong_n.forEach(frequency => {
+                
                 const temp = format;
                 format += (":" + frequency);
                 const result = calendar_controller.getNextDates(format, new Date(2019, 11, 31));
-                should.not.exist(result);
+                result.forEach(d => {
+                    should.not.exist(d);
+                });
                 format = temp;
             });
         });
