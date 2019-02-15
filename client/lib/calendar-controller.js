@@ -1,21 +1,12 @@
+/**
+ * Controller functions to get dates using a frequency foramt
+ * @module calendar-controller
+ * @author Danilo Del Busso
+ * @version 0.0.1
+ */
+
 const Holidays = require('date-holidays');
 const hd = new Holidays('GB');
-
-/**
- * Check if date is valid
- * @param {date} date the date
- */
-function validDate(date) {
-    if (Object.prototype.toString.call(date) === "[object Date]") {
-        if (isNaN(date.getTime())) {
-            return false;
-        } else {
-            return true;
-        }
-    } else {
-        return false;
-    }
-}
 
 /**
  * Get all the next dates based on the frequency notation.
@@ -30,20 +21,26 @@ function getNextDates(frequency, startingDate) {
         console.error("The frequency format is wrong.")
         return null;
     }
-    const repetitions = parseInt(f[1]);    
+    const repetitions = parseInt(f[1]);
     const allDates = [];
     let date = getNextDate(f[0], startingDate);
-  
-    for (let i = 0; i < repetitions; i++) {        
-        allDates.push(date);      
+
+    for (let i = 0; i < repetitions; i++) {
+        allDates.push(date);
         date = getNextDate(f[0], date);
     }
 
     return allDates;
 }
 
+console.log(getNextDate('3-D', new Date(2018, 0 , 1)));
+
 /**
  * Get the next date
+ * @example <caption>Example usage of getNextDate with X-D notation.</caption>
+ * // returns Date object of value 2018-01-04T00:00:00.000Z
+ * getNextDate('3-D', new Date(2018, 0 , 1));
+ * 
  * @param {string} frequency the frequency in the given format
  * @param {date} startingDate the starting date from which to calculate the next date
  */
@@ -89,8 +86,24 @@ function getNextDate(frequency, startingDate) {
 
 
 /**
+ * Check if date is valid
+ * @param {date} date the date
+ */
+function validDate(date) {
+    if (Object.prototype.toString.call(date) === "[object Date]") {
+        if (isNaN(date.getTime())) {
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        return false;
+    }
+}
+
+/**
  * Check if a date is a holiday in the UK
- * @param {Date} date the date to check
+ * @param {date} date the date to check
  */
 function isHoliday(date) {
     hd.isHoliday(date);
