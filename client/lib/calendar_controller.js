@@ -1,3 +1,21 @@
+const Holidays = require('date-holidays');
+const hd = new Holidays('GB');
+
+/**
+ * Check if date is valid
+ * @param {date} date the date
+ */
+function validDate(date) {
+    if (Object.prototype.toString.call(date) === "[object Date]") {
+        if (isNaN(date.getTime())) {
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        return false;
+    }
+}
 
 /**
  * Get all the next dates based on the frequency notation.
@@ -68,6 +86,17 @@ function getNextDate(frequency, startingDate) {
 
     return null;
 }
+
+
+/**
+ * Check if a date is a holiday in the UK
+ * @param {Date} date the date to check
+ */
+function isHoliday(date) {
+    hd.isHoliday(date);
+}
+
 module.exports = {
+    isHoliday,
     getNextDates
 }
