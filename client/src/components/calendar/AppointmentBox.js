@@ -3,7 +3,6 @@ import styled from "styled-components";
 import StatusCircle from "./StatusCircle";
 import AppointmentInfo from "./AppointmentInfo";
 import IconSet from "./IconSet";
-import VerticalLine from "./VerticalLine";
 
 const Container = styled.div`
   display: block;

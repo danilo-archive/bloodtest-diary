@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 
-import Label from "../Label";
 import DateText from "./DateText";
 import NotificationIcon from "./NotificationIcon";
 
