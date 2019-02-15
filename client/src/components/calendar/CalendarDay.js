@@ -6,15 +6,14 @@ import MonthDaySection from "./MonthDaySection";
 import ScrollBox from "./ScrollBox";
 import AppointmentSection from "./AppointmentSection";
 
-const APPOINTMENTS_EXAMPLE = [
+const APPOINTMENTS_EXAMPLE_ANYTIME = [
   {
     status: "pending",
     patientName: "Luka Kralj"
   },
   {
     status: "completed",
-    patientName: "Alvaro Rausell",
-    time: "12:00"
+    patientName: "Alvaro Rausell"
   },
   {
     status: "late",
@@ -27,6 +26,34 @@ const APPOINTMENTS_EXAMPLE = [
   {
     status: "pending",
     patientName: "IDK Who Else To Put"
+  }
+];
+
+const APPOINTMENTS_EXAMPLE_SCHEDULED = [
+  {
+    status: "pending",
+    patientName: "Luka Kralj",
+    time: "09:00"
+  },
+  {
+    status: "completed",
+    patientName: "Alvaro Rausell",
+    time: "12:00"
+  },
+  {
+    status: "late",
+    patientName: "Danilo del Busso",
+    time: "13:00"
+  },
+  {
+    status: "completed",
+    patientName: "Alessandro Amantini",
+    time: "15:00"
+  },
+  {
+    status: "pending",
+    patientName: "IDK Who Else To Put",
+    time: "23:30"
   }
 ];
 const CalendarContainer = styled.div`
@@ -59,7 +86,11 @@ class CalendarDay extends React.Component {
           <ScrollBox>
             <AppointmentSection
               type="Anytime Today"
-              appointments={APPOINTMENTS_EXAMPLE}
+              appointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+            />
+            <AppointmentSection
+              type="Scheduled Appointments"
+              appointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
             />
           </ScrollBox>
         </CalendarContainer>

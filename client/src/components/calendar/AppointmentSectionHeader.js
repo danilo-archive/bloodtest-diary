@@ -13,6 +13,7 @@ const Heading = styled.h3`
 export default props => {
   return (
     <>
+      <HorizontalLine />
       <Heading>{props.children}</Heading>
       <HorizontalLine />
     </>

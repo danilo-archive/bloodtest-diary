@@ -5,7 +5,7 @@ export default styled.hr`
   display: inline;
   margin: 0;
   height: 90%;
-  top: 8.6%;
+  top: 9.9%;
   left: 11.2%;
   border: 0;
   border-left: solid 1px rgb(100, 100, 100, 0.4);
