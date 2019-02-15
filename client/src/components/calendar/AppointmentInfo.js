@@ -2,13 +2,13 @@ import styled from "styled-components";
 import React from "react";
 
 const NameDiv = styled.div`
-  padding: 2%;
-  margin: 5%;
+  padding: 3%;
+  margin: 2.5%;
   width: 50%;
-  height: 80%;
+  height: 200%;
   color: #646464;
   font-family: "Rajdhani", sans-serif;
-  font-size: 140%;
+  font-size: 120%;
   overflow: scroll;
   white-space: nowrap;
 `;

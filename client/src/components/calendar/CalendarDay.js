@@ -52,18 +52,19 @@ const APPOINTMENTS_EXAMPLE_SCHEDULED = [
   },
   {
     status: "pending",
-    patientName: "IDK Who Else To Put",
+    patientName: "Just A Very Long Name To Test This",
     time: "23:30"
   }
 ];
 const CalendarContainer = styled.div`
-  margin: 5%;
-  padding: 10%;
-  width: 300px;
-  height: 495px;
+  margin: 0.2%;
+  padding: 0%;
+  width: 225px;
+  height: 371.25px;
   background-color: white;
   padding: 0;
   position: relative;
+  border: solid 1px #646464;
 `;
 
 class CalendarDay extends React.Component {
