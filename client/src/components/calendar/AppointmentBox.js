@@ -8,6 +8,7 @@ import VerticalLine from "./VerticalLine";
 const Container = styled.div`
   display: block;
   position: relative;
+  background-color: white;
   margin-top: 0;
   margin-bottom: 0;
   margin: 5%;
@@ -16,12 +17,12 @@ const Container = styled.div`
   border: solid 1px rgb(100, 100, 100, 0.2);
   display: flex;
   align-items: center;
+  z-index: 3;
 `;
 
 export default props => {
   return (
     <Container>
-      <VerticalLine />
       <StatusCircle type={props.type} />
       <AppointmentInfo name={props.name} />
       <IconSet />

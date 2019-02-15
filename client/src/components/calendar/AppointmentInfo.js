@@ -8,7 +8,7 @@ const NameDiv = styled.div`
   height: 80%;
   color: #646464;
   font-family: "Rajdhani", sans-serif;
-  font-size: 160%;
+  font-size: 140%;
   overflow: scroll;
   white-space: nowrap;
 `;

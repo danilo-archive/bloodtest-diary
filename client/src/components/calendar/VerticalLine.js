@@ -2,11 +2,12 @@ import styled from "styled-components";
 
 export default styled.hr`
   position: absolute;
-  transform: translate(-100%, -100%);
-  height: 42.8%;
-  top: -18.5%;
-  left: 7%;
+  display: inline;
+  margin: 0;
+  height: 95%;
+  top: 9.5%;
+  left: 11.2%;
   border: 0;
   border-left: solid 1px rgb(100, 100, 100, 0.4);
-  z-index: 0;
+  z-index: 1;
 `;

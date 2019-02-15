@@ -8,23 +8,23 @@ import AppointmentSection from "./AppointmentSection";
 
 const APPOINTMENTS_EXAMPLE = [
   {
-    type: "pending",
+    status: "pending",
     patientName: "Luka Kralj"
   },
   {
-    type: "completed",
+    status: "completed",
     patientName: "Alvaro Rausell"
   },
   {
-    type: "late",
+    status: "late",
     patientName: "Danilo del Busso"
   },
   {
-    type: "completed",
+    status: "completed",
     patientName: "Alessandro Amantini"
   },
   {
-    type: "pending",
+    status: "pending",
     patientName: "IDK Who Else To Put"
   }
 ];
@@ -35,6 +35,7 @@ const CalendarContainer = styled.div`
   height: 495px;
   background-color: white;
   padding: 0;
+  position: relative;
 `;
 
 class CalendarDay extends React.Component {
@@ -55,7 +56,6 @@ class CalendarDay extends React.Component {
             monthName={this.props.monthName || "June"}
           />
           <ScrollBox>
-            <AppointmentSection type="Anytime Today" />
             <AppointmentSection
               type="Anytime Today"
               appointments={APPOINTMENTS_EXAMPLE}

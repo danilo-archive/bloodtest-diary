@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const combinations = {
-  done: "#5BC714",
+  completed: "#5BC714",
   late: "#D10505",
   pending: "#FFD907"
 };
