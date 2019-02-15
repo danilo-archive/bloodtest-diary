@@ -20,6 +20,7 @@ export default props => {
         <AppointmentBox
           type={appointment.status}
           name={appointment.patientName}
+          time={appointment.time}
         />
       ))}
     </AppointmentSection>

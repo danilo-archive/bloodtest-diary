@@ -2,9 +2,9 @@ import React from "react";
 import styled from "styled-components";
 
 const combinations = {
-  check: "#5BC714",
-  times: "#D10505",
-  edit: "#FFD907"
+  check: { color: "#5BC714", status: "completed" },
+  times: { color: "#D10505", status: "late" },
+  edit: { color: "#FFD907", status: "edit" }
 };
 
 const Icon = styled.i`
@@ -20,8 +20,8 @@ export default props => {
   return (
     <Icon
       className={`fa fa-${props.icon}`}
-      style={{ color: combinations[props.icon], fontSize: "150%" }}
-      onClick={() => alert(`You clicked: ${props.icon}`)}
+      style={{ color: combinations[props.icon].color, fontSize: "150%" }}
+      onClick={() => props.onClick(combinations[props.icon].status)}
     />
   );
 };

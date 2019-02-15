@@ -14,8 +14,8 @@ export default props => {
       }}
     >
       <Icon icon="edit" />
-      <Icon icon="check" />
-      <Icon icon="times" />
+      <Icon icon="check" onClick={props.onStatusClick} />
+      <Icon icon="times" onClick={props.onStatusClick} />
     </div>
   );
 };

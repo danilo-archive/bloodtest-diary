@@ -3,6 +3,7 @@ import styled from "styled-components";
 import StatusCircle from "./StatusCircle";
 import AppointmentInfo from "./AppointmentInfo";
 import IconSet from "./IconSet";
+import TimePill from "./TimePill";
 
 const Container = styled.div`
   display: block;
@@ -19,12 +20,26 @@ const Container = styled.div`
   z-index: 3;
 `;
 
-export default props => {
-  return (
-    <Container>
-      <StatusCircle type={props.type} />
-      <AppointmentInfo name={props.name} />
-      <IconSet />
-    </Container>
-  );
-};
+export default class AppointmentBox extends React.Component {
+  state = {
+    status: this.props.type,
+    time: this.props.time,
+    name: this.props.name
+  };
+
+  onStatusClick = status => {
+    if (this.state.status === "pending") this.setState({ status });
+  };
+
+  render() {
+    const { status, time, name } = this.state;
+    return (
+      <Container>
+        {time ? <TimePill status={status}>{time}</TimePill> : ``}
+        <StatusCircle type={status} />
+        <AppointmentInfo name={name} />
+        <IconSet onStatusClick={this.onStatusClick} />
+      </Container>
+    );
+  }
+}

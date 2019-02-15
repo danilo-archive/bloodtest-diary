@@ -13,7 +13,8 @@ const APPOINTMENTS_EXAMPLE = [
   },
   {
     status: "completed",
-    patientName: "Alvaro Rausell"
+    patientName: "Alvaro Rausell",
+    time: "12:00"
   },
   {
     status: "late",
