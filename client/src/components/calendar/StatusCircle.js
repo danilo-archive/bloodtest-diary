@@ -25,7 +25,8 @@ export default styled.div`
     position: absolute;
     border-radius: 5px;
     font-size: 80%;
-    padding: 10%;
+    padding-left: 50%;
+    padding-right: 50%;
     bottom: 0%;
 
     transform: scale(0);

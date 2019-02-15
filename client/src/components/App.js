@@ -8,7 +8,8 @@ class App extends Component {
   render() {
     return (
       <div>
-        <CalendarDay />
+        <Header />
+        <Login />
       </div>
     );
   }
