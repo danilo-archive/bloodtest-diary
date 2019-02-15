@@ -4,7 +4,6 @@
  * @author Danilo Del Busso
  * @version 0.0.1
  */
-
 const Holidays = require('date-holidays');
 const hd = new Holidays('GB');
 
@@ -18,7 +17,7 @@ const hd = new Holidays('GB');
 function getNextDates(frequency, startingDate) {
     const f = frequency.split(':');
     if (f.length != 2 || f[1] < 0) {
-        console.error("The frequency format is wrong.")
+        //console.error("The frequency format is wrong.")
         return null;
     }
     const repetitions = parseInt(f[1]);
@@ -33,8 +32,6 @@ function getNextDates(frequency, startingDate) {
     return allDates;
 }
 
-console.log(getNextDate('3-D', new Date(2018, 0 , 1)));
-
 /**
  * Get the next date
  * @example <caption>Example usage of getNextDate with X-D notation.</caption>
@@ -46,34 +43,41 @@ console.log(getNextDate('3-D', new Date(2018, 0 , 1)));
  */
 function getNextDate(frequency, startingDate) {
     if (frequency === null || frequency.split('-').length > 2 || frequency.split('-').length < 1) {
-        console.error("Error in formatting date. Date is either null or not in the right format");
+        //console.error("Error in formatting date. Date is either null or not in the right format");
         return null;
     }
     const f_value = parseInt(frequency.split('-')[0]); // the '3' in '3-Y'
-    const f_format = frequency.split('-')[1];// the 'Y' in '2-Y'
+    if (isNaN(f_value) || !stringIsInteger(frequency.split('-')[0])) {
+        //console.error("Value must be a number")
+        return null;
+    }
+    const f_format = frequency.split('-')[1]; // the 'Y' in '2-Y'
     let date = null;
     let year = startingDate.getFullYear();
     const month = startingDate.getMonth();
     let day = startingDate.getDate()
 
     switch (f_format) {
-        case 'Y': {
-            year += f_value;
-            date = new Date(year, startingDate.getMonth(), startingDate.getDate());  //month is month_number-1 e.g. Jan is 0 and December is 11
-            break;
-        }
-        case 'W': {
-            day += (f_value * 7);
-            date = new Date(year, month, day);
-            break;
-        }
-        case 'D': {
-            day += f_value;
-            date = new Date(startingDate.getFullYear(), startingDate.getMonth(), day);
-            break;
-        }
+        case 'Y':
+            {
+                year += f_value;
+                date = new Date(year, startingDate.getMonth(), startingDate.getDate()); //month is month_number-1 e.g. Jan is 0 and December is 11
+                break;
+            }
+        case 'W':
+            {
+                day += (f_value * 7);
+                date = new Date(year, month, day);
+                break;
+            }
+        case 'D':
+            {
+                day += f_value;
+                date = new Date(startingDate.getFullYear(), startingDate.getMonth(), day);
+                break;
+            }
         default:
-            console.error("Error in formatting date");
+            //console.error("Error in formatting date");
             return null;
     }
 
@@ -107,6 +111,16 @@ function validDate(date) {
  */
 function isHoliday(date) {
     hd.isHoliday(date);
+}
+
+/**
+ * Check if given string is an integer
+ * @param {string} str 
+ * @returns {boolean} true if string is an integer
+ */
+function stringIsInteger(str) {
+    const n = Math.floor(Number(str));
+    return String(n) === str;
 }
 
 module.exports = {
