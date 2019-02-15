@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom'
+import { withRouter } from 'react-router'
 import './login.css';
 
 import { login } from "./../serverConnection.js";
@@ -33,7 +34,9 @@ class Login extends Component {
         if (res){
             alert('Login Successfull');
         }else{
-            alert('Login not Successfull');
+          alert('Login not Successfull');
+          this.props.history.push('/Home')
+
         }
     });
     event.preventDefault();
@@ -90,4 +93,4 @@ class Login extends Component {
   }
 
 
-export default Login;
+export default withRouter(Login);
