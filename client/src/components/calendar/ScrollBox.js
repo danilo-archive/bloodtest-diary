@@ -6,5 +6,5 @@ export default styled.div`
   width: 100%;
   height: 67%;
   overflow: scroll;
-  z-index: 0;
+  z-index: -3;
 `;

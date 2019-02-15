@@ -4,9 +4,30 @@ import styled from "styled-components";
 import WeekDaySection from "./WeekDaySection";
 import MonthDaySection from "./MonthDaySection";
 import ScrollBox from "./ScrollBox";
-import { relative } from "path";
-import Icon from "./Icon";
+import AppointmentSection from "./AppointmentSection";
 
+const APPOINTMENTS_EXAMPLE = [
+  {
+    type: "pending",
+    patientName: "Luka Kralj"
+  },
+  {
+    type: "completed",
+    patientName: "Alvaro Rausell"
+  },
+  {
+    type: "late",
+    patientName: "Danilo del Busso"
+  },
+  {
+    type: "completed",
+    patientName: "Alessandro Amantini"
+  },
+  {
+    type: "pending",
+    patientName: "IDK Who Else To Put"
+  }
+];
 const CalendarContainer = styled.div`
   margin: 5%;
   padding: 10%;
@@ -34,7 +55,11 @@ class CalendarDay extends React.Component {
             monthName={this.props.monthName || "June"}
           />
           <ScrollBox>
-            <Icon icon="edit" />
+            <AppointmentSection type="Anytime Today" />
+            <AppointmentSection
+              type="Anytime Today"
+              appointments={APPOINTMENTS_EXAMPLE}
+            />
           </ScrollBox>
         </CalendarContainer>
       </>

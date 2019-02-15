@@ -27,6 +27,7 @@ const MonthDaySection = props => {
           top="97%"
           size="40px"
           left="90%"
+          onClick={() => prompt("Add Appointment")}
         />
       </MonthDayDiv>
     </>

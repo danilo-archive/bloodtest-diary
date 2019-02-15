@@ -18,18 +18,21 @@ const Circle = styled.div`
   transition: background-color 0.2s ease;
   margin: auto;
   transform: translate(-50%, -50%);
-
+  z-index: 100;
   &:hover {
     background-color: #00b0c6;
     transition: background-color 0.2s ease;
-    z-index: 100;
   }
 `;
 
 export default props => {
   return (
     <>
-      <Circle size={props.size} style={{ top: props.top, left: props.left }}>
+      <Circle
+        size={props.size}
+        style={{ top: props.top, left: props.left }}
+        onClick={props.onClick}
+      >
         <Label
           style={{ left: "50%", top: "55%" }}
           fontSize={props.fontSize || "23px"}
