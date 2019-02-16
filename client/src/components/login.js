@@ -38,14 +38,14 @@ class Login extends Component {
   }
 
   handleSubmit(event) {
-    login({username: this.state.username, password: crypto.createHash('sha256').update(this.state.password).digest('hex')}, (res) =>{
-        {
+    let credentials = {username: this.state.username, password: crypto.createHash('sha256').update(this.state.password).digest('hex')};
+    login(credentials, res => {
           if (res){
               this.props.history.push('/Home')
           }else{
               Login.showLoginErrorMessage();
-        }
-    }});
+          }
+    });
     event.preventDefault();
   }
 
