@@ -18,17 +18,27 @@ const port = conf.port;
 var authenticator = require("./lib/authenticator.js");
 
 http.listen(port);
-io.on("disconnect", function(socket){
-    console.log("Disconnected");
-});
+
 
 io.on('connection',function(socket)
 {
-    socket.on('log', (user) => {
-        console.log("Authorizing here...")
-        //Function to get users here
-        //Return the users in emit on the bottom
-        socket.emit('auth', authenticator.canLogin(user,getUserInDatabase(user.username)));
+    console.log(`Socket ${socket.id} connected`);
+
+    socket.on("disconnect", () => {
+        console.log(`Socket ${socket.id} disconnected`);
+    });
+
+    /**
+    * Login endpoint.
+    * @param {username:username, password:password} credentials Hashed json of credentials
+    * @return {Boolean} True if credentials are correct
+    */
+    socket.on('log', (credentials) => {
+        console.log(`Authentication request from ${socket.id}`);
+        res = authenticator.canLogin(credentials,getUserInDatabase(credentials.username));
+        res_log = res ? "successful" : "unsuccesful";
+        console.log(`Authentication ${res_log}`);
+        socket.emit('auth', res);
     });
 
     socket.on('getAllPatients', () => {
@@ -65,6 +75,7 @@ io.on('connection',function(socket)
         // TODO
         // retrieve all overdue tests and return them as json
     });
+
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 });
