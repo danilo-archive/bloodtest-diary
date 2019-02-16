@@ -31,8 +31,8 @@ class Login extends Component {
 
   handleSubmit(event) {
     login({username: this.state.username, password: crypto.createHash('sha256').update(this.state.password).digest('hex')}, async function(res){
-        send++;
-        if(send<2)
+        responses++;
+        if(responses<2)
         {
           if (res){
               alert('Login Successfull');
@@ -43,7 +43,7 @@ class Login extends Component {
         }
     });
     event.preventDefault();
-    send=0;
+    responses=0;
   }
 
 

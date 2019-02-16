@@ -19,7 +19,8 @@ function canLogin(user, userInDatabase)
   }
   if(user.username===userInDatabase[0].username)
   {
-    if(user.password==userInDatabase[0].password)
+    var hash = crypto.pbkdf2Sync(user.password,userInDatabase[0].salt,userInDatabase[0].iterations,64,'sha256').toString('hex');
+    if(hash==userInDatabase[0].password)
     {
       return true;
     }
