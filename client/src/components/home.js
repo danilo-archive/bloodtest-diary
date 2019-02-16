@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
 import Header from './header.js';
-import './App.css';
+import './home.css';
 
-import Login from './login';
-
-class App extends Component {
+class Home extends Component {
   render() {
     return (
       <div>
         <Header />
-        {this.props.children}
-        <Login />
+        <h1>Hello</h1>
       </div>
+
     );
   }
 }
 
-export default App;
+export default Home;

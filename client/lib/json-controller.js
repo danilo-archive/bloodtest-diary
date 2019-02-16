@@ -28,8 +28,7 @@ function getJSON(path) {
         return null;
     }
 }
-
-
 module.exports = {
     getJSON
 }
+
