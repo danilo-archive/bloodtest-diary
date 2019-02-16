@@ -7,7 +7,6 @@
  * @version 0.0.2
  */
 
-import http from "http";
 import openSocket from 'socket.io-client';
 
 const host = "http://localhost";
