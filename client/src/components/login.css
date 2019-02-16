@@ -376,3 +376,11 @@ p {
     }
 
 }
+.login_error{
+    visibility: hidden;
+}
+
+.login_paragraph{
+    color: red;
+    margin: 0 auto;
+}
