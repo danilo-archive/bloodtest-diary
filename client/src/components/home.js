@@ -7,7 +7,6 @@ class Home extends Component {
     return (
       <div>
         <Header />
-        {this.props.children}
         <h1>Hello</h1>
       </div>
 

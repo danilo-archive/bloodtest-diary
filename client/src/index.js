@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App.js';
-import Login from './components/login';
+import Login from './components/login.js';
 import Home from './components/home.js';
 import * as serviceWorker from './serviceWorker';
 
@@ -9,10 +8,10 @@ import { Route, Link, BrowserRouter as Router, Switch } from 'react-router-dom'
 
 const routing = (
   <Router>
-  <div>
-    <Route exact path = "/" component = {App}/>
-    <Route path = "/home" component = {Home}/>
-  </div>
+    <div>
+      <Route exact path = "/" component = {Login}/>
+      <Route path = "/home" component = {Home}/>
+    </div>
   </Router>
 )
 
