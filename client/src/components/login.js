@@ -45,7 +45,7 @@ class Login extends Component {
     event.preventDefault();
   }
 
-
+//TODO : once user clicks here set visibility of login_error to hidden
   render() {
     return (
 
@@ -54,7 +54,7 @@ class Login extends Component {
         <div className="grid">
 
           <form onSubmit={this.handleSubmit} class="form login">
-              //TODO : once user clicks here set visibility of login_error to hidden
+
             <div className="form__field">
               <label for="login__username"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"></use></svg><span class="hidden">Username</span></label>
               <input id="login__username" type="text" name="username" class="form__input" value={this.state.username} onChange={this.handleChange} placeholder="Username" required/>

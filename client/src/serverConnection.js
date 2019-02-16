@@ -1,7 +1,18 @@
+
+/**
+ * The logic that works as back-end for the app's UI.
+ * It communicates with an external server, queries and sends update requests.
+ * @module serverConnection
+ * @author Danilo Del Busso, Mateusz Nowak, Jacopo Madaluni
+ * @version 0.0.2
+ */
+
 import http from "http";
 import openSocket from 'socket.io-client';
-const port = "3265";
-const  socket = openSocket(`http://localhost:${port}`);
+
+const host = "http://localhost";
+const port = 3265;
+const  socket = openSocket(`${host}:${port}`);
 
 
 /**
