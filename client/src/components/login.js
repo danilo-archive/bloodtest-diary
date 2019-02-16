@@ -5,7 +5,6 @@ import './login.css';
 
 import { login } from "./../serverConnection.js";
 //prevents resending form; works as a semaphore
-var responses = 0;
 const crypto = require('crypto');
 class Login extends Component {
 
@@ -35,18 +34,15 @@ class Login extends Component {
   }
 
   handleSubmit(event) {
-    login({username: this.state.username, password: crypto.createHash('sha256').update(this.state.password).digest('hex')}, async function(res){
-        responses++;
-        if(responses<2)
+    login({username: this.state.username, password: crypto.createHash('sha256').update(this.state.password).digest('hex')}, (res) =>{
         {
           if (res){
               this.props.history.push('/Home')
           }else{
-              Login.showLoginErrorMessage()
+              Login.showLoginErrorMessage();
         }
-    });
+    }});
     event.preventDefault();
-    responses=0;
   }
 
 
