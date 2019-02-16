@@ -29,14 +29,16 @@ class Login extends Component {
     });
   }
 
+  static showLoginErrorMessage() {
+      document.querySelector(".login_error").style.visibility = "visible"
+  }
+
   handleSubmit(event) {
     login({username: this.state.username, password: this.state.password}, res => {
         if (res){
-            alert('Login Successfull');
+            this.props.history.push('/Home')
         }else{
-          alert('Login not Successfull');
-          this.props.history.push('/Home')
-
+            Login.showLoginErrorMessage()
         }
     });
     event.preventDefault();
@@ -51,13 +53,13 @@ class Login extends Component {
         <div className="grid">
 
           <form onSubmit={this.handleSubmit} class="form login">
-
+              //TODO : once user clicks here set visibility of login_error to hidden
             <div className="form__field">
               <label for="login__username"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"></use></svg><span class="hidden">Username</span></label>
               <input id="login__username" type="text" name="username" class="form__input" value={this.state.username} onChange={this.handleChange} placeholder="Username" required/>
             </div>
 
-            <div className="form__field">
+            <div className="form__field" >
               <label for="login__password"><svg class="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#lock"></use></svg><span class="hidden">Password</span></label>
               <input id="login__password" type="password" name="password" class="form__input" value={this.state.password} onChange={this.handleChange} placeholder="Password" required/>
             </div>
@@ -65,6 +67,10 @@ class Login extends Component {
             <div className="form__field">
               <input type="submit" value="Sign In"/>
 
+            </div>
+
+            <div className={"form__field login_error"}>
+                <p className={"login_paragraph"}>Username or password is invalid</p>
             </div>
 
           </form>
@@ -91,6 +97,4 @@ class Login extends Component {
 
     }
   }
-
-
 export default withRouter(Login);
