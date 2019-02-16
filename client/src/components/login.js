@@ -30,7 +30,11 @@ class Login extends Component {
   }
 
   static showLoginErrorMessage() {
-      document.querySelector(".login_error").style.visibility = "visible"
+      let errorMessage = document.querySelector(".login_error");
+      errorMessage.style.visibility = "visible";
+      setTimeout( () => {
+          errorMessage.style.visibility = "hidden";
+      }, 5000);
   }
 
   handleSubmit(event) {
@@ -45,7 +49,6 @@ class Login extends Component {
     event.preventDefault();
   }
 
-//TODO : once user clicks here set visibility of login_error to hidden
   render() {
     return (
 
