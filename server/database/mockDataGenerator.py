@@ -88,8 +88,8 @@ patients = ""
 for num in patient_numbers:
     num = str(num)
     patients += patient_header  \
-        + "(" + num \
-        + ", 'name" + num    \
+        + "('" + num \
+        + "', 'name" + num    \
         +  "', 'surname" + num    \
         + "', 'patient" + num + "@gmail.com', "
 
