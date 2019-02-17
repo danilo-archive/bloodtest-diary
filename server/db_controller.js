@@ -45,35 +45,27 @@ function startsWith(sql, start) {
  * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
  */
 async function selectQuery(sql) {
-    if (!startsWith(sql, "select")) {
-        throw new Error("Invalid use of selectQuery.");
-    }
-    const database = new Database(databaseConfig);
-    let result = undefined;
-    try {
-        result = await database.query(sql);
-    }
-    catch(err) {
-        database.close();
-        return getErrResponse("Query failed.");
-    }
-
-    let rows = [];
-    for (let key in result) {
-        rows.push(result[key]);
-    }
-
-    database.close();
-
-    return await {
-        status: "OK",
-        response: rows
-    }
+    return await nonCriticalQuery(sql, "select", async (result) => {
+        let rows = [];
+        for (let key in result) {
+            rows.push(result[key]);
+        }
+        return rows;
+    });
 }
 
 async function insertQuery(sql) {
-    if (!startsWith(sql, "insert")) {
-        throw new Error("Invalid use of insertQuery.");
+    return await nonCriticalQuery(sql, "insert", async (result) => {
+        return await {
+            query: "OK",
+            affectedRows: result.affectedRows
+        }
+    })
+}
+
+async function nonCriticalQuery(sql, type, treatResponse) {
+    if (!startsWith(sql, type)) {
+        await Promise.reject("Invalid use of " + type + "Query.");
     }
     const database = new Database(databaseConfig);
     let result = undefined;
@@ -85,15 +77,14 @@ async function insertQuery(sql) {
         return getErrResponse("Query failed.");
     }
 
-    let inserted = result.affectedRows;
+    let treated = await treatResponse(result);
     database.close();
+
     return await {
         status: "OK",
-        response: "Successfully inserted " + inserted + " row(s)."
+        response: treated
     }
 }
-
-
 
 
 /**
@@ -146,7 +137,7 @@ selectQuery("SELECT * FROM Patient LIMIT 1").then((response) => {
     console.log("Select was:\n" + JSON.stringify(response));
 });
 
-insertQuery("insert into Patient (patient_no, patient_name, patient_surname) values ('k123410', 'Luka', 'Kralj')")
+insertQuery("insert into Patient (patient_no, patient_name, patient_surname) values ('k1234101', 'Luka', 'Kralj')")
 .then((response) => {
     console.log("Insert was:\n" + JSON.stringify(response));
 });
