@@ -1,6 +1,9 @@
 /**
  * This file contains tests that test the behaviour of tokenGenerator.js
  * 
+ * @author Luka Kralj
+ * @version 1.0
+ * 
  * @module testTokenGenerator
  * @see module:tokenGenerator
  */

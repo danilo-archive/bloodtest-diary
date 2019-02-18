@@ -1,8 +1,29 @@
-const mysql = require("mysql");
+/**
+ * This module enables secure execution of the basic queries. It prevents
+ * deleting any entry that some user might be editing at the moment.
+ * It also prevents editing the entry if someone else is already editing it.
+ * 
+ * @author Luka Kralj
+ * @version 1.0
+ * 
+ * @module db_controller
+ */
 
+module.exports = {
+    selectQuery,
+    insertQuery,
+    deleteQuery,
+    updateQuery,
+    requestEditing
+};
+
+const mysql = require("mysql");
+const tokenGenerator = require("./lib/tokenGenerator");
+const dateFormat = require("dateformat");
+const TOKEN_VALIDITY_MINUTES = 30;
 /**
  * Promisify mysql.
- * Source: https://codeburst.io/node-js-mysql-and-promises-4c3be599909b
+ * Adapted from: https://codeburst.io/node-js-mysql-and-promises-4c3be599909b
  *
  * @class Database
  */
@@ -40,18 +61,6 @@ const databaseConfig = {
 };
 
 /**
- * Shorthand function for comparing the start of a string. Leading spaces
- * and capitalisation are ignored.
- *
- * @param {string} toCheck A string the start of which we want to check.
- * @param {string} compareTo A string that should appear at the start of the toCheck.
- * @returns {boolean} True if toCheck starts with compareTo, false otherwise.
- */
-function startsWith(toCheck, compareTo) {
-    return toCheck.trim().toLowerCase().startsWith(compareTo.toLowerCase());
-}
-
-/**
  * Call this for SELECT queries.
  *
  * @param {string} sql The SQL query.
@@ -80,10 +89,189 @@ async function insertQuery(sql) {
     return await nonCriticalQuery(sql, "insert", async (result) => {
         return await {
             query: "OK",
-            affectedRows: result.affectedRows
+            affectedRows: result.affectedRows,
+            insertId: result.insertId
         }
     })
 }
+
+/**
+ * Call this for DELETE queries.
+ *
+ * @param {string} sql The SQL query.
+ * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
+ */
+async function deleteQuery(sql, entryTable, entryID) {
+    if (!startsWith(sql, "delete") || entryTable === undefined || entryID === undefined) {
+        return await Promise.reject("Invalid use of deleteQuery.");
+    }
+
+    const database = new Database(databaseConfig);
+    let response = undefined;
+
+    await isValidEntry(database, entryTable, entryID)
+    .then(async (isValid) => {
+        if (!isValid) {
+            response = await getErrResponse("Invalid entry table and entry ID pair.");
+        }
+    })
+
+    if (response !== undefined) {
+        return response;
+    }
+// TODO: CHECK IF TOKEN HAS EXPIRED
+
+    await tokenControlEntryExists(database, entryTable, entryID)
+    .then(async (result) => {
+        if (result) {
+            response = await getErrResponse("Entry is being modified and cannot be deleted.");
+        }
+        else {
+            // free to delete
+            response = await getResult(sql, database, async (result) => {
+                return {
+                    query: "OK",
+                    affectedRows: result.affectedRows
+                };
+            });
+        } 
+    });
+
+    database.close();
+    return response;
+}
+
+/**
+ * Call this for UPDATE queries.
+ *
+ * @param {string} sql The SQL query.
+ * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
+ */
+async function updateQuery(sql, entryTable, entryID, token) {
+    if (!startsWith(sql, "update") || entryTable === undefined || entryID === undefined || token === undefined) {
+        return await Promise.reject("Invalid use of updateQuery.");
+    }
+
+    const database = new Database(databaseConfig);
+
+    let response = undefined;
+    await isValidEntry(database, entryTable, entryID)
+    .then(async (isValid) => {
+        if (!isValid) {
+            response = await getErrResponse("Invalid entry table and entry ID pair.");
+        }
+    })
+
+    if (response !== undefined) {
+        database.close();
+        return response;
+    }
+
+    // TODO: CHECK IF TOKEN HAS EXPIRED
+
+    await tokenControlEntryExists(database, entryTable, entryID, token)
+    .then(async (result) => {
+        if (result) {
+             // Token is valid. Execute query:
+            response = await getResult(sql, database, async (result) => {
+                return {
+                    query: "OK",
+                    affectedRows: result.affectedRows,
+                    changedRows: result.changedRows
+                };
+            });
+        }
+        else {
+            response = await getErrResponse("Invalid or missing token.");
+        }
+    });
+
+    if (response.status !== "OK") {
+        database.close();
+        return response;
+    }
+
+    // delete token
+    let deleteQuery = "DELETE FROM TokenControl WHERE token = ?";
+    deleteQuery = mysql.format(deleteQuery, [token]);
+    await getResult(deleteQuery, database, async (result) => {
+        if (result.affectedRows != 1) {
+            console.log(result);
+            console.log("ERROR WHEN DELETING A TOKEN (" + token + ")!");
+        }
+        return result;
+    });
+
+    database.close();
+    
+    return response;
+}
+
+/**
+ * Request editing for the specific entry.
+ *
+ * @param {string} entryTable Table that we want to edit.
+ * @param {string} entryID ID of the entry in that table that we want to edit.
+ * @returns {Promise<JSON>} Response containing the valid token, or error message.
+ */
+async function requestEditing(entryTable, entryID) {
+    if (entryTable === undefined || entryID === undefined) {
+        return await Promise.reject("Invalid use of requestEditing.");
+    }
+
+    const database = new Database(databaseConfig);
+
+    let response = undefined;
+
+    await isValidEntry(database, entryTable, entryID)
+    .then(async (isValid) => {
+        if (!isValid) {
+            response = await getErrResponse("Invalid entry table and entry ID pair.");
+        }
+    })
+
+    if (response !== undefined) {
+        database.close();
+        return response;
+    }
+// TODO: CHECK IF TOKEN HAS EXPIRED
+    await tokenControlEntryExists(database, entryTable, entryID)
+    .then(async (result) => {
+        if (result) {
+            response = await getErrResponse("Entry is being modified and cannot be edited.");
+        }
+        else {
+            response = getSuccessfulResponse(null);
+        } 
+    });
+
+    if (response.status !== "OK") {
+        database.close();
+        return response;
+    }
+
+    // entry is not being edited, generate token, store it and return it
+    const token_ = tokenGenerator.generateToken();
+    let nowDate = new Date();
+    nowDate.setMinutes(nowDate.getMinutes() + TOKEN_VALIDITY_MINUTES);
+    const expires = dateFormat(nowDate, "yyyymmddHHMMss");
+    const insertQuery = mysql.format("INSERT INTO TokenControl VALUES (?, ?, ?, ?)", 
+                                        [token_, entryTable, entryID, expires]);
+
+    response = await getResult(insertQuery, database, (result) => {
+        return {
+            token: token_,
+            expires: dateFormat(nowDate, "yyyy-mm-dd HH:MM:ss")
+        };
+    });
+
+    database.close();
+    return response;
+}
+
+//=====================================
+//  HELPER FUNCTIONS BELOW:
+//=====================================
 
 /**
  * A helper function for insertQuery and selectQuery.
@@ -96,22 +284,33 @@ async function insertQuery(sql) {
  */
 async function nonCriticalQuery(sql, type, treatResponse) {
     if (!startsWith(sql, type)) {
-        await Promise.reject("Invalid use of " + type + "Query.");
+        return await Promise.reject("Invalid use of " + type + "Query.");
     }
     const database = new Database(databaseConfig);
+    const response = await getResult(sql, database, treatResponse);
+    database.close();
+
+    return response;
+}
+
+/**
+ * Helper function that executes the query.
+ *
+ * @param {string} sql Query to execute.
+ * @param {Database} database Database object to execute the query on.
+ * @param {function} treatResponse Decide how the response of a successful query is modified.
+ * @returns {JSON} Result of the query or error response, if query unsuccessful.
+ */
+async function getResult(sql, database, treatResponse) {
     let result = undefined;
     try {
         result = await database.query(sql);
     }
     catch(err) {
-        const errResponse = getSQLErrorResponse(err);
-        database.close();
+        const errResponse = await getSQLErrorResponse(err);
         return errResponse;
     }
-
     const treated = await treatResponse(result);
-    database.close();
-
     return await getSuccessfulResponse(treated);
 }
 
@@ -158,134 +357,91 @@ function getSuccessfulResponse(response_) {
 }
 
 /**
- * Call this for DELETE queries.
+ * Shorthand function for comparing the start of a string. Leading spaces
+ * and capitalisation are ignored.
  *
- * @param {string} sql The SQL query.
- * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
+ * @param {string} toCheck A string the start of which we want to check.
+ * @param {string} compareTo A string that should appear at the start of the toCheck.
+ * @returns {boolean} True if toCheck starts with compareTo, false otherwise.
  */
-async function deleteQuery(sql, entryTable, entryID) {
-    if (!startsWith(sql, "delete")) {
-        await Promise.reject("Invalid use of deleteQuery.");
-    }
+function startsWith(toCheck, compareTo) {
+    return toCheck.trim().toLowerCase().startsWith(compareTo.toLowerCase());
+}
 
-    const database = new Database(databaseConfig);
+/**
+ * Check if the entry with the given parameters exists in the TokenControl table.
+ *
+ * @param {Database} database
+ * @param {string} entryTable
+ * @param {string} entryID
+ * @param {string} token
+ * @returns {Promise<boolean>} True if such entry exists, false if not.
+ */
+async function tokenControlEntryExists(database, entryTable, entryID, token) {
+    if (database === undefined || entryTable === undefined || entryID === undefined) {
+        return await Promise.reject("Invalid use of entryExists.");
+    }
 
     let tokenQuery = "SELECT * FROM TokenControl "
     tokenQuery += "WHERE table_name = ? AND table_key = ?";
-    tokenQuery = mysql.format(tokenQuery, [entryTable, entryID]);
+    let options = [entryTable, entryID];
+    if (token !== undefined) {
+        tokenQuery += " AND token = ?";
+        options.push(token);
+    }
+    tokenQuery = mysql.format(tokenQuery, options);
 
-    let queryResult = undefined;
-    try {
-        queryResult = await database.query(tokenQuery);
-    }
-    catch(err) {
-        const errResponse = getSQLErrorResponse(err);
-        database.close();
-        return errResponse;
-    }
-    
-    if (queryResult.length == 1) {
-        database.close();
-        return getErrResponse("Entry is being modified and cannot be deleted.");
-    }
+    const queryResult = await getResult(tokenQuery, database, async (result) => {
+        if (result.length > 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
 
-    // free to delete
-
-    let result = undefined;
-    try {
-        result = await database.query(sql);
+    if (queryResult.status !== "OK") {
+        return false;
     }
-    catch(err) {
-        const errResponse = getSQLErrorResponse(err);
-        database.close();
-        return errResponse;
-    }
-
-    const response = {
-        query: "OK",
-        affectedRows: result.affectedRows
-    }
-    database.close();
-    return await getSuccessfulResponse(response);
+    return queryResult.response;
 }
-
 
 /**
- * Call this for DELETE queries.
+ * Checks if the table name and table ID pair actually represent some
+ * valid database entry.
  *
- * @param {string} sql The SQL query.
- * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
+ * @param {Database} database
+ * @param {string} entryTable
+ * @param {string} entryID
+ * @returns {Promise<boolean>} True if entry exists, false if not.
  */
-async function updateQuery(sql, entryTable, entryID, token) {
-    if (!startsWith(sql, "update")) {
-        await Promise.reject("Invalid use of updateQuery.");
+async function isValidEntry(database, entryTable, entryID) {
+    let primaryKey = undefined;
+    switch(entryTable) {
+        case "Laboratory": primaryKey = "lab_id"; break;
+        case "Patient": primaryKey = "patient_no"; break;
+        case "Carer": primaryKey = "carer_id"; break;
+        case "Test": primaryKey = "test_id"; break;
+    }
+    if (primaryKey === undefined) {
+        return false;
     }
 
-    const database = new Database(databaseConfig);
+    let sql = "SELECT * FROM " + entryTable + " WHERE " + primaryKey + " = ?";
+    sql = mysql.format(sql, [entryID]);
+    let response = await getResult(sql, database, (result) => {
+        if (result.length > 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
 
-    let tokenQuery = "SELECT * FROM TokenControl "
-    tokenQuery += "WHERE token = ? AND table_name = ? AND table_key = ?";
-    tokenQuery = mysql.format(tokenQuery, [token, entryTable, entryID]);
-
-    let queryResult = undefined;
-    try {
-        queryResult = await database.query(tokenQuery);
-    }
-    catch(err) {
-        const errResponse = getSQLErrorResponse(err);
-        database.close();
-        return errResponse;
-    }
-    
-    if (queryResult.length != 1) {
-        database.close();
-        return getErrResponse("Invalid token.");
-    }
-
-    // Token is valid. Execute query:
-
-    let result = undefined;
-    try {
-        result = await database.query(sql);
-    }
-    catch(err) {
-        const errResponse = getSQLErrorResponse(err);
-        database.close();
-        return errResponse;
-    }
-
-    const response = {
-        query: "OK",
-        affectedRows: result.affectedRows
-    };
-
-    // delete token
-    const deleteQuery = "DELETE FROM TokenControl WHERE token = ?";
-    let deleteResult = undefined;
-    try {
-        deleteResult = await database.query(deleteQuery, [token]);
-    }
-    catch(err) {
-        console.log("ERROR WHEN DELETING A TOKEN (" + token + "):");
-        console.log(JSON.stringify(getSQLErrorResponse(err)));
-    }
-    if (deleteResult.affectedRows != 1) {
-        console.log("ERROR WHEN DELETING A TOKEN (" + token + ")!");
-    }
-    
-
-    database.close();
-    return await getSuccessfulResponse(response);
+    return response.response;
 }
 
-
-
-
-
-
-
-
-
+/*
 selectQuery("SELECT * FROM Patient LIMIT 1").then((response) => {
     console.log("Select was:\n    " + JSON.stringify(response));
 });
@@ -296,11 +452,14 @@ insertQuery("insert into Patient (patient_no, patient_name, patient_surname) val
     console.log("Insert was:\n    " + JSON.stringify(response));
 });
 
-deleteQuery("DELETE FROM Patient WHERE patient_no = 'lukakralj'", "Patient", "lukakralj").then((response) => {
+deleteQuery("DELETE FROM Patient WHERE patient_no = 'lukakralj'", "Patient", "lukakralj", "Patient", "lukakralj").then((response) => {
     console.log("Delete was:\n    " + JSON.stringify(response));
 });
 
-updateQuery("UPDATE Patient SET patient_name = 'Luka - modified' WHERE patient_no = 'lukakralj'", "Patient", "lukakralj", "token").then((response) => {
+updateQuery("UPDATE Patient SET patient_name = 'Luka - modified' WHERE patient_no = 'lukakralj'", "Patient", "lukakralj", "201902180227008958596371").then((response) => {
     console.log("Update was:\n    " + JSON.stringify(response));
-})
-
+});*/
+/*
+requestEditing("Patient", "lukakralj").then((response) => {
+    console.log("request token:\n    " + JSON.stringify(response));
+});*/
