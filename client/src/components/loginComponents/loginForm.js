@@ -52,8 +52,8 @@ class LoginForm extends Component {
 
   clearForm() {
     this.setState({
-       firstname: '',
-       lastname: ''
+       username: '',
+       password: ''
    })
   }
 
