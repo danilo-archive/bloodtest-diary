@@ -3,6 +3,9 @@
  * deleting any entry that some user might be editing at the moment.
  * It also prevents editing the entry if someone else is already editing it.
  * 
+ * It does so through token exchange system that gives editing rights to whoever
+ * obtains it. The token only works for a particular entry in the database.
+ * 
  * @author Luka Kralj
  * @version 1.0
  * 
@@ -21,6 +24,7 @@ const mysql = require("mysql");
 const tokenGenerator = require("./lib/tokenGenerator");
 const dateFormat = require("dateformat");
 const TOKEN_VALIDITY_MINUTES = 30;
+
 /**
  * Promisify mysql.
  * Adapted from: https://codeburst.io/node-js-mysql-and-promises-4c3be599909b
@@ -119,7 +123,6 @@ async function deleteQuery(sql, entryTable, entryID) {
     if (response !== undefined) {
         return response;
     }
-// TODO: CHECK IF TOKEN HAS EXPIRED
 
     await tokenControlEntryExists(database, entryTable, entryID)
     .then(async (result) => {
@@ -166,8 +169,6 @@ async function updateQuery(sql, entryTable, entryID, token) {
         database.close();
         return response;
     }
-
-    // TODO: CHECK IF TOKEN HAS EXPIRED
 
     await tokenControlEntryExists(database, entryTable, entryID, token)
     .then(async (result) => {
@@ -234,7 +235,7 @@ async function requestEditing(entryTable, entryID) {
         database.close();
         return response;
     }
-// TODO: CHECK IF TOKEN HAS EXPIRED
+
     await tokenControlEntryExists(database, entryTable, entryID)
     .then(async (result) => {
         if (result) {
@@ -392,8 +393,33 @@ async function tokenControlEntryExists(database, entryTable, entryID, token) {
     tokenQuery = mysql.format(tokenQuery, options);
 
     const queryResult = await getResult(tokenQuery, database, async (result) => {
-        if (result.length > 0) {
-            return true;
+        if (result.length == 1) {
+            let expires = new Date(result[0].expiration);
+            if ((expires - new Date()) <= 0) {
+                // Token has expired.
+                
+                let delQuery = "DELETE FROM TokenControl "
+                delQuery += "WHERE table_name = ? AND table_key = ?";
+                let options = [entryTable, entryID];
+                if (token !== undefined) {
+                    delQuery += " AND token = ?";
+                    options.push(token);
+                }
+                delQuery = mysql.format(delQuery, options);
+
+                await getResult(delQuery, database, async (result) => {
+                    if (result.affectedRows != 1) {
+                        console.log(result);
+                        console.log("ERROR WHEN DELETING A TOKEN (" + entryTable + ", " + entryID + ")!");
+                    }
+                    return result;
+                });
+                
+                return false;
+            }
+            else {
+                return true;
+            }
         }
         else {
             return false;
@@ -451,15 +477,15 @@ insertQuery("insert into Patient (patient_no, patient_name, patient_surname) val
 .then((response) => {
     console.log("Insert was:\n    " + JSON.stringify(response));
 });
-
+*/
 deleteQuery("DELETE FROM Patient WHERE patient_no = 'lukakralj'", "Patient", "lukakralj", "Patient", "lukakralj").then((response) => {
     console.log("Delete was:\n    " + JSON.stringify(response));
 });
-
+/*
 updateQuery("UPDATE Patient SET patient_name = 'Luka - modified' WHERE patient_no = 'lukakralj'", "Patient", "lukakralj", "201902180227008958596371").then((response) => {
     console.log("Update was:\n    " + JSON.stringify(response));
-});*/
-/*
+});
+
 requestEditing("Patient", "lukakralj").then((response) => {
     console.log("request token:\n    " + JSON.stringify(response));
 });*/
