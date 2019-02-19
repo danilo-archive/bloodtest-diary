@@ -23,46 +23,10 @@ module.exports = {
 const mysql = require("mysql");
 const tokenGenerator = require("../tokenGenerator");
 const dateFormat = require("dateformat");
+const databaseConfig = require("../../config/database");
+const Database = require("./Database");
+
 const TOKEN_VALIDITY_MINUTES = 30;
-
-/**
- * Promisify mysql.
- * Adapted from: https://codeburst.io/node-js-mysql-and-promises-4c3be599909b
- *
- * @class Database
- */
-class Database {
-    constructor(config) {
-        this.connection = mysql.createConnection(config);
-        this.connection.beginTransaction();
-    }
-    query(sql, args) {
-        return new Promise((resolve, reject) => {
-            this.connection.query(sql, args, (err, rows) => {
-                if (err)
-                    return reject(err);
-                resolve(rows);
-            });
-        });
-    }
-    close() {
-        this.connection.commit();
-        return new Promise((resolve, reject) => {
-            this.connection.end((err) => {
-                if (err)
-                    return reject(err);
-                resolve();
-            });
-        });
-    }
-}
-
-const databaseConfig = {
-    host: "localhost",
-    user: "bloodTestAdmin",
-    password: "Blood_admin1",
-    database: "BloodTestDB"
-};
 
 /**
  * Call this for SELECT queries.
