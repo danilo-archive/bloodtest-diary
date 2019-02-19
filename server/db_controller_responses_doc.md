@@ -1,9 +1,11 @@
-Responses:
+# Responses format for db_controller:
 
-General format:
-    { status: "OK" | "ERR", message}
+### General format:
+    { status: "OK", response: object}
+    or
+    { status: "ERR", err: object}
 
-For programming errors (malformed SQL):
+### For programming errors (malformed SQL):
     { status: "ERR", 
         err: {
             type: "SQL Error",
@@ -13,8 +15,7 @@ For programming errors (malformed SQL):
         }
     }
     
-// TODO
-For non-programming errors (well-formed SQL, but invalid request):
+### For non-programming errors (well-formed SQL, but invalid request):
     { status: "ERR", 
         err: {
             type: "Invalid request",
@@ -22,7 +23,7 @@ For non-programming errors (well-formed SQL, but invalid request):
         }
     }
 
-SELECT response:
+### SELECT query response:
     { status: "OK",
         response: {
             query: "OK",
@@ -34,7 +35,7 @@ SELECT response:
         }
     }
 
-INSERT response:
+### INSERT query response:
     { status: "OK",
         response: {
             query: "OK",
@@ -43,15 +44,15 @@ INSERT response:
         }
     }
 
-DELETE response:
+### DELETE query response:
     { status: "OK",
         response: {
-            query: "OK",
+            query: "OK",  
             affectedRows: n,
         }
     }
 
-UPDATE response:
+### UPDATE query response:
     { status: "OK",
         response: {
             query: "OK",
@@ -60,7 +61,7 @@ UPDATE response:
         }
     }
 
-REQUEST TOKEN response:
+### REQUEST TOKEN response:
     { status: "OK",
         response: {
             token: token_sequence,
