@@ -30,9 +30,9 @@ CREATE TABLE Patient (
     patient_surname VARCHAR(255) NOT NULL,
     patient_email VARCHAR(255),
     patient_phone VARCHAR(10),
-    prefered_lab INTEGER,
+    preferred_lab INTEGER,
     PRIMARY KEY (patient_no),
-    FOREIGN KEY (prefered_lab) REFERENCES Laboratory(lab_id)
+    FOREIGN KEY (preferred_lab) REFERENCES Laboratory(lab_id)
 );
 
 CREATE TABLE Carer (
