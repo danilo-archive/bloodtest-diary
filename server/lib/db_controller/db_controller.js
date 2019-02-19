@@ -21,7 +21,7 @@ module.exports = {
 };
 
 const mysql = require("mysql");
-const tokenGenerator = require("./lib/tokenGenerator");
+const tokenGenerator = require("../tokenGenerator");
 const dateFormat = require("dateformat");
 const TOKEN_VALIDITY_MINUTES = 30;
 
