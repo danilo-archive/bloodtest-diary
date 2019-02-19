@@ -1,0 +1,69 @@
+Responses:
+
+General format:
+    { status: "OK" | "ERR", message}
+
+For programming errors (malformed SQL):
+    { status: "ERR", 
+        err: {
+            type: "SQL Error",
+            code: sql_error_code,
+            errno: sql_error_no,
+            sqlMessage: sql_error_message
+        }
+    }
+    
+// TODO
+For non-programming errors (well-formed SQL, but invalid request):
+    { status: "ERR", 
+        err: {
+            type: "Invalid request",
+            cause: why_is_invalid
+        }
+    }
+
+SELECT response:
+    { status: "OK",
+        response: {
+            query: "OK",
+            rows: [
+                {obj1},
+                {obj2},
+                ...
+            ]
+        }
+    }
+
+INSERT response:
+    { status: "OK",
+        response: {
+            query: "OK",
+            affectedRows: n,
+            insertId: n
+        }
+    }
+
+DELETE response:
+    { status: "OK",
+        response: {
+            query: "OK",
+            affectedRows: n,
+        }
+    }
+
+UPDATE response:
+    { status: "OK",
+        response: {
+            query: "OK",
+            affectedRows: n,
+            changedRows: n
+        }
+    }
+
+REQUEST TOKEN response:
+    { status: "OK",
+        response: {
+            token: token_sequence,
+            expires: yyyy-mm-dd HH:MM:ss,
+        }
+    }
