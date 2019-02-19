@@ -8,7 +8,7 @@ import { Route, Link, BrowserRouter as Router, Switch } from 'react-router-dom'
 
 const routing = (
   <Router>
-    <div>
+    <div className={"routes"}>
       <Route exact path = "/" component = {Login}/>
       <Route path = "/home" component = {Home}/>
     </div>

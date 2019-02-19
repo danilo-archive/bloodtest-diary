@@ -1,0 +1,44 @@
+:root {
+  --htmlFontSize: 100%;
+
+  --bodyBackgroundColor: #f4f9fd;
+  --bodyColor: #000000;
+  --bodyFontFamily: 'Open Sans';
+  --bodyFontFamilyFallback: sans-serif;
+  --bodyFontSize: 0.875rem;
+  --bodyFontWeight: 400;
+  --bodyLineHeight: 1.5;
+}
+
+#app{
+  height: 100%;
+}
+
+#app>div{
+  height: 100%;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: var(--htmlFontSize);
+  height: 100%;
+}
+
+body {
+  background-color: var(--bodyBackgroundColor);
+  color: var(--bodyColor);
+  font-family: var(--bodyFontFamily), var(--bodyFontFamilyFallback);
+  font-size: var(--bodyFontSize);
+  font-weight: var(--bodyFontWeight);
+  height: auto;
+  line-height: var(--bodyLineHeight);
+  margin: 0;
+  min-height: 100vh;
+  height: 100%;
+}
+
+
+.home {
+  display: flex;
+  height:100%;
+}
