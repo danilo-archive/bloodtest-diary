@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
-import WeekDaySection from "./WeekDaySection";
-import MonthDaySection from "./MonthDaySection";
-import ScrollBox from "./ScrollBox";
-import AppointmentSection from "./AppointmentSection";
+import WeekDaySection from "./calendarComponents/WeekDaySection";
+import ScrollBox from "./calendarComponents/ScrollBox";
+import AppointmentSection from "./calendarComponents/AppointmentSection";
 
 const CalendarContainer = styled.div`
   margin: 0.2%;

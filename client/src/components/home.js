@@ -1,4 +1,4 @@
-import CalendarDay from "./calendar/CalendarDay";
+import CalendarDay from "./homeComponents/dashboardComponents/calendarComponents/CalendarDay";
 import React, { Component } from 'react';
 import Header from './header.js';
 import Dashboard from './homeComponents/dashboard.js';
