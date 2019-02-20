@@ -11,25 +11,14 @@ import openSocket from 'socket.io-client';
 
 const host = "http://localhost";
 const port = 3265;
-//const  socket = openSocket(`${host}:${port}`);
-
+var serverConnect = undefined;
 
 class ServerConnect {
 
     constructor(){
         this.socket = openSocket(`${host}:${port}`);
         this.testCallback = undefined;
-
-        this.socket.on("testBroadcast", (username, password) => {
-            this.testCallback(username, password);
-        });
     }
-
-
-    setTestCallback(callback){
-        this.testCallback = callback;
-    }
-
 
 
     /**
@@ -131,5 +120,14 @@ class ServerConnect {
 
 }
 
-export {ServerConnect};
-//export {test, login};
+
+
+
+const serverConnect = new ServerConnect();
+function getServerConnect(){
+    if (typeof serverConnect === undefined){
+        serverConnect = new ServerConnect();
+    }
+    return serverConnect;
+}
+export {getServerConnect, ServerConnect};

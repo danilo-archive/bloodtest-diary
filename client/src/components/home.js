@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import Header from './header.js';
 import './home.css';
+import {getServerConnect} from "../serverConnection.js";
 
 class Home extends Component {
+
+  constructor(props){
+      super(props);
+      this.serverConnect = getServerConnect();
+  }
+
   render() {
     return (
       <div>

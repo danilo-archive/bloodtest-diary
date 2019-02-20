@@ -36,9 +36,7 @@ io.on('connection',function(socket)
     socket.on('log', (credentials) => {
         console.log(`Authentication request from ${socket.id}`);
         res = authenticator.canLogin(credentials,getUserInDatabase(credentials.username));
-        res_log = res ? "successful" : "unsuccesful";
-        console.log(`Authentication ${res_log}`);
-        socket.broadcast.emit("testBroadcast", "lol", "gotupdated");
+        console.log(`Authentication ${res ? "successful" : "unsuccesful"}`);
         socket.emit('auth', res);
     });
 
