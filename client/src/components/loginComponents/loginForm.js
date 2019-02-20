@@ -12,6 +12,7 @@ class LoginForm extends Component {
       username: "",
       password: ""
     };
+
     this.serverConnect = props.serverConnect;
 
     this.handleChange = this.handleChange.bind(this);

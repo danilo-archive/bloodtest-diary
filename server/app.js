@@ -19,6 +19,7 @@ var authenticator = require("./lib/authenticator.js");
 
 http.listen(port);
 
+// to broadcast in room => io.in("room").emit("change", json);
 
 io.on('connection',function(socket)
 {
@@ -27,6 +28,16 @@ io.on('connection',function(socket)
     socket.on("disconnect", () => {
         console.log(`Socket ${socket.id} disconnected`);
     });
+
+    socket.on("join", (oldRoom, room) => {
+        if (oldRoom !== ""){
+            socket.leave(oldRoom);
+            console.log(`Socket ${socket.id} left ${oldRoom}`);
+        }
+        socket.join(room);
+        console.log(`Socket ${socket.id} joined ${room}`);
+    });
+
 
     /**
     * Login endpoint.

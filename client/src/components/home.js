@@ -8,6 +8,7 @@ class Home extends Component {
   constructor(props){
       super(props);
       this.serverConnect = getServerConnect();
+      this.serverConnect.joinMainPage();
   }
 
   render() {

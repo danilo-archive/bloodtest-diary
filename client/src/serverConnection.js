@@ -18,6 +18,17 @@ class ServerConnect {
     constructor(){
         this.socket = openSocket(`${host}:${port}`);
         this.testCallback = undefined;
+        this.currentRoom = "";
+    }
+
+    joinMainPage(){
+        this.socket.emit("join", this.currentRoom, "main_page");
+        this.currentRoom = "main_page";
+    }
+
+    joinLoginPage(){
+        this.socket.emit("join", this.currentRoom, "login_page");
+        this.currentRoom = "login_page";
     }
 
 
