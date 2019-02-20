@@ -1,3 +1,4 @@
+import CalendarDay from "./calendar/CalendarDay";
 import React, { Component } from 'react';
 import Header from './header.js';
 import Dashboard from './homeComponents/dashboard.js';
@@ -8,7 +9,7 @@ class Home extends Component {
     return (
       <div className={"home"}>
         <Header />
-
+        <h1>Hello</h1>
         <Dashboard />
       </div>
     );
