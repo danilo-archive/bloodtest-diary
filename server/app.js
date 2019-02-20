@@ -33,11 +33,11 @@ io.on('connection',function(socket)
     * @param {username:username, password:password} credentials Hashed json of credentials
     * @return {Boolean} True if credentials are correct
     */
-    socket.on('log', (credentials) => {
+    socket.on('authenticate', (credentials) => {
         console.log(`Authentication request from ${socket.id}`);
         res = authenticator.canLogin(credentials,getUserInDatabase(credentials.username));
         console.log(`Authentication ${res ? "successful" : "unsuccesful"}`);
-        socket.emit('auth', res);
+        socket.emit('authenticationResponse', res);
     });
 
     socket.on('getAllPatients', () => {

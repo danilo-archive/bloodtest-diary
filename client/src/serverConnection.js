@@ -29,8 +29,8 @@ class ServerConnect {
      */
     login(credentials, callback){
         console.log("trying to log in");
-        this.socket.emit('log', credentials);
-        this.socket.on('auth', res => {
+        this.socket.emit('authenticate', credentials);
+        this.socket.on('authenticationResponse', res => {
             callback(res);
         });
     }
