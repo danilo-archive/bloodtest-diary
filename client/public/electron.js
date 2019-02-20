@@ -10,8 +10,10 @@ const maxWindowHeight = 800;
 const maxSplashwWidth = 600;
 const maxSplashHeight = 800;
 
-var width = 0;
-var height = 0;
+let width = 0;
+let height = 0;
+
+let mainWindow;
 
 function getWindowSize(axis) {
   if (axis == "width") {
