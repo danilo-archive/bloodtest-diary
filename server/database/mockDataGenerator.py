@@ -21,7 +21,7 @@ DELETE FROM TokenControl;
 patient_header = "INSERT INTO Patient (patient_no, patient_name, patient_surname, patient_email, patient_phone) VALUES "
 carer_header = "INSERT INTO Carer (patient_no, carer_name, carer_email, carer_phone, relationship) VALUES "
 lab_header = "INSERT INTO Laboratory (lab_id, lab_name, lab_email) VALUES "
-test_header = "INSERT INTO Test (patient_no, added, first_due_date, frequency, laboratory, completed_status, completed_date) VALUES "
+test_header = "INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date) VALUES "
 
 patient_numbers = []
 for i in range(200):
