@@ -7,14 +7,23 @@ const isDev = require('electron-is-dev');
 let mainWindow;
 
 function createWindows() {
-  mainWindow = new BrowserWindow({width: 1400, height: 800, backgroundColor: '#f4f9fd', frame: false, resizable: false, show: false});
+
+  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+
+  console.log(width, height);
+
+  mainWindow = new BrowserWindow({width: width*0.7, height: height*0.75, backgroundColor: '#f4f9fd', frame: false, resizable: false, show: false});
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : './public/index.html');
   mainWindow.on('closed', () => mainWindow = null);
 
 
-  splash = new BrowserWindow({width: 300, height: 400, backgroundColor: '#f4f9fd', frame: false, resizable: false});
+  splash = new BrowserWindow({width: width*0.15, height: height*0.4, backgroundColor: '#f4f9fd', frame: false, resizable: false});
   splash.loadFile('./public/loading.html');
+
+
+
 }
+
 
 app.on('ready', () => {
   createWindows();
