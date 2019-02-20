@@ -1,29 +1,18 @@
-<<<<<<< HEAD
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./components/App.js";
-import Login from "./components/login";
-import * as serviceWorker from "./serviceWorker";
-=======
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Login from './components/login.js';
 import Home from './components/home.js';
 import * as serviceWorker from './serviceWorker';
->>>>>>> 148e1ba24088907d0f1e16bc9d2b2d0bf8049597
+
 
 import { Route, Link, BrowserRouter as Router, Switch } from "react-router-dom";
 
 const routing = (
   <Router>
-<<<<<<< HEAD
-    <Route path="/" component={App} />
-=======
-    <div>
+    <div className={"routes"}>
       <Route exact path = "/" component = {Login}/>
       <Route path = "/home" component = {Home}/>
     </div>
->>>>>>> 148e1ba24088907d0f1e16bc9d2b2d0bf8049597
   </Router>
 );
 
