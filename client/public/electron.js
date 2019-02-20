@@ -40,7 +40,7 @@ function setScreenSize() {
 
 function createWindows() {
 
-  mainWindow = new BrowserWindow({width: getWindowSize("width"), height: getWindowSize("height"), backgroundColor: '#f4f9fd', frame: false, resizable: false, show: false});
+  mainWindow = new BrowserWindow({width: getWindowSize("width"), height: getWindowSize("height"), backgroundColor: '#f4f9fd', frame: false, resizable: true, show: false});
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : './public/index.html');
   mainWindow.on('closed', () => mainWindow = null);
 

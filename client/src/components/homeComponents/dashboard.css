@@ -1,26 +1,19 @@
 .dashboard {
   border: blue 2px solid;
-  margin-top: 5%;
+  margin-top: 3%;
   margin-left: 1%;
   margin-right: 1%;
   margin-bottom: 2%;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+
 }
 
 .overduePatients {
   border: red 2px solid;
-  background-color: #d6dbda;
-  width: 20%;
-  height: 100%;
+  width: auto;
+  height: fill;
+  overflow: hidden;
 
-  margin-left: 2%;
-  margin-right: 80%;
-  margin-top: 1%;
+
 }
 
 .calender {
@@ -28,9 +21,6 @@
 
 }
 
-.footer {
-  margin-top: 80%;
-}
 
 .ongoingWeekly {
   border-color: red;

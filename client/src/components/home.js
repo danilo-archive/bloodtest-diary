@@ -9,7 +9,6 @@ class Home extends Component {
     return (
       <div className={"home"}>
         <Header />
-        <h1>Hello</h1>
         <Dashboard />
       </div>
     );

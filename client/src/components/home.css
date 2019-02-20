@@ -1,6 +1,5 @@
 :root {
   --htmlFontSize: 100%;
-
   --bodyBackgroundColor: #f4f9fd;
   --bodyColor: #000000;
   --bodyFontFamily: 'Open Sans';
@@ -8,14 +7,6 @@
   --bodyFontSize: 0.875rem;
   --bodyFontWeight: 400;
   --bodyLineHeight: 1.5;
-}
-
-#app{
-  height: 100%;
-}
-
-#app>div{
-  height: 100%;
 }
 
 html {
@@ -40,5 +31,4 @@ body {
 
 .home {
   display: flex;
-  height:100%;
 }
