@@ -3,13 +3,12 @@ import Header from "./header.js";
 import "./App.css";
 
 import Login from "./login";
-import CalendarDay from "./calendar/CalendarDay";
-import WeekView from "./calendar/WeekView.js";
 class App extends Component {
   render() {
     return (
       <div>
-        <WeekView />
+        <Header />
+        <Login />
       </div>
     );
   }

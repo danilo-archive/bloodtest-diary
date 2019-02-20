@@ -12,10 +12,10 @@ const Heading = styled.h3`
 
 export default props => {
   return (
-    <>
+    <div style={{ zIndex: "5", backgroundColor: "white" }}>
       <HorizontalLine />
       <Heading>{props.children}</Heading>
       <HorizontalLine />
-    </>
+    </div>
   );
 };

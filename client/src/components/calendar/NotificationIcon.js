@@ -6,7 +6,6 @@ import Label from "../Label";
 const Circle = styled.div`
   background-color: #028090;
   border-radius: 50%;
-
   display: flex;
   width: ${props => props.size || `35px`};
   height: ${props => props.size || `35px`};

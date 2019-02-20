@@ -12,6 +12,7 @@ const WeekDayDiv = styled.div`
   text-align: center;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   position: relative;
 `;
 const WeekDaySection = props => {
@@ -20,8 +21,8 @@ const WeekDaySection = props => {
       <WeekDayDiv>
         <NotificationIcon
           text={props.notificationNumber}
-          top="-10%"
-          left="50%"
+          top="45%"
+          left="10%"
         />
         <Label style={{ left: "50%", top: "50%" }} fontSize={"30px"}>
           {props.dayName}
