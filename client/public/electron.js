@@ -4,28 +4,55 @@ const BrowserWindow = electron.BrowserWindow;
 
 const isDev = require('electron-is-dev');
 
-let mainWindow;
+const maxWindowWidth = 1600;
+const maxWindowHeight = 800;
+
+const maxSplashwWidth = 600;
+const maxSplashHeight = 800;
+
+var width = 0;
+var height = 0;
+
+function getWindowSize(axis) {
+  if (axis == "width") {
+    return (width*0.7 > maxWindowWidth) ? maxWindowWidth : width*0.7;
+  } else if (axis == "height") {
+    return (height*0.75 > maxWindowHeight) ? maxWindowHeight : height*0.75;
+  }
+  return null;
+}
+
+function getSplashSize(axis) {
+  if (axis == "width") {
+    return (width*0.15 > maxSplashwWidth) ? maxSplashwWidth : width*0.15;
+  } else if (axis == "height") {
+    return (height*0.4 > maxSplashHeight) ? maxSplashHeight : height*0.4;
+  }
+  return null;
+}
+
+function setScreenSize() {
+  width = electron.screen.getPrimaryDisplay().workAreaSize.width;
+  height = electron.screen.getPrimaryDisplay().workAreaSize.height;
+}
 
 function createWindows() {
 
-  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
-
-  console.log(width, height);
-
-  mainWindow = new BrowserWindow({width: width*0.7, height: height*0.75, backgroundColor: '#f4f9fd', frame: false, resizable: false, show: false});
+  mainWindow = new BrowserWindow({width: getWindowSize("width"), height: getWindowSize("height"), backgroundColor: '#f4f9fd', frame: false, resizable: false, show: false});
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : './public/index.html');
   mainWindow.on('closed', () => mainWindow = null);
 
 
-  splash = new BrowserWindow({width: width*0.15, height: height*0.4, backgroundColor: '#f4f9fd', frame: false, resizable: false});
+  splash = new BrowserWindow({width: getSplashSize("width"), height: getSplashSize("height"), backgroundColor: '#f4f9fd', frame: false, resizable: false});
   splash.loadFile('./public/loading.html');
-
-
 
 }
 
 
+
 app.on('ready', () => {
+
+  setScreenSize();
   createWindows();
 
   mainWindow.once('ready-to-show', () => {
