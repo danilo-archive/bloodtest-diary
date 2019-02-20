@@ -130,4 +130,4 @@ function getServerConnect(){
     }
     return serverConnect;
 }
-export {getServerConnect, ServerConnect};
+export {getServerConnect};
