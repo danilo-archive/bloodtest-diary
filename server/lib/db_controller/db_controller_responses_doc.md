@@ -44,6 +44,9 @@
         }
     }
 
+<i>N.B. If you insert multiple values, `affectedRows` will equal the number of those values, but `insertId` will equal to a primary key of the the first inserted entry. If you want to obtain primary keys of all of them, call functions separately for each entry.</i>
+
+
 ### DELETE query response:
     { status: "OK",
         response: {

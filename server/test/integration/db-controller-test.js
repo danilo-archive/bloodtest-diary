@@ -246,7 +246,231 @@ describe("Test main DB controller behaviour:", () => {
 
     describe("Test insertQuery() function:", () => {
 
-        
+        describe("> Insert one entry, valid SQL", () => {
+            it("Should return no errors.", (done) => {
+                const sql = "INSERT INTO Patient " + 
+                            "(patient_no, patient_name, patient_surname) " +
+                            "VALUES ('test_no_I', 'testName_I', 'testSurname_I')";
+
+                db_controller.insertQuery(sql)
+                .then((result) => {
+                    expect(result.status).to.equal("OK");
+                    expect(result.response.query).to.equal("OK");
+                    expect(result.response.affectedRows).to.equal(1);
+                    expect(result.response.insertId).to.equal(0); // because not auto_increment primary key
+                })
+                .then(() => {
+                    done();
+                })
+                .catch((err) => {
+                    done(err);
+                })
+                .then(() => {
+                    // clean entry
+                    const database = new Database(databaseConfig);
+                    database.query("DELETE FROM Patient WHERE patient_no = 'test_no_I'")
+                                            .catch((err) => {
+                                                printSetupError(err);
+                                            })
+                                            .then(() => {
+                                                database.close();
+                                            });
+                });
+            });
+        });
+
+        describe("> Insert one entry, invalid SQL", () => {
+            it("Should return an error message.", (done) => {
+                const sql = "INSERT INTO Patient " + 
+                            "(patient_no, patient_nam, patient_surname) " +
+                            "VALUES ('test_no_I2', 'testName_I', 'testSurname_I')";
+
+                db_controller.insertQuery(sql)
+                .then((result) => {
+                    expect(result.status).to.equal("ERR");
+                    expect(result.err.type).to.equal("SQL Error");
+                })
+                .then(() => {
+                    done();
+                })
+                .catch((err) => {
+                    done(err);
+                })
+                .then(() => {
+                    // clean entry
+                    const database = new Database(databaseConfig);
+                    database.query("DELETE FROM Patient WHERE patient_no = 'test_no_I2'")
+                                            .catch((err) => {
+                                                printSetupError(err);
+                                            })
+                                            .then(() => {
+                                                database.close();
+                                            });
+                });
+            });
+        });
+
+        describe("> Insert same entry twice", () => {
+            it("Should return an error message.", (done) => {
+                const sql = "INSERT INTO Patient " + 
+                            "(patient_no, patient_name, patient_surname) " +
+                            "VALUES ('test_no_I', 'testName_I', 'testSurname_I')";
+
+                db_controller.insertQuery(sql)
+                .then((result) => {
+                    expect(result.status).to.equal("OK");
+                    expect(result.response.query).to.equal("OK");
+                    expect(result.response.affectedRows).to.equal(1);
+                    expect(result.response.insertId).to.equal(0); // because not auto_increment primary key
+                })
+                .then(() => {
+                    db_controller.insertQuery(sql)
+                    .then((result) => {
+                        expect(result.status).to.equal("ERR");
+                        expect(result.err.type).to.equal("SQL Error");
+                    })
+                    .then(() => {
+                        done();
+                    })
+                    .catch((err) => {
+                        done(err);
+                    });
+                })
+                .catch((err) => {
+                    done(err);
+                })
+                .then(() => {
+                    // clean entry
+                    const database = new Database(databaseConfig);
+                    database.query("DELETE FROM Patient WHERE patient_no = 'test_no_I'")
+                                            .catch((err) => {
+                                                printSetupError(err);
+                                            })
+                                            .then(() => {
+                                                database.close();
+                                            });
+                });
+            });
+        });
+
+        describe("> Insert multiple entries, valid SQL", () => {
+            it("Should return no errors.", (done) => {
+                const sql = "INSERT INTO Patient " + 
+                            "(patient_no, patient_name, patient_surname) " +
+                            "VALUES ('test_no_I3', 'testName_I3', 'testSurname_I3'), " +
+                            "('test_no_I4', 'testName_I4', 'testSurname_I4')";
+
+                db_controller.insertQuery(sql)
+                .then((result) => {
+                    expect(result.status).to.equal("OK");
+                    expect(result.response.query).to.equal("OK");
+                    expect(result.response.affectedRows).to.equal(2);
+                    expect(result.response.insertId).to.equal(0); // because not auto_increment primary key
+                })
+                .then(() => {
+                    done();
+                })
+                .catch((err) => {
+                    done(err);
+                })
+                .then(() => {
+                    // clean entry
+                    const database = new Database(databaseConfig);
+                    database.query("DELETE FROM Patient WHERE patient_no = 'test_no_I3' OR patient_no = 'test_no_I4'")
+                                            .catch((err) => {
+                                                printSetupError(err);
+                                            })
+                                            .then(() => {
+                                                database.close();
+                                            });
+                });
+            });
+        });
+
+        describe("> Insert multiple entries, invalid SQL", () => {
+            it("Should return an error message.", (done) => {
+                const sql = "INSERT INTO Patient " + 
+                            "(patient_no, patient_name, patient_surname) " +
+                            "VALUES ('test_no_I3', 'testName_I3', 'testSurname_I3') " +
+                            "('test_no_I4', 'testName_I4', 'testSurname_I4')";
+
+                db_controller.insertQuery(sql)
+                .then((result) => {
+                    expect(result.status).to.equal("ERR");
+                    expect(result.err.type).to.equal("SQL Error");
+                })
+                .then(() => {
+                    done();
+                })
+                .catch((err) => {
+                    done(err);
+                })
+                .then(() => {
+                    // clean entry
+                    const database = new Database(databaseConfig);
+                    database.query("DELETE FROM Patient WHERE patient_no = 'test_no_I3' OR patient_no = 'test_no_I4'")
+                                            .catch((err) => {
+                                                printSetupError(err);
+                                            })
+                                            .then(() => {
+                                                database.close();
+                                            });
+                });
+            });
+        });
+
+        describe("> Insert query with auto-incremented primary key", () => {
+            it("Should return a valid primary key", (done) => {
+                const sql = "INSERT INTO Laboratory (lab_name) " +
+                            "VALUES ('Test_lab_INS')";
+
+                let insId = 0;
+                db_controller.insertQuery(sql)
+                .then((result) => {
+                    expect(result.status).to.equal("OK");
+                    expect(result.response.query).to.equal("OK");
+                    //expect(result.response.affectedRows).to.equal(1);
+                    expect(result.response.insertId).to.not.equal(0);
+                    insId = result.response.insertId;
+                })
+                .then(() => {
+                    const database = new Database(databaseConfig);
+                    database.query("SELECT * FROM Laboratory WHERE lab_id = " + insId)
+                    .then((result) => {
+                        expect(result.length).to.equal(1);
+                        expect(result[0].lab_name).to.equal("Test_lab_INS");
+                    })
+                    .then(() => {
+                        database.close();
+                        done();
+                    })
+                    .catch((err) => {
+                        database.close();
+                        done(err);
+                    })
+                })
+                .catch((err) => {
+                    done(err);
+                })
+                .then(() => {
+                    // clean entry
+                    const database = new Database(databaseConfig);
+                    database.query("DELETE FROM Laboratory WHERE lab_id = " + insId)
+                                            .catch((err) => {
+                                                printSetupError(err);
+                                            })
+                                            .then(() => {
+                                                database.close();
+                                            });
+                });
+            });
+        });
+
+    });
+
+    describe("Test deleteQuery() function:", () => {
+
+
 
         /*describe("> description", () => {
             it("Should return ...", (done) => {
@@ -265,10 +489,6 @@ describe("Test main DB controller behaviour:", () => {
                 });
             });
         });*/
-    });
-
-    describe("Test deleteQuery() function:", () => {
-
     });
 
     describe("Test updateQuery() function:", () => {

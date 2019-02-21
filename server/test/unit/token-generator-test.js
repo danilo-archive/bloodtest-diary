@@ -46,7 +46,10 @@ function testUniqueness() {
             process.stdout.cursorTo(0);
             process.stdout.write("        " + (i / sorted.length * 100) + " %");
         }
-        
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
+        process.stdout.write("        100 %");
+
         if (sorted[i] === sorted[i+1]) {
             allUnique = false;
             break;
