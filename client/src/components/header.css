@@ -1,9 +1,9 @@
-
 #titlebar {
-  z-index: 1;
-  padding: 4px;
+  z-index: 100;
+  padding: 2px;
   display: block;
   position: fixed;
+  top: 0;
   height: 24px;
   width: 100%;
   background-color: #0b989d;
@@ -20,11 +20,10 @@
   grid-column: 1;
   display: flex;
   align-items: center;
-  font-family: "Segoe UI", sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 16px;
   margin-left: 8px;
   overflow-x: hidden;
-
 }
 #window-title span {
   overflow: hidden;
@@ -62,10 +61,10 @@
 }
 
 #window-controls .button:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   opacity: 1;
 }
 
 #window-controls #close-button:hover {
-  background: #E81123;
+  background: #e81123;
 }

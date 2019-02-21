@@ -1,8 +1,7 @@
 :root {
   --htmlFontSize: 100%;
-
   --bodyBackgroundColor: #f4f9fd;
-  --bodyColor: var(--baseColor);
+  --bodyColor: #000000;
   --bodyFontFamily: 'Open Sans';
   --bodyFontFamilyFallback: sans-serif;
   --bodyFontSize: 0.875rem;
@@ -22,8 +21,11 @@ body {
   font-family: var(--bodyFontFamily), var(--bodyFontFamilyFallback);
   font-size: var(--bodyFontSize);
   font-weight: var(--bodyFontWeight);
-  height: 100%;
+  height: auto;
   line-height: var(--bodyLineHeight);
-  margin: 0;
-  min-height: 100vh;
+}
+
+
+.home {
+  display: flow-root;
 }
