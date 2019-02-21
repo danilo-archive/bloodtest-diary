@@ -1,9 +1,3 @@
 {
-    "email-sender-conf":{
-        "host":"smtp.gmail.com",
-        "port":645,
-        "secure":true,
-        "username":"",
-        "password":""
-    }
+    "port":3265
 }
