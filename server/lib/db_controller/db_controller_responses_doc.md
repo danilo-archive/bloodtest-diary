@@ -18,7 +18,7 @@
 ### For non-programming errors (well-formed SQL, but invalid request):
     { status: "ERR", 
         err: {
-            type: "Invalid request",
+            type: "Invalid request.",
             cause: why_is_invalid
         }
     }
@@ -54,6 +54,9 @@
             affectedRows: n,
         }
     }
+
+<i>N.B. The query that is passed into this function should only delete one entry. This rule is not enforced in this function but should be enforced by the called, otherwise unwanted data (entries that are currently being edited) might be deleted.</i>
+
 
 ### UPDATE query response:
     { status: "OK",

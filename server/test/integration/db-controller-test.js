@@ -16,6 +16,7 @@ const db_controller = require("../../lib/db_controller/db-controller");
 const mysql = require("mysql");
 const databaseConfig = require("../../config/database");
 const Database = require("../../lib/db_controller/Database");
+const dateFormat = require("dateformat");
 
 describe("Test main DB controller behaviour:", () => {
     describe("Test selectQuery() function:", () => {
@@ -470,7 +471,275 @@ describe("Test main DB controller behaviour:", () => {
 
     describe("Test deleteQuery() function:", () => {
 
+        describe("> Delete single entry, valid arguments, valid SQL", () => {
+            it("Should return no error.", (done) => {
+                const sql = "DELETE FROM Patient WHERE patient_no = 'test_no_D'";
 
+                // prepare environment
+                const database = new Database(databaseConfig);
+                database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('test_no_D', 'testNameD', 'testSurnameD')")
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.deleteQuery(sql, "Patient", "test_no_D")
+                            .then((result) => {
+                                expect(result.status).to.equal("OK");
+                                expect(result.response.query).to.equal("OK");
+                                expect(result.response.affectedRows).to.equal(1);
+                            })
+                            .then(() => {
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            })
+                            .then(() => {
+                                const database1 = new Database(databaseConfig);
+                                database1.query(sql).catch((err) => {
+                                    printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
+                                });
+                            });
+                        });
+            });
+        });
+
+        describe("> Delete single entry, invalid arguments, valid SQL", () => {
+            it("Should reject the request.", (done) => {
+                const sql = "DELETE FROM Patient WHERE patient_no = 'test_no_D2'";
+
+                // prepare environment
+                const database = new Database(databaseConfig);
+                database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('test_no_D2', 'testNameD', 'testSurnameD')")
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.deleteQuery(sql, "invalid", "invalid")
+                            .then((result) => {
+                                expect(result.status).to.equal("ERR");
+                                expect(result.err.type).to.equal("Invalid request.");
+                            })
+                            .then(() => {
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            })
+                            .then(() => {
+                                const database1 = new Database(databaseConfig);
+                                database1.query(sql).catch((err) => {
+                                    printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
+                                });
+                            });
+                        });
+            });
+        });
+
+        describe("> Delete single entry, valid arguments, invalid SQL", () => {
+            it("Should return an SQL error message.", (done) => {
+                const sql = "DELETE FROM Patient WHERE invalid = 'test_no_D3'";
+
+                // prepare environment
+                const database = new Database(databaseConfig);
+                database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('test_no_D3', 'testNameD', 'testSurnameD')")
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.deleteQuery(sql, "Patient", "test_no_D3")
+                            .then((result) => {
+                                expect(result.status).to.equal("ERR");
+                                expect(result.err.type).to.equal("SQL Error");
+                            })
+                            .then(() => {
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            })
+                            .then(() => {
+                                const database1 = new Database(databaseConfig);
+                                database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_D3'").catch((err) => {
+                                    printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
+                                });
+                            });
+                        });
+            });
+        });
+
+        describe("> Delete single entry, invalid arguments, invalid SQL", () => {
+            it("Should reject the request.", (done) => {
+                const sql = "DELETE FROM Patient WHERE invalid = 'test_no_D4'";
+
+                // prepare environment
+                const database = new Database(databaseConfig);
+                database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('test_no_D4', 'testNameD', 'testSurnameD')")
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.deleteQuery(sql, "Patient", "invalid")
+                            .then((result) => {
+                                expect(result.status).to.equal("ERR");
+                                expect(result.err.type).to.equal("Invalid request.");
+                            })
+                            .then(() => {
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            })
+                            .then(() => {
+                                const database1 = new Database(databaseConfig);
+                                database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_D4'").catch((err) => {
+                                    printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
+                                });
+                            });
+                        });
+            });
+        });
+
+        describe("> Attempt to delete entry that is being edited", () => {
+            it("Should reject the request.", (done) => {
+                const sql = "DELETE FROM Patient WHERE patient_no = 'test_no_D5'";
+
+                // prepare environment
+                const database = new Database(databaseConfig);
+                database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('test_no_D5', 'testNameD', 'testSurnameD')")
+                        .then(() => {
+                            let nowDate = new Date();
+                            nowDate.setMinutes(nowDate.getMinutes() + 30);
+                            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
+                            database.query("INSERT INTO TokenControl VALUES " +
+                                        "('test_token_D', 'Patient', 'test_no_D5', " + expires + ")")
+                        })
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.deleteQuery(sql, "Patient", "test_no_D5")
+                            .then((result) => {
+                                expect(result.status).to.equal("ERR");
+                                expect(result.err.type).to.equal("Invalid request.");
+                            })
+                            .then(() => {
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            })
+                            .then(() => {
+                                const database1 = new Database(databaseConfig);
+                                database1.query(sql)
+                                .then(() => {
+                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_token_D'")
+                                    .catch((err) => {
+                                        printSetupError(err);
+                                    });
+                                })
+                                .catch((err) => {
+                                    printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
+                                });
+                            });
+                        });
+            });
+        });
+
+        describe("> Attempt to delete entry that is being edited, but the token has expired", () => {
+            it("Should return no error.", (done) => {
+                const sql = "DELETE FROM Patient WHERE patient_no = 'test_no_D6'";
+
+                // prepare environment
+                const database = new Database(databaseConfig);
+                database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('test_no_D6', 'testNameD', 'testSurnameD')")
+                        .then(() => {
+                            let nowDate = new Date();
+                            nowDate.setSeconds(nowDate.getSeconds() - 1);
+                            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
+                            database.query("INSERT INTO TokenControl VALUES " +
+                                        "('test_tokenD', 'Patient', 'test_no_D6', " + expires + ")")
+                        })
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.deleteQuery(sql, "Patient", "test_no_D6")
+                            .then((result) => {
+                                expect(result.status).to.equal("OK");
+                                expect(result.response.query).to.equal("OK");
+                                expect(result.response.affectedRows).to.equal(1);
+                            })
+                            .then(() => {
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            })
+                            .then(() => {
+                                const database1 = new Database(databaseConfig);
+                                database1.query(sql)
+                                .then(() => {
+                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_tokenD'")
+                                    .catch((err) => {
+                                        printSetupError(err);
+                                    });
+                                })
+                                .catch((err) => {
+                                    printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
+                                });
+                            });
+                        });
+            });
+        });
 
         /*describe("> description", () => {
             it("Should return ...", (done) => {
@@ -500,6 +769,12 @@ describe("Test main DB controller behaviour:", () => {
     });
 });
 
+/**
+ * Prints an error that occurred during setting up the testing 
+ * environment in a nice format.
+ *
+ * @param {Error} err Error that occurred.
+ */
 function printSetupError(err) {
     console.log("=======================================");
     console.log("Error setting up testing environment:\n" + err);

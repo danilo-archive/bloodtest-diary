@@ -85,6 +85,7 @@ async function deleteQuery(sql, entryTable, entryID) {
     })
 
     if (response !== undefined) {
+        database.close();
         return response;
     }
 
@@ -436,28 +437,3 @@ async function isValidEntry(database, entryTable, entryID) {
 
     return response.response;
 }
-
-/*
-selectQuery("SELECT * FROM Patient LIMIT 1").then((response) => {
-    console.log("Select was:\n    " + JSON.stringify(response));
-});
-
-
-insertQuery("insert into Patient (patient_no, patient_name, patient_surname) values ('lukakralj', 'Luka', 'Kralj')")
-.then((response) => {
-    console.log("Insert was:\n    " + JSON.stringify(response));
-});
-
-deleteQuery("DELETE FROM Patient WHERE patient_no = 'lukakralj'", "Patient", "lukakralj", "Patient", "lukakralj").then((response) => {
-    console.log("Delete was:\n    " + JSON.stringify(response));
-});
-
-updateQuery("UPDATE Patient SET patient_name = 'Luka - modified' WHERE patient_no = 'lukakralj'", 
-"Patient", "lukakralj", "201902191642274547560298").then((response) => {
-    console.log("Update was:\n    " + JSON.stringify(response));
-});
-
-requestEditing("Patient", "lukakralj").then((response) => {
-    console.log("request token:\n    " + JSON.stringify(response));
-});*/
-
