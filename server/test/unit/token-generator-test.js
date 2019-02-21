@@ -9,7 +9,7 @@
  */
 
 const expect = require("chai").expect;
-const id_gen = require("../../lib/tokenGenerator");
+const id_gen = require("../../lib/token-generator");
 
 /**
  * Generates and compares 10000 tokens.

@@ -10,7 +10,7 @@
  */ 
 
 const expect = require("chai").expect;
-const db_controller = require("../../lib/db_controller/db_controller");
+const db_controller = require("../../lib/db_controller/db-controller");
 
 // These are needed for setting up a testing environment.
 const mysql = require("mysql");
@@ -54,7 +54,12 @@ describe("Test main DB controller behaviour:", () => {
                     expect(result.response.rows[0].patient_name).to.equal("testName");
                     expect(result.response.rows[0].patient_surname).to.equal("testSurname");
                     expect(result.response.rows[0].lab_id).to.equal(test_lab_id);
+                })
+                .then(() => {
                     done();
+                })
+                .catch((err) => {
+                    done(err);
                 });
             });
         });
@@ -67,7 +72,12 @@ describe("Test main DB controller behaviour:", () => {
                 .then((result) => {
                     expect(result.status).to.equal("ERR");
                     expect(result.err.type).to.equal("SQL Error");
+                })
+                .then(() => {
                     done();
+                })
+                .catch((err) => {
+                    done(err);
                 });
             });
         });
@@ -76,12 +86,17 @@ describe("Test main DB controller behaviour:", () => {
             it("Should return an error message.", (done) => {
                 const sql = "SELECT * FROM Patient WHERE patient_no = 'test_no_S'; " +
                             "SELECT * FROM Patient WHERE patient_no = 'test_no_S'";
-
+  
                 db_controller.selectQuery(sql)
                 .then((result) => {
                     expect(result.status).to.equal("ERR");
                     expect(result.err.type).to.equal("SQL Error");
+                })
+                .then(() => {
                     done();
+                })
+                .catch((err) => {
+                    done(err);
                 });
             });
         });
@@ -101,7 +116,12 @@ describe("Test main DB controller behaviour:", () => {
                     expect(result.response.rows[0].patient_surname).to.equal("testSurname");
                     expect(result.response.rows[0].lab_id).to.equal(test_lab_id);
                     expect(result.response.rows[0].lab_name).to.equal("Test Lab 123_S");
+                })
+                .then(() => {
                     done();
+                })
+                .catch((err) => {
+                    done(err);
                 });
             });
         });
@@ -115,7 +135,12 @@ describe("Test main DB controller behaviour:", () => {
                 .then((result) => {
                     expect(result.status).to.equal("ERR");
                     expect(result.err.type).to.equal("SQL Error");
+                })
+                .then(() => {
                     done();
+                })
+                .catch((err) => {
+                    done(err);
                 });
             });
         });
@@ -125,11 +150,16 @@ describe("Test main DB controller behaviour:", () => {
             it("Should return ...", (done) => {
                 const sql = "[query]";
 
-                db_controller.selectQuery(sql)
+                await db_controller.selectQuery(sql)
                 .then((result) => {
                     expect(result.status).to.equal("ERR");
                     //...
-                    done();
+                })
+                .then(() => {
+                done();
+                })
+                .catch((err) => {
+                    done(err);
                 });
             });
         });

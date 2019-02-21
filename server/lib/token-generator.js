@@ -4,7 +4,7 @@
  * @author Luka Kralj
  * @version 1.0
  * 
- * @module tokenGenerator
+ * @module token-generator
  */
 
 const dateFormat = require("dateformat");
