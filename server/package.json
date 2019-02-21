@@ -17,7 +17,7 @@
   "scripts": {
     "eslint": "eslint",
     "start": "node app.js",
-    "test": "mocha"
+    "test": "nodemon --exec \"mocha --recursive\""
   },
   "repository": {
     "type": "git",
