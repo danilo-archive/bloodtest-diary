@@ -32,6 +32,11 @@ class ServerConnect {
     }
 
 
+    // TODO pls remove
+    TESTgetOverdueTests(){
+        return [{status: "late", patientName: "Diocane porco"}]
+    }
+
     /**
      * Function to be called when user needs to be authenticated
      * @param {username: username, password: password} credentials

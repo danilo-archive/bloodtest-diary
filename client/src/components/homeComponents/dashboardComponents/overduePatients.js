@@ -14,22 +14,31 @@ overflow: hidden;
 `;
 
 class OverduePatients extends React.Component {
+
+  constructor(props){
+      super(props);
+      this.state={
+         notificationNumber: props.notificationNumber,
+         appointments: props.anytimeAppointments
+      };
+  }
+
   render() {
     return (
       <>
         <Container>
           <WeekDaySection
             notificationNumber={
-              this.props.notificationNumber
-                ? this.props.notificationNumber
-                : "1"
+              this.state.notificationNumber
+                ? this.state.notificationNumber
+                : "0"
             }
             dayName={"Overdue"}
           />
           <ScrollBox>
             <AppointmentSection
               type="Appointments"
-              appointments={this.props.anytimeAppointments}
+              appointments={this.state.appointments}
             />
             </ScrollBox>
         </Container>

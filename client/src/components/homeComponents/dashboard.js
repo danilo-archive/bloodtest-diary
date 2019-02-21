@@ -9,6 +9,22 @@ import Navbar from "./dashboardComponents/navbar";
 import './dashboard.css';
 
 class Dashboard extends Component {
+
+  constructor(props){
+      super(props);
+      this.state = {
+          overdueTests: {}
+      };
+      this.serverConnect = props.serverConnect;
+      this.initOverduePanel();
+  }
+
+  initOverduePanel(){
+      // TODO get from database
+      this.state.overdueTests = this.serverConnect.TESTgetOverdueTests();
+  }
+
+
   render() {
     return (
 
@@ -16,11 +32,9 @@ class Dashboard extends Component {
         <div className={"overduePatients"}>
           <OverduePatients
             notificationNumber={
-              APPOINTMENTS_EXAMPLE_ANYTIME.length +
-              APPOINTMENTS_EXAMPLE_SCHEDULED.length
+                this.state.overdueTests.length
             }
-            anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
-            scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+            anytimeAppointments={this.state.overdueTests}
           />
         </div>
         <div className={"calendar"}>

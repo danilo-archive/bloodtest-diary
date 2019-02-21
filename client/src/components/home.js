@@ -17,7 +17,7 @@ class Home extends Component {
     return (
       <div className={"home"}>
         <Header />
-        <Dashboard />
+        <Dashboard serverConnect={this.serverConnect}/>
       </div>
     );
   }
