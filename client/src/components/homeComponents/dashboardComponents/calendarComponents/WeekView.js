@@ -5,7 +5,9 @@ import CalendarDay from "./CalendarDay";
 const WeekContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin: 10%;
+  justify-content: flex-start
+  overflow-x: scroll;
+  overflow-y: hidden;
 `;
 
 const APPOINTMENTS_EXAMPLE_ANYTIME = [
@@ -102,6 +104,39 @@ export default class WeekView extends React.Component {
           anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
           scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
         />
+        <CalendarDay
+          notificationNumber={
+            APPOINTMENTS_EXAMPLE_ANYTIME.length +
+            APPOINTMENTS_EXAMPLE_SCHEDULED.length
+          }
+          anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+          scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+        /><CalendarDay
+          notificationNumber={
+            APPOINTMENTS_EXAMPLE_ANYTIME.length +
+            APPOINTMENTS_EXAMPLE_SCHEDULED.length
+          }
+          anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+          scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+        />
+        <CalendarDay
+          notificationNumber={
+            APPOINTMENTS_EXAMPLE_ANYTIME.length +
+            APPOINTMENTS_EXAMPLE_SCHEDULED.length
+          }
+          anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+          scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+        />
+        <CalendarDay
+          notificationNumber={
+            APPOINTMENTS_EXAMPLE_ANYTIME.length +
+            APPOINTMENTS_EXAMPLE_SCHEDULED.length
+          }
+          anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+          scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+        />
+
+
       </WeekContainer>
     );
   }

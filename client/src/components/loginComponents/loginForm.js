@@ -78,7 +78,6 @@ class LoginForm extends Component {
 
             <div className="form__field">
               <input type="submit" value="Sign In"/>
-
             </div>
 
             <div className={"form__field login_error"}>

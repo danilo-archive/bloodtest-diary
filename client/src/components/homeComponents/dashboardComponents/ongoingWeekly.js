@@ -6,14 +6,15 @@ import ScrollBox from "./calendarComponents/ScrollBox";
 import AppointmentSection from "./calendarComponents/AppointmentSection";
 
 const Container = styled.div`
-margin: 3px;
-padding: 0%;
-width: 250px;
-height: 100%;
-overflow: hidden;
+  margin: 3px;
+  padding: 0%;
+  width: 250px;
+  height: 509px;
+  overflow: hidden;
+
 `;
 
-class OverduePatients extends React.Component {
+class OngoingWeekly extends React.Component {
   render() {
     return (
       <>
@@ -24,7 +25,7 @@ class OverduePatients extends React.Component {
                 ? this.props.notificationNumber
                 : "1"
             }
-            dayName={"Overdue"}
+            dayName={"Ongoing"}
           />
           <ScrollBox>
             <AppointmentSection
@@ -38,4 +39,4 @@ class OverduePatients extends React.Component {
   }
 }
 
-export default OverduePatients;
+export default OngoingWeekly;

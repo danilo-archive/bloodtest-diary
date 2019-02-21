@@ -7,14 +7,17 @@ import ScrollBox from "./ScrollBox";
 import AppointmentSection from "./AppointmentSection";
 
 const CalendarContainer = styled.div`
-  margin: 0.2%;
+  margin: 3px;
+  margin-bottom: 5px;
   padding: 0%;
   width: 250px;
-  height: 450px;
+  height: 500px;
   background-color: white;
   padding: 0;
   position: relative;
   border: solid 1px #646464;
+
+
 `;
 
 class CalendarDay extends React.Component {

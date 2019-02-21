@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 
 import styled from "styled-components";
 import OverduePatients from "./dashboardComponents/overduePatients";
+import WeeklyCalendar from "./dashboardComponents/weeklyCalendar";
+import OngoingWeekly from "./dashboardComponents/ongoingWeekly";
+import Navbar from "./dashboardComponents/navbar";
 
 import './dashboard.css';
 
@@ -20,10 +23,23 @@ class Dashboard extends Component {
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
         </div>
-        <div className={"calender"}>
+        <div className={"calendar"}>
+          <WeeklyCalendar />
         </div>
-        <div className={"ongoingWeekly"}>
-
+        <div className={"test"}>
+          <div className={"navbar"}>
+            <Navbar />
+          </div>
+          <div className={"ongoingWeekly"}>
+            <OngoingWeekly
+              notificationNumber={
+                APPOINTMENTS_EXAMPLE_ANYTIME.length +
+                APPOINTMENTS_EXAMPLE_SCHEDULED.length
+              }
+              anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+              scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+            />
+          </div>
         </div>
       </div>
     );
@@ -31,6 +47,46 @@ class Dashboard extends Component {
 }
 
 const APPOINTMENTS_EXAMPLE_ANYTIME = [
+  {
+    status: "completed",
+    patientName: "Luka Kralj"
+  },
+  {
+    status: "completed",
+    patientName: "Alvaro Rausell"
+  },
+  {
+    status: "late",
+    patientName: "Danilo del Busso"
+  },
+  {
+    status: "completed",
+    patientName: "Alessandro Amantini"
+  },
+  {
+    status: "pending",
+    patientName: "IDK Who Else To Put"
+  },
+  {
+    status: "completed",
+    patientName: "Luka Kralj"
+  },
+  {
+    status: "completed",
+    patientName: "Alvaro Rausell"
+  },
+  {
+    status: "late",
+    patientName: "Danilo del Busso"
+  },
+  {
+    status: "completed",
+    patientName: "Alessandro Amantini"
+  },
+  {
+    status: "pending",
+    patientName: "IDK Who Else To Put"
+  },
   {
     status: "completed",
     patientName: "Luka Kralj"

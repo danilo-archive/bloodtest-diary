@@ -1,28 +1,107 @@
 .dashboard {
-  border: blue 2px solid;
-  margin-top: 3%;
+  border: blue 0px solid;
+  height: 800px;
+  width: auto;
+
+  margin-top: 2.5%;
   margin-left: 1%;
   margin-right: 1%;
-  margin-bottom: 2%;
+  margin-bottom: 1%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: flex-end;
+
+}
+
+.test {
+  display: flex;
+  border: blue 0px solid;
+  height: fill;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+
+
+}
+
+.test1 {
+
+  border: blue 0px solid;
+  height: auto;
+  width: auto;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+
+
+}
+
+.navbar {
+  border: #839595 3px solid;
+  border-radius: 10px;
+  padding-left: 4px;
+  margin-left: 0.25%;
+  margin-bottom: 9px;
+
+  flex: 1;
+
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 
 }
 
 .overduePatients {
-  border: red 2px solid;
-  width: auto;
-  height: fill;
-  overflow: hidden;
+  border: #839595 3px solid;
+  border-radius: 10px;
+  padding: 4px;
+  margin-right: 0.25%;
 
-
+  align-self: stretch;
 }
 
-.calender {
-  border-color: red;
+.calendar {
+  border: #839595 3px solid;
+  border-radius: 10px;
+  padding: 4px;
+  margin-right: 0.25%;
+  margin-left: 0.25%;
 
+  min-width: 1150px;
+
+  flex-shrink: 2;
+  flex-grow: 1;
 }
 
 
 .ongoingWeekly {
-  border-color: red;
+  border: #839595 3px solid;
+  border-radius: 10px;
+  padding: 4px;
+  margin-left: 1.5%;
+  margin-top: 0.25%;
 
+  flex-basis: auto;
+}
+
+::-webkit-scrollbar {
+  height: 5px;
+}
+
+::-webkit-scrollbar:vertical {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb  {
+  background: #0b989d;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-corner {
+  display: none;
 }

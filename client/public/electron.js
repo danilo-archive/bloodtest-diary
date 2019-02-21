@@ -4,11 +4,11 @@ const BrowserWindow = electron.BrowserWindow;
 
 const isDev = require('electron-is-dev');
 
-const maxWindowWidth = 1600;
-const maxWindowHeight = 800;
+const maxWindowWidth = 1750;
+const maxWindowHeight = 875;
 
-const maxSplashwWidth = 600;
-const maxSplashHeight = 800;
+const maxSplashwWidth = 400;
+const maxSplashHeight = 500;
 
 let width = 0;
 let height = 0;
@@ -17,9 +17,9 @@ let mainWindow;
 
 function getWindowSize(axis) {
   if (axis == "width") {
-    return (width*0.7 > maxWindowWidth) ? maxWindowWidth : width*0.7;
+    return 1750; //(width*0.7 > maxWindowWidth) ? maxWindowWidth : width*0.7;
   } else if (axis == "height") {
-    return (height*0.75 > maxWindowHeight) ? maxWindowHeight : height*0.75;
+    return 875; //(height*0.75 > maxWindowHeight) ? maxWindowHeight : height*0.75;
   }
   return null;
 }
@@ -40,7 +40,8 @@ function setScreenSize() {
 
 function createWindows() {
 
-  mainWindow = new BrowserWindow({width: getWindowSize("width"), height: getWindowSize("height"), backgroundColor: '#f4f9fd', frame: false, resizable: true, show: false});
+  mainWindow = new BrowserWindow({width: getWindowSize("width"), height: getWindowSize("height"), backgroundColor: '#f4f9fd', frame: false, resizable: true, show: false, minWidth : 1750,
+  minHeight : 875});
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : './public/index.html');
   mainWindow.on('closed', () => mainWindow = null);
 
