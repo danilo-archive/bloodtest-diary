@@ -19,6 +19,7 @@ var authenticator = require("./lib/authenticator.js");
 
 http.listen(port);
 
+// to broadcast in room => io.in("room").emit("change", json);
 
 io.on('connection',function(socket)
 {
@@ -28,17 +29,26 @@ io.on('connection',function(socket)
         console.log(`Socket ${socket.id} disconnected`);
     });
 
+    socket.on("join", (oldRoom, room) => {
+        if (oldRoom !== ""){
+            socket.leave(oldRoom);
+            console.log(`Socket ${socket.id} left ${oldRoom}`);
+        }
+        socket.join(room);
+        console.log(`Socket ${socket.id} joined ${room}`);
+    });
+
+
     /**
     * Login endpoint.
     * @param {username:username, password:password} credentials Hashed json of credentials
     * @return {Boolean} True if credentials are correct
     */
-    socket.on('log', (credentials) => {
+    socket.on('authenticate', (credentials) => {
         console.log(`Authentication request from ${socket.id}`);
         res = authenticator.canLogin(credentials,getUserInDatabase(credentials.username));
-        res_log = res ? "successful" : "unsuccesful";
-        console.log(`Authentication ${res_log}`);
-        socket.emit('auth', res);
+        console.log(`Authentication ${res ? "successful" : "unsuccesful"}`);
+        socket.emit('authenticationResponse', res);
     });
 
     socket.on('getAllPatients', () => {

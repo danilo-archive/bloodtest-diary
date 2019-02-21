@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router'
-
+import { withRouter, Redirect, Link } from 'react-router-dom'
 import './loginForm.css'
-import { login } from "./../../serverConnection.js"
-//prevents resending form; works as a semaphore
+
 const crypto = require('crypto')
+
 class LoginForm extends Component {
 
   constructor(props) {
@@ -13,6 +12,8 @@ class LoginForm extends Component {
       username: "",
       password: ""
     };
+
+    this.serverConnect = props.serverConnect;
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -39,9 +40,9 @@ class LoginForm extends Component {
 
   handleSubmit(event) {
     let credentials = {username: this.state.username, password: crypto.createHash('sha256').update(this.state.password).digest('hex')};
-    login(credentials, res => {
+    this.serverConnect.login(credentials, res => {
           if (res){
-              this.props.history.push('/Home')
+              this.props.history.push("home");
           }else{
               LoginForm.showLoginErrorMessage();
           }
