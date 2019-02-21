@@ -38,6 +38,17 @@ describe("Test main DB controller behaviour:", () => {
                         .catch((err) => {
                             printSetupError(err);
                         });
+            await database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('test_no_S2', 'testName2', 'testSurname2')")
+                        .catch((err) => {
+                            printSetupError(err);
+                        });
+            await database.query("INSERT INTO TokenControl " + 
+                                "VALUES ('test_token_S', 'Patient', 'test_no_S2', 20190805151515)")
+                        .catch((err) => {
+                            printSetupError(err);
+                        });  
             await database.close();            
         });
         
@@ -102,7 +113,7 @@ describe("Test main DB controller behaviour:", () => {
         });
 
         describe("> Select with a join Patient-Laboratory", () => {
-            it("Should return one entry", (done) => {
+            it("Should return one entry.", (done) => {
                 const sql = "SELECT * FROM Patient NATURAL JOIN Laboratory " +
                             "WHERE patient_no = 'test_no_S'";
 
@@ -145,30 +156,78 @@ describe("Test main DB controller behaviour:", () => {
             });
         });
 
-        /*
-        describe("> description", () => {
-            it("Should return ...", (done) => {
-                const sql = "[query]";
+        describe("> Select multiple entries, valid SQL", () => {
+            it("Should return a list of correct entries.", (done) => {
+                const sql = "SELECT * FROM Patient WHERE patient_no = 'test_no_S' OR patient_no = 'test_no_S2'";
 
-                await db_controller.selectQuery(sql)
+                db_controller.selectQuery(sql)
                 .then((result) => {
-                    expect(result.status).to.equal("ERR");
-                    //...
+                    expect(result.status).to.equal("OK");
+                    expect(result.response.query).to.equal("OK");
+                    expect(result.response.rows.length).to.equal(2);
+                    expect(result.response.rows[0].patient_no).to.equal("test_no_S");
+                    expect(result.response.rows[0].patient_name).to.equal("testName");
+                    expect(result.response.rows[0].patient_surname).to.equal("testSurname");
+                    expect(result.response.rows[0].lab_id).to.equal(test_lab_id);
+                    expect(result.response.rows[1].patient_no).to.equal("test_no_S2");
+                    expect(result.response.rows[1].patient_name).to.equal("testName2");
+                    expect(result.response.rows[1].patient_surname).to.equal("testSurname2");
+                    expect(result.response.rows[1].lab_id).to.equal(null);
                 })
                 .then(() => {
-                done();
+                    done();
                 })
                 .catch((err) => {
                     done(err);
                 });
             });
         });
-        */
+
+        describe("> Select multiple entries, invalid SQL", () => {
+            it("Should return an error message.", (done) => {
+                const sql = "SELECT * FROM Patient WHERE patient_no = 'test_no_S' OR patient_no == 'test_no_S2'";
+
+                db_controller.selectQuery(sql)
+                .then((result) => {
+                    expect(result.status).to.equal("ERR");
+                    expect(result.err.type).to.equal("SQL Error");
+                })
+                .then(() => {
+                    done();
+                })
+                .catch((err) => {
+                    done(err);
+                });
+            });
+        });
+
+        describe("> Select entry that is being edited", () => {
+            it("Should return a correct entry.", (done) => {
+                const sql = "SELECT * FROM Patient WHERE patient_no = 'test_no_S2'";
+
+                db_controller.selectQuery(sql)
+                .then((result) => {
+                    expect(result.status).to.equal("OK");
+                    expect(result.response.query).to.equal("OK");
+                    expect(result.response.rows.length).to.equal(1);
+                    expect(result.response.rows[0].patient_no).to.equal("test_no_S2");
+                    expect(result.response.rows[0].patient_name).to.equal("testName2");
+                    expect(result.response.rows[0].patient_surname).to.equal("testSurname2");
+                    expect(result.response.rows[0].lab_id).to.equal(null);
+                })
+                .then(() => {
+                    done();
+                })
+                .catch((err) => {
+                    done(err);
+                });
+            });
+        });
 
         after(async () => {
             const database = new Database(databaseConfig);
 
-            await database.query("DELETE FROM Patient WHERE patient_no = 'test_no_S'")
+            await database.query("DELETE FROM Patient WHERE patient_no = 'test_no_S' OR patient_no = 'test_no_S2'")
                         .catch((err) => {
                             printSetupError(err);
                         });
@@ -177,12 +236,35 @@ describe("Test main DB controller behaviour:", () => {
                         .catch((err) => {
                             printSetupError(err);
                         });
+            await database.query("DELETE FROM TokenControl WHERE token = 'test_token_S'")
+                        .catch((err) => {
+                            printSetupError(err);
+                        });        
             await database.close();
         });
     });
 
     describe("Test insertQuery() function:", () => {
 
+        
+
+        /*describe("> description", () => {
+            it("Should return ...", (done) => {
+                const sql = "[query]";
+
+                db_controller.selectQuery(sql)
+                .then((result) => {
+                    expect(result.status).to.equal("ERR");
+                    //...
+                })
+                .then(() => {
+                    done();
+                })
+                .catch((err) => {
+                    done(err);
+                });
+            });
+        });*/
     });
 
     describe("Test deleteQuery() function:", () => {
@@ -199,8 +281,8 @@ describe("Test main DB controller behaviour:", () => {
 });
 
 function printSetupError(err) {
-    console.log("=======================================")
-    console.log("Error setting up testing environment:\n" + err)
-    console.log("=======================================")
+    console.log("=======================================");
+    console.log("Error setting up testing environment:\n" + err);
+    console.log("=======================================");
 }
 

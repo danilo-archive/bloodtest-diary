@@ -64,7 +64,7 @@ function testUniqueness() {
 }
 
 describe("Test token generator:", () => {
-    describe("testUniqueness()", () => {
+    describe("> Test uniqueness of tokens", () => {
 
         it("Should return true - all tokens are unique.", (done) => {
             expect(testUniqueness()).to.be.true;

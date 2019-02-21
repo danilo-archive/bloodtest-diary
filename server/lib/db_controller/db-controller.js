@@ -71,7 +71,7 @@ async function insertQuery(sql) {
  */
 async function deleteQuery(sql, entryTable, entryID) {
     if (!startsWith(sql, "delete") || entryTable === undefined || entryID === undefined) {
-        return await Promise.reject("Invalid use of deleteQuery.");
+        throw new Error("Invalid use of deleteQuery.");
     }
 
     const database = new Database(databaseConfig);
@@ -116,7 +116,7 @@ async function deleteQuery(sql, entryTable, entryID) {
  */
 async function updateQuery(sql, entryTable, entryID, token) {
     if (!startsWith(sql, "update") || entryTable === undefined || entryID === undefined || token === undefined) {
-        return await Promise.reject("Invalid use of updateQuery.");
+        throw new Error("Invalid use of updateQuery.");
     }
 
     const database = new Database(databaseConfig);
@@ -181,7 +181,7 @@ async function updateQuery(sql, entryTable, entryID, token) {
  */
 async function requestEditing(entryTable, entryID) {
     if (entryTable === undefined || entryID === undefined) {
-        return await Promise.reject("Invalid use of requestEditing.");
+        throw new Error("Invalid use of requestEditing.");
     }
 
     const database = new Database(databaseConfig);
@@ -249,7 +249,7 @@ async function requestEditing(entryTable, entryID) {
  */
 async function nonCriticalQuery(sql, type, treatResponse) {
     if (!startsWith(sql, type)) {
-        return await Promise.reject("Invalid use of " + type + "Query.");
+        throw new Error("Invalid use of " + type + "Query.");
     }
     const database = new Database(databaseConfig);
     const response = await getResult(sql, database, treatResponse);
