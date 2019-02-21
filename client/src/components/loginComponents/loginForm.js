@@ -47,14 +47,15 @@ class LoginForm extends Component {
               LoginForm.showLoginErrorMessage();
           }
     });
+    this.clearForm();
     event.preventDefault();
   }
 
   clearForm() {
     this.setState({
-       firstname: '',
-       lastname: ''
-   });
+       username: '',
+       password: ''
+   })
   }
 
   render() {
@@ -78,7 +79,6 @@ class LoginForm extends Component {
 
             <div className="form__field">
               <input type="submit" value="Sign In"/>
-
             </div>
 
             <div className={"form__field login_error"}>
