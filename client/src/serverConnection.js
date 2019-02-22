@@ -34,7 +34,10 @@ class ServerConnect {
 
     // TODO pls remove
     TESTgetOverdueTests(){
-        return [{status: "late", patientName: "Diocane porco"}]
+        return [{status: "late", patientName: "Test test"}, {status: "pending", patientName: "Test test2"}]
+    }
+    TESTgetTestsInWeek(date, anytime=false){
+        return [{status: "pending", patientName: "Test test weekly"}]
     }
 
     /**

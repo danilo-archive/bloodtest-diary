@@ -13,15 +13,31 @@ class Dashboard extends Component {
   constructor(props){
       super(props);
       this.state = {
-          overdueTests: {}
+          overdueTests: {},
+          ongoingTests: {}
       };
       this.serverConnect = props.serverConnect;
+
+      this.initDate();
       this.initOverduePanel();
+      this.initOngoingPanel();
   }
+
+  initDate(){
+      this.currentDay = new Date();
+      this.mondayOfWeek = new Date();
+      this.mondayOfWeek.setDate(this.mondayOfWeek.getDate() - this.currentDay.getDay() + 1);
+      console.log(this.mondayOfWeek);
+  }
+
 
   initOverduePanel(){
       // TODO get from database
       this.state.overdueTests = this.serverConnect.TESTgetOverdueTests();
+  }
+  initOngoingPanel(){
+      // TODO get from database
+      this.state.ongoingTests = this.serverConnect.TESTgetTestsInWeek(this.currentDay, true);
   }
 
 
@@ -46,12 +62,11 @@ class Dashboard extends Component {
           </div>
           <div className={"ongoingWeekly"}>
             <OngoingWeekly
+              currentMonday = {this.currentMonday}
               notificationNumber={
-                APPOINTMENTS_EXAMPLE_ANYTIME.length +
-                APPOINTMENTS_EXAMPLE_SCHEDULED.length
+                this.state.ongoingTests.length
               }
-              anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
-              scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+              anytimeAppointments={this.state.ongoingTests}
             />
           </div>
         </div>
