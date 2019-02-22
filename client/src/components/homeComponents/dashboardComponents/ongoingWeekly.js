@@ -18,11 +18,6 @@ class OngoingWeekly extends React.Component {
 
   constructor(props){
       super(props);
-      this.state={
-         currentMonday: props.currentMonday,
-         notificationNumber: props.notificationNumber,
-         appointments: props.anytimeAppointments
-      };
   }
 
 
@@ -32,8 +27,8 @@ class OngoingWeekly extends React.Component {
         <Container>
           <WeekDaySection
             notificationNumber={
-              this.state.notificationNumber
-                ? this.state.notificationNumber
+              this.props.notificationNumber
+                ? this.props.notificationNumber
                 : "0"
             }
             dayName={"Ongoing"}
@@ -41,7 +36,7 @@ class OngoingWeekly extends React.Component {
           <ScrollBox>
             <AppointmentSection
               type="Appointments"
-              appointments={this.state.appointments}
+              appointments={this.props.anytimeAppointments}
             />
             </ScrollBox>
         </Container>

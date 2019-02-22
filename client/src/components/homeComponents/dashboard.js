@@ -74,7 +74,9 @@ class Dashboard extends Component {
       this.state.weekDays[2].setDate(this.state.weekDays[2].getDate() + 7);
       this.state.weekDays[3].setDate(this.state.weekDays[3].getDate() + 7);
       this.state.weekDays[4].setDate(this.state.weekDays[4].getDate() + 7);
+      // TODO get data from db
       this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
+      this.state.ongoingTests = this.serverConnect.TESTgetEmptyWeek()[5];
       this.forceUpdate();
   }
   handlePrevious(event){
@@ -83,7 +85,9 @@ class Dashboard extends Component {
       this.state.weekDays[2].setDate(this.state.weekDays[2].getDate() - 7);
       this.state.weekDays[3].setDate(this.state.weekDays[3].getDate() - 7);
       this.state.weekDays[4].setDate(this.state.weekDays[4].getDate() - 7);
+      // TODO get data from db
       this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
+      this.state.ongoingTests = [];
       this.forceUpdate();
   }
 
