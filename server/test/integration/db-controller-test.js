@@ -984,14 +984,13 @@ describe("Test main DB controller behaviour:", () => {
 
     describe("Test requestEditing() function:", () => {
 
-        /*describe("> description", () => {
-            it("Should return ...", (done) => {
-                const sql = "[query]";
+        describe("> Request on entry that does not exist", () => {
+            it("Should reject the request.", (done) => {
 
-                db_controller.selectQuery(sql)
+                db_controller.requestEditing("Test", "invalid")
                 .then((result) => {
                     expect(result.status).to.equal("ERR");
-                    //...
+                    expect(result.err.type).to.equal("Invalid request.");
                 })
                 .then(() => {
                     done();
@@ -1000,7 +999,317 @@ describe("Test main DB controller behaviour:", () => {
                     done(err);
                 });
             });
-        });*/
+            it("Should reject the request.", (done) => {
+
+                db_controller.requestEditing("Laboratory", "invalid")
+                .then((result) => {
+                    expect(result.status).to.equal("ERR");
+                    expect(result.err.type).to.equal("Invalid request.");
+                })
+                .then(() => {
+                    done();
+                })
+                .catch((err) => {
+                    done(err);
+                });
+            });
+            it("Should reject the request.", (done) => {
+
+                db_controller.requestEditing("Carer", "invalid")
+                .then((result) => {
+                    expect(result.status).to.equal("ERR");
+                    expect(result.err.type).to.equal("Invalid request.");
+                })
+                .then(() => {
+                    done();
+                })
+                .catch((err) => {
+                    done(err);
+                });
+            });
+        });
+
+        describe("> Request on a valid entry", () => {
+            it("Should return a token with correct validity", (done) => {
+                const database = new Database(databaseConfig);
+
+                database.query("INSERT INTO Patient " + 
+                        "(patient_no, patient_name, patient_surname) " +
+                        "VALUES ('test_no_R', 'testName', 'testSurname')")
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.requestEditing("Patient", "test_no_R")
+                            .then((result) => {
+                                expect(result.status).to.equal("OK");
+
+                                let nowDate = new Date();
+                                nowDate.setMinutes(nowDate.getMinutes() + 30);
+                                const shouldExpire = dateFormat(nowDate, "yyyymmddHHMM");
+
+                                let tokenExpire = new Date(result.response.expires);
+                                const actualExpire = dateFormat(tokenExpire, "yyyymmddHHMM");
+                                expect(actualExpire).to.equal(shouldExpire);
+
+                                const shouldStartWith = dateFormat(new Date(), "yyyymmddHHMM");
+                                expect(result.response.token.startsWith(shouldStartWith)).to.be.true;
+                            })
+                            .then(() => {
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            });
+                        })
+                        .then(() => {
+                            const database1 = new Database(databaseConfig);
+
+                            database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R'")
+                            .then(() => {
+                                database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R'")
+                                .catch((err) => {
+                                    printSetupError(err);
+                                });
+                            })
+                            .catch((err) => {
+                                printSetupError(err);
+                            })
+                            .then(() => {
+                                database1.close();
+                            });
+                        });
+            });
+        });
+
+        describe("> Request on a valid entry that is being edited", () => {
+            it("Should reject the request", (done) => {
+                const database = new Database(databaseConfig);
+
+                database.query("INSERT INTO Patient " + 
+                        "(patient_no, patient_name, patient_surname) " +
+                        "VALUES ('test_no_R1', 'testName', 'testSurname')")
+                        .then(() => {
+                            let nowDate = new Date();
+                            nowDate.setMinutes(nowDate.getMinutes() + 30);
+                            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
+                            database.query("INSERT INTO TokenControl VALUES " +
+                                    "('token_R', 'Patient', 'test_no_R1', " + expires + ")")
+                        })
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.requestEditing("Patient", "test_no_R1")
+                            .then((result) => {
+                                expect(result.status).to.equal("ERR");
+                                expect(result.err.type).to.equal("Invalid request.");
+                            })
+                            .then(() => {
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            });
+                        })
+                        .then(() => {
+                            const database1 = new Database(databaseConfig);
+
+                            database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R1'")
+                            .then(() => {
+                                database1.query("DELETE FROM TokenControl WHERE token = 'token_R'")
+                                .catch((err) => {
+                                    printSetupError(err);
+                                });
+                            })
+                            .catch((err) => {
+                                printSetupError(err);
+                            })
+                            .then(() => {
+                                database1.close();
+                            });
+                        });
+            });
+        });
+
+        describe("> Request on a valid entry with expired token", () => {
+            it("Should return a token with correct validity, previous token should be deleted.", (done) => {
+                const database = new Database(databaseConfig);
+
+                database.query("INSERT INTO Patient " + 
+                        "(patient_no, patient_name, patient_surname) " +
+                        "VALUES ('test_no_R2', 'testName', 'testSurname')")
+                        .then(() => {
+                            let nowDate = new Date();
+                            nowDate.setMinutes(nowDate.getMinutes() - 30);
+                            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
+                            database.query("INSERT INTO TokenControl VALUES " +
+                                    "('token_R2', 'Patient', 'test_no_R2', " + expires + ")")
+                        })
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.requestEditing("Patient", "test_no_R2")
+                            .then((result) => {
+                                expect(result.status).to.equal("OK");
+
+                                let nowDate = new Date();
+                                nowDate.setMinutes(nowDate.getMinutes() + 30);
+                                const shouldExpire = dateFormat(nowDate, "yyyymmddHHMM");
+
+                                let tokenExpire = new Date(result.response.expires);
+                                const actualExpire = dateFormat(tokenExpire, "yyyymmddHHMM");
+                                expect(actualExpire).to.equal(shouldExpire);
+
+                                const shouldStartWith = dateFormat(new Date(), "yyyymmddHHMM");
+                                expect(result.response.token.startsWith(shouldStartWith)).to.be.true;
+                            })
+                            .then(() => {
+                                // previous token should be deleted
+                                const database2 = new Database(databaseConfig);
+                                database2.query("SELECT * FROM TokenControl WHERE token = 'token_R2'")
+                                .then((result) => {
+                                    expect(result.length).to.equal(0);
+                                })
+                                .catch((err) => {
+                                    done(err);
+                                })
+                                .then(() => {
+                                    database2.close();
+                                });
+                            })
+                            .then(() => {
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            });
+                        })
+                        .then(() => {
+                            const database1 = new Database(databaseConfig);
+
+                            database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R2'")
+                            .then(() => {
+                                database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R2'")
+                                .catch((err) => {
+                                    printSetupError(err);
+                                });
+                            })
+                            .catch((err) => {
+                                printSetupError(err);
+                            })
+                            .then(() => {
+                                database1.close();
+                            });
+                        });
+            });
+        });
+
+
+    });
+
+    describe("Test improper use of query functions:", () => {
+
+        describe("> Improper use of selectQuery", () => {
+            it("Should throw an Error", (done) => {
+                const sql = "updAte ...";
+
+                db_controller.selectQuery(sql)
+                .then((result) => {
+                    done(new Error("Did not throw an error for improper use."))
+                })
+                .catch((err) => {
+                    done();
+                });
+            });
+        });
+
+        describe("> Improper use of insertQuery", () => {
+            it("Should throw an Error", (done) => {
+                const sql = "SELECT ...";
+
+                db_controller.insertQuery(sql)
+                .then((result) => {
+                    done(new Error("Did not throw an error for improper use."))
+                })
+                .catch((err) => {
+                    done();
+                });
+            });
+        });
+
+        describe("> Improper use of deleteQuery", () => {
+            it("Should throw an Error", (done) => {
+                const sql = "SELECT ...";
+
+                db_controller.deleteQuery(sql, 'Patient', 'id')
+                .then((result) => {
+                    done(new Error("Did not throw an error for improper use."))
+                })
+                .catch((err) => {
+                    done();
+                });
+            });
+            it("Should throw an Error", (done) => {
+                const sql = "DELETE ...";
+
+                db_controller.deleteQuery(sql, 'Test')
+                .then((result) => {
+                    done(new Error("Did not throw an error for improper use."))
+                })
+                .catch((err) => {
+                    done();
+                });
+            });
+        });
+
+        describe("> Improper use of updateQuery", () => {
+            it("Should throw an Error", (done) => {
+                const sql = "SELECT ...";
+
+                db_controller.updateQuery(sql, "Patient", "id", "token")
+                .then((result) => {
+                    done(new Error("Did not throw an error for improper use."))
+                })
+                .catch((err) => {
+                    done();
+                });
+            });
+            it("Should throw an Error", (done) => {
+                const sql = "UPDATE ...";
+
+                db_controller.updateQuery(sql, "Patient", "id")
+                .then((result) => {
+                    done(new Error("Did not throw an error for improper use."))
+                })
+                .catch((err) => {
+                    done();
+                });
+            });
+        });
+
+        describe("> Improper use of requestEditing", () => {
+            it("Should throw an Error", (done) => {
+                db_controller.requestEditing('Patient')
+                .then((result) => {
+                    done(new Error("Did not throw an error for improper use."))
+                })
+                .catch((err) => {
+                    done();
+                });
+            });
+        });
+
     });
 });
 

@@ -72,6 +72,6 @@ describe("Test token generator:", () => {
         it("Should return true - all tokens are unique.", (done) => {
             expect(testUniqueness()).to.be.true;
             done();
-        });
+        }).timeout(3000);
     });
 });
