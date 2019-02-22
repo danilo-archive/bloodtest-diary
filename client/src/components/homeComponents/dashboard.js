@@ -13,21 +13,23 @@ class Dashboard extends Component {
   constructor(props){
       super(props);
       this.state = {
+          mondayOfWeek: undefined,
           overdueTests: {},
-          ongoingTests: {}
+          ongoingTests: {},
+          calendar: {}
       };
       this.serverConnect = props.serverConnect;
 
       this.initDate();
       this.initOverduePanel();
-      this.initOngoingPanel();
+      this.initWeeklyView();
+
   }
 
   initDate(){
       this.currentDay = new Date();
-      this.mondayOfWeek = new Date();
-      this.mondayOfWeek.setDate(this.mondayOfWeek.getDate() - this.currentDay.getDay() + 1);
-      console.log(this.mondayOfWeek);
+      this.state.mondayOfWeek = new Date();
+      this.state.mondayOfWeek.setDate(this.state.mondayOfWeek.getDate() - this.currentDay.getDay() + 1);
   }
 
 
@@ -35,9 +37,15 @@ class Dashboard extends Component {
       // TODO get from database
       this.state.overdueTests = this.serverConnect.TESTgetOverdueTests();
   }
+  initWeeklyView(){
+      let weekResponse = this.serverConnect.TESTgetTestsInWeek();
+      this.state.ongoingTests = weekResponse[5];
+      this.state.calendar = weekResponse.slice(0, 5);
+  }
+
   initOngoingPanel(){
       // TODO get from database
-      this.state.ongoingTests = this.serverConnect.TESTgetTestsInWeek(this.currentDay, true);
+
   }
 
 
@@ -54,7 +62,10 @@ class Dashboard extends Component {
           />
         </div>
         <div className={"calendar"}>
-          <WeeklyCalendar />
+          <WeeklyCalendar
+            calendar = {this.state.calendar}
+            mondayDate = {this.state.mondayOfWeek}
+          />
         </div>
         <div className={"test"}>
           <div className={"navbar"}>
@@ -75,95 +86,5 @@ class Dashboard extends Component {
   }
 }
 
-const APPOINTMENTS_EXAMPLE_ANYTIME = [
-  {
-    status: "completed",
-    patientName: "Luka Kralj"
-  },
-  {
-    status: "completed",
-    patientName: "Alvaro Rausell"
-  },
-  {
-    status: "late",
-    patientName: "Danilo del Busso"
-  },
-  {
-    status: "completed",
-    patientName: "Alessandro Amantini"
-  },
-  {
-    status: "pending",
-    patientName: "IDK Who Else To Put"
-  },
-  {
-    status: "completed",
-    patientName: "Luka Kralj"
-  },
-  {
-    status: "completed",
-    patientName: "Alvaro Rausell"
-  },
-  {
-    status: "late",
-    patientName: "Danilo del Busso"
-  },
-  {
-    status: "completed",
-    patientName: "Alessandro Amantini"
-  },
-  {
-    status: "pending",
-    patientName: "IDK Who Else To Put"
-  },
-  {
-    status: "completed",
-    patientName: "Luka Kralj"
-  },
-  {
-    status: "completed",
-    patientName: "Alvaro Rausell"
-  },
-  {
-    status: "late",
-    patientName: "Danilo del Busso"
-  },
-  {
-    status: "completed",
-    patientName: "Alessandro Amantini"
-  },
-  {
-    status: "pending",
-    patientName: "IDK Who Else To Put"
-  }
-];
-
-const APPOINTMENTS_EXAMPLE_SCHEDULED = [
-  {
-    status: "pending",
-    patientName: "Luka Kralj",
-    time: "09:00"
-  },
-  {
-    status: "completed",
-    patientName: "Alvaro Rausell",
-    time: "12:00"
-  },
-  {
-    status: "late",
-    patientName: "Danilo del Busso",
-    time: "13:00"
-  },
-  {
-    status: "completed",
-    patientName: "Alessandro Amantini",
-    time: "15:00"
-  },
-  {
-    status: "pending",
-    patientName: "Just A Very Long Name To Test This",
-    time: "23:30"
-  }
-];
 
 export default Dashboard;

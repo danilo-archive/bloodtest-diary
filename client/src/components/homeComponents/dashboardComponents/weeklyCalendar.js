@@ -11,78 +11,79 @@ const WeekContainer = styled.div`
 `;
 
 class WeeklyCalendar extends React.Component {
+
+  constructor(props){
+      super(props);
+      let calendar = props.calendar;
+      this.state = {
+         mondayDate: this.props.mondayDate,
+         monday: calendar[0],
+         tuesday: calendar[1],
+         wednesday: calendar[2],
+         thursday: calendar[3],
+         friday: calendar[4]
+      };
+
+
+
+  }
+
+
+
   render() {
+      let tuesdayDate = new Date();
+      tuesdayDate.setDate(this.state.mondayDate.getDate() + 1);
+      let wednesdayDate = new Date();
+      wednesdayDate.setDate(this.state.mondayDate.getDate() + 2);
+      let thursdayDate = new Date();
+      thursdayDate.setDate(this.state.mondayDate.getDate() + 3);
+      let fridayDate = new Date();
+      fridayDate.setDate(this.state.mondayDate.getDate() + 4);
       return (
         <WeekContainer>
           <CalendarDay
             notificationNumber={
-              APPOINTMENTS_EXAMPLE_ANYTIME.length +
-              APPOINTMENTS_EXAMPLE_SCHEDULED.length
+              this.state.monday.length
             }
-            anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+            date= {this.state.mondayDate}
+            dayName = {"Monday"}
+            anytimeAppointments={this.state.monday}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
           <CalendarDay
             notificationNumber={
-              APPOINTMENTS_EXAMPLE_ANYTIME.length +
-              APPOINTMENTS_EXAMPLE_SCHEDULED.length
+              this.state.tuesday.length
             }
-            anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+            date=  {tuesdayDate}
+            dayName = {"Tuesday"}
+            anytimeAppointments={this.state.tuesday}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
           <CalendarDay
             notificationNumber={
-              APPOINTMENTS_EXAMPLE_ANYTIME.length +
-              APPOINTMENTS_EXAMPLE_SCHEDULED.length
+              this.state.wednesday.length
             }
-            anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+            date= {wednesdayDate}
+            dayName = {"Wednesday"}
+            anytimeAppointments={this.state.wednesday}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
           <CalendarDay
             notificationNumber={
-              APPOINTMENTS_EXAMPLE_ANYTIME.length +
-              APPOINTMENTS_EXAMPLE_SCHEDULED.length
+              this.state.thursday.length
             }
-            anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+            date= {thursdayDate}
+            dayName = {"Thursday"}
+            anytimeAppointments={this.state.thursday}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
           <CalendarDay
             notificationNumber={
-              APPOINTMENTS_EXAMPLE_ANYTIME.length +
-              APPOINTMENTS_EXAMPLE_SCHEDULED.length
+              this.state.friday.length
             }
-            anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
-            scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
-          />
-          <CalendarDay
-            notificationNumber={
-              APPOINTMENTS_EXAMPLE_ANYTIME.length +
-              APPOINTMENTS_EXAMPLE_SCHEDULED.length
-            }
-            anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
-            scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
-          /><CalendarDay
-            notificationNumber={
-              APPOINTMENTS_EXAMPLE_ANYTIME.length +
-              APPOINTMENTS_EXAMPLE_SCHEDULED.length
-            }
-            anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
-            scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
-          />
-          <CalendarDay
-            notificationNumber={
-              APPOINTMENTS_EXAMPLE_ANYTIME.length +
-              APPOINTMENTS_EXAMPLE_SCHEDULED.length
-            }
-            anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
-            scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
-          />
-          <CalendarDay
-            notificationNumber={
-              APPOINTMENTS_EXAMPLE_ANYTIME.length +
-              APPOINTMENTS_EXAMPLE_SCHEDULED.length
-            }
-            anytimeAppointments={APPOINTMENTS_EXAMPLE_ANYTIME}
+            date= {fridayDate}
+            dayName = {"Friday"}
+            anytimeAppointments={this.state.friday}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
 

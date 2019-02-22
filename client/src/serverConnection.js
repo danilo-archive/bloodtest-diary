@@ -37,7 +37,12 @@ class ServerConnect {
         return [{status: "late", patientName: "Test test"}, {status: "pending", patientName: "Test test2"}]
     }
     TESTgetTestsInWeek(date, anytime=false){
-        return [{status: "pending", patientName: "Test test weekly"}]
+        return [[{status: "pending", patientName: "Test test monday"}],
+                [{status: "pending", patientName: "Test test tuesday"}],
+                [{status: "pending", patientName: "Test test wednesday"}],
+                [{status: "pending", patientName: "Test test thursday"}],
+                [{status: "pending", patientName: "Test test friday"}],
+                [{status: "pending", patientName: "Test test weekly"}]]
     }
 
     /**

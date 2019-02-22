@@ -19,33 +19,45 @@ const CalendarContainer = styled.div`
 
 
 `;
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+];
 
 class CalendarDay extends React.Component {
+
+  constructor(props){
+      super(props);
+      this.state = {
+        notificationNumber: props.notificationNumber,
+        date: props.date,
+        dayName: props.dayName,
+        appointments: props.anytimeAppointments
+      };
+  }
+
+
   render() {
     return (
       <>
         <CalendarContainer>
           <WeekDaySection
             notificationNumber={
-              this.props.notificationNumber
-                ? this.props.notificationNumber
-                : "1"
+              this.state.notificationNumber
+                ? this.state.notificationNumber
+                : "0"
             }
-            dayName={this.props.dayName || "Monday"}
+            dayName={this.props.dayName}
           />
           <MonthDaySection
-            dayNumber={this.props.dayNumber ? this.props.dayNumber : "01"}
-            monthName={this.props.monthName || "June"}
+            dayNumber={this.state.date.getDate()}
+            monthName={monthNames[this.state.date.getMonth()]}
           />
           <ScrollBox>
             <AppointmentSection
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
             />
-            <AppointmentSection
-              type="Scheduled Appointments"
-              appointments={this.props.scheduledAppointments}
-            />
+
           </ScrollBox>
         </CalendarContainer>
       </>
