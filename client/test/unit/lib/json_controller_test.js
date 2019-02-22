@@ -20,7 +20,7 @@ describe("Read JSON files", function () {
                     }`
             }
         });
-        
+
         const obj = json_controller.getJSON('test/test.json');
         const expected_result = {
             "port": 4200,
