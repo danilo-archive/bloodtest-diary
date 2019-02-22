@@ -101,7 +101,8 @@ class Dashboard extends Component {
           />
         </div>
         <div className={"scrollButtons"}>
-          <button className={"nextButton"} onClick={this.handleNext}>NEXT</button>
+            <button className={"prevButton"} onClick={this.handlePrevious}>PREV</button>
+            <button className={"nextButton"} onClick={this.handleNext}>NEXT</button>
         </div>
         <div className={"calendar"}>
           <WeeklyCalendar
