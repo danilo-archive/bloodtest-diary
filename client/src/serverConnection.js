@@ -44,6 +44,9 @@ class ServerConnect {
                 [{status: "pending", patientName: "Test test friday"}],
                 [{status: "pending", patientName: "Test test weekly"}]]
     }
+    TESTgetEmptyWeek(){
+        return [[], [], [], [], [], []];
+    };
 
     /**
      * Function to be called when user needs to be authenticated

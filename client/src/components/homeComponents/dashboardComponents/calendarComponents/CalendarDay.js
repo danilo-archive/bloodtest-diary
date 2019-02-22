@@ -42,22 +42,21 @@ class CalendarDay extends React.Component {
         <CalendarContainer>
           <WeekDaySection
             notificationNumber={
-              this.state.notificationNumber
-                ? this.state.notificationNumber
+              this.props.notificationNumber
+                ? this.props.notificationNumber
                 : "0"
             }
             dayName={this.props.dayName}
           />
           <MonthDaySection
-            dayNumber={this.state.date.getDate()}
-            monthName={monthNames[this.state.date.getMonth()]}
+            dayNumber={this.props.date.getDate()}
+            monthName={monthNames[this.props.date.getMonth()]}
           />
           <ScrollBox>
             <AppointmentSection
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
             />
-
           </ScrollBox>
         </CalendarContainer>
       </>

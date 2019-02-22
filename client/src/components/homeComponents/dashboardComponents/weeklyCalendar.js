@@ -14,76 +14,56 @@ class WeeklyCalendar extends React.Component {
 
   constructor(props){
       super(props);
-      let calendar = props.calendar;
-      this.state = {
-         mondayDate: this.props.mondayDate,
-         monday: calendar[0],
-         tuesday: calendar[1],
-         wednesday: calendar[2],
-         thursday: calendar[3],
-         friday: calendar[4]
-      };
-
-
-
   }
 
 
 
   render() {
-      let tuesdayDate = new Date();
-      tuesdayDate.setDate(this.state.mondayDate.getDate() + 1);
-      let wednesdayDate = new Date();
-      wednesdayDate.setDate(this.state.mondayDate.getDate() + 2);
-      let thursdayDate = new Date();
-      thursdayDate.setDate(this.state.mondayDate.getDate() + 3);
-      let fridayDate = new Date();
-      fridayDate.setDate(this.state.mondayDate.getDate() + 4);
       return (
         <WeekContainer>
           <CalendarDay
             notificationNumber={
-              this.state.monday.length
+              this.props.calendar[0].length
             }
-            date= {this.state.mondayDate}
+            date= {this.props.weekDays[0]}
             dayName = {"Monday"}
-            anytimeAppointments={this.state.monday}
+            anytimeAppointments={this.props.calendar[0]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
           <CalendarDay
             notificationNumber={
-              this.state.tuesday.length
+             this.props.calendar[1].length
             }
-            date=  {tuesdayDate}
+            date=  {this.props.weekDays[1]}
             dayName = {"Tuesday"}
-            anytimeAppointments={this.state.tuesday}
+            anytimeAppointments={this.props.calendar[1]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
           <CalendarDay
             notificationNumber={
-              this.state.wednesday.length
+              this.props.calendar[2].length
             }
-            date= {wednesdayDate}
+            date= {this.props.weekDays[2]}
             dayName = {"Wednesday"}
-            anytimeAppointments={this.state.wednesday}
+            anytimeAppointments={this.props.calendar[2]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
           <CalendarDay
             notificationNumber={
-              this.state.thursday.length
+              this.props.calendar[3].length
             }
-            date= {thursdayDate}
+            date= {this.props.weekDays[3]}
             dayName = {"Thursday"}
-            anytimeAppointments={this.state.thursday}
+            anytimeAppointments={this.props.calendar[3]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
           <CalendarDay
             notificationNumber={
-              this.state.friday.length
+              this.props.calendar[4].length
             }
-            date= {fridayDate}
+            date= {this.props.weekDays[4]}
             dayName = {"Friday"}
-            anytimeAppointments={this.state.friday}
+            anytimeAppointments={this.props.calendar[4]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
           />
 
