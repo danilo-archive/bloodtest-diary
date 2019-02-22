@@ -4,7 +4,7 @@ import StatusCircle from "./StatusCircle";
 import AppointmentInfo from "./AppointmentInfo";
 import IconSet from "./IconSet";
 import TimePill from "./TimePill";
-
+import {getServerConnect} from "../../../../serverConnection.js";
 const Container = styled.div`
   display: block;
   position: relative;
@@ -21,14 +21,26 @@ const Container = styled.div`
 `;
 
 export default class AppointmentBox extends React.Component {
-  state = {
-    status: this.props.type,
-    time: this.props.time,
-    name: this.props.name
-  };
+
+  constructor(props){
+      super(props);
+      this.state = {
+        id: this.props.id,
+        status: this.props.type,
+        time: this.props.time,
+        name: this.props.name
+      };
+      this.serverConnect = getServerConnect();
+}
 
   onStatusClick = status => {
     if (this.state.status === "pending") this.setState({ status });
+  };
+  onStatusChange = status => {
+      this.setState({ status });
+  };
+  onStatusClickTest = status => {
+    this.serverConnect.changeStatus(this.state.id, status);
   };
 
   render() {
@@ -36,7 +48,7 @@ export default class AppointmentBox extends React.Component {
     return (
       <Container>
         {time ? <TimePill status={status}>{time}</TimePill> : ``}
-        <StatusCircle type={status} />
+        <StatusCircle type={this.props.type} />
         <AppointmentInfo name={name} />
         <IconSet onStatusClick={this.onStatusClick} />
       </Container>

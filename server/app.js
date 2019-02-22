@@ -38,6 +38,11 @@ io.on('connection',function(socket)
         console.log(`Socket ${socket.id} joined ${room}`);
     });
 
+    // TODO remove
+    socket.on("testChange", (id, status) => {
+        console.log("arrived");
+        socket.emit("testStatusChange", id, status);
+    });
 
     /**
     * Login endpoint.

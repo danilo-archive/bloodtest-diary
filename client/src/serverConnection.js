@@ -19,6 +19,13 @@ class ServerConnect {
         this.socket = openSocket(`${host}:${port}`);
         this.testCallback = undefined;
         this.currentRoom = "";
+
+        this.onTestStatusChange = undefined;
+
+        this.socket.on("testStatusChange", (id, status) => {
+            console.log("here");
+            this.onTestStatusChange(id, status);
+        });
     }
 
     joinMainPage(){
@@ -31,18 +38,27 @@ class ServerConnect {
         this.currentRoom = "login_page";
     }
 
+    changeStatus(id, newStatus){
+        this.socket.emit("testChange", id, newStatus);
+    }
+    setOnTestStatusChange(callback){
+        console.log("set");
+        this.onTestStatusChange = callback;
+    }
+
+
 
     // TODO pls remove
     TESTgetOverdueTests(){
         return [{status: "late", patientName: "Test test"}, {status: "pending", patientName: "Test test2"}]
     }
     TESTgetTestsInWeek(date, anytime=false){
-        return [[{status: "pending", patientName: "Test test monday"}],
-                [{status: "pending", patientName: "Test test tuesday"}],
-                [{status: "pending", patientName: "Test test wednesday"}],
-                [{status: "pending", patientName: "Test test thursday"}],
-                [{status: "pending", patientName: "Test test friday"}],
-                [{status: "pending", patientName: "Test test weekly"}]]
+        return [[{id: 1, status: "pending", patientName: "Test test monday"}],
+                [{id: 3, status: "pending", patientName: "Test test tuesday"}],
+                [{id: 4, status: "pending", patientName: "Test test wednesday"}],
+                [{id: 5, status: "pending", patientName: "Test test thursday"}],
+                [{id: 6, status: "pending", patientName: "Test test friday"}],
+                [{id: 7, status: "pending", patientName: "Test test weekly"}]]
     }
     TESTgetEmptyWeek(){
         return [[], [], [], [], [], []];
