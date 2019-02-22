@@ -1,12 +1,22 @@
 {
-    "host": "smtp.gmail.com",
-    "port": 465,
-    "secure": true, 
-    "auth": {
-        "user": "",
-        "pass": ""
+    "email": {
+        "host": "smtp.gmail.com",
+        "port": 465,
+        "secure": true,
+        "auth": {
+            "user": "",
+            "pass": ""
+        },
+        "tls": {
+            "rejectUnauthorized": false
+        }
     },
-    "tls": {
-        "rejectUnauthorized": false
+    "cron":{
+        "second" : "",
+        "minute" : "0",
+        "hour" : "7",
+        "dayOfMonth" : "*",
+        "month" : "*",
+        "dayOfWeek" : "*"
     }
 }
