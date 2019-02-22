@@ -16,18 +16,18 @@ let height = 0;
 let mainWindow;
 
 function getWindowSize(axis) {
-  if (axis == "width") {
+  if (axis === "width") {
     return 1750; //(width*0.7 > maxWindowWidth) ? maxWindowWidth : width*0.7;
-  } else if (axis == "height") {
+  } else if (axis === "height") {
     return 875; //(height*0.75 > maxWindowHeight) ? maxWindowHeight : height*0.75;
   }
   return null;
 }
 
 function getSplashSize(axis) {
-  if (axis == "width") {
+  if (axis === "width") {
     return (width*0.15 > maxSplashwWidth) ? maxSplashwWidth : width*0.15;
-  } else if (axis == "height") {
+  } else if (axis === "height") {
     return (height*0.4 > maxSplashHeight) ? maxSplashHeight : height*0.4;
   }
   return null;
