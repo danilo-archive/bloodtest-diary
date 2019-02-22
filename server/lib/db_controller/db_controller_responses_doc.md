@@ -55,7 +55,7 @@
         }
     }
 
-<i>N.B. The query that is passed into this function should only delete one entry. This rule is not enforced in this function but should be enforced by the called, otherwise unwanted data (entries that are currently being edited) might be deleted.</i>
+<i>N.B. The query that is passed into this function should only delete one entry. This rule is not enforced in this function but should be enforced by the caller, otherwise unwanted data (entries that are currently being edited) might be deleted.</i>
 
 
 ### UPDATE query response:
@@ -67,6 +67,10 @@
         }
     }
 
+<i>N.B. The query that is passed into this function should only update one entry. This rule is not enforced in this function but should be enforced by the caller, otherwise unwanted data (entries that are currently being edited) might also be updated.<br>
+<b>This will be extended later to allow for multiple line edits.</b></i>
+
+
 ### REQUEST TOKEN response:
     { status: "OK",
         response: {
@@ -74,3 +78,6 @@
             expires: yyyy-mm-dd HH:MM:ss,
         }
     }
+
+<i>N.B. Currently you can only request editing for one entry.<br>
+<b>This will be extended later to allow for multiple line edits.</b></i>

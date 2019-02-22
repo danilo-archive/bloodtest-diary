@@ -13,7 +13,6 @@ const expect = require("chai").expect;
 const db_controller = require("../../lib/db_controller/db-controller");
 
 // These are needed for setting up a testing environment.
-const mysql = require("mysql");
 const databaseConfig = require("../../config/database");
 const Database = require("../../lib/db_controller/Database");
 const dateFormat = require("dateformat");
@@ -45,8 +44,11 @@ describe("Test main DB controller behaviour:", () => {
                         .catch((err) => {
                             printSetupError(err);
                         });
+            let nowDate = new Date();
+            nowDate.setMinutes(nowDate.getMinutes() + 30);
+            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
             await database.query("INSERT INTO TokenControl " + 
-                                "VALUES ('test_token_S', 'Patient', 'test_no_S2', 20190805151515)")
+                                "VALUES ('test_token_S', 'Patient', 'test_no_S2', " + expires + ")")
                         .catch((err) => {
                             printSetupError(err);
                         });  
@@ -741,6 +743,247 @@ describe("Test main DB controller behaviour:", () => {
             });
         });
 
+    });
+
+    describe("Test updateQuery() function:", () => {
+
+        describe("> Update single entry, valid arguments, valid SQL", () => {
+            it("Should return no error message.", (done) => {
+                const sql = "UPDATE Patient SET patient_name = 'U1 - updated' WHERE patient_no = 'testNo_U1'";
+
+                // prepare environment
+                const database = new Database(databaseConfig);
+                database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('testNo_U1', 'testName', 'testSurname')")
+                        .then(() => {
+                            let nowDate = new Date();
+                            nowDate.setMinutes(nowDate.getMinutes() + 30);
+                            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
+                            database.query("INSERT INTO TokenControl VALUES " +
+                                        "('test_token_U1', 'Patient', 'testNo_U1', " + expires + ")")
+                        })
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.updateQuery(sql, "Patient", "testNo_U1", "test_token_U1")
+                            .then((result) => {
+                                expect(result.status).to.equal("OK");
+                                expect(result.response.query).to.equal("OK");
+                                expect(result.response.affectedRows).to.equal(1);
+                                expect(result.response.changedRows).to.equal(1);
+                            })
+                            .then(() => {
+                                const database2 = new Database(databaseConfig);
+                                database2.query("SELECT * FROM Patient WHERE patient_no = 'testNo_U1'")
+                                .then((result) => {
+                                    expect(result.length).to.equal(1);
+                                    expect(result[0].patient_name).to.equal("U1 - updated");
+                                })
+                                .then(() => {
+                                    database2.query("SELECT * FROM TokenControl WHERE token = 'test_token_U1'")
+                                    .then((result) => {
+                                        expect(result.length).to.equal(0);
+                                        done();
+                                    })
+                                    .catch((err) => {
+                                        done(err);
+                                    });
+                                })
+                                .catch((err) => {
+                                    done(err);
+                                })
+                                .then(() => {
+                                    database2.close();
+                                });
+                            })
+                            .catch((err) => {
+                                done(err);
+                            })
+                            .then(() => {
+                                const database1 = new Database(databaseConfig);
+                                database1.query("DELETE FROM Patient WHERE patient_no = 'testNo_U1'")
+                                .then(() => {
+                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_token_U1'")
+                                    .catch((err) => {
+                                        printSetupError(err);
+                                    });
+                                })
+                                .catch((err) => {
+                                    printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
+                                });
+                            });
+                        });
+            });
+        });
+
+        describe("> Update single entry, valid arguments, invalid SQL", () => {
+            it("Should return SQL error message.", (done) => {
+                const sql = "UPDATE Patient SET patient_name = invalid WHERE patient_no = 'testNo_U2'";
+
+                // prepare environment
+                const database = new Database(databaseConfig);
+                database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('testNo_U2', 'testName', 'testSurname')")
+                        .then(() => {
+                            let nowDate = new Date();
+                            nowDate.setMinutes(nowDate.getMinutes() + 30);
+                            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
+                            database.query("INSERT INTO TokenControl VALUES " +
+                                        "('test_token_U2', 'Patient', 'testNo_U2', " + expires + ")")
+                        })
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.updateQuery(sql, "Patient", "testNo_U2", "test_token_U2")
+                            .then((result) => {
+                                expect(result.status).to.equal("ERR");
+                                expect(result.err.type).to.equal("SQL Error");
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            })
+                            .then(() => {
+                                const database1 = new Database(databaseConfig);
+                                database1.query("DELETE FROM Patient WHERE patient_no = 'testNo_U2'")
+                                .then(() => {
+                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_token_U2'")
+                                    .catch((err) => {
+                                        printSetupError(err);
+                                    });
+                                })
+                                .catch((err) => {
+                                    printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
+                                });
+                            });
+                        });
+            });
+        });
+
+        describe("> Update single entry, invalid arguments, valid SQL", () => {
+            it("Should reject the request.", (done) => {
+                const sql = "UPDATE Patient SET patient_name = 'U3 - updated' WHERE patient_no = 'testNo_U3'";
+
+                // prepare environment
+                const database = new Database(databaseConfig);
+                database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('testNo_U3', 'testName', 'testSurname')")
+                        .then(() => {
+                            let nowDate = new Date();
+                            nowDate.setSeconds(nowDate.getSeconds() - 1);
+                            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
+                            database.query("INSERT INTO TokenControl VALUES " +
+                                        "('test_token_U3', 'Patient', 'testNo_U3', " + expires + ")")
+                        })
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.updateQuery(sql, "Patient", "testNo_U3", "test_token_U3")
+                            .then((result) => {
+                                expect(result.status).to.equal("ERR");
+                                expect(result.err.type).to.equal("Invalid request.");
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            })
+                            .then(() => {
+                                const database1 = new Database(databaseConfig);
+                                database1.query("DELETE FROM Patient WHERE patient_no = 'testNo_U3'")
+                                .then(() => {
+                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_token_U3'")
+                                    .catch((err) => {
+                                        printSetupError(err);
+                                    });
+                                })
+                                .catch((err) => {
+                                    printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
+                                });
+                            });
+                        });
+            });
+        });
+
+        describe("> Update single entry, invalid arguments, invalid SQL", () => {
+            it("Should reject the request.", (done) => {
+                const sql = "UPDATE Patient invalid patient_name = 'U3 - updated' WHERE patient_no = 'testNo_U4'";
+
+                // prepare environment
+                const database = new Database(databaseConfig);
+                database.query("INSERT INTO Patient " + 
+                                "(patient_no, patient_name, patient_surname) " +
+                                "VALUES ('testNo_U4', 'testName', 'testSurname')")
+                        .then(() => {
+                            let nowDate = new Date();
+                            nowDate.setSeconds(nowDate.getSeconds() + 30);
+                            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
+                            database.query("INSERT INTO TokenControl VALUES " +
+                                        "('test_token_U4', 'Patient', 'testNo_U4', " + expires + ")")
+                        })
+                        .catch((err) => {
+                            printSetupError(err);
+                        })
+                        .then(() => {
+                            database.close();
+                        })
+                        .then(() => {
+                            db_controller.updateQuery(sql, "invalid", "testNo_U4", "test_token_U4")
+                            .then((result) => {
+                                expect(result.status).to.equal("ERR");
+                                expect(result.err.type).to.equal("Invalid request.");
+                                done();
+                            })
+                            .catch((err) => {
+                                done(err);
+                            })
+                            .then(() => {
+                                const database1 = new Database(databaseConfig);
+                                database1.query("DELETE FROM Patient WHERE patient_no = 'testNo_U4'")
+                                .then(() => {
+                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_token_U4'")
+                                    .catch((err) => {
+                                        printSetupError(err);
+                                    });
+                                })
+                                .catch((err) => {
+                                    printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
+                                });
+                            });
+                        });
+            });
+        });
+
+    });
+
+    describe("Test requestEditing() function:", () => {
+
         /*describe("> description", () => {
             it("Should return ...", (done) => {
                 const sql = "[query]";
@@ -758,14 +1001,6 @@ describe("Test main DB controller behaviour:", () => {
                 });
             });
         });*/
-    });
-
-    describe("Test updateQuery() function:", () => {
-
-    });
-
-    describe("Test requestEditing() function:", () => {
-
     });
 });
 
