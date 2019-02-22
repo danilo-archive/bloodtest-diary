@@ -100,8 +100,8 @@ class Dashboard extends Component {
             anytimeAppointments={this.state.overdueTests}
           />
         </div>
-        <div>
-            <button onClick={this.handleNext}>NEXT</button>
+        <div className={"scrollButtons"}>
+          <button className={"nextButton"} onClick={this.handleNext}>NEXT</button>
         </div>
         <div className={"calendar"}>
           <WeeklyCalendar
