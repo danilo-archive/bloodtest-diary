@@ -1,7 +1,7 @@
 {
   "name": "blood_test_diary_server",
   "version": "0.0.1",
-  "description": "",
+  "description": "Server side of the Blood Test Diary",
   "main": "app.js",
   "dependencies": {
     "express": "^4.16.4",
@@ -12,12 +12,13 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint": "^5.13.0",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "nyc": "^13.3.0"
   },
   "scripts": {
     "eslint": "eslint",
     "start": "node app.js",
-    "test": "mocha"
+    "test": "nodemon --exec \"nyc --reporter=html --reporter=text mocha --recursive\""
   },
   "repository": {
     "type": "git",
