@@ -1,12 +1,15 @@
 /** 
  * Unique token generator.
  * 
- * @module tokenGenerator
+ * @author Luka Kralj
+ * @version 1.0
+ * 
+ * @module token-generator
  */
 
 const dateFormat = require("dateformat");
 
-let dict = {};
+let map = {};
 
 /**
  * Generates a random integer.
@@ -28,9 +31,9 @@ function randInt(min, max) {
  */
 function generateToken() {
 
-    let formated = dateFormat(new Date(), "yyyymmddHHMMssl");
+    let formatted = dateFormat(new Date(), "yyyymmddHHMMssl");
 
-    if (formated in dict) {
+    if (formatted in map) {
         // Another token requested in the same millisecond.
 
         let found = false;
@@ -38,12 +41,12 @@ function generateToken() {
         do {
             const rand = randInt(10000, 10000000);
             // Verify that the random number hasn't already been used for this timestamp.
-            if (dict[formated].find((element) => {
+            if (map[formatted].find((element) => {
                 return element === rand;
             }) === undefined) {
                 found = true;
-                dict[formated].push(rand);
-                formated += rand;
+                map[formatted].push(rand);
+                formatted += rand;
             }
         } while (!found);
     }
@@ -52,13 +55,13 @@ function generateToken() {
 
         // Since the timestamp always changes - if value is not found it means it's because it's not in the same millisecond.
         // Hence, the previous values in the map will never be repeated again so the map can be deleted.
-        dict = {}; 
+        map = {}; 
         const rand = randInt(10000, 10000000);
-        dict[formated] = [rand];
-        formated += rand;
+        map[formatted] = [rand];
+        formatted += rand;
     }
 
-    return formated;
+    return formatted;
 }
 
 module.exports = {

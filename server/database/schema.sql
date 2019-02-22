@@ -30,14 +30,14 @@ CREATE TABLE Patient (
     patient_surname VARCHAR(255) NOT NULL,
     patient_email VARCHAR(255),
     patient_phone VARCHAR(10),
-    prefered_lab INTEGER,
+    lab_id INTEGER,
     PRIMARY KEY (patient_no),
-    FOREIGN KEY (prefered_lab) REFERENCES Laboratory(lab_id)
+    FOREIGN KEY (lab_id) REFERENCES Laboratory(lab_id)
 );
 
 CREATE TABLE Carer (
     carer_id INTEGER AUTO_INCREMENT,
-    patient_no VARCHAR(10),
+    patient_no VARCHAR(10) NOT NULL,
     carer_name VARCHAR(255),
     carer_email VARCHAR(255),
     carer_phone VARCHAR(10),
@@ -53,13 +53,13 @@ CREATE TABLE Test (
     added DATE NOT NULL,
     first_due_date DATE NOT NULL,
     frequency VARCHAR(100) NOT NULL,
-    laboratory INTEGER,
+    lab_id INTEGER,
     completed_status ENUM("yes", "no", "in review") NOT NULL DEFAULT "no",
     completed_date DATE,
     notes TEXT,
     PRIMARY KEY (test_id),
     FOREIGN KEY (patient_no) REFERENCES Patient(patient_no),
-    FOREIGN KEY (laboratory) REFERENCES Laboratory(lab_id)
+    FOREIGN KEY (lab_id) REFERENCES Laboratory(lab_id)
 );
 
 CREATE TABLE TokenControl (

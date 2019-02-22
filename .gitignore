@@ -329,3 +329,8 @@ fastlane/test_output
 fastlane/readme.md
 
 # End of https://www.gitignore.io/api/node,reactnative,jetbrains+all
+
+# Visual Studio and Visual Studio Code
+
+*.vs 
+*.vscode
