@@ -5,6 +5,7 @@ import OverduePatients from "./dashboardComponents/overduePatients";
 import WeeklyCalendar from "./dashboardComponents/weeklyCalendar";
 import OngoingWeekly from "./dashboardComponents/ongoingWeekly";
 import Navbar from "./dashboardComponents/navbar";
+import arrow from "../../images/arrow.png";
 
 import './dashboard.css';
 
@@ -101,8 +102,8 @@ class Dashboard extends Component {
           />
         </div>
         <div className={"scrollButtons"}>
-            <button className={"prevButton"} onClick={this.handlePrevious}>PREV</button>
-            <button className={"nextButton"} onClick={this.handleNext}>NEXT</button>
+            <img src={arrow} className={"prevButton"} onClick={this.handlePrevious} alt={"Previous Date"}/>
+            <img src={arrow} className={"nextButton"} onClick={this.handleNext} alt={"Next Date"}/>
         </div>
         <div className={"calendar"}>
           <WeeklyCalendar
