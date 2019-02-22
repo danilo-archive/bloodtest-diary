@@ -102,8 +102,7 @@ class Dashboard extends Component {
       this.forceUpdate();
   }
   handlePrevious(event){
-      this.serverConnect.changeStatus(1, "late");
-      /*this.state.weekDays[0].setDate(this.state.weekDays[0].getDate() - 7);
+      this.state.weekDays[0].setDate(this.state.weekDays[0].getDate() - 7);
       this.state.weekDays[1].setDate(this.state.weekDays[1].getDate() - 7);
       this.state.weekDays[2].setDate(this.state.weekDays[2].getDate() - 7);
       this.state.weekDays[3].setDate(this.state.weekDays[3].getDate() - 7);
@@ -111,7 +110,11 @@ class Dashboard extends Component {
       // TODO get data from db
       this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
       this.state.ongoingTests = [];
-      this.forceUpdate();*/
+      this.forceUpdate();
+  }
+  // TODO remove
+  testReact(event){
+      this.serverConnect.changeStatus(1, "late");
   }
 
 
