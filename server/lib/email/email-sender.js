@@ -44,10 +44,10 @@
  * @version 0.0.2
  */
 const nodeMailer = require('nodemailer');
-const jsonController = require('./json-controller');
-const CONFIG_ABSOLUTE_PATH = __dirname + '/../config/email_config.json'; //the absolute path of the email_config.json file
+const jsonController = require('../json-controller');
+const CONFIG_ABSOLUTE_PATH = __dirname + '/../../config/email_config.json'; //the absolute path of the email_config.json file
 let backlog = [];
-const query_controller = require('./query-controller')
+const query_controller = require('../query-controller')
 
 //todo: remove this init when module is complete
 init(CONFIG_ABSOLUTE_PATH, backlog);
@@ -62,7 +62,7 @@ function init(configPath) {
     const config = jsonController.getJSON(configPath);
 
     //? what if the backlog updates less often than the emails are being sent? check for empty emails
-    startBacklogUpdateCron(config); 
+    startBacklogUpdateCron(config);
     startEmailSenderCron(config);
 }
 
@@ -120,7 +120,7 @@ function addTestsToBacklog(date) {
             }
         })
     }
-    //? what if success is false?
+    //? what if success is false
 }
 
 /*
@@ -189,6 +189,25 @@ function sendEmail(transporterOptions, receiverOptions) {
             //TODO: IN CASE OF SUCCESS?
         }
     });
+}
+/**
+ * Get the receiver options needed to send an email
+ * @async
+ * @param {string} subject the subject of the email
+ * @param {JSON} patient the patient row
+ * @param {JSON} test the test row
+ * @param {function} email_generator the function which generates the html, it should return a Promise.
+ * @return {Promise<JSON>}
+ */
+async function getOptionsForEmail(subject, patient, test, email_generator) {
+    return await email_generator(patient, test).then(async (result) => {
+        const html = result;
+        return {
+            "to": patient.email,
+            "subject": subject,
+            "html": html
+        }
+    })
 }
 
 /*
