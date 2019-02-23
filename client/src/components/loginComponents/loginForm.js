@@ -68,12 +68,12 @@ class LoginForm extends Component {
           <form onSubmit={this.handleSubmit} className="form login">
 
             <div className="form__field">
-              <label for="login__username"><svg className="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"></use></svg></label>
+              <label form="login__username"><svg className="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"/></svg></label>
               <input id="login__username" type="text" name="username" className="form__input" value={this.state.username} onChange={this.handleChange} placeholder="Username" required/>
             </div>
 
             <div className="form__field" >
-              <label for="login__password"><svg className="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#lock"></use></svg></label>
+              <label form="login__password"><svg className="icon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#lock"/></svg></label>
               <input id="login__password" type="password" name="password" className="form__input" value={this.state.password} onChange={this.handleChange} placeholder="Password" required/>
             </div>
 
