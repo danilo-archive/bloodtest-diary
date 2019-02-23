@@ -61,7 +61,7 @@ init(CONFIG_ABSOLUTE_PATH, backlog);
 function init(configPath) {
     const config = jsonController.getJSON(configPath);
 
-    //? what if the backlog updates less often than the emails are being sent? check for empty emails
+    //? what if the backlog updates less often than the emails are being sent? code has to support empty backlog
     startBacklogUpdateCron(config);
     startEmailSenderCron(config);
 }
@@ -138,7 +138,7 @@ function addTestsToBacklog(date) {
  * @param {array} backlog 
  */
 function sendAllBacklogEmails(emailConfig) {
-    //TODO WRITE CONENT
+    //TODO WRITE FUNCTION BODY
     //!!! THIS VERSION OF THE CODE ASSUMES THAT THE QUERY CONTROLLER EXISTS!!!
 
     //send information about patients that are overdue to labs and doctors
@@ -194,21 +194,22 @@ function sendEmail(transporterOptions, receiverOptions) {
 /**
  * Get the receiver options needed to send an email
  * @async
+ * @param {string} receiverEmail the receiver's email address
  * @param {string} subject the subject of the email
- * @param {JSON} patient the patient row
- * @param {JSON} test the test row
+ * @param {JSON} email_info information needed to fill custom details of the email, depends on which email generator function is passed
  * @param {function} email_generator_function the function which generates the html, it should return a Promise.
  * @return {Promise<JSON>} the JSON containing the option needed to send an email to the specified patient
  */
-async function getOptionsForEmail(subject, patient, test, email_generator_function) {
+async function getOptionsForEmail(receiverEmail, subject, email_info , email_generator_function) {
 
     //TODO : GENERALISE THIS! CURRENT FORMAT WILL ONLY WORK FOR PATIENTS
-    return await email_generator_function(patient, test).then(async (result) => {
-        const html = result;
+    //TODO: CHECK IF "text" IS NEEDED OR IF IT CAN BE OMITTED
+    return await email_generator_function(email_info).then(async (generated_html) => {
         return {
-            "to": patient.email,
+            "to": receiverEmail,
             "subject": subject,
-            "html": html
+            "text": "",
+            "html": generated_html
         }
     })
 }

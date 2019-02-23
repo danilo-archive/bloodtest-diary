@@ -13,16 +13,31 @@ const mjml2html = require("mjml");
 | This section contains the functions which generate html code for different kinds of email
 |
 */
+
+//TODO: UPDATE JSDOC BELOW WITH ACTUAL FORMAT NEEDED
+
 /**
- * Return html for an email containing info about a test which is due for a patient
- * @param {JSON} patient the patient row
- * @param {JSON} test the test row
- * @return {string} html for an email containing info about a test which is due for a patient
+ * Return html for an email containing info about a test which is due for a patient.
+ * 
+ * @example <caption>The email_info JSON needs to reflect this format in order to be properly parsed:</caption>
+ {
+    "patient": {
+        "name" : <PATIENT_NAME>
+    },
+    "test": {
+        "date" : <DATE_OF_DUE_TEST>,
+        "lab" :{
+            "name" : <LAB_NAME>,
+        }
+    }
+}
+ * @param {JSON} email_info the json containing info needed to generate the email. For format info look at function example.
+ * @returns {string} html for an email containing info about a test which is due for a patient
  */
-function testDueReminderForPatient(patient, test) {
+function testDueReminderForPatient(email_info) {
     const header_image_url = "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
 
-    const date = new Date(); //todo: update with actual date
+    const date = email_info.test.date;
     const computed_html = mjml2html(`
     <mjml>
        ${getHead()}
@@ -38,9 +53,10 @@ function testDueReminderForPatient(patient, test) {
           <mj-section padding-top="30px">
              <mj-column width="100%">
                 <mj-text>
-                   <p>Hello ${patient.name}.</p>
+                   <p>Hello ${email_info.patient.name}.</p>
                    <p>This is a reminder for your blood test</p>
-                   <p>The test is due on ${date}</p>
+                   <p>The test is due on ${email_info.test.date}</p>
+                   <p>The test will be taken at ${email_info.test.lab.name}</p>
                 </mj-text>
              </mj-column>
           </mj-section>
