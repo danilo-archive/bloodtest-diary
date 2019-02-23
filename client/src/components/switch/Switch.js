@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 const Toggle = styled.input.attrs({ type: "checkbox" })`
   appearance: none;
-  outline: none;
   display: flex;
   align-items: center;
   position: relative;
@@ -11,8 +10,8 @@ const Toggle = styled.input.attrs({ type: "checkbox" })`
   height: 2rem;
   border-radius: 4em;
   background: #d0d0d0;
-  top: 2.5rem;
-  left: 2.5rem;
+  margin: 0;
+  padding: 0;
 
   &::before {
     content: "";
