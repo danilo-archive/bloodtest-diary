@@ -1,7 +1,7 @@
 const databaseController = require('./db_controller/db-controller.js');
 const tokenGenerator = require('./token-generator.js');
 
-async function getTestsDuringTheWeek(date)
+function getTestsDuringTheWeek(date)
 {
   var weekDay = new Date(date).getDay();
   var daysInWeek=[]
@@ -14,7 +14,7 @@ async function getTestsDuringTheWeek(date)
   return daysInWeek;
 }
 
-async function checkMultipleQueriesStatus(queries)
+function checkMultipleQueriesStatus(queries)
 {
   var data = [];
   queries.forEach(query=>{

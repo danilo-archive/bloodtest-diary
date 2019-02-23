@@ -88,11 +88,11 @@ io.on('connection',function(socket)
     /**
     *@param {String} date of type "yyyy-mm-dd"
     **/
-    socket.on('getTestsOnDate', async (date) => {
+    socket.on('getAllTestsOnDate', async (date) => {
         let sql = `Select * From Test Where first_due_date = '${date}';`;
         console.log(sql);
         console.log(await queryController.selectQueryDatabase(sql))
-        socket.emit('getTestsOnDateResponse',await queryController.selectQueryDatabase(sql));
+        socket.emit('getAllTestsOnDateResponse',await queryController.selectQueryDatabase(sql));
     });
 
     /**
@@ -100,6 +100,7 @@ io.on('connection',function(socket)
     *@param {Boolean} anydayTestsOnly - if unscheduled test to return
     **/
     socket.on('getTestsInWeek',async (date,anydayTestsOnly=false) => {
+      console.log(await queryController.getTestWithinWeek(date));
             socket.emit('getTestsInWeekResponse',await queryController.getTestWithinWeek(date))
           });
 
