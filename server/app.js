@@ -108,8 +108,9 @@ io.on('connection',function(socket)
 
     socket.on('getOverdueTests', async () => {
       let sql = `Select * From Test Where first_due_date < CURDATE() AND completed_status='no' `
-      console.log(await queryController.selectQueryDatabase(sql))
-      socket.emit('getTestsOfPatientResponse', await queryController.selectQueryDatabase(sql));
+      let response = await queryController.selectQueryDatabase(sql)
+      console.log(response);
+      socket.emit('getOverdueTestsResponse', response);
     });
 
     // updates of database --------------------------------

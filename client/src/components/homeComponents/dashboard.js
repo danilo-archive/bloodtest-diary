@@ -81,9 +81,14 @@ class Dashboard extends Component {
 
   initOverduePanel(){
       // TODO get from database
-      this.state.overdueTests = this.serverConnect.TESTgetOverdueTests();
-      this.state.overdueReady = true;
-      this.forceUpdate();
+      //this.state.overdueTests = this.serverConnect.TESTgetOverdueTests();
+      this.serverConnect.getOverdueTests( res => {
+          console.log("overdue init");
+          this.state.overdueTests = res;
+          this.state.overdueReady = true;
+          this.forceUpdate();
+      });
+
   }
 
   updateDashboard(){
