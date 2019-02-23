@@ -157,25 +157,12 @@ class ServerConnect {
      * TODO eventually change name of the function.
      * TODO eventually change name of the callback.
      */
-    getTestsInWeek(date, anydayTestsOnly=false){
-        this.socket.emit('getTestsInWeek', date, anydayTestsOnly);
-        var promise = new Promise(function(resolve, reject){
-            this.socket.on('getTestsInWeekResponse', res => {
-                //callback(res);
-                console.log(res.response);
-                resolve(res.response);
-            });
-        });
-        return promise;
-    }
-
-    getTestsInWeek2(date, callback, anydayTestsOnly=false){
+    getTestsInWeek(date, callback, anydayTestsOnly=false){
         this.socket.emit('getTestsInWeek', date, anydayTestsOnly);
         this.socket.on('getTestsInWeekResponse', res => {
             console.log(res.response);
             callback(res.response);
         });
-
     }
 }
 

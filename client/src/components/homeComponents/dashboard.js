@@ -94,7 +94,7 @@ class Dashboard extends Component {
       //let weekResponse = this.serverConnect.TESTgetTestsInWeek();
       //this.state.ongoingTests = weekResponse[5];
       //this.state.calendar = weekResponse.slice(0, 5);
-      this.serverConnect.getTestsInWeek2(this.state.weekDays[0], res => {
+      this.serverConnect.getTestsInWeek(this.state.weekDays[0], res => {
           this.state.ongoingTests = res[5];
           this.state.calendar = res.slice(0, 5);
           this.state.dashboardReady = true;
