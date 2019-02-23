@@ -162,47 +162,6 @@ class Dashboard extends Component {
 
     );
   }
-
-    oldRender() {
-      return (
-
-        <div className={"dashboard"}>
-          <div className={"overduePatients"}>
-            <OverduePatients
-              notificationNumber={
-                  this.state.overdueTests.length
-              }
-              anytimeAppointments={this.state.overdueTests}
-            />
-          </div>
-          <div className={"scrollButtons"}>
-              <img src={arrow} className={"prevButton"} onClick={this.handlePrevious} alt={"Previous Date"}/>
-              <img src={arrow} className={"nextButton"} onClick={this.handleNext} alt={"Next Date"}/>
-          </div>
-          <div className={"calendar"}>
-            <WeeklyCalendar
-              calendar = {this.state.calendar}
-              weekDays = {this.state.weekDays}
-            />
-          </div>
-          <div className={"test"}>
-            <div className={"navbar"}>
-              <Navbar />
-            </div>
-            <div className={"ongoingWeekly"}>
-              <OngoingWeekly
-                currentMonday = {this.currentMonday}
-                notificationNumber={
-                  this.state.ongoingTests.length
-                }
-                anytimeAppointments={this.state.ongoingTests}
-              />
-            </div>
-          </div>
-        </div>
-      );
-
-  }
 }
 
 
