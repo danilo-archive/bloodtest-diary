@@ -11,6 +11,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+const queryController = require('./lib/query-controller.js');
 const CONFIG_FILE_PATH = __dirname + '/config/config.json';
 const jsonController = require('./lib/json-controller');
 const conf = jsonController.getJSON(CONFIG_FILE_PATH);
@@ -64,44 +65,51 @@ io.on('connection',function(socket)
         socket.emit('authenticationResponse', res);
     });
 
-    socket.on('getAllPatients', () => {
-        // TODO
-        // retrive all patients and return them as json
+    socket.on('getAllPatients', (socket) => {
+        let sql = "Select * From Patient;";
+        socket.emit("getAllPatientsResponse", queryController.selectQueryDatabase(sql));
     });
 
-    socket.on('getAllTests', () => {
-        // TODO
-        // retrieve all tests scheduled and return them as json
+    socket.on('getAllTests', (socket) => {
+        let sql = "Select * From Test;";
+        socket.emit("getAllTestsResponse", queryController.selectQueryDatabase(sql));
     });
 
-    socket.on('getTestsOfPatient', (patientId) => {
-        // TODO
-        // given the id of the patient, return all the tests scheduled
-        // for that patient as json
+    socket.on('getTestsOfPatient', (socket,patientId) => {
+        let sql = `Select * From Test Where patient_no = ${patientId}`;
+        // All or unscheduled?
+        // sql += " AND completed_status='no';";
+        socket.emit('getTestsOfPatientResponse',queryController.selectQueryDatabase(sql));
     });
 
+    /**
+    *@param {String} date of type "yyyy-mm-dd"
+    **/
     socket.on('getTestsOnDate', (date) => {
-        // TODO
-        // given a date, return all tests on that date as json
+        let sql = `Select * From Test Where first_due_date = '${date}';`;
+        socket.emit('getTestsOnDateResponse',queryController.selectQueryDatabase(sql));
     });
 
-    socket.on('getTestsInWeek', (date, anydayTestsOnly=false) => {
-        // TODO
-        // given a date, retrieve the tests that are scheduled on that
-        // date week, and return them as json
-        // if anydayTestsOnly is true, return only the tests that don't have
-        // a particular day assigned
+    /**
+    *@param {String} date of type "yyyy-mm-dd"
+    *@param {Boolean} anydayTestsOnly - if unscheduled test to return
+    **/
+    socket.on('getTestsInWeek', (date,anydayTestsOnly=false) => {
+          queryController.getTestWithinWeek(date).then(response => {
+            socket.emit('getTestsInWeekResponse',response)
+          })
     });
-
 
     socket.on('getOverdueTests', () => {
-        // TODO
-        // retrieve all overdue tests and return them as json
+      let sql = `Select * From Test Where first_due_date < CURDATE() AND completed_status='no' `
+      socket.emit('getTestsOfPatientResponse',queryController.selectQueryDatabase(sql));
     });
 
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 });
+
+
 
 
 /**

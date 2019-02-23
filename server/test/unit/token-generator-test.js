@@ -1,12 +1,15 @@
 /**
  * This file contains tests that test the behaviour of tokenGenerator.js
  * 
- * @module testTokenGenerator
+ * @author Luka Kralj
+ * @version 1.0
+ * 
+ * @module tokenGeneratorTest
  * @see module:tokenGenerator
  */
 
 const expect = require("chai").expect;
-const id_gen = require("../../lib/tokenGenerator");
+const id_gen = require("../../lib/token-generator");
 
 /**
  * Generates and compares 10000 tokens.
@@ -14,7 +17,7 @@ const id_gen = require("../../lib/tokenGenerator");
  * @returns {boolean} true if all tokens are unique, false if not.
  */
 function testUniqueness() {
-    console.log("Testing uniqueness of 10000 tokens.")
+    console.log("      Testing uniqueness of 10000 tokens:")
     const all = [];
 
     for (let i = 1; i < 10001; i++) {
@@ -22,18 +25,18 @@ function testUniqueness() {
         if (i % 100 === 0) {
             process.stdout.clearLine();
             process.stdout.cursorTo(0);
-            process.stdout.write((i / 100) + " %");
+            process.stdout.write("        " + (i / 100) + " %");
         }
     }
-    console.log("\nall generated");
+    console.log("\n        all generated");
      
-    console.log("sorting");
+    console.log("        sorting...");
     
     const sorted = all.sort();
     
-    console.log("sorted");
+    console.log("        sorted");
     
-    console.log("comparing:");
+    console.log("        comparing...");
     
     let allUnique = true;
     
@@ -41,7 +44,7 @@ function testUniqueness() {
         if (i % (sorted.length/100) === 0) {
             process.stdout.clearLine();
             process.stdout.cursorTo(0);
-            process.stdout.write((i / sorted.length * 100) + " %");
+            process.stdout.write("        " + (i / sorted.length * 100) + " %");
         }
         
         if (sorted[i] === sorted[i+1]) {
@@ -51,19 +54,21 @@ function testUniqueness() {
     }
     
     if (allUnique) {
-        console.log("\nAll tokens are unique.");
+        console.log("\n        All tokens are unique.");
         return true;
     }
     else {
-        console.log("\nDuplicates were found!!");
+        console.log("\n        Duplicates were found!!");
         return false;
     }
 }
 
-describe("testUniqueness()", () => {
+describe("Test token generator:", () => {
+    describe("> Test uniqueness of tokens", () => {
 
-    it("Should return true - all tokens are unique.", (done) => {
-        expect(testUniqueness()).to.be.true;
-        done();
+        it("Should return true - all tokens are unique.", (done) => {
+            expect(testUniqueness()).to.be.true;
+            done();
+        });
     });
-})
+});
