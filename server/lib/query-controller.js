@@ -1,7 +1,7 @@
 const databaseController = require('./db_controller/db-controller.js');
 const tokenGenerator = require('./token-generator.js');
 
-function getTestsDuringTheWeek(date)
+async function getTestsDuringTheWeek(date)
 {
   var weekDay = new Date(date).getDay();
   var daysInWeek=[]
@@ -14,7 +14,7 @@ function getTestsDuringTheWeek(date)
   return daysInWeek;
 }
 
-function checkMultipleQueriesStatus(queries)
+async function checkMultipleQueriesStatus(queries)
 {
   var data = [];
   queries.forEach(query=>{
@@ -30,21 +30,22 @@ function checkMultipleQueriesStatus(queries)
 
 async function selectQueryDatabase(sql)
 {
-  databaseController.selectQuery(sql).then((queryResponse) =>{
+  var response = await databaseController.selectQuery(sql).then((queryResponse) =>{
     if(queryResponse.status==="OK"){
       data = queryResponse.response.rows;
-      console.log(data);
       return {success:true, response:data}
     }
     else{
       return {success:false, response:queryResponse.err}
     }
   });
+  return response;
 }
 
-function getTestWithinWeek(date)
+async function getTestWithinWeek(date)
 {
-  return Promise.all(getTestsDuringTheWeek(date)).then(days => {return checkMultipleQueriesStatus(days)});
+  var response = await Promise.all(getTestsDuringTheWeek(date)).then(days => {return checkMultipleQueriesStatus(days)}).then(data => {return data})
+  return response;
 }
 
 module.exports = {
