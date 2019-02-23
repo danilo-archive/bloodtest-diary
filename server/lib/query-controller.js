@@ -5,7 +5,7 @@ function getTestsDuringTheWeek(date)
 {
   var weekDay = new Date(date).getDay();
   var daysInWeek=[]
-  for(var i=0;i<5;i++)
+  for(var i=0;i<6;i++)
   {
     day = -1*(weekDay - 1) + i;
     var sql = `Select * From Test Where first_due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;

@@ -9,11 +9,14 @@ import arrow from "../../images/arrow.png";
 
 import './dashboard.css';
 
+// TODO remove forceUpdates and use setState instead
 class Dashboard extends Component {
 
   constructor(props){
       super(props);
       this.state = {
+          dashboardReady: false,
+          overdueReady: false,
           weekDays: [undefined, undefined, undefined, undefined, undefined],
           overdueTests: {},
           ongoingTests: {},
@@ -79,11 +82,25 @@ class Dashboard extends Component {
   initOverduePanel(){
       // TODO get from database
       this.state.overdueTests = this.serverConnect.TESTgetOverdueTests();
+      this.state.overdueReady = true;
+      this.forceUpdate();
+  }
+  helper(){
+      this.serverConnect.getTestsInWeek(this.state.weekDays[0]).then(res => {
+          return res;
+      });
   }
   initWeeklyView(){
-      let weekResponse = this.serverConnect.TESTgetTestsInWeek();
-      this.state.ongoingTests = weekResponse[5];
-      this.state.calendar = weekResponse.slice(0, 5);
+      //let weekResponse = this.serverConnect.TESTgetTestsInWeek();
+      //this.state.ongoingTests = weekResponse[5];
+      //this.state.calendar = weekResponse.slice(0, 5);
+      this.serverConnect.getTestsInWeek2(this.state.weekDays[0], res => {
+          this.state.ongoingTests = res[5];
+          this.state.calendar = res.slice(0, 5);
+          this.state.dashboardReady = true;
+          this.forceUpdate();
+      });
+
   }
 
   initOngoingPanel(){
@@ -120,44 +137,49 @@ class Dashboard extends Component {
 
 
   render() {
-    return (
+    if (this.state.dashboardReady && this.state.overdueReady){
+        return (
 
-      <div className={"dashboard"}>
-        <div className={"overduePatients"}>
-          <OverduePatients
-            notificationNumber={
-                this.state.overdueTests.length
-            }
-            anytimeAppointments={this.state.overdueTests}
-          />
-        </div>
-        <div className={"scrollButtons"}>
-            <img src={arrow} className={"prevButton"} onClick={this.handlePrevious} alt={"Previous Date"}/>
-            <img src={arrow} className={"nextButton"} onClick={this.handleNext} alt={"Next Date"}/>
-        </div>
-        <div className={"calendar"}>
-          <WeeklyCalendar
-            calendar = {this.state.calendar}
-            weekDays = {this.state.weekDays}
-          />
-        </div>
-        <div className={"test"}>
-          <div className={"navbar"}>
-            <Navbar />
+          <div className={"dashboard"}>
+            <div className={"overduePatients"}>
+              <OverduePatients
+                notificationNumber={
+                    this.state.overdueTests.length
+                }
+                anytimeAppointments={this.state.overdueTests}
+              />
+            </div>
+            <div className={"scrollButtons"}>
+                <img src={arrow} className={"prevButton"} onClick={this.handlePrevious} alt={"Previous Date"}/>
+                <img src={arrow} className={"nextButton"} onClick={this.handleNext} alt={"Next Date"}/>
+            </div>
+            <div className={"calendar"}>
+              <WeeklyCalendar
+                calendar = {this.state.calendar}
+                weekDays = {this.state.weekDays}
+              />
+            </div>
+            <div className={"test"}>
+              <div className={"navbar"}>
+                <Navbar />
+              </div>
+              <div className={"ongoingWeekly"}>
+                <OngoingWeekly
+                  currentMonday = {this.currentMonday}
+                  notificationNumber={
+                    this.state.ongoingTests.length
+                  }
+                  anytimeAppointments={this.state.ongoingTests}
+                />
+              </div>
+            </div>
           </div>
-          <div className={"ongoingWeekly"}>
-            <OngoingWeekly
-              currentMonday = {this.currentMonday}
-              notificationNumber={
-                this.state.ongoingTests.length
-              }
-              anytimeAppointments={this.state.ongoingTests}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
+        );
+      }else{
+          // TODO loading screen.
+           return ("");
+      }
+   }
 }
 
 
