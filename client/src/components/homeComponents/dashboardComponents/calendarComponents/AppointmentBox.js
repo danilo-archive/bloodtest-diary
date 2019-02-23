@@ -35,12 +35,7 @@ export default class AppointmentBox extends React.Component {
 
   onStatusClick = status => {
     if (this.state.status === "pending") this.setState({ status });
-  };
-  onStatusChange = status => {
-      this.setState({ status });
-  };
-  onStatusClickTest = status => {
-    this.serverConnect.changeStatus(this.state.id, status);
+    //this.serverConnect.changeStatus(this.state.id, status);
   };
 
   render() {
