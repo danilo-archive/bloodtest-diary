@@ -24,18 +24,26 @@ http.listen(port);
 io.on('connection',function(socket)
 {
     console.log(`Socket ${socket.id} connected`);
+    socket.emit("connected");
 
     socket.on("disconnect", () => {
         console.log(`Socket ${socket.id} disconnected`);
     });
 
-    socket.on("join", (oldRoom, room) => {
-        if (oldRoom !== ""){
-            socket.leave(oldRoom);
-            console.log(`Socket ${socket.id} left ${oldRoom}`);
+    socket.on("join", (oldRoom, room, reconnecting=false) => {
+        if (reconnecting){
+            if (socket.rooms[room] !== undefined){
+                return;
+            }
         }
-        socket.join(room);
-        console.log(`Socket ${socket.id} joined ${room}`);
+        if (oldRoom !== room){
+            if (oldRoom !== ""){
+                socket.leave(oldRoom);
+                console.log(`Socket ${socket.id} left ${oldRoom}`);
+            }
+            socket.join(room);
+            console.log(`Socket ${socket.id} joined ${room}`);
+        }
     });
 
     // TODO remove

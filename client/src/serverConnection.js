@@ -16,9 +16,12 @@ var serverConnect = undefined;
 class ServerConnect {
 
     constructor(){
-        this.socket = openSocket(`${host}:${port}`);
-        this.testCallback = undefined;
         this.currentRoom = "";
+        this.socket = openSocket(`${host}:${port}`);
+        this.socket.on("connected", () => {
+            console.log("connected successfully");
+            this.socket.emit("join", "", this.currentRoom, true);
+        });
 
         this.onTestStatusChange = undefined;
 
