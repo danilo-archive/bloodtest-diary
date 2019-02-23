@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 import arrow from "./../../../images/arrow.png";
 
-import Dashboard from "./../dashboard.js";
 
 const Container = styled.div`
 
@@ -101,6 +100,13 @@ const Container = styled.div`
 `;
 
 class Navbar extends React.Component {
+
+  constructor(props){
+      super(props);
+      this.onPrev = props.onPrev;
+      this.onNext = props.onNext;
+  }
+
   render() {
     return (
       <>
@@ -115,8 +121,8 @@ class Navbar extends React.Component {
           </div>
           <div className={"calanderControls"}>
             <div className={"scrollButtons"}>
-                <img src={arrow} className={"prevButton"} onClick={Dashboard.handlePrevious} alt={"Previous Date"}/>
-                <img src={arrow} className={"nextButton"} onClick={Dashboard.handleNext} alt={"Next Date"}/>
+                <img src={arrow} className={"prevButton"} onClick={this.onPrev} alt={"Previous Date"}/>
+                <img src={arrow} className={"nextButton"} onClick={this.onNext} alt={"Next Date"}/>
             </div>
           </div>
       </Container>

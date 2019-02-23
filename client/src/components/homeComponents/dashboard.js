@@ -133,7 +133,10 @@ class Dashboard extends Component {
       </div>
         <div className={"rightSideDash"}>
           <div className={"navbar"}>
-            <Navbar />
+            <Navbar
+                onPrev = {this.handlePrevious}
+                onNext = {this.handleNext}
+            />
           </div>
           <div className={"bottomSideDash"}>
             <div className={"calendar"}>
