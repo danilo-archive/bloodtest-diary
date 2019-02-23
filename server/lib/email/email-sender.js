@@ -138,7 +138,7 @@ function addTestsToBacklog(date) {
  * @param {array} backlog 
  */
 function sendAllBacklogEmails(emailConfig) {
-
+    //TODO WRITE CONENT
     //!!! THIS VERSION OF THE CODE ASSUMES THAT THE QUERY CONTROLLER EXISTS!!!
 
     //send information about patients that are overdue to labs and doctors
@@ -190,17 +190,20 @@ function sendEmail(transporterOptions, receiverOptions) {
         }
     });
 }
+
 /**
  * Get the receiver options needed to send an email
  * @async
  * @param {string} subject the subject of the email
  * @param {JSON} patient the patient row
  * @param {JSON} test the test row
- * @param {function} email_generator the function which generates the html, it should return a Promise.
- * @return {Promise<JSON>}
+ * @param {function} email_generator_function the function which generates the html, it should return a Promise.
+ * @return {Promise<JSON>} the JSON containing the option needed to send an email to the specified patient
  */
-async function getOptionsForEmail(subject, patient, test, email_generator) {
-    return await email_generator(patient, test).then(async (result) => {
+async function getOptionsForEmail(subject, patient, test, email_generator_function) {
+
+    //TODO : GENERALISE THIS! CURRENT FORMAT WILL ONLY WORK FOR PATIENTS
+    return await email_generator_function(patient, test).then(async (result) => {
         const html = result;
         return {
             "to": patient.email,
