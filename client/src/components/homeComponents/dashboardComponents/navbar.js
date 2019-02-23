@@ -1,47 +1,36 @@
 import React from "react";
 import styled from "styled-components";
 
+import arrow from "./../../../images/arrow.png";
+
+
 const Container = styled.div`
+
+  border: red 0px solid;
   margin: 3px;
   padding: 8px;
-  width: 90%;
-  height: 100%;
-`;
+  width: auto;
+  height: auto;
 
-class Navbar extends React.Component {
-  render() {
-    return (
-      <>
-      <Container>
-        <Button>
-          <button id="button" className={"home"}>Home</button>
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-content: flex-end;
 
-          <button id="button" className={"patients"}>Patients</button>
 
-          <button id="button" className={"signOut"}>Sign Out</button>
-        </Button>
-      </Container>
-      </>
-    );
-  }
-}
-
-export default Navbar;
-
-const Button = styled.div`
   .signOut {
     background-color: #55cdd1;
     color: #eee;
     font-weight: 700;
     text-transform: uppercase;
-    width: 100%;
+    width: 150px;
     border-radius:  0.25rem;
-    padding: 1rem;
     cursor: pointer;
     border: none;
     outline:none;
     padding: 10px;
-    margin-top: 100px;
+    margin: 10px;
+
   }
 
   .patients {
@@ -49,14 +38,14 @@ const Button = styled.div`
     color: #eee;
     font-weight: 700;
     text-transform: uppercase;
-    width: 100%;
+    width: 150px;
     border-radius:  0.25rem;
-    padding: 1rem;
     cursor: pointer;
     border: none;
     outline:none;
     padding: 10px;
-    margin-top: 10px;
+    margin: 10px;
+
   }
 
   .home {
@@ -64,14 +53,14 @@ const Button = styled.div`
     color: #eee;
     font-weight: 700;
     text-transform: uppercase;
-    width: 100%;
+    width: 150px;
     border-radius:  0.25rem;
-    padding: 1rem;
     cursor: pointer;
     border: none;
     outline:none;
     padding: 10px;
-    margin-top: 10px;
+    margin: 10px;
+
   }
 
   .signOut:focus,
@@ -89,4 +78,57 @@ const Button = styled.div`
     background-color: #abbdbd;
   }
 
+  .scrollButtons {
+    padding: 4px;
+    width: 100px;
+
+
+  }
+
+  .prevButton {
+    width: 50%;
+    cursor: pointer;
+  }
+
+
+  .nextButton {
+    width: 50%;
+    cursor: pointer;
+    transform: rotate(180deg);
+  }
+
 `;
+
+class Navbar extends React.Component {
+
+  constructor(props){
+      super(props);
+      this.onPrev = props.onPrev;
+      this.onNext = props.onNext;
+  }
+
+  render() {
+    return (
+      <>
+      <Container>
+
+          <div className={"controlButtons"}>
+            <button className={"home"}>Home</button>
+
+            <button className={"patients"}>Patients</button>
+
+            <button className={"signOut"}>Sign Out</button>
+          </div>
+          <div className={"calanderControls"}>
+            <div className={"scrollButtons"}>
+                <img src={arrow} className={"prevButton"} onClick={this.onPrev} alt={"Previous Date"}/>
+                <img src={arrow} className={"nextButton"} onClick={this.onNext} alt={"Next Date"}/>
+            </div>
+          </div>
+      </Container>
+      </>
+    );
+  }
+}
+
+export default Navbar;

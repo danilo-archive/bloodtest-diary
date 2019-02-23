@@ -11,11 +11,11 @@ const CalendarContainer = styled.div`
   margin-bottom: 5px;
   padding: 0%;
   width: 250px;
-  height: 500px;
+  height: fill;
   background-color: white;
   padding: 0;
   position: relative;
-  border: solid 1px #646464;
+  border: solid 1px #839595;
 
 
 `;

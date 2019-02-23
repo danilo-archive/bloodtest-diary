@@ -151,30 +151,30 @@ class Dashboard extends Component {
 
   render() {
     if (this.state.dashboardReady && this.state.overdueReady){
-        return (
+      return (
 
-          <div className={"dashboard"}>
-            <div className={"overduePatients"}>
-              <OverduePatients
-                notificationNumber={
-                    this.state.overdueTests.length
-                }
-                anytimeAppointments={this.state.overdueTests}
+        <div className={"dashboard"}>
+        <div className={"overduePatients"}>
+          <OverduePatients
+            notificationNumber={
+                this.state.overdueTests.length
+            }
+            anytimeAppointments={this.state.overdueTests}
+          />
+        </div>
+          <div className={"rightSideDash"}>
+            <div className={"navbar"}>
+              <Navbar
+                  onPrev = {this.handlePrevious}
+                  onNext = {this.handleNext}
               />
             </div>
-            <div className={"scrollButtons"}>
-                <img src={arrow} className={"prevButton"} onClick={this.handlePrevious} alt={"Previous Date"}/>
-                <img src={arrow} className={"nextButton"} onClick={this.handleNext} alt={"Next Date"}/>
-            </div>
-            <div className={"calendar"}>
-              <WeeklyCalendar
-                calendar = {this.state.calendar}
-                weekDays = {this.state.weekDays}
-              />
-            </div>
-            <div className={"test"}>
-              <div className={"navbar"}>
-                <Navbar />
+            <div className={"bottomSideDash"}>
+              <div className={"calendar"}>
+                <WeeklyCalendar
+                  calendar = {this.state.calendar}
+                  weekDays = {this.state.weekDays}
+                />
               </div>
               <div className={"ongoingWeekly"}>
                 <OngoingWeekly
@@ -186,13 +186,17 @@ class Dashboard extends Component {
                 />
               </div>
             </div>
+
           </div>
-        );
-      }else{
-          // TODO loading screen.
-           return ("");
-      }
+
+        </div>
+
+      );
+   }else{
+       // TODO loading screen.
+       return ("");
    }
+ }
 }
 
 

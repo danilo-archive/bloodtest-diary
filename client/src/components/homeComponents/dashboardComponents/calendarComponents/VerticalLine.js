@@ -4,7 +4,7 @@ export default styled.hr`
   position: absolute;
   display: inline;
   margin: 0;
-  height: 100%;
+  height: 0;
   top: 47px;
   left: 11.8%;
   border: 0;
