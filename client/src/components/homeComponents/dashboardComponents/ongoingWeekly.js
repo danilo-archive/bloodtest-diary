@@ -8,8 +8,8 @@ import AppointmentSection from "./calendarComponents/AppointmentSection";
 const Container = styled.div`
   margin: 3px;
   padding: 0%;
-  width: 250px;
-  height: 509px;
+  width: auto;
+  height: auto;
   overflow: hidden;
 
 `;

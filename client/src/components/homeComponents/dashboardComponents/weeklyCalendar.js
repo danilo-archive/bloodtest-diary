@@ -5,7 +5,12 @@ import CalendarDay from "./calendarComponents/CalendarDay";
 const WeekContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start
+  justify-content: flex-start;
+
+
+  width: auto;
+  height: 100%;
+
   overflow-x: scroll;
   overflow-y: hidden;
 `;

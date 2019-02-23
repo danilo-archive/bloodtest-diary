@@ -5,7 +5,7 @@ import NotificationIcon from "./NotificationIcon";
 import Label from "../../../Label";
 
 const WeekDayDiv = styled.div`
-  width: 100%;
+  width: auto;
   height: 50px;
   background-color: #0d4e56;
   display: flex;
@@ -24,9 +24,9 @@ const WeekDaySection = props => {
           top="45%"
           left="12%"
         />
-        <Label style={{ left: "50%", top: "50%" }} fontSize={"30px"}>
-          {props.dayName}
-        </Label>
+          <Label style={{ left: "50%", top: "50%" }}>
+            {props.dayName}
+          </Label>
       </WeekDayDiv>
     </>
   );
