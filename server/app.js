@@ -65,44 +65,52 @@ io.on('connection',function(socket)
         socket.emit('authenticationResponse', res);
     });
 
-    socket.on('getAllPatients', (socket) => {
+    socket.on('getAllPatients', async () => {
         let sql = "Select * From Patient;";
-        socket.emit("getAllPatientsResponse", queryController.selectQueryDatabase(sql));
+        console.log(await queryController.selectQueryDatabase(sql))
+        socket.emit("getAllPatientsResponse", await queryController.selectQueryDatabase(sql));
     });
 
-    socket.on('getAllTests', (socket) => {
+    socket.on('getAllTests', async () => {
         let sql = "Select * From Test;";
-        socket.emit("getAllTestsResponse", queryController.selectQueryDatabase(sql));
+        console.log(await queryController.selectQueryDatabase(sql))
+        socket.emit("getAllTestsResponse", await queryController.selectQueryDatabase(sql));
     });
 
-    socket.on('getTestsOfPatient', (socket,patientId) => {
+    socket.on('getTestsOfPatient', async (patientId) => {
         let sql = `Select * From Test Where patient_no = ${patientId}`;
         // All or unscheduled?
         // sql += " AND completed_status='no';";
-        socket.emit('getTestsOfPatientResponse',queryController.selectQueryDatabase(sql));
+        console.log(await queryController.selectQueryDatabase(sql))
+        socket.emit('getTestsOfPatientResponse', await queryController.selectQueryDatabase(sql));
     });
 
     /**
     *@param {String} date of type "yyyy-mm-dd"
     **/
-    socket.on('getTestsOnDate', (date) => {
+    socket.on('getAllTestsOnDate', async (date) => {
         let sql = `Select * From Test Where first_due_date = '${date}';`;
-        socket.emit('getTestsOnDateResponse',queryController.selectQueryDatabase(sql));
+        console.log(sql);
+        console.log(await queryController.selectQueryDatabase(sql))
+        socket.emit('getAllTestsOnDateResponse',await queryController.selectQueryDatabase(sql));
     });
 
     /**
     *@param {String} date of type "yyyy-mm-dd"
     *@param {Boolean} anydayTestsOnly - if unscheduled test to return
     **/
-    socket.on('getTestsInWeek', (date,anydayTestsOnly=false) => {
-          queryController.getTestWithinWeek(date).then(response => {
-            socket.emit('getTestsInWeekResponse',response)
-          })
+    socket.on('getTestsInWeek',async (date,anydayTestsOnly=false) => {
+        console.log(date);
+        let response = await queryController.getTestWithinWeek(date);
+        console.log(response);
+        socket.emit('getTestsInWeekResponse', response);
     });
 
-    socket.on('getOverdueTests', () => {
+    socket.on('getOverdueTests', async () => {
       let sql = `Select * From Test Where first_due_date < CURDATE() AND completed_status='no' `
-      socket.emit('getTestsOfPatientResponse',queryController.selectQueryDatabase(sql));
+      let response = await queryController.selectQueryDatabase(sql)
+      console.log(response);
+      socket.emit('getOverdueTestsResponse', response);
     });
 
     // updates of database --------------------------------

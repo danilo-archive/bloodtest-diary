@@ -9,11 +9,14 @@ import arrow from "../../images/arrow.png";
 
 import './dashboard.css';
 
+// TODO remove forceUpdates and use setState instead
 class Dashboard extends Component {
 
   constructor(props){
       super(props);
       this.state = {
+          dashboardReady: false,
+          overdueReady: false,
           weekDays: [undefined, undefined, undefined, undefined, undefined],
           overdueTests: {},
           ongoingTests: {},
@@ -78,12 +81,37 @@ class Dashboard extends Component {
 
   initOverduePanel(){
       // TODO get from database
-      this.state.overdueTests = this.serverConnect.TESTgetOverdueTests();
+      //this.state.overdueTests = this.serverConnect.TESTgetOverdueTests();
+      this.serverConnect.getOverdueTests( res => {
+          console.log("overdue init");
+          this.state.overdueTests = res;
+          this.state.overdueReady = true;
+          this.forceUpdate();
+      });
+
   }
+
+  updateDashboard(){
+      this.serverConnect.getTestsInWeek(this.state.weekDays[0], res => {
+          console.log(res);
+          this.state.ongoingTests = res[5];
+          this.state.calendar = res.slice(0, 5);
+          this.state.dashboardReady = true;
+          this.forceUpdate();
+      });
+  }
+
   initWeeklyView(){
-      let weekResponse = this.serverConnect.TESTgetTestsInWeek();
-      this.state.ongoingTests = weekResponse[5];
-      this.state.calendar = weekResponse.slice(0, 5);
+      //let weekResponse = this.serverConnect.TESTgetTestsInWeek();
+      //this.state.ongoingTests = weekResponse[5];
+      //this.state.calendar = weekResponse.slice(0, 5);
+      this.serverConnect.getTestsInWeek(this.state.weekDays[0], res => {
+          this.state.ongoingTests = res[5];
+          this.state.calendar = res.slice(0, 5);
+          this.state.dashboardReady = true;
+          this.forceUpdate();
+      });
+
   }
 
   initOngoingPanel(){
@@ -98,8 +126,9 @@ class Dashboard extends Component {
       this.state.weekDays[3].setDate(this.state.weekDays[3].getDate() + 7);
       this.state.weekDays[4].setDate(this.state.weekDays[4].getDate() + 7);
       // TODO get data from db
-      this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
-      this.state.ongoingTests = this.serverConnect.TESTgetEmptyWeek()[5];
+      //this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
+      //this.state.ongoingTests = this.serverConnect.TESTgetEmptyWeek()[5];
+      this.updateDashboard();
       this.forceUpdate();
   }
   handlePrevious(event){
@@ -109,8 +138,9 @@ class Dashboard extends Component {
       this.state.weekDays[3].setDate(this.state.weekDays[3].getDate() - 7);
       this.state.weekDays[4].setDate(this.state.weekDays[4].getDate() - 7);
       // TODO get data from db
-      this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
-      this.state.ongoingTests = [];
+     // this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
+      //this.state.ongoingTests = [];
+      this.updateDashboard();
       this.forceUpdate();
   }
   // TODO remove
@@ -120,48 +150,53 @@ class Dashboard extends Component {
 
 
   render() {
-    return (
+    if (this.state.dashboardReady && this.state.overdueReady){
+      return (
 
-      <div className={"dashboard"}>
-      <div className={"overduePatients"}>
-        <OverduePatients
-          notificationNumber={
-              this.state.overdueTests.length
-          }
-          anytimeAppointments={this.state.overdueTests}
-        />
-      </div>
-        <div className={"rightSideDash"}>
-          <div className={"navbar"}>
-            <Navbar
-                onPrev = {this.handlePrevious}
-                onNext = {this.handleNext}
-            />
-          </div>
-          <div className={"bottomSideDash"}>
-            <div className={"calendar"}>
-              <WeeklyCalendar
-                calendar = {this.state.calendar}
-                weekDays = {this.state.weekDays}
+        <div className={"dashboard"}>
+        <div className={"overduePatients"}>
+          <OverduePatients
+            notificationNumber={
+                this.state.overdueTests.length
+            }
+            anytimeAppointments={this.state.overdueTests}
+          />
+        </div>
+          <div className={"rightSideDash"}>
+            <div className={"navbar"}>
+              <Navbar
+                  onPrev = {this.handlePrevious}
+                  onNext = {this.handleNext}
               />
             </div>
-            <div className={"ongoingWeekly"}>
-              <OngoingWeekly
-                currentMonday = {this.currentMonday}
-                notificationNumber={
-                  this.state.ongoingTests.length
-                }
-                anytimeAppointments={this.state.ongoingTests}
-              />
+            <div className={"bottomSideDash"}>
+              <div className={"calendar"}>
+                <WeeklyCalendar
+                  calendar = {this.state.calendar}
+                  weekDays = {this.state.weekDays}
+                />
+              </div>
+              <div className={"ongoingWeekly"}>
+                <OngoingWeekly
+                  currentMonday = {this.currentMonday}
+                  notificationNumber={
+                    this.state.ongoingTests.length
+                  }
+                  anytimeAppointments={this.state.ongoingTests}
+                />
+              </div>
             </div>
+
           </div>
 
         </div>
 
-      </div>
-
-    );
-  }
+      );
+   }else{
+       // TODO loading screen.
+       return ("");
+   }
+ }
 }
 
 

@@ -8,6 +8,7 @@
  */
 
 import openSocket from 'socket.io-client';
+import {formatDate} from './lib/utils.js';
 
 const host = "http://localhost";
 const port = 3265;
@@ -145,7 +146,7 @@ class ServerConnect {
     getOverdueTests(callback){
         this.socket.emit('getOverdueTests');
         this.socket.on('getOverdueTestsResponse', res => {
-            callback(res);
+            callback(res.response);
         });
     }
 
@@ -157,16 +158,15 @@ class ServerConnect {
      * TODO eventually change name of the function.
      * TODO eventually change name of the callback.
      */
-    getTestsInWeek(date, anydayTestsOnly=false, callback){
-        this.socket.emit('getTestsInWeek', date, anydayTestsOnly);
+    getTestsInWeek(date, callback, anydayTestsOnly=false){
+        let dateString = formatDate(date);
+        this.socket.emit('getTestsInWeek', dateString, anydayTestsOnly);
         this.socket.on('getTestsInWeekResponse', res => {
-            callback(res);
+            console.log(res.response);
+            callback(res.response);
         });
     }
-
 }
-
-
 
 
 const serverConnect = new ServerConnect();

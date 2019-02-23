@@ -5,7 +5,7 @@ function getTestsDuringTheWeek(date)
 {
   var weekDay = new Date(date).getDay();
   var daysInWeek=[]
-  for(var i=0;i<5;i++)
+  for(var i=0;i<6;i++)
   {
     day = -1*(weekDay - 1) + i;
     var sql = `Select * From Test Where first_due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
@@ -30,21 +30,22 @@ function checkMultipleQueriesStatus(queries)
 
 async function selectQueryDatabase(sql)
 {
-  databaseController.selectQuery(sql).then((queryResponse) =>{
+  var response = await databaseController.selectQuery(sql).then((queryResponse) =>{
     if(queryResponse.status==="OK"){
       data = queryResponse.response.rows;
-      console.log(data);
       return {success:true, response:data}
     }
     else{
       return {success:false, response:queryResponse.err}
     }
   });
+  return response;
 }
 
-function getTestWithinWeek(date)
+async function getTestWithinWeek(date)
 {
-  return Promise.all(getTestsDuringTheWeek(date)).then(days => {return checkMultipleQueriesStatus(days)});
+  var response = await Promise.all(getTestsDuringTheWeek(date)).then(days => {return checkMultipleQueriesStatus(days)}).then(data => {return data})
+  return response;
 }
 
 module.exports = {
