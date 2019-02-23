@@ -18,8 +18,8 @@ export default props => {
       <AppointmentSectionHeader>{props.type}</AppointmentSectionHeader>
       {props.appointments.map(appointment => (
         <AppointmentBox
-          id = {appointment.id}
-          type={appointment.status}
+          id = {appointment.test_id}
+          type={appointment.completed_status}
           name={appointment.patientName}
           time={appointment.time}
         />

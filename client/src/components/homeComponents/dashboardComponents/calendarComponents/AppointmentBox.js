@@ -20,6 +20,12 @@ const Container = styled.div`
   z-index: 3;
 `;
 
+const mapping = {
+    "yes":"completed",
+    "no": "late",
+    "in review": "pending"
+}
+
 export default class AppointmentBox extends React.Component {
 
   constructor(props){
@@ -43,7 +49,7 @@ export default class AppointmentBox extends React.Component {
     return (
       <Container>
         {time ? <TimePill status={status}>{time}</TimePill> : ``}
-        <StatusCircle type={this.props.type} />
+        <StatusCircle type={mapping[this.props.type]} />
         <AppointmentInfo name={name} />
         <IconSet onStatusClick={this.onStatusClick} />
       </Container>
