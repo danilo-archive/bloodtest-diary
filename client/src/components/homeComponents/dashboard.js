@@ -85,11 +85,17 @@ class Dashboard extends Component {
       this.state.overdueReady = true;
       this.forceUpdate();
   }
-  helper(){
-      this.serverConnect.getTestsInWeek(this.state.weekDays[0]).then(res => {
-          return res;
+
+  updateDashboard(){
+      this.serverConnect.getTestsInWeek(this.state.weekDays[0], res => {
+          console.log(res);
+          this.state.ongoingTests = res[5];
+          this.state.calendar = res.slice(0, 5);
+          this.state.dashboardReady = true;
+          this.forceUpdate();
       });
   }
+
   initWeeklyView(){
       //let weekResponse = this.serverConnect.TESTgetTestsInWeek();
       //this.state.ongoingTests = weekResponse[5];
@@ -115,8 +121,9 @@ class Dashboard extends Component {
       this.state.weekDays[3].setDate(this.state.weekDays[3].getDate() + 7);
       this.state.weekDays[4].setDate(this.state.weekDays[4].getDate() + 7);
       // TODO get data from db
-      this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
-      this.state.ongoingTests = this.serverConnect.TESTgetEmptyWeek()[5];
+      //this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
+      //this.state.ongoingTests = this.serverConnect.TESTgetEmptyWeek()[5];
+      this.updateDashboard();
       this.forceUpdate();
   }
   handlePrevious(event){
@@ -126,8 +133,9 @@ class Dashboard extends Component {
       this.state.weekDays[3].setDate(this.state.weekDays[3].getDate() - 7);
       this.state.weekDays[4].setDate(this.state.weekDays[4].getDate() - 7);
       // TODO get data from db
-      this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
-      this.state.ongoingTests = [];
+     // this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
+      //this.state.ongoingTests = [];
+      this.updateDashboard();
       this.forceUpdate();
   }
   // TODO remove

@@ -100,9 +100,11 @@ io.on('connection',function(socket)
     *@param {Boolean} anydayTestsOnly - if unscheduled test to return
     **/
     socket.on('getTestsInWeek',async (date,anydayTestsOnly=false) => {
-      console.log(await queryController.getTestWithinWeek(date));
-            socket.emit('getTestsInWeekResponse',await queryController.getTestWithinWeek(date))
-          });
+        console.log(date);
+        let response = await queryController.getTestWithinWeek(date);
+        console.log(response);
+        socket.emit('getTestsInWeekResponse', response);
+    });
 
     socket.on('getOverdueTests', async () => {
       let sql = `Select * From Test Where first_due_date < CURDATE() AND completed_status='no' `
