@@ -29,8 +29,8 @@ class OverduePatients extends React.Component {
         <Container>
           <WeekDaySection
             notificationNumber={
-              this.state.notificationNumber
-                ? this.state.notificationNumber
+              this.props.notificationNumber
+                ? this.props.notificationNumber
                 : "0"
             }
             dayName={"Overdue"}
@@ -38,7 +38,7 @@ class OverduePatients extends React.Component {
           <ScrollBox>
             <AppointmentSection
               type="Appointments"
-              appointments={this.state.appointments}
+              appointments={this.props.anytimeAppointments}
             />
             </ScrollBox>
         </Container>

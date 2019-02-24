@@ -39,9 +39,18 @@ export default class AppointmentBox extends React.Component {
       this.serverConnect = getServerConnect();
 }
 
+  formatStatus(status){
+      if (status === "completed" || status === "pending" || status === "late"){
+         return status;
+     } else {
+         return mapping[status];
+     }
+  }
+
   onStatusClick = status => {
-    if (this.state.status === "pending") this.setState({ status });
-    //this.serverConnect.changeStatus(this.state.id, status);
+    //if (this.state.status === "pending") this.setState({ status });
+    //this.setState({ status });
+    this.serverConnect.changeTestStatus(this.state.id, status);
   };
 
   render() {
@@ -49,7 +58,7 @@ export default class AppointmentBox extends React.Component {
     return (
       <Container>
         {time ? <TimePill status={status}>{time}</TimePill> : ``}
-        <StatusCircle type={mapping[this.props.type]} />
+        <StatusCircle type={this.formatStatus(this.props.type)} />
         <AppointmentInfo name={name} />
         <IconSet onStatusClick={this.onStatusClick} />
       </Container>

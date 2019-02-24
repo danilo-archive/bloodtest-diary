@@ -34,20 +34,43 @@ class Dashboard extends Component {
   }
 
   initCallbacks(){
-      console.log(this.state.calendar);
+      //console.log(this.state.calendar);
       this.serverConnect.setOnTestStatusChange((id, status) => {
+          // check if it's overdue
+          for (var i = 0; i < this.state.overdueTests.length; ++i){
+              var test = this.state.overdueTests[i];
+              if (test.test_id === id){
+                  var newState = this.state;
+                  newState.overdueTests[i].completed_status = status;
+                  this.setState(newState);
+                  return;
+              }
+          }
+          // check if it's ongoing
+          for (var i = 0; i < this.state.ongoingTests.length; ++i){
+              var test = this.state.ongoingTests[i];
+              if (test.test_id === id){
+                  var newState = this.state;
+                  newState.ongoingTests[i].completed_status = status;
+                  this.setState(newState);
+                  console.log(this.state.ongoingTests);
+                  return;
+              }
+          }
+          //check if it's in the current calendar
           for (var i = 0 ; i < this.state.calendar.length; ++i){
               var day = this.state.calendar[i];
               for(var j = 0; j < day.length; ++j){
                   var test = day[j];
-                  if (test.id === id){
+                  if (test.test_id === id){
                       var newState = this.state;
-                      newState.calendar[i][j].status = status;
+                      newState.calendar[i][j].completed_status = status;
                       //test.status = status;
                       //this.forceUpdate();
                       this.setState(newState);
                       console.log(this.state.calendar);
                       console.log("changed");
+                      return;
                   }
               }
           }

@@ -166,6 +166,10 @@ class ServerConnect {
             callback(res.response);
         });
     }
+
+    changeTestStatus(testId, newStatus){
+        this.socket.emit('testStatusChange', testId, newStatus);
+    }
 }
 
 
