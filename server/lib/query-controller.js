@@ -4,13 +4,22 @@ const tokenGenerator = require('./token-generator.js');
 function getTestsDuringTheWeek(date)
 {
   var weekDay = new Date(date).getDay();
+  //Check if it's Saturday or Sunday and produce Friday instead
+  if(weekDay==6 || weekDay==0)
+  {
+    weekDay=5;
+  }
   var daysInWeek=[]
-  for(var i=0;i<6;i++)
+  for(var i=0;i<5;i++)
   {
     day = -1*(weekDay - 1) + i;
-    var sql = `Select * From Test Where first_due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
+    sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where first_due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
     daysInWeek.push(databaseController.selectQuery(sql));
   }
+  //Get how many days to Sunday
+  day = 7 -  weekDay;
+  sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where first_due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
+  daysInWeek.push(databaseController.selectQuery(sql));
   return daysInWeek;
 }
 
