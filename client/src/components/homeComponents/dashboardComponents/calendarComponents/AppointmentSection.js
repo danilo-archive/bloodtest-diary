@@ -20,7 +20,7 @@ export default props => {
         <AppointmentBox
           id = {appointment.test_id}
           type={appointment.completed_status}
-          name={appointment.patientName}
+          name={`${appointment.patient_name} ${appointment.patient_surname}`}
           time={appointment.time}
         />
       ))}
