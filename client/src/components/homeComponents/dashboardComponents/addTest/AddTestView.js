@@ -29,7 +29,13 @@ export default class AddTestView extends React.Component {
               Add Appointments
             </TitleTab>
             <DataContainer>
-              <PatientSelect />
+              <PatientSelect
+                patients={[
+                  { name: "John Smith", id: "1740982" },
+                  { name: "Juan Mexican", id: "098765" },
+                  { name: "El Barto", id: "123456789" }
+                ]}
+              />
             </DataContainer>
           </div>
         ) : (

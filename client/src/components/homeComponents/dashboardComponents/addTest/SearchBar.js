@@ -37,7 +37,7 @@ export default class SearchBar extends React.Component {
         <Container>
           <SearchDiv>
             <i className="fa fa-search" />
-            <Bar />
+            <Bar onChange={event => this.props.onChange(event.target.value)} />
           </SearchDiv>
         </Container>
       </>
