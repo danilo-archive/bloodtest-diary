@@ -46,14 +46,14 @@ class LoginForm extends Component {
               LoginForm.showLoginErrorMessage();
           }
     });
-    //LoginForm.clearForm();
+    this.clearForm();
     event.preventDefault();
   }
 
   clearForm() {
     this.setState({
-       firstname: '',
-       lastname: ''
+       username: '',
+       password: ''
    })
   }
 
