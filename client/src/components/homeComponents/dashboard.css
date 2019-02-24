@@ -50,6 +50,7 @@
   margin-bottom: 9px;
 
   max-height: 250px;
+  min-height: 200px;
   width: auto;
 
   flex-grow: 1;

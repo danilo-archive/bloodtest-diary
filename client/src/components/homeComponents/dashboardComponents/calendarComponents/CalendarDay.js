@@ -10,8 +10,8 @@ const CalendarContainer = styled.div`
   margin: 3px;
   margin-bottom: 5px;
   padding: 0%;
-  width: 250px;
-  height: fill;
+  width: 300px;
+  height: inherit;
   background-color: white;
   padding: 0;
   position: relative;

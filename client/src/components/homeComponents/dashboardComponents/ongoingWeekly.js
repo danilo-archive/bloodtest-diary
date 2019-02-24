@@ -9,7 +9,7 @@ const Container = styled.div`
   margin: 3px;
   padding: 0%;
   width: auto;
-  height: auto;
+  height: 100%;
   overflow: hidden;
 
 `;
