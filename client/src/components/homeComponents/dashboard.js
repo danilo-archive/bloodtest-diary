@@ -117,7 +117,7 @@ class Dashboard extends Component {
   updateDashboard(){
       this.serverConnect.getTestsInWeek(this.state.weekDays[0], res => {
           console.log(res);
-          this.state.ongoingTests = res[5] || [];
+          this.state.ongoingTests = res[5];
           this.state.calendar = res.slice(0, 5);
           this.state.dashboardReady = true;
           this.forceUpdate();
@@ -129,7 +129,7 @@ class Dashboard extends Component {
       //this.state.ongoingTests = weekResponse[5];
       //this.state.calendar = weekResponse.slice(0, 5);
       this.serverConnect.getTestsInWeek(this.state.weekDays[0], res => {
-          this.state.ongoingTests = res[5] || [];
+          this.state.ongoingTests = res[5];
           this.state.calendar = res.slice(0, 5);
           this.state.dashboardReady = true;
           this.forceUpdate();
