@@ -113,9 +113,8 @@ io.on('connection',function(socket)
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 
-    socket.on('testStatusChange', async (testId, newStatus) => {
+    socket.on('testStatusChange', (testId, newStatus) => {
         // TODO change test status, if success, return testId, testDueDate and newStatus
-        console.log("test");
         socket.emit('testStatusChange', testId, newStatus);
         io.in("main_page").emit('testStatusChange', testId, newStatus);
     });
