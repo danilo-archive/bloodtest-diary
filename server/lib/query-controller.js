@@ -4,11 +4,6 @@ const tokenGenerator = require('./token-generator.js');
 function getTestsDuringTheWeek(date)
 {
   var weekDay = new Date(date).getDay();
-  //Check if it's Saturday or Sunday and produce Friday instead
-  //if(weekDay==6 || weekDay==0)
-  //{
-//    weekDay=5;
-  //}
   var daysInWeek=[]
   for(var i=0;i<6;i++)
   {
@@ -21,6 +16,34 @@ function getTestsDuringTheWeek(date)
   //sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where first_due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
   //daysInWeek.push(databaseController.selectQuery(sql));
   return daysInWeek;
+}
+
+async function changeTestStatus(testId, newStatus)
+{
+  console.log("STATUS:" + newStatus);
+  var token = await databaseController.requestEditing("Test", testId).then( data => {
+    if(data.response.token){
+      return data.response.token
+    }
+    else{
+      return data;
+    }
+  });
+  console.log(token);
+  if(token!=undefined)
+  {
+    switch(newStatus)
+    {
+      case "completed": {status = "yes"; date=`CURDATE()`; break;}
+      case "late": {status = "no"; date=`NULL`; break;}
+    }
+    let sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${testId};`;
+    console.log(sql);
+    return {success:true , response: await databaseController.updateQuery(sql, "Test", testId, token).then(data => {return data.response})}
+  }
+  else {
+    return {success:false, response: data.response}
+  }
 }
 
 function checkMultipleQueriesStatus(queries)
@@ -58,6 +81,7 @@ async function getTestWithinWeek(date)
 }
 
 module.exports = {
+    changeTestStatus,
     selectQueryDatabase,
     getTestWithinWeek,
 };

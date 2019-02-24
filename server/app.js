@@ -105,7 +105,7 @@ io.on('connection',function(socket)
     });
 
     socket.on('getOverdueTests', async () => {
-      let sql = `Select * From Test Where first_due_date < CURDATE() AND completed_status='no' `
+      let sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where first_due_date < CURDATE() AND completed_status='no' `
       let response = await queryController.selectQueryDatabase(sql)
       socket.emit('getOverdueTestsResponse', response);
     });
@@ -113,8 +113,9 @@ io.on('connection',function(socket)
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 
-    socket.on('testStatusChange', (testId, newStatus) => {
+    socket.on('testStatusChange', async (testId, newStatus) => {
         // TODO change test status, if success, return testId, testDueDate and newStatus
+        console.log(await queryController.changeTestStatus(testId,newStatus));
         socket.emit('testStatusChange', testId, newStatus);
         io.in("main_page").emit('testStatusChange', testId, newStatus);
     });
