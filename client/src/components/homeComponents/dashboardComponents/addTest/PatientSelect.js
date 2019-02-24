@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar";
 import TitleTab from "./TitleTab";
 import Label from "../../../Label";
 import Switch from "../../../switch/Switch";
+import PatientBox from "./PatientBox";
 
 const Container = styled.div`
   height: 100%;
@@ -40,6 +41,7 @@ export default props => {
         <Switch />
       </ShowID>
       <hr />
+      <PatientBox />
     </Container>
   );
 };
