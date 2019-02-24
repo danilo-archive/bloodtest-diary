@@ -13,7 +13,7 @@ const Container = styled.div`
   width: 50%;
   background: rgba(244, 244, 244, 0.7);
   float: right;
-  border: solid 1px grey;
+  border-left: solid 1px grey;
 `;
 const ShowID = styled.div`
   height: 10%;
@@ -21,7 +21,21 @@ const ShowID = styled.div`
   display: flex;
   justify-content: center;
 `;
-
+const DoneButton = styled.button`
+  appearance: none;
+  width: 100%;
+  height: 10%;
+  top: 0;
+  left: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background: #0d4e56;
+  font-size: 1.25rem;
+  cursor: pointer;
+  outline: none;
+`;
 export default class PatientSelect extends React.Component {
   state = { showID: false, patients: this.props.patients };
 
@@ -55,7 +69,7 @@ export default class PatientSelect extends React.Component {
           <Switch checked />
         </ShowID>
         <hr />
-        <ScrollBox style={{ width: "100%" }}>
+        <ScrollBox style={{ width: "100%", height: "44%" }}>
           {this.state.patients.map(patient => (
             <PatientBox
               patientName={patient.name}
@@ -64,6 +78,7 @@ export default class PatientSelect extends React.Component {
             />
           ))}
         </ScrollBox>
+        <DoneButton onClick={this.props.onDoneClick}>Done</DoneButton>
       </Container>
     );
   }

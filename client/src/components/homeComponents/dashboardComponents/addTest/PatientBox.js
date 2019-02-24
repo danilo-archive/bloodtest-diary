@@ -4,7 +4,7 @@ import styled, { keyframes } from "styled-components";
 const Box = styled.div`
   position: relative;
   width: 80%;
-  height: 10%;
+  height: 20%;
   background: white;
   display: flex;
   align-items: center;

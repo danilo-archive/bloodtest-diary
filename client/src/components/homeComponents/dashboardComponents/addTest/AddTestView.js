@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import TitleTab from "./TitleTab";
 import PatientSelect from "./PatientSelect";
+import DateSelectorSection from "./DateSelectorSection";
 
 const DataContainer = styled.div`
   width: 100%;
@@ -33,9 +34,14 @@ export default class AddTestView extends React.Component {
                 patients={[
                   { name: "John Smith", id: "1740982" },
                   { name: "Juan Mexican", id: "098765" },
+                  { name: "El Barto", id: "123456789" },
+                  { name: "El Barto", id: "123456789" },
                   { name: "El Barto", id: "123456789" }
                 ]}
+                onDoneClick={() => this.close()}
               />
+
+              <DateSelectorSection />
             </DataContainer>
           </div>
         ) : (

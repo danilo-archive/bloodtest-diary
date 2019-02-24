@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Label from "../../../Label";
 
 const XText = styled(Label)`
-  font-size: 3rem;
+  font-size: 1rem;
   color: white;
   top: 55%;
   left: 50%;
@@ -11,9 +11,10 @@ const XText = styled(Label)`
 
 const CloseDiv = styled.div`
   position: absolute;
+  top: 0;
   right: 0;
-  width: 10%;
-  height: 100%;
+  width: 5%;
+  height: 50%;
   background: red;
   cursor: pointer;
 `;
