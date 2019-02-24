@@ -100,16 +100,13 @@ io.on('connection',function(socket)
     *@param {Boolean} anydayTestsOnly - if unscheduled test to return
     **/
     socket.on('getTestsInWeek',async (date,anydayTestsOnly=false) => {
-        console.log(date);
         let response = await queryController.getTestWithinWeek(date);
-        console.log(response);
         socket.emit('getTestsInWeekResponse', response);
     });
 
     socket.on('getOverdueTests', async () => {
       let sql = `Select * From Test Where first_due_date < CURDATE() AND completed_status='no' `
       let response = await queryController.selectQueryDatabase(sql)
-      console.log(response);
       socket.emit('getOverdueTestsResponse', response);
     });
 
@@ -120,7 +117,7 @@ io.on('connection',function(socket)
         // TODO change test status, if success, return testId, testDueDate and newStatus
         console.log("test");
         socket.emit('testStatusChange', testId, newStatus);
-        io.in("main_window").emit('testStatusChange', testId, newStatus);
+        io.in("main_page").emit('testStatusChange', testId, newStatus);
     });
 });
 
