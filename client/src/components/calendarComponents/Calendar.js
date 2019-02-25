@@ -32,7 +32,6 @@ function getCalendar(date){
   let currentMonth = getMonthOf(date);
   let firstDay = getFirstDayOf(currentYear, currentMonth); //first week day of the month
   let lastDay = getDaysInMonth(currentYear, currentMonth); //days in the month
-  console.log(currentYear,currentMonth,"first day: "+days[firstDay],"total days: "+lastDay);
   let prevMonthLastDay = getDaysInMonth(currentYear, currentMonth-1);
   let arrCalendar = [];
   let calendar = [];
@@ -78,6 +77,8 @@ class CalendarTable extends Component {
     this.nextMonth = this.nextMonth;
     this.prevMonth = this.prevMonth;
     this.getDaysInMonth = getDaysInMonth;
+    this.returnDate = this.returnDate;
+
     this.prevMonth = () => {
       let date = this.state.date;
       let newDate = new Date(date.setMonth(date.getMonth() - 1));
@@ -86,14 +87,17 @@ class CalendarTable extends Component {
     };
     this.nextMonth = () => {
       let date = this.state.date;
-      let newDate = new Date(date.setMonth(date.getMonth() - 1));
+      let newDate = new Date(date.setMonth(date.getMonth() + 1));
       this.setState({date: newDate,
                      calendar: getCalendar(newDate)})
     };
     this.selectDay = (day) => {
-      console.log(this.date.getFullYear() + "-" + (this.date.getMonth()+1) + "-" + day);
-      this.setState({selected: day});
+      let date = this.state.date;
+      this.setState({selected: `${date.getFullYear()}-${date.getMonth()}-${day}`});
     };
+    this.returnDate = () => {
+      return this.state.selected;
+    }
   }
   
   render() {
