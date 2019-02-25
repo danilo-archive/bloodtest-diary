@@ -79,6 +79,7 @@ const Container = styled.div`
   }
 
   .scrollButtons {
+    background-color: #f4f9fd;
     padding: 4px;
     width: 100px;
 
