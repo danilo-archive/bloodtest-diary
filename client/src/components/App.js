@@ -7,7 +7,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <AddTestView />
+        <AddTestView selectedDate="2-3-2015" />
       </div>
     );
   }
