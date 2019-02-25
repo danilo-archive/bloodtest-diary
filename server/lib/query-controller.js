@@ -1,6 +1,24 @@
 const databaseController = require('./db_controller/db-controller.js');
 
 /**
+ * Get the patient given its patient number
+ * @param {string} patient_no the patient number
+ */
+async function getPatient(patient_no) {
+  const sql = `SELECT * FROM Patient WHERE patient_no = '${patient_no}';`
+  return await selectQueryDatabase(sql);
+}
+
+/**
+ * Get the lab given its lab id
+ * @param {string} lab_id the lab id
+ */
+async function getLab(lab_id) {
+  const sql = `SELECT * FROM Laboratory WHERE lab_id = '${lab_id}';`
+  return await selectQueryDatabase(sql);
+}
+
+/**
 * Get all the patients from the database
 * @return {JSON} result of the query
 **/
@@ -154,13 +172,14 @@ async function selectQueryDatabase(sql)
   return response;
 }
 
-
 module.exports = {
-    getAllPatients,
-    getAllTests,
-    getTestsOfPatient,
-    getAllTestsOnDate,
-    getOverdueTests,
-    changeTestStatus,
-    getTestWithinWeek,
+  getLab,
+  getPatient,
+  getAllPatients,
+  getAllTests,
+  getTestsOfPatient,
+  getAllTestsOnDate,
+  getOverdueTests,
+  changeTestStatus,
+  getTestWithinWeek,
 };
