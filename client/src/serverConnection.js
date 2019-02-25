@@ -103,7 +103,7 @@ class ServerConnect {
         //this.socket.on("getAllPatientsResponse", res => {
         //    callback(res);
         //});
-        let mockedData = [{patient_name: "John", patient_surname: "Doe", patient_no: 1},
+        let mockedData = [{patient_name: "John", patient_surname: "Doe", patient_no: 607239},
                           {patient_name: "John", patient_surname: "Snow", patient_no: 2},
                           {patient_name: "John", patient_surname: "Snow", patient_no: 3},
                           {patient_name: "ReallyLongName", patient_surname: "ReallyLongSurname", patient_no: 4},
@@ -186,9 +186,8 @@ class ServerConnect {
         });
     }
 
-    addTest(patientId, date, frequency=""){
-        let dateString = formatDate(date);
-        this.socket.emit("addTest", patientId, dateString, frequency);
+    addTest(patientId, date, notes, frequency=""){
+        this.socket.emit("addTest", patientId, date, notes, frequency);
     }
 
     changeTestStatus(testId, newStatus){

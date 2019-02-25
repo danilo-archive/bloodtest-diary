@@ -45,12 +45,14 @@ export default class AddTestView extends React.Component {
   };
   onDoneClick = () => {
     if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
+      this.serverConnect.addTest(this.state.selectedID, this.state.selectedDate, this.state.observations);
       alert(
         `Patient ID: ${this.state.selectedID} \nObservations: ${
           this.state.observations
         }\nScheduled Date: ${this.state.selectedDate}`
       );
       this.setState({ open: false });
+      this.props.closeModal();
     } else {
       alert("Please ensure you have selected all the relevant fields");
     }

@@ -26,7 +26,7 @@ const MonthDaySection = props => {
           top="97%"
           size="40px"
           left="90%"
-          onClick={() => this.props.openModal(formatDate(props.date))}
+          onClick={() => props.openModal(formatDate(props.date))}
         />
       </MonthDayDiv>
     </>

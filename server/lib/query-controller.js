@@ -53,10 +53,12 @@ async function getOverdueTests()
 }
 
 
-async function addTest(patient_no, date, frequency){
+async function addTest(patient_no, date, notes, frequency){
     let today = utils.formatDate(new Date());
+    date = utils.formatDate(new Date(date));
     let values = ``;
-    let sql =`INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date) VALUES (${patient_no}, ${today}, ${date}, 'weekly', 1, 'in review', NULL);`;
+    console.log({today, date});
+    let sql =`INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date, notes) VALUES (${patient_no}, ${today}, ${date}, 'weekly', 1, 'in review', NULL, '${notes}');`;
     console.log(sql);
     let response = await databaseController.insertQuery(sql);
     console.log(response);

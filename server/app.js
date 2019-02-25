@@ -105,8 +105,8 @@ io.on('connection',function(socket)
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 
-    socket.on("addTest", async (patientId, date, frequency) => {
-        let response = await queryController.addTest(patientId, date, frequency);
+    socket.on("addTest", async (patientId, date, notes, frequency) => {
+        let response = await queryController.addTest(patientId, date, notes, frequency);
         if (response.success){
             socket.emit("testAdded", response.response);
             socket.in("main_page").emit("testAdded", response.response)
