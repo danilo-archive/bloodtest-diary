@@ -1,4 +1,5 @@
 const databaseController = require('./db_controller/db-controller.js');
+const utils = require("./utils.js");
 
 /**
 * Get all the patients from the database
@@ -53,13 +54,14 @@ async function getOverdueTests()
 
 
 async function addTest(patient_no, date, frequency){
-    let today = new Date();
-    let values = `(${patient_no}, ${today}, ${date}, "weekly", "in review", NULL)`
-    let sql =`INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date) VALUES ${values}`;
-
+    let today = utils.formatDate(new Date());
+    let values = ``;
+    let sql =`INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date) VALUES (${patient_no}, ${today}, ${date}, 'weekly', 1, 'in review', NULL);`;
+    console.log(sql);
     let response = await databaseController.insertQuery(sql);
-    if (response.query === "OK"){
-        return {success: true, response: response.affectedRows};
+    console.log(response);
+    if (response.status == "OK"){
+        return {success: true};
     }else {
         return {success: false};
     }

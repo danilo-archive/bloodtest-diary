@@ -31,24 +31,26 @@ class Dashboard extends Component {
 
       this.handleNext = this.handleNext.bind(this);
       this.handlePrevious = this.handlePrevious.bind(this);
+      this.test = this.test.bind(this);
   }
 
   initCallbacks(){
       this.initOnTestAdded();
       this.initOnTestStatusChange();
-
   }
 
   initOnTestAdded(){
       this.serverConnect.setOnTestAdded( newTest => {
-         let dueDate = newTest.first_due_date;
+          // TODO change db response
+         /*let dueDate = newTest.first_due_date;
          for (let i = 0; i < this.state.weekDays.length; ++i){
              if (dueDate === this.state.weekDays[i]){
                  this.state.calendar[i].push(newTest);
                  this.forceUpdate();
                  return;
              }
-         }
+         }*/
+        this.updateDashboard();
       });
   }
 
@@ -134,11 +136,7 @@ class Dashboard extends Component {
 
   updateDashboard(){
       this.serverConnect.getTestsInWeek(this.state.weekDays[0], res => {
-          console.log(res);
-          this.state.ongoingTests = res[5];
-          this.state.calendar = res.slice(0, 5);
-          this.state.dashboardReady = true;
-          this.forceUpdate();
+          this.setState({ ongoingTests: res[5], calendar: res.slice(0, 5), dashboardReady: true});
       });
   }
 
@@ -188,6 +186,10 @@ class Dashboard extends Component {
   testReact(event){
       this.serverConnect.changeStatus(1, "late");
   }
+  test(event){
+      let today = new Date();
+      this.serverConnect.addTest(607239, today);
+  }
 
 
   render() {
@@ -206,7 +208,7 @@ class Dashboard extends Component {
           <div className={"rightSideDash"}>
             <div className={"navbar"}>
               <Navbar
-                  onPrev = {this.handlePrevious}
+                  onPrev = {this.test}
                   onNext = {this.handleNext}
               />
             </div>

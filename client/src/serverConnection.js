@@ -187,7 +187,8 @@ class ServerConnect {
     }
 
     addTest(patientId, date, frequency=""){
-        this.socket.emit("addTest", patientId, date, frequency);
+        let dateString = formatDate(date);
+        this.socket.emit("addTest", patientId, dateString, frequency);
     }
 
     changeTestStatus(testId, newStatus){
