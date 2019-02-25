@@ -35,6 +35,7 @@ const DoneButton = styled.button`
   font-size: 1.25rem;
   cursor: pointer;
   outline: none;
+  border-radius: 0;
 `;
 export default class PatientSelect extends React.Component {
   state = { showID: false, patients: this.props.patients };

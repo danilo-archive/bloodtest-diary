@@ -6,6 +6,7 @@ import PatientSelect from "./PatientSelect";
 import DateSelectorSection from "./DateSelectorSection";
 
 const DataContainer = styled.div`
+  position: relative;
   width: 100%;
   height: 88%;
   background: rgba(0, 0, 0, 0);
