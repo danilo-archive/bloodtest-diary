@@ -10,9 +10,7 @@
   flex-direction: row;
   justify-content: ;
   align-items: flex-end;
-
 }
-
 
 .rightSideDash {
   border: red 0px solid;
@@ -38,7 +36,7 @@
   justify-content: flex-start;
   align-items: stretch ;
 
-  flex-grow: 4;
+  flex-grow: 1;
   flex-shrink: 1;
 }
 
@@ -46,15 +44,15 @@
 .navbar {
   border: #839595 3px solid;
   border-radius: 10px;
-  margin-left: 0.25%;
+  margin-left: 0.5%;
   margin-bottom: 9px;
 
-  max-height: 250px;
+  max-height: 225px;
   min-height: 200px;
   width: auto;
 
   flex-grow: 1;
-  flex-shrink: 2;
+  flex-shrink: 1;
 
   overflow: scroll;
 }
@@ -63,15 +61,15 @@
   border: #839595 3px solid;
   border-radius: 10px;
   padding: 4px;
-  margin-right: 0.25%;
+  margin-right: 0.5%;
 
   min-width: 150px;
-  max-width: 350px;
+  max-width: 325px;
 
   overflow: hidden;
 
   flex-grow: 1;
-  flex-shrink: 4;
+  flex-shrink: 20;
   align-self: stretch;
 }
 
@@ -79,8 +77,8 @@
   border: #839595 3px solid;
   border-radius: 10px;
   padding: 4px;
-  margin-right: 0.25%;
-  margin-left: 0.25%;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
 
   width: 200px;
   overflow: hidden;
@@ -92,7 +90,7 @@
   border: #839595 3px solid;
   border-radius: 10px;
   padding: 4px;
-  margin-left: 1.5%;
+  margin-left: 0.5%;
 
   overflow: hidden;
 
@@ -100,7 +98,7 @@
   width: auto;
 
   min-width: 150px;
-  max-width: 350px;
+  max-width: 325px;
 
   flex-grow: 1;
   flex-shrink: 1;
