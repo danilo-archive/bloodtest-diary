@@ -31,17 +31,21 @@ const arrColspan = 1;
 const monthColspan = 5;
 
 class CalendarHeader extends React.Component{
+    constructor(props){
+        super(props);
+        let currentDate = this.props.currentDate;
+        this.state = {date: currentDate};
+        this.nextMonth = () => props.nextMonth();
+        this.prevMonth = () => props.prevMonth();
+    }
     render(){
-        let date = this.props.currentDate;
-        let next = this.props.nextMonth;
-        let prev = this.props.prevMonth;
         return(
             <tr>
-                <td colSpan={arrColspan} className={'arrow'} /*onClick={() => prev()}*/>
+                <td colSpan={arrColspan} className={'arrow'} onClick={this.prevMonth}>
                     <button>&lt;</button>
                 </td>
-                <td colSpan={monthColspan} className={'date'}>{getMonthAndYear(date)}</td>
-                <td colSpan={arrColspan} className={'arrow'} onClick={() => next()}>
+                <td colSpan={monthColspan} className={'date'}>{getMonthAndYear(this.state.date)}</td>
+                <td colSpan={arrColspan} className={'arrow'} onClick={this.nextMonth}>
                     <button>&gt;</button>
                 </td>
             </tr>

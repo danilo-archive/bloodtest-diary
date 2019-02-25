@@ -4,7 +4,6 @@ import DayCell from "./DayCell.js";
 import CalendarHeader from "./CalendarHeader.js";
 
 const WEEK_DAYS = 7;
-const CALENDAR_SIZE = 35;
 
 function getDaysInMonth(year, month) {
   return new Date(year, month, 0).getDate();
@@ -15,19 +14,18 @@ function getYearOf(date) {
 }
 
 function getMonthOf(date) {
-  return date.getMonth() + 1;
+  return date.getMonth();
 }
 
 function getFirstDayOf(year, month) {
   return new Date(year, month, 1).getDay();
 }
 
-let days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+let days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-var date;
+var dayBelongsToCurrentMonth = false;
 
-function getCalendar() {
-  date = new Date();
+function getCalendar(date) {
   let currentYear = getYearOf(date);
   let currentMonth = getMonthOf(date);
   let firstDay = getFirstDayOf(currentYear, currentMonth); //first week day of the month
@@ -35,6 +33,7 @@ function getCalendar() {
   let prevMonthLastDay = getDaysInMonth(currentYear, currentMonth - 1);
   let arrCalendar = [];
   let calendar = [];
+  let whiteCells = 0;
 
   for (let i = 0; i < firstDay; ++i) {
     arrCalendar.unshift(prevMonthLastDay - i);
@@ -44,11 +43,15 @@ function getCalendar() {
     arrCalendar.push(++i);
   }
 
-  for (let i = lastDay; i < CALENDAR_SIZE; ++i) {
+  whiteCells = WEEK_DAYS - (arrCalendar.length % WEEK_DAYS);
+
+  for (let i = lastDay; whiteCells > 0; ++i) {
     arrCalendar.push(i - lastDay + 1);
+    whiteCells--;
   }
 
-  let rows = arrCalendar.length % WEEK_DAYS;
+  let rows = arrCalendar.length / WEEK_DAYS;
+
   for (let i = 0; i < rows; ++i) {
     calendar[i] = new Array(WEEK_DAYS);
     for (let j = 0; j < WEEK_DAYS; j++) {
@@ -58,50 +61,54 @@ function getCalendar() {
   return calendar;
 }
 
-function prevMonth() {
-  date.setMonth(date.getMonth() - 1);
-  console.log(date);
-}
-
-function nextMonth() {
-  date.setMonth(date.getMonth() + 1);
-  console.log(date);
-}
-
-var dayBelongsToCurrentMonth = false;
-
 class CalendarTable extends Component {
   constructor(props) {
     super(props);
+    let currentDate = new Date();
     this.state = {
-      calendar: getCalendar(),
-      date: date,
+      date: currentDate,
+      calendar: getCalendar(currentDate),
       selected: null
+    };
+
+    this.select = this.select;
+    this.nextMonth = this.nextMonth;
+    this.prevMonth = this.prevMonth;
+    this.getDaysInMonth = getDaysInMonth;
+    this.returnDate = this.returnDate;
+
+    this.prevMonth = () => {
+      let date = this.state.date;
+      let newDate = new Date(date.setMonth(date.getMonth() - 1));
+      this.setState({ date: newDate, calendar: getCalendar(newDate) });
+    };
+    this.nextMonth = () => {
+      let date = this.state.date;
+      let newDate = new Date(date.setMonth(date.getMonth() + 1));
+      this.setState({ date: newDate, calendar: getCalendar(newDate) });
+    };
+    this.selectDay = day => {
+      let date = this.state.date;
+      this.setState({
+        selected: `${date.getFullYear()}-${date.getMonth()}-${day}`
+      });
+      this.props.onDateSelect(
+        `${date.getFullYear()}-${date.getMonth() + 1}-${day}`
+      );
+    };
+    this.returnDate = () => {
+      return this.state.selected;
     };
   }
 
-  onDayClicked = (day, belongs) => {
-    console.log([day, belongs]);
-    this.props.onDayClicked(day);
-  };
   render() {
     return (
       <table id={"daysTable"} cellPadding={0} cellSpacing={0}>
         <thead>
           <CalendarHeader
             currentDate={this.state.date}
-            prevMonth={() =>
-              this.setState({
-                date: prevMonth()
-                /*calendar: getCalendar()*/
-              })
-            }
-            nextMonth={() =>
-              this.setState({
-                date: nextMonth()
-                /*calendar: getCalendar()*/
-              })
-            }
+            prevMonth={this.prevMonth}
+            nextMonth={this.nextMonth}
           />
           <tr>
             {days.map(day => {
@@ -126,9 +133,7 @@ class CalendarTable extends Component {
                     >
                       {
                         <DayCell
-                          onClick={day =>
-                            this.onDayClicked(day, dayBelongsToCurrentMonth)
-                          }
+                          selectDay={this.selectDay}
                           dayOfMonth={day}
                           isFromThisMonth={dayBelongsToCurrentMonth}
                         />
