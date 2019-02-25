@@ -34,7 +34,7 @@ function isJSON(data) {
         const json = JSON.parse(data);
         return json;
     } catch (e) {
-        console.error(`The file at ${path} is not in JSON format`);
+        console.error(`The file is not in JSON format`);
         return null;
     }
 }
