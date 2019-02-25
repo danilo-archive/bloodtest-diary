@@ -34,7 +34,25 @@ class Dashboard extends Component {
   }
 
   initCallbacks(){
-      //console.log(this.state.calendar);
+      this.initOnTestAdded();
+      this.initOnTestStatusChange();
+
+  }
+
+  initOnTestAdded(){
+      this.serverConnect.setOnTestAdded( newTest => {
+         let dueDate = newTest.first_due_date;
+         for (let i = 0; i < this.state.weekDays.length; ++i){
+             if (dueDate === this.state.weekDays[i]){
+                 this.state.calendar[i].push(newTest);
+                 this.forceUpdate();
+                 return;
+             }
+         }
+      });
+  }
+
+  initOnTestStatusChange(){
       this.serverConnect.setOnTestStatusChange((id, status) => {
           // check if it's overdue
           for (var i = 0; i < this.state.overdueTests.length; ++i){
