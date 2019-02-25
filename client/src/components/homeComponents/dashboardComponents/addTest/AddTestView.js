@@ -12,14 +12,10 @@ const DataContainer = styled.div`
   background: rgba(0, 0, 0, 0);
 `;
 export default class AddTestView extends React.Component {
-  state = { open: true };
-  close = () => {
-    this.setState({ open: false });
-  };
+
   render() {
     return (
       <>
-        {this.state.open ? (
           <div
             style={{
               width: "35rem",
@@ -27,7 +23,7 @@ export default class AddTestView extends React.Component {
               background: "rgba(244, 244, 244,0.7)"
             }}
           >
-            <TitleTab onClose={this.close} main={true}>
+            <TitleTab onClose={this.props.closeModal} main={true}>
               Add Appointments
             </TitleTab>
             <DataContainer>
@@ -39,15 +35,12 @@ export default class AddTestView extends React.Component {
                   { name: "El Barto", id: "123456789" },
                   { name: "El Barto", id: "123456789" }
                 ]}
-                onDoneClick={() => this.close()}
+                onDoneClick={this.props.closeModal}
               />
 
               <DateSelectorSection />
             </DataContainer>
           </div>
-        ) : (
-          <></>
-        )}
       </>
     );
   }

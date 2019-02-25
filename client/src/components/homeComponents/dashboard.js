@@ -6,7 +6,8 @@ import WeeklyCalendar from "./dashboardComponents/weeklyCalendar";
 import OngoingWeekly from "./dashboardComponents/ongoingWeekly";
 import Navbar from "./dashboardComponents/navbar";
 import arrow from "../../images/arrow.png";
-
+import Modal from 'react-responsive-modal';
+import AddTest from "./dashboardComponents/addTest/AddTestView";
 import './dashboard.css';
 
 // TODO remove forceUpdates and use setState instead
@@ -20,7 +21,8 @@ class Dashboard extends Component {
           weekDays: [undefined, undefined, undefined, undefined, undefined],
           overdueTests: {},
           ongoingTests: {},
-          calendar: {}
+          calendar: {},
+          openModal: false
       };
       this.serverConnect = props.serverConnect;
 
@@ -31,6 +33,8 @@ class Dashboard extends Component {
 
       this.handleNext = this.handleNext.bind(this);
       this.handlePrevious = this.handlePrevious.bind(this);
+      this.onOpenModal = this.onOpenModal.bind(this);
+      this.onCloseModal = this.onCloseModal.bind(this);
   }
 
   initCallbacks(){
@@ -171,48 +175,60 @@ class Dashboard extends Component {
       this.serverConnect.changeStatus(1, "late");
   }
 
+  onOpenModal = () => {
+    this.setState({ openModal: true });
+  };
+
+  onCloseModal = () => {
+    this.setState({ openModal: false });
+  };
+
 
   render() {
     if (this.state.dashboardReady && this.state.overdueReady){
       return (
 
         <div className={"dashboard"}>
-        <div className={"overduePatients"}>
-          <OverduePatients
-            notificationNumber={
-                this.state.overdueTests.length
-            }
-            anytimeAppointments={this.state.overdueTests}
-          />
-        </div>
-          <div className={"rightSideDash"}>
-            <div className={"navbar"}>
-              <Navbar
-                  onPrev = {this.handlePrevious}
-                  onNext = {this.handleNext}
-              />
-            </div>
-            <div className={"bottomSideDash"}>
-              <div className={"calendar"}>
-                <WeeklyCalendar
-                  calendar = {this.state.calendar}
-                  weekDays = {this.state.weekDays}
-                />
-              </div>
-              <div className={"ongoingWeekly"}>
-                <OngoingWeekly
-                  currentMonday = {this.currentMonday}
-                  notificationNumber={
-                    this.state.ongoingTests.length
-                  }
-                  anytimeAppointments={this.state.ongoingTests}
-                />
-              </div>
-            </div>
-
+          <div className={"overduePatients"}>
+            <OverduePatients
+              notificationNumber={
+                  this.state.overdueTests.length
+              }
+              anytimeAppointments={this.state.overdueTests}
+            />
           </div>
+            <div className={"rightSideDash"}>
+              <div className={"navbar"}>
+                <Navbar
+                    onPrev = {this.handlePrevious}
+                    onNext = {this.handleNext}
+                />
+              </div>
+              <div className={"bottomSideDash"}>
+                <div className={"calendar"}>
+                  <WeeklyCalendar
+                    calendar = {this.state.calendar}
+                    weekDays = {this.state.weekDays}
+                    openModal= {this.onOpenModal}
+                  />
+                </div>
+                <div className={"ongoingWeekly"}>
+                  <OngoingWeekly
+                    currentMonday = {this.currentMonday}
+                    notificationNumber={
+                      this.state.ongoingTests.length
+                    }
+                    anytimeAppointments={this.state.ongoingTests}
+                  />
+                </div>
+              </div>
 
-        </div>
+            </div>
+            <Modal open={this.state.openModal} onClose={this.onCloseModal} showCloseIcon={false} style={modalStyles} center>
+              <AddTest closeModal= {this.onCloseModal}/>
+
+            </Modal>
+          </div>
 
       );
    }else{
@@ -222,5 +238,8 @@ class Dashboard extends Component {
  }
 }
 
+const modalStyles = {
+    padding: 0
+};
 
 export default Dashboard;
