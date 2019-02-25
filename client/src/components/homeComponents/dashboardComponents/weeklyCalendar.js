@@ -34,6 +34,7 @@ class WeeklyCalendar extends React.Component {
             dayName = {"Monday"}
             anytimeAppointments={this.props.calendar[0]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+            openModal={this.props.openModal}
           />
           <CalendarDay
             notificationNumber={

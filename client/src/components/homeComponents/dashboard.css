@@ -63,6 +63,8 @@
   padding: 4px;
   margin-right: 0.5%;
 
+  background-color: ;
+
   min-width: 150px;
   max-width: 325px;
 
@@ -91,6 +93,8 @@
   border-radius: 10px;
   padding: 4px;
   margin-left: 0.5%;
+
+  background-color: ;
 
   overflow: hidden;
 

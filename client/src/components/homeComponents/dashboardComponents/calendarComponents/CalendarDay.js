@@ -51,6 +51,7 @@ class CalendarDay extends React.Component {
           <MonthDaySection
             dayNumber={this.props.date.getDate()}
             monthName={monthNames[this.props.date.getMonth()]}
+            openModal={this.props.openModal}
           />
           <ScrollBox>
             <AppointmentSection
