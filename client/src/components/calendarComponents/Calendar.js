@@ -92,6 +92,9 @@ class CalendarTable extends Component {
       this.setState({
         selected: `${date.getFullYear()}-${date.getMonth()}-${day}`
       });
+      this.props.onDateSelect(
+        `${date.getFullYear()}-${date.getMonth() + 1}-${day}`
+      );
     };
     this.returnDate = () => {
       return this.state.selected;

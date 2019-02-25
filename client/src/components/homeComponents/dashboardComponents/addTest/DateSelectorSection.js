@@ -37,6 +37,11 @@ export default class DateSelectorSection extends React.Component {
   onDayClicked = day => {
     this.setState({ showCalendar: false });
   };
+
+  onDateSelect = selectedDate => {
+    this.setState({ showCalendar: false, selectedDate });
+    this.props.onDateSelect(selectedDate);
+  };
   render() {
     return (
       <>
@@ -45,12 +50,12 @@ export default class DateSelectorSection extends React.Component {
           <br />
           <input
             type="text"
-            placeholder="Select Date..."
             onClick={this.onInputClick}
-            text={this.state.selectedDate}
+            value={this.state.selectedDate}
+            readOnly
           />
           {this.state.showCalendar ? (
-            <CalendarTable onDayClicked={day => this.onDayClicked(day)} />
+            <CalendarTable onDateSelect={day => this.onDateSelect(day)} />
           ) : (
             <></>
           )}

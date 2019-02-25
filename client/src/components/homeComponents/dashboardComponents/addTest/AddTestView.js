@@ -16,6 +16,21 @@ export default class AddTestView extends React.Component {
   close = () => {
     this.setState({ open: false });
   };
+  onDateSelect = selectedDate => {
+    this.setState({ selectedDate });
+  };
+  onDoneClick = () => {
+    if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
+      alert(
+        `Patient ID: ${this.state.selectedID} \nObservations: ${
+          this.state.observations
+        }\nScheduled Date: ${this.state.selectedDate}`
+      );
+      this.setState({ open: false });
+    } else {
+      alert("Please ensure you have selected all the relevant fields");
+    }
+  };
   render() {
     return (
       <>
@@ -39,17 +54,12 @@ export default class AddTestView extends React.Component {
                   { name: "El Barto", id: "123456789" },
                   { name: "El Barto", id: "123456789" }
                 ]}
-                onDoneClick={() =>
-                  alert(
-                    `Patient ID: ${this.state.selectedID} \n Observations: ${
-                      this.state.observations
-                    }`
-                  )
-                }
+                onDoneClick={this.onDoneClick}
                 onSelectClick={id => this.setState({ selectedID: id })}
               />
 
               <DateSelectorSection
+                onDateSelect={day => this.onDateSelect(day)}
                 onObservationsChange={observations =>
                   this.setState({ observations })
                 }
