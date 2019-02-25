@@ -7,7 +7,7 @@ import Label from "../../../Label";
 import Switch from "../../../switch/Switch";
 import PatientBox from "./PatientBox";
 import ScrollBox from "../calendarComponents/ScrollBox";
-
+import { WaveLoading } from "styled-spinkit";
 const Container = styled.div`
   height: 100%;
   width: 50%;
@@ -41,7 +41,8 @@ export default class PatientSelect extends React.Component {
   state = {
     showID: true,
     patients: this.props.patients,
-    selectedPatientID: ""
+    selectedPatientID: "",
+    update: false
   };
 
   filter = value => {
@@ -52,6 +53,9 @@ export default class PatientSelect extends React.Component {
     });
   };
   render() {
+    if (!this.state.updated && this.props.patients) {
+      this.setState({ updated: true, patients: this.props.patients });
+    }
     return (
       <Container>
         <TitleTab color="#0b999d">Patient</TitleTab>
@@ -74,20 +78,46 @@ export default class PatientSelect extends React.Component {
           <Switch checked="checked" />
         </ShowID>
         <hr />
-        <ScrollBox style={{ width: "100%", height: "44%" }}>
+        <ScrollBox
+          style={{
+            width: "100%",
+            height: "44%"
+          }}
+        >
           <br />
-          {this.state.patients.map(patient => (
-            <PatientBox
-              patientName={patient.name}
-              patientID={patient.id}
-              showID={this.state.showID}
-              selected={this.state.selectedPatientID === patient.id}
-              onSelectClick={id => {
-                this.setState({ selectedPatientID: id });
-                this.props.onSelectClick(id);
+          {this.props.patients && this.state.updated ? (
+            this.state.patients.map(patient => (
+              <PatientBox
+                patientName={patient.name}
+                patientID={patient.id}
+                showID={this.state.showID}
+                selected={this.state.selectedPatientID === patient.id}
+                onSelectClick={id => {
+                  this.setState({ selectedPatientID: id });
+                  this.props.onSelectClick(id);
+                }}
+              />
+            ))
+          ) : (
+            <div
+              style={{
+                width: "100%",
+
+                textAlign: "center"
               }}
-            />
-          ))}
+            >
+              <WaveLoading />
+              <Label
+                style={{
+                  position: "relative",
+                  transform: "translate(0,0)",
+                  margin: "auto"
+                }}
+              >
+                Fetching Patients
+              </Label>
+            </div>
+          )}
         </ScrollBox>
         <DoneButton onClick={this.props.onDoneClick}>Done</DoneButton>
       </Container>

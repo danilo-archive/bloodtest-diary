@@ -4,6 +4,7 @@ import styled from "styled-components";
 import TitleTab from "./TitleTab";
 import PatientSelect from "./PatientSelect";
 import DateSelectorSection from "./DateSelectorSection";
+import { getServerConnect } from "../../../../serverConnection.js";
 
 const DataContainer = styled.div`
   position: relative;
@@ -12,7 +13,30 @@ const DataContainer = styled.div`
   background: rgba(0, 0, 0, 0);
 `;
 export default class AddTestView extends React.Component {
-  state = { open: true, selectedID: "", selectedDate: "", observations: "" };
+  state = {
+    open: true,
+    selectedID: "",
+    selectedDate: "",
+    observations: "",
+    allPatients: ""
+  };
+  constructor(props) {
+    super(props);
+    this.serverConnect = getServerConnect();
+    this.getAllPatients();
+  }
+
+  getAllPatients = () => {
+    this.serverConnect.getAllPatients(res => {
+      res = res.map(patient => {
+        return {
+          name: `${patient.patient_name} ${patient.patient_surname}`,
+          id: `${patient.patient_no}`
+        };
+      });
+      this.setState({ allPatients: res });
+    });
+  };
   close = () => {
     this.setState({ open: false });
   };
@@ -47,13 +71,7 @@ export default class AddTestView extends React.Component {
             </TitleTab>
             <DataContainer>
               <PatientSelect
-                patients={[
-                  { name: "John Smith", id: "1740982" },
-                  { name: "Juan Mexican", id: "098765" },
-                  { name: "El Barto", id: "123456789" },
-                  { name: "El Barto", id: "123456789" },
-                  { name: "El Barto", id: "123456789" }
-                ]}
+                patients={this.state.allPatients}
                 onDoneClick={this.onDoneClick}
                 onSelectClick={id => this.setState({ selectedID: id })}
               />
