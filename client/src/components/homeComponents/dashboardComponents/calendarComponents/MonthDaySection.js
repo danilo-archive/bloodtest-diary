@@ -6,8 +6,8 @@ import NotificationIcon from "./NotificationIcon";
 
 const MonthDayDiv = styled.div`
   padding-left: 35%;
-  width: 100%;
-  height: 22%;
+  width: auto;
+  height: 80px;
   background-color: #0b999d;
   display: flex;
   flex-direction: row;

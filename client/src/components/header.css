@@ -1,8 +1,9 @@
 #titlebar {
-  z-index: 1;
-  padding: 4px;
+  z-index: 100;
+  padding: 2px;
   display: block;
   position: fixed;
+  top: 0;
   height: 24px;
   width: 100%;
   background-color: #0b989d;

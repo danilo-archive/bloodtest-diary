@@ -11,6 +11,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+const queryController = require('./lib/query-controller.js');
 const CONFIG_FILE_PATH = __dirname + '/config/config.json';
 const jsonController = require('./lib/json-controller');
 const conf = jsonController.getJSON(CONFIG_FILE_PATH);
@@ -19,13 +20,37 @@ var authenticator = require("./lib/authenticator.js");
 
 http.listen(port);
 
+// to broadcast in room => io.in("room").emit("change", json);
 
 io.on('connection',function(socket)
 {
     console.log(`Socket ${socket.id} connected`);
+    socket.emit("connected");
 
     socket.on("disconnect", () => {
         console.log(`Socket ${socket.id} disconnected`);
+    });
+
+    socket.on("join", (oldRoom, room, reconnecting=false) => {
+        if (reconnecting){
+            if (socket.rooms[room] !== undefined){
+                return;
+            }
+        }
+        if (oldRoom !== room){
+            if (oldRoom !== ""){
+                socket.leave(oldRoom);
+                console.log(`Socket ${socket.id} left ${oldRoom}`);
+            }
+            socket.join(room);
+            console.log(`Socket ${socket.id} joined ${room}`);
+        }
+    });
+
+    // TODO remove
+    socket.on("testChange", (id, status) => {
+        console.log("arrived");
+        socket.emit("testStatusChange", id, status);
     });
 
     /**
@@ -33,52 +58,63 @@ io.on('connection',function(socket)
     * @param {username:username, password:password} credentials Hashed json of credentials
     * @return {Boolean} True if credentials are correct
     */
-    socket.on('log', (credentials) => {
+    socket.on('authenticate', (credentials) => {
         console.log(`Authentication request from ${socket.id}`);
         res = authenticator.canLogin(credentials,getUserInDatabase(credentials.username));
-        res_log = res ? "successful" : "unsuccesful";
-        console.log(`Authentication ${res_log}`);
-        socket.emit('auth', res);
+        console.log(`Authentication ${res ? "successful" : "unsuccesful"}`);
+        socket.emit('authenticationResponse', res);
     });
 
-    socket.on('getAllPatients', () => {
-        // TODO
-        // retrive all patients and return them as json
+    socket.on('getAllPatients', async () => {
+        let response = await queryController.getAllPatients();
+        socket.emit("getAllPatientsResponse", response);
     });
 
-    socket.on('getAllTests', () => {
-        // TODO
-        // retrieve all tests scheduled and return them as json
+    socket.on('getAllTests', async () => {
+        let response = await queryController.getAllTests();
+        socket.emit("getAllTestsResponse", response);
     });
 
-    socket.on('getTestsOfPatient', (patientId) => {
-        // TODO
-        // given the id of the patient, return all the tests scheduled
-        // for that patient as json
+    socket.on('getTestsOfPatient', async (patientId) => {
+        let response = await queryController.getTestsOfPatient(patientId);
+        socket.emit('getTestsOfPatientResponse', response);
     });
 
-    socket.on('getTestsOnDate', (date) => {
-        // TODO
-        // given a date, return all tests on that date as json
+    /**
+    *@param {String} date of type "yyyy-mm-dd"
+    **/
+    socket.on('getAllTestsOnDate', async (date) => {
+        let response = await queryController.getAllTestsOnDate(date);
+        socket.emit('getAllTestsOnDateResponse',response);
     });
 
-    socket.on('getTestsInWeek', (date, anydayTestsOnly=false) => {
-        // TODO
-        // given a date, retrieve the tests that are scheduled on that
-        // date week, and return them as json
-        // if anydayTestsOnly is true, return only the tests that don't have
-        // a particular day assigned
+    /**
+    *@param {String} date of type "yyyy-mm-dd"
+    *@param {Boolean} anydayTestsOnly - if unscheduled test to return
+    **/
+    socket.on('getTestsInWeek',async (date) => {
+        let response = await queryController.getTestWithinWeek(date);
+        socket.emit('getTestsInWeekResponse', response);
     });
 
-
-    socket.on('getOverdueTests', () => {
-        // TODO
-        // retrieve all overdue tests and return them as json
+    socket.on('getOverdueTests', async () => {
+        let response = await queryController.getOverdueTests();
+        socket.emit('getOverdueTestsResponse', response);
     });
 
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
+
+    socket.on('testStatusChange', async (testId, newStatus) => {
+        // TODO change test status, if success, return testId, testDueDate and newStatus
+        let response = await queryController.changeTestStatus(testId,newStatus);
+        console.log(response);
+        socket.emit('testStatusChange', testId, newStatus);
+        io.in("main_page").emit('testStatusChange', testId, newStatus);
+    });
 });
+
+
 
 
 /**

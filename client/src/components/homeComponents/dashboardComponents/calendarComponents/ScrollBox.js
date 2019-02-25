@@ -1,9 +1,7 @@
 import styled from "styled-components";
 
 export default styled.div`
-  margin: 0;
-  width: 100%;
-  height: 67%;
+  height: inherit;
+  width: inherit;
   overflow: scroll;
-  position: relative;
 `;

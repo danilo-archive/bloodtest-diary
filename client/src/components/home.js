@@ -1,29 +1,24 @@
-<<<<<<< HEAD:client/src/components/App.js
-import React, { Component } from "react";
-import Header from "./header.js";
-import "./App.css";
-
-import Login from "./login";
-import CalendarDay from "./calendar/CalendarDay";
-class App extends Component {
-=======
+import CalendarDay from "./homeComponents/dashboardComponents/calendarComponents/CalendarDay";
 import React, { Component } from 'react';
 import Header from './header.js';
+import Dashboard from './homeComponents/dashboard.js';
 import './home.css';
+import {getServerConnect} from "../serverConnection.js";
 
 class Home extends Component {
->>>>>>> 148e1ba24088907d0f1e16bc9d2b2d0bf8049597:client/src/components/home.js
+
+  constructor(props){
+      super(props);
+      this.serverConnect = getServerConnect();
+      this.serverConnect.joinMainPage();
+  }
+
   render() {
     return (
-      <div>
+      <div className={"home"}>
         <Header />
-<<<<<<< HEAD:client/src/components/App.js
-        <Login />
-=======
-        <h1>Hello</h1>
->>>>>>> 148e1ba24088907d0f1e16bc9d2b2d0bf8049597:client/src/components/home.js
+        <Dashboard serverConnect={this.serverConnect}/>
       </div>
-
     );
   }
 }

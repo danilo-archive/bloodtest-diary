@@ -7,17 +7,35 @@ import ScrollBox from "./ScrollBox";
 import AppointmentSection from "./AppointmentSection";
 
 const CalendarContainer = styled.div`
-  margin: 0.2%;
+  margin: 3px;
+  margin-bottom: 5px;
   padding: 0%;
-  width: 250px;
-  height: 450px;
+  width: 16vw;
+  height: inherit;
   background-color: white;
   padding: 0;
   position: relative;
-  border: solid 1px #646464;
+  border: solid 1px #839595;
+
+
 `;
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+];
 
 class CalendarDay extends React.Component {
+
+  constructor(props){
+      super(props);
+     /* this.state = {
+        notificationNumber: props.notificationNumber,
+        date: props.date,
+        dayName: props.dayName,
+        appointments: props.anytimeAppointments
+    };*/
+  }
+
+
   render() {
     return (
       <>
@@ -26,22 +44,18 @@ class CalendarDay extends React.Component {
             notificationNumber={
               this.props.notificationNumber
                 ? this.props.notificationNumber
-                : "1"
+                : "0"
             }
-            dayName={this.props.dayName || "Monday"}
+            dayName={this.props.dayName}
           />
           <MonthDaySection
-            dayNumber={this.props.dayNumber ? this.props.dayNumber : "01"}
-            monthName={this.props.monthName || "June"}
+            dayNumber={this.props.date.getDate()}
+            monthName={monthNames[this.props.date.getMonth()]}
           />
           <ScrollBox>
             <AppointmentSection
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
-            />
-            <AppointmentSection
-              type="Scheduled Appointments"
-              appointments={this.props.scheduledAppointments}
             />
           </ScrollBox>
         </CalendarContainer>
