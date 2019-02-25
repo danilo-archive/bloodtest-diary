@@ -8,6 +8,7 @@ const Heading = styled.h3`
   color: #646464;
   font-family: "Rajdhani", sans-serif;
   font-size: 150%;
+  overflow: hidden;
 `;
 
 export default props => {

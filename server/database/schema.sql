@@ -37,7 +37,7 @@ CREATE TABLE Patient (
 
 CREATE TABLE Carer (
     carer_id INTEGER AUTO_INCREMENT,
-    patient_no VARCHAR(10),
+    patient_no VARCHAR(10) NOT NULL,
     carer_name VARCHAR(255),
     carer_email VARCHAR(255),
     carer_phone VARCHAR(10),
