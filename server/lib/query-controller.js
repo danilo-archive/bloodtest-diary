@@ -51,6 +51,20 @@ async function getOverdueTests()
   return await selectQueryDatabase(sql);
 }
 
+
+async function addTest(patient_no, date, frequency){
+    let today = new Date();
+    let values = `(${patient_no}, ${today}, ${date}, "weekly", "in review", NULL)`
+    let sql =`INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date) VALUES ${values}`;
+
+    let response = await databaseController.insertQuery(sql);
+    if (response.query === "OK"){
+        return {success: true, response: response.affectedRows};
+    }else {
+        return {success: false};
+    }
+}
+
 /**
 * Change the status of the test in the database
 * @param {String} testId - id of a test to change
@@ -161,6 +175,7 @@ module.exports = {
     getTestsOfPatient,
     getAllTestsOnDate,
     getOverdueTests,
+    addTest,
     changeTestStatus,
     getTestWithinWeek,
 };

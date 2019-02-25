@@ -24,7 +24,12 @@ class ServerConnect {
             this.socket.emit("join", "", this.currentRoom, true);
         });
 
+        this.onTestAdded = undefined;
         this.onTestStatusChange = undefined;
+
+        this.socket.on("testAdded", newTest => {
+            this.onTestAdded(newTest);
+        });
 
         this.socket.on("testStatusChange", (id, status) => {
             console.log("here");
@@ -44,6 +49,10 @@ class ServerConnect {
 
     changeStatus(id, newStatus){
         this.socket.emit("testChange", id, newStatus);
+    }
+
+    setOnTestAdded(callback){
+        this.onTestAdded = callback;
     }
     setOnTestStatusChange(callback){
         console.log("set");
@@ -175,6 +184,10 @@ class ServerConnect {
             console.log(res.response);
             callback(res.response);
         });
+    }
+
+    addTest(patientId, date, frequency=""){
+        this.socket.emit("addTest", patientId, date, frequency);
     }
 
     changeTestStatus(testId, newStatus){
