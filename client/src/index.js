@@ -10,7 +10,7 @@ import { Route, Link, BrowserRouter as Router, Switch } from "react-router-dom";
 const routing = (
   <Router>
     <div className={"routes"}>
-      <Route exact path="/" component={App} />
+      <Route exact path="/" component={Login} />
       <Route path="/home" component={Home} />
     </div>
   </Router>
