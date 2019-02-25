@@ -18,7 +18,7 @@ DELETE FROM TokenControl;
 
 """
 
-patient_header = "INSERT INTO Patient (patient_no, patient_name, patient_surname, patient_email, patient_phone) VALUES "
+patient_header = "INSERT INTO Patient (patient_no, patient_name, patient_surname, patient_email, patient_phone, lab_id) VALUES "
 carer_header = "INSERT INTO Carer (patient_no, carer_name, carer_email, carer_phone, relationship) VALUES "
 lab_header = "INSERT INTO Laboratory (lab_id, lab_name, lab_email) VALUES "
 test_header = "INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date) VALUES "
@@ -37,11 +37,13 @@ phone_numbers = list(set(phone_numbers))
 
 # Generate a tuple of [added, first_due_date, completed_date]
 def generateDates():
-    year = 2018
+    year = 2019
+    month = randint(1,3)
     if (randint(0,3) == 0):
-        year = 2019
+        year = 2018
+        month = randint(10,12)
 
-    month = randint(1,12)
+    
     day = randint(1,28)
 
     added = str(year) + pad(month) + pad(day)
@@ -98,7 +100,7 @@ for num in patient_numbers:
     else:
         patients += "NULL"
 
-    patients += ");\n"
+    patients += ", " + str(randint(1,10)) + ");\n"
 
 print("Generated patients...")
 #####################################################

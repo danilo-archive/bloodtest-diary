@@ -10,11 +10,11 @@
  */ 
 
 const expect = require("chai").expect;
-const db_controller = require("../../lib/db_controller/db-controller");
+const db_controller = require("../../../../lib/db_controller/db-controller");
 
 // These are needed for setting up a testing environment.
-const databaseConfig = require("../../config/database");
-const Database = require("../../lib/db_controller/Database");
+const databaseConfig = require("../../../../config/database");
+const Database = require("../../../../lib/db_controller/Database");
 const dateFormat = require("dateformat");
 
 describe("Test main DB controller behaviour:", () => {
