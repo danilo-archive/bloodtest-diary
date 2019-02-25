@@ -46,7 +46,10 @@ function testUniqueness() {
             process.stdout.cursorTo(0);
             process.stdout.write("        " + (i / sorted.length * 100) + " %");
         }
-        
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
+        process.stdout.write("        100 %");
+
         if (sorted[i] === sorted[i+1]) {
             allUnique = false;
             break;
@@ -69,6 +72,6 @@ describe("Test token generator:", () => {
         it("Should return true - all tokens are unique.", (done) => {
             expect(testUniqueness()).to.be.true;
             done();
-        });
+        }).timeout(3000);
     });
 });
