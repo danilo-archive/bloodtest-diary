@@ -24,13 +24,13 @@ lab_header = "INSERT INTO Laboratory (lab_id, lab_name, lab_email) VALUES "
 test_header = "INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date) VALUES "
 
 patient_numbers = []
-for i in range(200):
+for i in range(500):
     patient_numbers.append(randint(1, 1000000))
 
 patient_numbers = list(set(patient_numbers))
 
 phone_numbers = []
-for i in range(300):
+for i in range(500):
     phone_numbers.append(randint(7000000000, 7999999999))
 
 phone_numbers = list(set(phone_numbers))
@@ -100,12 +100,12 @@ for num in patient_numbers:
     else:
         patients += "NULL"
 
-    patients += ", " + str(randint(1,10)) + ");\n"
+    patients += ", " + str(randint(1,20)) + ");\n"
 
 print("Generated patients...")
 #####################################################
 carers = ""
-for i in range(100):
+for i in range(200):
     i = str(i)
     pat_no = patient_numbers[randint(0, len(patient_numbers) - 1)]
     carers += carer_header  \
@@ -124,7 +124,7 @@ for i in range(100):
 print("Generated carers...")
 #####################################################
 labs = ""
-for i in range(1,11):
+for i in range(1,21):
     i = str(i)
     labs += lab_header  \
         + "(" + i \
@@ -134,7 +134,7 @@ for i in range(1,11):
 print("Generated labs...")
 #####################################################
 tests = ""
-for i in range(100):
+for i in range(400):
     pat_no = patient_numbers[randint(0, len(patient_numbers) - 1)]
     dates = generateDates()
     tests += test_header  \
@@ -142,7 +142,7 @@ for i in range(100):
         + ", " + dates[0]    \
         + ", " + dates[1]    \
         + ", 'weekly'"    \
-        + ", " + str(randint(1,10))
+        + ", " + str(randint(1,20))
 
     if (dates[2] == "NULL"):
         tests += ", 'no', NULL);\n"
