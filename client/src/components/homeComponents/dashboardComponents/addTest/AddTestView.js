@@ -16,7 +16,7 @@ export default class AddTestView extends React.Component {
   state = {
     open: true,
     selectedID: "",
-    selectedDate: "",
+    selectedDate: this.props.selectedDate,
     observations: "",
     allPatients: ""
   };
@@ -77,6 +77,7 @@ export default class AddTestView extends React.Component {
               />
 
               <DateSelectorSection
+                selectedDate={this.state.selectedDate}
                 onDateSelect={day => this.onDateSelect(day)}
                 onObservationsChange={observations =>
                   this.setState({ observations })

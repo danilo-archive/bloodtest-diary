@@ -29,7 +29,7 @@ const TextArea = styled.textarea`
 `;
 
 export default class DateSelectorSection extends React.Component {
-  state = { selectedDate: "", showCalendar: false };
+  state = { selectedDate: this.props.selectedDate, showCalendar: false };
   onInputClick = () => {
     this.setState({ showCalendar: true });
   };
