@@ -38,7 +38,11 @@ const DoneButton = styled.button`
   border-radius: 0;
 `;
 export default class PatientSelect extends React.Component {
-  state = { showID: false, patients: this.props.patients };
+  state = {
+    showID: true,
+    patients: this.props.patients,
+    selectedPatientID: ""
+  };
 
   filter = value => {
     this.setState({
@@ -65,17 +69,23 @@ export default class PatientSelect extends React.Component {
               margin: "0rem 1rem"
             }}
           >
-            Show ID
+            Hide ID
           </Label>
-          <Switch checked />
+          <Switch checked="checked" />
         </ShowID>
         <hr />
         <ScrollBox style={{ width: "100%", height: "44%" }}>
+          <br />
           {this.state.patients.map(patient => (
             <PatientBox
               patientName={patient.name}
               patientID={patient.id}
               showID={this.state.showID}
+              selected={this.state.selectedPatientID === patient.id}
+              onSelectClick={id => {
+                this.setState({ selectedPatientID: id });
+                this.props.onSelectClick(id);
+              }}
             />
           ))}
         </ScrollBox>

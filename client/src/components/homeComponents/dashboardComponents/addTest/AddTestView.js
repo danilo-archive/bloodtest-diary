@@ -12,7 +12,7 @@ const DataContainer = styled.div`
   background: rgba(0, 0, 0, 0);
 `;
 export default class AddTestView extends React.Component {
-  state = { open: true };
+  state = { open: true, selectedID: "", selectedDate: "", observations: "" };
   close = () => {
     this.setState({ open: false });
   };
@@ -39,10 +39,21 @@ export default class AddTestView extends React.Component {
                   { name: "El Barto", id: "123456789" },
                   { name: "El Barto", id: "123456789" }
                 ]}
-                onDoneClick={() => this.close()}
+                onDoneClick={() =>
+                  alert(
+                    `Patient ID: ${this.state.selectedID} \n Observations: ${
+                      this.state.observations
+                    }`
+                  )
+                }
+                onSelectClick={id => this.setState({ selectedID: id })}
               />
 
-              <DateSelectorSection />
+              <DateSelectorSection
+                onObservationsChange={observations =>
+                  this.setState({ observations })
+                }
+              />
             </DataContainer>
           </div>
         ) : (
