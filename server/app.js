@@ -67,7 +67,8 @@ io.on('connection',function(socket)
 
     socket.on('getAllPatients', async () => {
         let response = await queryController.getAllPatients();
-        socket.emit("getAllPatientsResponse", response);
+        console.log({response});
+        socket.emit("getAllPatientsResponse", response.response);
     });
 
     socket.on('getAllTests', async () => {

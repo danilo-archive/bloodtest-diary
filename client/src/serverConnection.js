@@ -99,11 +99,11 @@ class ServerConnect {
      * TODO eventually change name of the callback.
      */
     getAllPatients(callback){
-        //this.socket.emit('getAllPatients');
-        //this.socket.on("getAllPatientsResponse", res => {
-        //    callback(res);
-        //});
-        let mockedData = [{patient_name: "John", patient_surname: "Doe", patient_no: 607239},
+        this.socket.emit('getAllPatients');
+        this.socket.on("getAllPatientsResponse", res => {
+            callback(res);
+        });
+        /*let mockedData = [{patient_name: "John", patient_surname: "Doe", patient_no: 607239},
                           {patient_name: "John", patient_surname: "Snow", patient_no: 2},
                           {patient_name: "John", patient_surname: "Snow", patient_no: 3},
                           {patient_name: "ReallyLongName", patient_surname: "ReallyLongSurname", patient_no: 4},
@@ -112,7 +112,7 @@ class ServerConnect {
 
         setTimeout( () => {
             callback(mockedData);
-        }, 2000);
+        }, 2000);*/
     }
 
     /**
