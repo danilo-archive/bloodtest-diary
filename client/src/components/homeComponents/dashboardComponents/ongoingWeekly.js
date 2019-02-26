@@ -31,7 +31,7 @@ class OngoingWeekly extends React.Component {
                 ? this.props.notificationNumber
                 : "0"
             }
-            dayName={"Ongoing"}
+            dayName={"This Week"}
           />
           <ScrollBox>
             <AppointmentSection
