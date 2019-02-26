@@ -18,6 +18,7 @@ const Database = require("../../../../lib/db_controller/Database");
 const dateFormat = require("dateformat");
 
 describe("Test main DB controller behaviour:", () => {
+
     describe("Test selectQuery() function:", () => {
 
         // Setup environment.
@@ -985,6 +986,7 @@ describe("Test main DB controller behaviour:", () => {
     describe("Test requestEditing() function:", () => {
 
         describe("> Request on entry that does not exist", () => {
+            // Three similar tests to ensure code coverage
             it("Should reject the request.", (done) => {
 
                 db_controller.requestEditing("Test", "invalid")
@@ -1032,7 +1034,7 @@ describe("Test main DB controller behaviour:", () => {
         describe("> Request on a valid entry", () => {
             it("Should return a token with correct validity", (done) => {
                 const database = new Database(databaseConfig);
-
+                let error = undefined;
                 database.query("INSERT INTO Patient " + 
                         "(patient_no, patient_name, patient_surname) " +
                         "VALUES ('test_no_R', 'testName', 'testSurname')")
@@ -1058,28 +1060,29 @@ describe("Test main DB controller behaviour:", () => {
                                 const shouldStartWith = dateFormat(new Date(), "yyyymmddHHMM");
                                 expect(result.response.token.startsWith(shouldStartWith)).to.be.true;
                             })
-                            .then(() => {
-                                done();
-                            })
                             .catch((err) => {
-                                done(err);
-                            });
-                        })
-                        .then(() => {
-                            const database1 = new Database(databaseConfig);
-
-                            database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R'")
+                                error = err;
+                            })
                             .then(() => {
-                                database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R'")
+                                const database1 = new Database(databaseConfig);
+    
+                                database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R'")
+                                .then(() => {
+                                    database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R'")
+                                    .catch((err) => {
+                                        printSetupError(err);
+                                    });
+                                })
                                 .catch((err) => {
                                     printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
                                 });
                             })
-                            .catch((err) => {
-                                printSetupError(err);
-                            })
                             .then(() => {
-                                database1.close();
+                                if (error) done(error);
+                                else done();
                             });
                         });
             });
@@ -1088,7 +1091,7 @@ describe("Test main DB controller behaviour:", () => {
         describe("> Request on a valid entry that is being edited", () => {
             it("Should reject the request", (done) => {
                 const database = new Database(databaseConfig);
-
+                let error = undefined;
                 database.query("INSERT INTO Patient " + 
                         "(patient_no, patient_name, patient_surname) " +
                         "VALUES ('test_no_R1', 'testName', 'testSurname')")
@@ -1111,11 +1114,8 @@ describe("Test main DB controller behaviour:", () => {
                                 expect(result.status).to.equal("ERR");
                                 expect(result.err.type).to.equal("Invalid request.");
                             })
-                            .then(() => {
-                                done();
-                            })
                             .catch((err) => {
-                                done(err);
+                                error = err;
                             });
                         })
                         .then(() => {
@@ -1134,6 +1134,10 @@ describe("Test main DB controller behaviour:", () => {
                             .then(() => {
                                 database1.close();
                             });
+                        })
+                        .then(() => {
+                            if (error) done(error);
+                            else done();
                         });
             });
         });
@@ -1141,7 +1145,7 @@ describe("Test main DB controller behaviour:", () => {
         describe("> Request on a valid entry with expired token", () => {
             it("Should return a token with correct validity, previous token should be deleted.", (done) => {
                 const database = new Database(databaseConfig);
-
+                let error = undefined;
                 database.query("INSERT INTO Patient " + 
                         "(patient_no, patient_name, patient_surname) " +
                         "VALUES ('test_no_R2', 'testName', 'testSurname')")
@@ -1182,34 +1186,35 @@ describe("Test main DB controller behaviour:", () => {
                                     expect(result.length).to.equal(0);
                                 })
                                 .catch((err) => {
-                                    done(err);
+                                    error = err;
                                 })
                                 .then(() => {
                                     database2.close();
                                 });
                             })
-                            .then(() => {
-                                done();
-                            })
                             .catch((err) => {
-                                done(err);
-                            });
-                        })
-                        .then(() => {
-                            const database1 = new Database(databaseConfig);
-
-                            database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R2'")
+                                error = err;
+                            })
                             .then(() => {
-                                database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R2'")
+                                const database1 = new Database(databaseConfig);
+    
+                                database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R2'")
+                                .then(() => {
+                                    database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R2'")
+                                    .catch((err) => {
+                                        printSetupError(err);
+                                    });
+                                })
                                 .catch((err) => {
                                     printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
                                 });
                             })
-                            .catch((err) => {
-                                printSetupError(err);
-                            })
                             .then(() => {
-                                database1.close();
+                                if (error) done(error);
+                                else done();
                             });
                         });
             });
