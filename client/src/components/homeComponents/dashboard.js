@@ -63,9 +63,9 @@ class Dashboard extends Component {
       for (var i = 0; i < this.state.overdueTests.length; ++i) {
         var test = this.state.overdueTests[i];
         if (test.test_id === id) {
-          var newState = this.state;
-          newState.overdueTests[i].completed_status = status;
-          this.setState(newState);
+          let newOverdueTests = [...this.state.overdueTests];
+          newOverdueTests[i].completed_status = status;
+          this.setState({overdueTests: newOverdueTests});
           return;
         }
       }
@@ -73,10 +73,9 @@ class Dashboard extends Component {
       for (var i = 0; i < this.state.ongoingTests.length; ++i) {
         var test = this.state.ongoingTests[i];
         if (test.test_id === id) {
-          var newState = this.state;
-          newState.ongoingTests[i].completed_status = status;
-          this.setState(newState);
-          console.log(this.state.ongoingTests);
+          let newOngoingTests = [...this.state.ongoingTests];
+          newOngoingTests[i].completed_status = status;
+          this.setState({ongoingTests: newOngoingTests});
           return;
         }
       }
@@ -86,13 +85,9 @@ class Dashboard extends Component {
         for (var j = 0; j < day.length; ++j) {
           var test = day[j];
           if (test.test_id === id) {
-            var newState = this.state;
-            newState.calendar[i][j].completed_status = status;
-            //test.status = status;
-            //this.forceUpdate();
-            this.setState(newState);
-            console.log(this.state.calendar);
-            console.log("changed");
+            let newCalendar = [...this.state.calendar];
+            newCalendar[i][j].completed_status = status;
+            this.setState({calendar: newCalendar});
             return;
           }
         }
@@ -147,9 +142,6 @@ class Dashboard extends Component {
   }
 
   initWeeklyView() {
-    //let weekResponse = this.serverConnect.TESTgetTestsInWeek();
-    //this.state.ongoingTests = weekResponse[5];
-    //this.state.calendar = weekResponse.slice(0, 5);
     this.serverConnect.getTestsInWeek(this.state.weekDays[0], res => {
       this.state.ongoingTests = res[5];
       this.state.calendar = res.slice(0, 5);
@@ -168,9 +160,6 @@ class Dashboard extends Component {
     this.state.weekDays[2].setDate(this.state.weekDays[2].getDate() + 7);
     this.state.weekDays[3].setDate(this.state.weekDays[3].getDate() + 7);
     this.state.weekDays[4].setDate(this.state.weekDays[4].getDate() + 7);
-    // TODO get data from db
-    //this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
-    //this.state.ongoingTests = this.serverConnect.TESTgetEmptyWeek()[5];
     this.updateDashboard();
     this.forceUpdate();
   }
@@ -180,19 +169,8 @@ class Dashboard extends Component {
     this.state.weekDays[2].setDate(this.state.weekDays[2].getDate() - 7);
     this.state.weekDays[3].setDate(this.state.weekDays[3].getDate() - 7);
     this.state.weekDays[4].setDate(this.state.weekDays[4].getDate() - 7);
-    // TODO get data from db
-    // this.state.calendar = this.serverConnect.TESTgetEmptyWeek();
-    //this.state.ongoingTests = [];
     this.updateDashboard();
     this.forceUpdate();
-  }
-  // TODO remove
-  testReact(event) {
-    this.serverConnect.changeStatus(1, "late");
-  }
-  test(event) {
-    let today = new Date();
-    this.serverConnect.addTest(607239, today);
   }
 
   onOpenModal = selectedDate => {
