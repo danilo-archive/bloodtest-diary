@@ -16,6 +16,7 @@ const CalendarContainer = styled.div`
   padding: 0;
   position: relative;
   border: solid 1px #839595;
+  min-width: 17rem;
 `;
 const monthNames = [
   "Jan",
@@ -66,6 +67,7 @@ class CalendarDay extends React.Component {
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
             />
+            <div style={{width:"100%",height:"30%"}}/>
           </ScrollBox>
         </CalendarContainer>
       </>

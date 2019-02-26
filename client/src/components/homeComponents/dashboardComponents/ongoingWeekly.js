@@ -38,6 +38,7 @@ class OngoingWeekly extends React.Component {
               type="Appointments"
               appointments={this.props.anytimeAppointments}
             />
+            <div style={{width:"100%",height:"10%"}}/>
             </ScrollBox>
         </Container>
       </>

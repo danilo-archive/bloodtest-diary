@@ -40,7 +40,8 @@ class OverduePatients extends React.Component {
               type="Appointments"
               appointments={this.props.anytimeAppointments}
             />
-            </ScrollBox>
+            <div style={{width:"100%",height:"10%"}}/>
+          </ScrollBox>
         </Container>
       </>
     );

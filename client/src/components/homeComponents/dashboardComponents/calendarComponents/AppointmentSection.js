@@ -9,6 +9,7 @@ const AppointmentSection = styled.div`
   text-align: center;
   position: relative;
   padding: 0;
+  width: inherit;
 `;
 
 export default props => {
