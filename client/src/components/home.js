@@ -36,7 +36,7 @@ class Home extends Component {
 
       this.initDays();
       this.initOverduePanel();
-      this.initWeeklyView();
+      this.updateDashboard();
       this.initCallbacks();
 
       this.handleNext = this.handleNext.bind(this);
@@ -147,15 +147,6 @@ class Home extends Component {
           calendar: res.slice(0, 5),
           dashboardReady: true
         });
-      });
-    }
-
-    initWeeklyView() {
-      this.serverConnect.getTestsInWeek(this.state.weekDays[0], res => {
-        this.state.ongoingTests = res[5];
-        this.state.calendar = res.slice(0, 5);
-        this.state.dashboardReady = true;
-        this.forceUpdate();
       });
     }
 
