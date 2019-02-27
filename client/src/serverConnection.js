@@ -158,10 +158,22 @@ class ServerConnect {
         });
     }
 
+    /**
+    * Thim method emits a request to add a test into the database
+    * @param patientId The number of the patient that has to take the test.
+    * @param date The first due date of the test
+    * @param notes Additional info about the test
+    * @param frequency The frequency of the test
+    */
     addTest(patientId, date, notes, frequency=""){
         this.socket.emit("addTest", patientId, date, notes, frequency);
     }
 
+    /**
+    * Thim method emits a request to add a test into the database
+    * @param testId The id of the test to be changed.
+    * @param newStatus The new status of the test
+    */
     changeTestStatus(testId, newStatus){
         this.socket.emit('testStatusChange', testId, newStatus);
     }
