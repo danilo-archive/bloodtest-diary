@@ -37,23 +37,34 @@ class ServerConnect {
         });
     }
 
+    /**
+    * Joins the main page room in the server.
+    */
     joinMainPage(){
         this.socket.emit("join", this.currentRoom, "main_page");
         this.currentRoom = "main_page";
     }
 
+    /**
+    * Joins the login page room in the server.
+    */
     joinLoginPage(){
         this.socket.emit("join", this.currentRoom, "login_page");
         this.currentRoom = "login_page";
     }
 
-    changeStatus(id, newStatus){
-        this.socket.emit("testChange", id, newStatus);
-    }
-
+    /**
+    * Sets the callback to call when a new test is added.
+    * @callback callback "On test added" callback
+    */
     setOnTestAdded(callback){
         this.onTestAdded = callback;
     }
+
+    /**
+    * Sets the callback to call when a test status is changed
+    * @callback callback "On test status change" callback
+    */
     setOnTestStatusChange(callback){
         console.log("set");
         this.onTestStatusChange = callback;
