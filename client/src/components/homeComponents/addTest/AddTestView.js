@@ -4,7 +4,7 @@ import styled from "styled-components";
 import TitleTab from "./TitleTab";
 import PatientSelect from "./PatientSelect";
 import DateSelectorSection from "./DateSelectorSection";
-import { getServerConnect } from "../../../../serverConnection.js";
+import { getServerConnect } from "../../../serverConnection.js";
 
 const DataContainer = styled.div`
   position: relative;

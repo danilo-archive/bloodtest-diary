@@ -3,8 +3,8 @@ import styled from "styled-components";
 
 import SearchBar from "./SearchBar";
 import TitleTab from "./TitleTab";
-import Label from "../../../Label";
-import Switch from "../../../switch/Switch";
+import Label from "../../Label";
+import Switch from "../../switch/Switch";
 import PatientBox from "./PatientBox";
 import ScrollBox from "../calendarComponents/ScrollBox";
 import { WaveLoading } from "styled-spinkit";

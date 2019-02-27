@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import Label from "../../../Label";
+import Label from "../../Label";
 
 export default props => {
   return (

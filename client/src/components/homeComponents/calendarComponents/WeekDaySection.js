@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import NotificationIcon from "./NotificationIcon";
-import Label from "../../../Label";
+import Label from "../../Label";
 
 const WeekDayDiv = styled.div`
   width: auto;

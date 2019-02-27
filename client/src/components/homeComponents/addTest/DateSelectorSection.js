@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import TitleTab from "./TitleTab";
-import CalendarTable from "../../../calendarComponents/Calendar";
+import CalendarTable from "../../calendarComponents/Calendar";
 
 const Container = styled.div`
   position: relative;

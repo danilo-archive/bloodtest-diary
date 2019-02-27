@@ -4,7 +4,7 @@ import StatusCircle from "./StatusCircle";
 import AppointmentInfo from "./AppointmentInfo";
 import IconSet from "./IconSet";
 import TimePill from "./TimePill";
-import {getServerConnect} from "../../../../serverConnection.js";
+import {getServerConnect} from "../../../serverConnection.js";
 const Container = styled.div`
   display: block;
   position: relative;

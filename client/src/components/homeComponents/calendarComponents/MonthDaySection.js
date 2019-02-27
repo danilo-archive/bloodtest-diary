@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import DateText from "./DateText";
 import NotificationIcon from "./NotificationIcon";
-import { formatDate } from "../../../../lib/utils";
+import { formatDate } from "../../../lib/utils";
 const MonthDayDiv = styled.div`
   padding-left: 35%;
   width: auto;
