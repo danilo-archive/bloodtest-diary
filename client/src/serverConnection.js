@@ -59,24 +59,6 @@ class ServerConnect {
         this.onTestStatusChange = callback;
     }
 
-
-
-    // TODO pls remove
-    TESTgetOverdueTests(){
-        return [{status: "late", patientName: "Test test"}, {status: "pending", patientName: "Test test2"}]
-    }
-    TESTgetTestsInWeek(date, anytime=false){
-        return [[{id: 1, status: "pending", patientName: "Test test monday"}],
-                [{id: 3, status: "pending", patientName: "Test test tuesday"}],
-                [{id: 4, status: "pending", patientName: "Test test wednesday"}],
-                [{id: 5, status: "pending", patientName: "Test test thursday"}],
-                [{id: 6, status: "pending", patientName: "Test test friday"}],
-                [{id: 7, status: "pending", patientName: "Test test weekly"}]]
-    }
-    TESTgetEmptyWeek(){
-        return [[], [], [], [], [], []];
-    };
-
     /**
      * Function to be called when user needs to be authenticated
      * @param {username: username, password: password} credentials
@@ -103,16 +85,6 @@ class ServerConnect {
         this.socket.on("getAllPatientsResponse", res => {
             callback(res);
         });
-        /*let mockedData = [{patient_name: "John", patient_surname: "Doe", patient_no: 607239},
-                          {patient_name: "John", patient_surname: "Snow", patient_no: 2},
-                          {patient_name: "John", patient_surname: "Snow", patient_no: 3},
-                          {patient_name: "ReallyLongName", patient_surname: "ReallyLongSurname", patient_no: 4},
-                          {patient_name: "Mark", patient_surname: "Hamill", patient_no: 5},
-                          {patient_name: "Gandalf", patient_surname: "The Grey", patient_no: 6}];
-
-        setTimeout( () => {
-            callback(mockedData);
-        }, 2000);*/
     }
 
     /**
