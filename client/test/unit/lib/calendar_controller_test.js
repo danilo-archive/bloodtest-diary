@@ -1,7 +1,7 @@
 const chai = require('chai');
 const should = chai.should();
 
-const calendar_controller = require('../../../lib/calendar-controller');
+const calendar_controller = require('../../../src/lib/calendar-controller');
 
 /**
  * Test if the getNextDates works when given strings with the right format
@@ -58,7 +58,7 @@ describe("Test working frequency formats", function () {
 
     it('should return 15 dates, each 1 week apart. Starting from 30th Dec 2018', function () {
         const expected = [
-            new Date(2019, 0, 6), //1 
+            new Date(2019, 0, 6), //1
             new Date(2019, 0, 13), //2
             new Date(2019, 0, 20), //3
             new Date(2019, 0, 27), //4
@@ -72,7 +72,7 @@ describe("Test working frequency formats", function () {
             new Date(2019, 2, 24), //12
             new Date(2019, 2, 31), //13
             new Date(2019, 3, 7), //14
-            new Date(2019, 3, 14) //15     
+            new Date(2019, 3, 14) //15
         ]
 
         const result = calendar_controller.getNextDates('1-W:15', new Date(2018, 11, 30));
@@ -117,7 +117,7 @@ describe("Test not frequency formats", function () {
         ]
         wrong_formats.forEach(format => {
             wrong_n.forEach(frequency => {
-                
+
                 const temp = format;
                 format += (":" + frequency);
                 const result = calendar_controller.getNextDates(format, new Date(2019, 11, 31));
@@ -130,11 +130,48 @@ describe("Test not frequency formats", function () {
     });
 });
 
+describe("Test week handling", function() {
+    const testDays = [(new Date(2019, 01, 20)), (new Date(2019, 02, 1)), (new Date(2019, 05, 20))];
+    it ("Should return the correct monday date given any date", function(){
+        let results = [];
+        testDays.forEach( day => {
+            results = results.concat([calendarController.getMondayOfWeek(day)]);
+        });
+        results.should.equal([(new Date(2019, 01, 18)), (new Date(2019, 01, 25)), (new Date(2019, 05, 18))]);
+    });
+
+    const weekTest1 = [(new Date(2019, 01, 25)), (new Date(2019, 01, 26)), (new Date(2019, 01, 27)),
+                       (new Date(2019, 01, 28)), (new Date(2019, 02, 1))];
+    const weekTest2 = [(new Date(2019, 02, 25)), (new Date(2019, 02, 26)), (new Date(2019, 02, 27)),
+                       (new Date(2019, 02, 28)), (new Date(2019, 02, 29))];
+
+    it ("Should return the correct previous week given a well formed week", function() {
+
+        const result1 = calendarController.getPreviousWeek(weekTest1);
+        result1.should.equal([(new Date(2019, 01, 18)), (new Date(2019, 01, 19)), (new Date(2019, 01, 20)),
+                              (new Date(2019, 01, 21)), (new Date(2019, 01, 22))]);
+
+        const result2 = calendarController.getPreviousWeek(weekTest2);
+        result2.should.equal([(new Date(2019, 02, 18)), (new Date(2019, 02, 19)), (new Date(2019, 02, 20)),
+                              (new Date(2019, 02, 21)), (new Date(2019, 02, 22))]);
+    });
+
+    it ("Should return the correct next week given a well formed week", function() {
+        const result1 = calendarController.getPreviousWeek(weekTest1);
+        result1.should.equal([(new Date(2019, 02, 4)), (new Date(2019, 02, 5)), (new Date(2019, 02, 6)),
+                              (new Date(2019, 02, 7)), (new Date(2019, 02, 8))]);
+
+        const result2 = calendarController.getPreviousWeek(weekTest2);
+        result2.should.equal([(new Date(2019, 03, 1)), (new Date(2019, 03, 2)), (new Date(2019, 03, 3)),
+                              (new Date(2019, 03, 4)), (new Date(2019, 03, 5))]);
+    });
+});
+
 /**
  * Check if two arrays containing dates have
  * the same values
- * @param {array1} _arr1 
- * @param {array2} _arr2 
+ * @param {array1} _arr1
+ * @param {array2} _arr2
  */
 function arraysOfDatesEqual(_arr1, _arr2) {
 
