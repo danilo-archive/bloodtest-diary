@@ -131,40 +131,131 @@ describe("Test not frequency formats", function () {
 });
 
 describe("Test week handling", function() {
-    const testDays = [(new Date(2019, 01, 20)), (new Date(2019, 02, 1)), (new Date(2019, 05, 20))];
+    const testDays = [ (new Date(2019, 01, 20)), (new Date(2019, 02, 1)), (new Date(2019, 05, 20))];
     it ("Should return the correct monday date given any date", function(){
         let results = [];
         testDays.forEach( day => {
-            results = results.concat([calendarController.getMondayOfWeek(day)]);
+            let monday = calendar_controller.getMondayOfWeek(day);
+            results = results.concat(monday);
         });
-        results.should.equal([(new Date(2019, 01, 18)), (new Date(2019, 01, 25)), (new Date(2019, 05, 18))]);
-    });
 
-    const weekTest1 = [(new Date(2019, 01, 25)), (new Date(2019, 01, 26)), (new Date(2019, 01, 27)),
-                       (new Date(2019, 01, 28)), (new Date(2019, 02, 1))];
-    const weekTest2 = [(new Date(2019, 02, 25)), (new Date(2019, 02, 26)), (new Date(2019, 02, 27)),
-                       (new Date(2019, 02, 28)), (new Date(2019, 02, 29))];
+        results[0].getDate().should.equal(18);
+        results[0].getMonth().should.equal(01);
+        results[0].getFullYear().should.equal(2019);
+        results[1].getDate().should.equal(25);
+        results[1].getMonth().should.equal(01);
+        results[1].getFullYear().should.equal(2019);
+        results[2].getDate().should.equal(17);
+        results[2].getMonth().should.equal(05);
+        results[2].getFullYear().should.equal(2019);
+
+    });
 
     it ("Should return the correct previous week given a well formed week", function() {
 
-        const result1 = calendarController.getPreviousWeek(weekTest1);
-        result1.should.equal([(new Date(2019, 01, 18)), (new Date(2019, 01, 19)), (new Date(2019, 01, 20)),
-                              (new Date(2019, 01, 21)), (new Date(2019, 01, 22))]);
+        const weekTest1 = [(new Date(2019, 01, 25)), (new Date(2019, 01, 26)), (new Date(2019, 01, 27)),
+                           (new Date(2019, 01, 28)), (new Date(2019, 02, 1))];
+        const weekTest2 = [(new Date(2019, 02, 25)), (new Date(2019, 02, 26)), (new Date(2019, 02, 27)),
+                           (new Date(2019, 02, 28)), (new Date(2019, 02, 29))];
 
-        const result2 = calendarController.getPreviousWeek(weekTest2);
-        result2.should.equal([(new Date(2019, 02, 18)), (new Date(2019, 02, 19)), (new Date(2019, 02, 20)),
-                              (new Date(2019, 02, 21)), (new Date(2019, 02, 22))]);
+        var result1 = [];
+        calendar_controller.getPreviousWeek(weekTest1).forEach(day => {
+            day = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+            result1 = result1.concat(day);
+        });
+
+        result1[0].getDate().should.equal(18);
+        result1[0].getMonth().should.equal(1);
+        result1[0].getFullYear().should.equal(2019);
+        result1[1].getDate().should.equal(19);
+        result1[1].getMonth().should.equal(1);
+        result1[1].getFullYear().should.equal(2019);
+        result1[2].getDate().should.equal(20);
+        result1[2].getMonth().should.equal(1);
+        result1[2].getFullYear().should.equal(2019);
+        result1[3].getDate().should.equal(21);
+        result1[3].getMonth().should.equal(1);
+        result1[3].getFullYear().should.equal(2019);
+        result1[4].getDate().should.equal(22);
+        result1[4].getMonth().should.equal(1);
+        result1[4].getFullYear().should.equal(2019);
+
+        var result2 = [];
+        calendar_controller.getPreviousWeek(weekTest2).forEach(day => {
+            day =  new Date(day.getFullYear(), day.getMonth(), day.getDate());
+            result2 = result2.concat(day);
+        });
+
+        result2[0].getDate().should.equal(18);
+        result2[0].getMonth().should.equal(2);
+        result2[0].getFullYear().should.equal(2019);
+        result2[1].getDate().should.equal(19);
+        result2[1].getMonth().should.equal(2);
+        result2[1].getFullYear().should.equal(2019);
+        result2[2].getDate().should.equal(20);
+        result2[2].getMonth().should.equal(2);
+        result2[2].getFullYear().should.equal(2019);
+        result2[3].getDate().should.equal(21);
+        result2[3].getMonth().should.equal(2);
+        result2[3].getFullYear().should.equal(2019);
+        result2[4].getDate().should.equal(22);
+        result2[4].getMonth().should.equal(2);
+        result2[4].getFullYear().should.equal(2019);
+
     });
 
     it ("Should return the correct next week given a well formed week", function() {
-        const result1 = calendarController.getPreviousWeek(weekTest1);
-        result1.should.equal([(new Date(2019, 02, 4)), (new Date(2019, 02, 5)), (new Date(2019, 02, 6)),
-                              (new Date(2019, 02, 7)), (new Date(2019, 02, 8))]);
+        const weekTest3 = [(new Date(2019, 01, 25)), (new Date(2019, 01, 26)), (new Date(2019, 01, 27)),
+                           (new Date(2019, 01, 28)), (new Date(2019, 02, 1))];
 
-        const result2 = calendarController.getPreviousWeek(weekTest2);
-        result2.should.equal([(new Date(2019, 03, 1)), (new Date(2019, 03, 2)), (new Date(2019, 03, 3)),
-                              (new Date(2019, 03, 4)), (new Date(2019, 03, 5))]);
+        var result3 = [];
+        calendar_controller.getNextWeek(weekTest3).forEach(day => {
+            day = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+            result3 = result3.concat(day);
+        });
+
+        result3[0].getDate().should.equal(4);
+        result3[0].getMonth().should.equal(2);
+        result3[0].getFullYear().should.equal(2019);
+        result3[1].getDate().should.equal(5);
+        result3[1].getMonth().should.equal(2);
+        result3[1].getFullYear().should.equal(2019);
+        result3[2].getDate().should.equal(6);
+        result3[2].getMonth().should.equal(2);
+        result3[2].getFullYear().should.equal(2019);
+        result3[3].getDate().should.equal(7);
+        result3[3].getMonth().should.equal(2);
+        result3[3].getFullYear().should.equal(2019);
+        result3[4].getDate().should.equal(8);
+        result3[4].getMonth().should.equal(2);
+        result3[4].getFullYear().should.equal(2019);
+
+        const weekTest4 = [(new Date(2019, 02, 25)), (new Date(2019, 02, 26)), (new Date(2019, 02, 27)),
+                           (new Date(2019, 02, 28)), (new Date(2019, 02, 29))];
+
+        var result4 = []
+        calendar_controller.getNextWeek(weekTest4).forEach(day => {
+            day = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+            result4 = result4.concat(day);
+        });
+
+        result4[0].getDate().should.equal(1);
+        result4[0].getMonth().should.equal(3);
+        result4[0].getFullYear().should.equal(2019);
+        result4[1].getDate().should.equal(2);
+        result4[1].getMonth().should.equal(3);
+        result4[1].getFullYear().should.equal(2019);
+        result4[2].getDate().should.equal(3);
+        result4[2].getMonth().should.equal(3);
+        result4[2].getFullYear().should.equal(2019);
+        result4[3].getDate().should.equal(4);
+        result4[3].getMonth().should.equal(3);
+        result4[3].getFullYear().should.equal(2019);
+        result4[4].getDate().should.equal(5);
+        result4[4].getMonth().should.equal(3);
+        result4[4].getFullYear().should.equal(2019);
     });
+
 });
 
 /**
