@@ -3,9 +3,9 @@ import ReactDOM from "react-dom";
 import Login from "./components/login.js";
 import Home from "./components/home.js";
 import Header from "./components/header.js";
+import Patients from "./components/patients.js";
 import * as serviceWorker from "./serviceWorker";
 
-import App from "./components/App";
 import { Route, Link, BrowserRouter as Router, Switch } from "react-router-dom";
 
 const routing = (
@@ -14,6 +14,7 @@ const routing = (
       <Route path="/" component={Header} />
       <Route exact path="/" component={Login} />
       <Route path="/home" component={Home} />
+      <Route path={"/patients"} component={Patients} />
     </div>
   </Router>
 );

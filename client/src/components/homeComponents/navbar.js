@@ -106,7 +106,10 @@ class Navbar extends React.Component {
       super(props);
       this.onPrev = props.onPrev;
       this.onNext = props.onNext;
+      this.onPatientsClick = props.onPatientsClick;
+      this.onHomeClick = props.onHomeClick;
   }
+
 
   render() {
     return (
@@ -114,13 +117,13 @@ class Navbar extends React.Component {
       <Container>
 
           <div className={"controlButtons"}>
-            <button className={"home"}>Home</button>
+            <button className={"home"} onClick={this.onHomeClick}>Home</button>
 
-            <button className={"patients"}>Patients</button>
+            <button className={"patients"} onClick={this.onPatientsClick}>Patients</button>
 
             <button className={"signOut"}>Sign Out</button>
           </div>
-          <div className={"calanderControls"}>
+          <div className={"calendarControls"}>
             <div className={"scrollButtons"}>
                 <img src={arrow} className={"prevButton"} onClick={this.onPrev} alt={"Previous Date"}/>
                 <img src={arrow} className={"nextButton"} onClick={this.onNext} alt={"Next Date"}/>
