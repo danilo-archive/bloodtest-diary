@@ -1,6 +1,5 @@
 :root {
   --htmlFontSize: 100%;
-
   --bodyBackgroundColor: #f4f9fd;
   --bodyColor: #000000;
   --bodyFontFamily: 'Open Sans';
@@ -8,14 +7,6 @@
   --bodyFontSize: 0.875rem;
   --bodyFontWeight: 400;
   --bodyLineHeight: 1.5;
-}
-
-#app{
-  height: 100%;
-}
-
-#app>div{
-  height: 100%;
 }
 
 html {
@@ -32,13 +23,137 @@ body {
   font-weight: var(--bodyFontWeight);
   height: auto;
   line-height: var(--bodyLineHeight);
-  margin: 0;
-  min-height: 100vh;
-  height: 100%;
 }
 
 
 .home {
+  display: flow-root;
+}
+
+.dashboard {
+  border: blue 0px solid;
+  height: calc(100vh - 65px);
+  width: auto;
+  position: relative;
+  top: 30px;
+  margin: 1% 1% 1% 1%;
+
   display: flex;
-  height:100%;
+  flex-direction: row;
+  justify-content: ;
+  align-items: flex-end;
+}
+
+.rightSideDash {
+  border: red 0px solid;
+  height: 100%;
+  width: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  flex-grow: 5;
+  flex-shrink: 1;
+}
+
+.bottomSideDash {
+  border: green  0px solid;
+  height: auto;
+  width: auto;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch ;
+
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+
+.navbar {
+  border: #839595 3px solid;
+  border-radius: 10px;
+  margin-left: 0.5%;
+  margin-bottom: 9px;
+
+  max-height: 225px;
+  min-height: 200px;
+  width: auto;
+
+  flex-grow: 1;
+  flex-shrink: 1;
+
+  overflow: scroll;
+}
+
+.overduePatients {
+  border: #839595 3px solid;
+  border-radius: 10px;
+  padding: 4px;
+  margin-right: 0.5%;
+
+  background-color: ;
+
+  min-width: 150px;
+  max-width: 325px;
+
+  overflow: hidden;
+
+  flex-grow: 1;
+  flex-shrink: 20;
+  align-self: stretch;
+}
+
+.calendar {
+  border: #839595 3px solid;
+  border-radius: 10px;
+  padding: 4px;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+
+  width: 200px;
+  overflow: hidden;
+  flex-grow: 5;
+  flex-shrink: 1;
+}
+
+.ongoingWeekly {
+  border: #839595 3px solid;
+  border-radius: 10px;
+  padding: 4px;
+  margin-left: 0.5%;
+
+  background-color: ;
+
+  overflow: hidden;
+
+  height: auto;
+  width: auto;
+
+  min-width: 150px;
+  max-width: 325px;
+
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+
+::-webkit-scrollbar {
+  height: 5px;
+}
+
+::-webkit-scrollbar:vertical {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb  {
+  background: #0b989d;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-corner {
+  display: none;
 }

@@ -7,4 +7,5 @@ export default styled.p`
   position: absolute;
   transform: translate(-50%, -50%);
   user-select: none;
+  color: #e2e2d9;
 `;

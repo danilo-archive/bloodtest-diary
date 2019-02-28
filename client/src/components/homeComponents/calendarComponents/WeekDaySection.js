@@ -2,11 +2,11 @@ import React from "react";
 import styled from "styled-components";
 
 import NotificationIcon from "./NotificationIcon";
-import Label from "../Label";
+import Label from "../../Label";
 
 const WeekDayDiv = styled.div`
-  width: 100%;
-  height: 11%;
+  width: auto;
+  height: 50px;
   background-color: #0d4e56;
   display: flex;
   text-align: center;
@@ -22,11 +22,11 @@ const WeekDaySection = props => {
         <NotificationIcon
           text={props.notificationNumber}
           top="45%"
-          left="10%"
+          left="12%"
         />
-        <Label style={{ left: "50%", top: "50%" }} fontSize={"30px"}>
-          {props.dayName}
-        </Label>
+          <Label style={{ left: "50%", top: "50%" }}>
+            {props.dayName}
+          </Label>
       </WeekDayDiv>
     </>
   );
