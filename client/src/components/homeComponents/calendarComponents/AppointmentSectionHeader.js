@@ -4,18 +4,18 @@ import HorizontalLine from "./HorizontalLine";
 
 const Heading = styled.h3`
   padding: 0;
-  margin: 0;
+  margin: 2.5%;
   color: #646464;
+  border-radius: 5px;
   font-family: "Rajdhani", sans-serif;
   font-size: 150%;
+  overflow: hidden;
+  zIndex: 5;
+  background-color: white;
 `;
 
 export default props => {
   return (
-    <div style={{ zIndex: "5", backgroundColor: "white" }}>
-      <HorizontalLine />
       <Heading>{props.children}</Heading>
-      <HorizontalLine />
-    </div>
   );
 };

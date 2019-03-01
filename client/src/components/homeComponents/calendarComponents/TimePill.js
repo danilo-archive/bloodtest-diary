@@ -8,7 +8,7 @@ const PillDiv = styled.div`
   font-family: "Rajdhani", sans-serif;
   transform: translate(-50%, -50%);
   padding: 0% 5% 0% 5%;
-  top: 0;
+  top: -20%;
   left: 50%;
 `;
 

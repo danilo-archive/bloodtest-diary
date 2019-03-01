@@ -2,7 +2,7 @@ import styled from "styled-components";
 import React from "react";
 
 const NameDiv = styled.div`
-  padding: 3%;
+  padding-left: 3%;
   margin: 2.5%;
   width: 50%;
   height: 200%;

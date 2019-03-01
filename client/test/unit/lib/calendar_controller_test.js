@@ -1,7 +1,7 @@
 const chai = require('chai');
 const should = chai.should();
 
-const calendar_controller = require('../../../lib/calendar-controller');
+const calendar_controller = require('../../../src/lib/calendar-controller');
 
 /**
  * Test if the getNextDates works when given strings with the right format
@@ -58,7 +58,7 @@ describe("Test working frequency formats", function () {
 
     it('should return 15 dates, each 1 week apart. Starting from 30th Dec 2018', function () {
         const expected = [
-            new Date(2019, 0, 6), //1 
+            new Date(2019, 0, 6), //1
             new Date(2019, 0, 13), //2
             new Date(2019, 0, 20), //3
             new Date(2019, 0, 27), //4
@@ -72,7 +72,7 @@ describe("Test working frequency formats", function () {
             new Date(2019, 2, 24), //12
             new Date(2019, 2, 31), //13
             new Date(2019, 3, 7), //14
-            new Date(2019, 3, 14) //15     
+            new Date(2019, 3, 14) //15
         ]
 
         const result = calendar_controller.getNextDates('1-W:15', new Date(2018, 11, 30));
@@ -117,7 +117,7 @@ describe("Test not frequency formats", function () {
         ]
         wrong_formats.forEach(format => {
             wrong_n.forEach(frequency => {
-                
+
                 const temp = format;
                 format += (":" + frequency);
                 const result = calendar_controller.getNextDates(format, new Date(2019, 11, 31));
@@ -130,11 +130,139 @@ describe("Test not frequency formats", function () {
     });
 });
 
+describe("Test week handling", function() {
+    const testDays = [ (new Date(2019, 01, 20)), (new Date(2019, 02, 1)), (new Date(2019, 05, 20))];
+    it ("Should return the correct monday date given any date", function(){
+        let results = [];
+        testDays.forEach( day => {
+            let monday = calendar_controller.getMondayOfWeek(day);
+            results = results.concat(monday);
+        });
+
+        results[0].getDate().should.equal(18);
+        results[0].getMonth().should.equal(01);
+        results[0].getFullYear().should.equal(2019);
+        results[1].getDate().should.equal(25);
+        results[1].getMonth().should.equal(01);
+        results[1].getFullYear().should.equal(2019);
+        results[2].getDate().should.equal(17);
+        results[2].getMonth().should.equal(05);
+        results[2].getFullYear().should.equal(2019);
+
+    });
+
+    it ("Should return the correct previous week given a well formed week", function() {
+
+        const weekTest1 = [(new Date(2019, 01, 25)), (new Date(2019, 01, 26)), (new Date(2019, 01, 27)),
+                           (new Date(2019, 01, 28)), (new Date(2019, 02, 1))];
+        const weekTest2 = [(new Date(2019, 02, 25)), (new Date(2019, 02, 26)), (new Date(2019, 02, 27)),
+                           (new Date(2019, 02, 28)), (new Date(2019, 02, 29))];
+
+        var result1 = [];
+        calendar_controller.getPreviousWeek(weekTest1).forEach(day => {
+            day = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+            result1 = result1.concat(day);
+        });
+
+        result1[0].getDate().should.equal(18);
+        result1[0].getMonth().should.equal(1);
+        result1[0].getFullYear().should.equal(2019);
+        result1[1].getDate().should.equal(19);
+        result1[1].getMonth().should.equal(1);
+        result1[1].getFullYear().should.equal(2019);
+        result1[2].getDate().should.equal(20);
+        result1[2].getMonth().should.equal(1);
+        result1[2].getFullYear().should.equal(2019);
+        result1[3].getDate().should.equal(21);
+        result1[3].getMonth().should.equal(1);
+        result1[3].getFullYear().should.equal(2019);
+        result1[4].getDate().should.equal(22);
+        result1[4].getMonth().should.equal(1);
+        result1[4].getFullYear().should.equal(2019);
+
+        var result2 = [];
+        calendar_controller.getPreviousWeek(weekTest2).forEach(day => {
+            day =  new Date(day.getFullYear(), day.getMonth(), day.getDate());
+            result2 = result2.concat(day);
+        });
+
+        result2[0].getDate().should.equal(18);
+        result2[0].getMonth().should.equal(2);
+        result2[0].getFullYear().should.equal(2019);
+        result2[1].getDate().should.equal(19);
+        result2[1].getMonth().should.equal(2);
+        result2[1].getFullYear().should.equal(2019);
+        result2[2].getDate().should.equal(20);
+        result2[2].getMonth().should.equal(2);
+        result2[2].getFullYear().should.equal(2019);
+        result2[3].getDate().should.equal(21);
+        result2[3].getMonth().should.equal(2);
+        result2[3].getFullYear().should.equal(2019);
+        result2[4].getDate().should.equal(22);
+        result2[4].getMonth().should.equal(2);
+        result2[4].getFullYear().should.equal(2019);
+
+    });
+
+    it ("Should return the correct next week given a well formed week", function() {
+        const weekTest3 = [(new Date(2019, 01, 25)), (new Date(2019, 01, 26)), (new Date(2019, 01, 27)),
+                           (new Date(2019, 01, 28)), (new Date(2019, 02, 1))];
+
+        var result3 = [];
+        calendar_controller.getNextWeek(weekTest3).forEach(day => {
+            day = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+            result3 = result3.concat(day);
+        });
+
+        result3[0].getDate().should.equal(4);
+        result3[0].getMonth().should.equal(2);
+        result3[0].getFullYear().should.equal(2019);
+        result3[1].getDate().should.equal(5);
+        result3[1].getMonth().should.equal(2);
+        result3[1].getFullYear().should.equal(2019);
+        result3[2].getDate().should.equal(6);
+        result3[2].getMonth().should.equal(2);
+        result3[2].getFullYear().should.equal(2019);
+        result3[3].getDate().should.equal(7);
+        result3[3].getMonth().should.equal(2);
+        result3[3].getFullYear().should.equal(2019);
+        result3[4].getDate().should.equal(8);
+        result3[4].getMonth().should.equal(2);
+        result3[4].getFullYear().should.equal(2019);
+
+        const weekTest4 = [(new Date(2019, 02, 25)), (new Date(2019, 02, 26)), (new Date(2019, 02, 27)),
+                           (new Date(2019, 02, 28)), (new Date(2019, 02, 29))];
+
+        var result4 = []
+        calendar_controller.getNextWeek(weekTest4).forEach(day => {
+            day = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+            result4 = result4.concat(day);
+        });
+
+        result4[0].getDate().should.equal(1);
+        result4[0].getMonth().should.equal(3);
+        result4[0].getFullYear().should.equal(2019);
+        result4[1].getDate().should.equal(2);
+        result4[1].getMonth().should.equal(3);
+        result4[1].getFullYear().should.equal(2019);
+        result4[2].getDate().should.equal(3);
+        result4[2].getMonth().should.equal(3);
+        result4[2].getFullYear().should.equal(2019);
+        result4[3].getDate().should.equal(4);
+        result4[3].getMonth().should.equal(3);
+        result4[3].getFullYear().should.equal(2019);
+        result4[4].getDate().should.equal(5);
+        result4[4].getMonth().should.equal(3);
+        result4[4].getFullYear().should.equal(2019);
+    });
+
+});
+
 /**
  * Check if two arrays containing dates have
  * the same values
- * @param {array1} _arr1 
- * @param {array2} _arr2 
+ * @param {array1} _arr1
+ * @param {array2} _arr2
  */
 function arraysOfDatesEqual(_arr1, _arr2) {
 
