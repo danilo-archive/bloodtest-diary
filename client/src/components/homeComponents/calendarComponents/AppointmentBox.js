@@ -8,7 +8,7 @@ import { getServerConnect } from "../../../serverConnection.js";
 const Container = styled.div`
   display: block;
   position: relative;
-  background-color: ${props => (props.tentative ? `grey` : `white`)};
+  background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
   margin-top: 0;
   margin-bottom: 0;
   margin: 2.5%;
@@ -80,8 +80,6 @@ export default class AppointmentBox extends React.Component {
     const { status, name, tentative } = this.state;
     return (
       <Container tentative={tentative}>
-        {tentative ? <TimePill status={status}>Tentative</TimePill> : ``}
-
         <StatusCircle
           type={tentative ? "tentative" : this.formatStatus(this.props.type)}
         />
