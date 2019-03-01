@@ -10,6 +10,7 @@ const PillDiv = styled.div`
   padding: 0% 5% 0% 5%;
   top: -20%;
   left: 50%;
+  text-align: center;
 `;
 
 export default props => {
