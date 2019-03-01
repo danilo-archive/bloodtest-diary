@@ -23,7 +23,7 @@ async function getUser(username)
 **/
 async function getAllTests()
 {
-  let sql = "Select * From Test;";
+  let sql = "Select * From Test ORDER BY due_date ASC;";
   return await selectQueryDatabase(sql)
 }
 
@@ -54,17 +54,25 @@ async function getAllTestsOnDate(date)
 **/
 async function getOverdueTests()
 {
-  let sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where due_date < CURDATE() AND completed_status='no' `;
+  let sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
   return await selectQueryDatabase(sql);
 }
 
+/**
+* Get all the overdue tests from the database plus additional info about time difference
+* @return {JSON} result of the query
+**/
+async function getOverdueTestsExtended()
+{
+  let sql = `Select *, DATEDIFF(CURDATE(),due_date) AS difference From Test NATURAL JOIN Patient where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
+  return await selectQueryDatabase(sql);
+}
 
-async function addTest(patient_no, date, notes, frequency){
-    let today = utils.formatDate(new Date());
+async function addTest(patient_no, date, notes, frequency, occurrences=1){
     date = utils.formatDate(new Date(date));
     let values = ``;
-    console.log({today, date});
-    let sql =`INSERT INTO Test (patient_no, added, due_date, frequency, lab_id, completed_status, completed_date, notes) VALUES (${patient_no}, ${today}, ${date}, 'weekly', 1, 'in review', NULL, '${notes}');`;
+    console.log({date});
+    let sql =`INSERT INTO Test (patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes) VALUES (${patient_no}, ${date}, 'weekly', ${occurrences}, 'no', NULL, '${notes}');`;
     console.log(sql);
     let response = await databaseController.insertQuery(sql);
     console.log(response);
@@ -180,6 +188,7 @@ async function selectQueryDatabase(sql)
 
 
 module.exports = {
+    getOverdueTestsExtended,
     getUser,
     getAllPatients,
     getAllTests,
