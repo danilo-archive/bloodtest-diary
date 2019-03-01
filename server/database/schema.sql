@@ -16,11 +16,11 @@ GRANT ALL PRIVILEGES ON BloodTestDB.*
     TO 'bloodTestAdmin'@localhost
     IDENTIFIED BY "Blood_admin1";
 
-
-DROP TABLE IF EXISTS Carer;
 DROP TABLE IF EXISTS Test;
-DROP TABLE IF EXISTS Hospital;
 DROP TABLE IF EXISTS Patient;
+DROP TABLE IF EXISTS Carer;
+DROP TABLE IF EXISTS Hospital;
+DROP TABLE IF EXISTS Laboratory;
 DROP TABLE IF EXISTS TokenControl;
 
 CREATE TABLE Hospital (
@@ -65,7 +65,7 @@ CREATE TABLE Test (
     completed_date DATE,
     notes TEXT,
     PRIMARY KEY (test_id),
-    FOREIGN KEY (patient_no) REFERENCES Patient(patient_no),
+    FOREIGN KEY (patient_no) REFERENCES Patient(patient_no)
 );
 
 -- ================================
@@ -81,9 +81,11 @@ CREATE TABLE TokenControl (
     PRIMARY KEY (token)
 );
 
-CREATE TABLE LoginCredentials (
+CREATE TABLE User (
     username VARCHAR(100),
-    hashed_password VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    salt VARCHAR(255) NOT NULL,
+    iterations INTEGER NOT NULL,
     recovery_email VARCHAR(100) NOT NULL,
     PRIMARY KEY (username)
 );
@@ -97,5 +99,5 @@ CREATE TABLE ActionLog (
     entry_affected VARCHAR(50) NOT NULL,
     additional_info TEXT,
     PRIMARY KEY (action_id),
-    FOREIGN KEY (username) REFERENCES LoginCredentials(username)
+    FOREIGN KEY (username) REFERENCES User(username)
 );

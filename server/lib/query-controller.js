@@ -11,6 +11,12 @@ async function getAllPatients()
   return await selectQueryDatabase(sql)
 }
 
+async function getUser(username)
+{
+  let sql = `Select * From User Where username='${username}' Limit 1;`;
+  return await selectQueryDatabase(sql)
+}
+
 /**
 *Get all the tests from the database
 * @return {JSON} result of the query
@@ -38,7 +44,7 @@ async function getTestsOfPatient(patientId){
 **/
 async function getAllTestsOnDate(date)
 {
-  let sql = `Select * From Test Where first_due_date = '${date}';`;
+  let sql = `Select * From Test Where due_date = '${date}';`;
   return await selectQueryDatabase(sql)
 }
 
@@ -48,7 +54,7 @@ async function getAllTestsOnDate(date)
 **/
 async function getOverdueTests()
 {
-  let sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where first_due_date < CURDATE() AND completed_status='no' `;
+  let sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where due_date < CURDATE() AND completed_status='no' `;
   return await selectQueryDatabase(sql);
 }
 
@@ -58,7 +64,7 @@ async function addTest(patient_no, date, notes, frequency){
     date = utils.formatDate(new Date(date));
     let values = ``;
     console.log({today, date});
-    let sql =`INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date, notes) VALUES (${patient_no}, ${today}, ${date}, 'weekly', 1, 'in review', NULL, '${notes}');`;
+    let sql =`INSERT INTO Test (patient_no, added, due_date, frequency, lab_id, completed_status, completed_date, notes) VALUES (${patient_no}, ${today}, ${date}, 'weekly', 1, 'in review', NULL, '${notes}');`;
     console.log(sql);
     let response = await databaseController.insertQuery(sql);
     console.log(response);
@@ -127,7 +133,7 @@ function getTestsDuringTheWeek(date)
   for(var i=0;i<6;i++)
   {
     day = -1*(weekDay - 1) + i;
-    sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where first_due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
+    sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
     daysInWeek.push(databaseController.selectQuery(sql));
   }
   return daysInWeek;
@@ -174,6 +180,7 @@ async function selectQueryDatabase(sql)
 
 
 module.exports = {
+    getUser,
     getAllPatients,
     getAllTests,
     getTestsOfPatient,
