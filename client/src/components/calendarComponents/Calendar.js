@@ -149,6 +149,8 @@ class CalendarTable extends Component {
                     return(
                       <td key={tdIndex} className={`${(dayBelongsToCurrentMonth) ? "in" : "out"} day`}>
                         {<DayCell selectDay={this.selectDay}
+                                  selectedDay={this.state.selected}
+                                  date={this.state.date}
                                   dayOfMonth={day}
                                   isFromThisMonth={dayBelongsToCurrentMonth}/>}
                       </td>
