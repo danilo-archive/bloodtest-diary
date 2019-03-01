@@ -23,7 +23,9 @@ class OverduePatients extends React.Component {
       };
   }
 
+
   render() {
+     console.log(this.props.anytimeAppointments);
     return (
       <>
         <Container>
@@ -36,10 +38,16 @@ class OverduePatients extends React.Component {
             dayName={"Outstanding"}
           />
           <ScrollBox>
-            <AppointmentSection
-              type="Appointments"
-              appointments={this.props.anytimeAppointments}
-            />
+              {this.props.anytimeAppointments.map( group => {
+                  if(group.tests.length !== 0){
+                      return (
+                          <AppointmentSection
+                              type = {group.class}
+                              appointments = {group.tests}
+                          />
+                      )
+                }
+            })}
             <div style={{width:"100%",height:"10%"}}/>
           </ScrollBox>
         </Container>
@@ -47,5 +55,6 @@ class OverduePatients extends React.Component {
     );
   }
 }
-
+/*
+*/
 export default OverduePatients;
