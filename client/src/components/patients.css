@@ -26,7 +26,16 @@ body {
 }
 
 .patients {
-    display: flow-root;
+    border: blue 0 solid;
+    height: calc(100vh - 65px);
+    width: auto;
+    position: relative;
+    top: 30px;
+    margin: 1% 1% 1% 1%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
 }
 
 .navbar {
@@ -45,6 +54,20 @@ body {
     overflow: scroll;
 }
 
+.patientsTable {
+    color: #ffffff;
+    border: green 0 solid;
+    height: auto;
+    width: auto;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch ;
+
+    flex-grow: 1;
+    flex-shrink: 1;
+}
 
 
 ::-webkit-scrollbar {
