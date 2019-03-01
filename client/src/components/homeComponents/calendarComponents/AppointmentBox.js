@@ -19,7 +19,10 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   z-index: 3;
-
+  & .pill {
+    opacity: 0;
+    transition: opacity 150ms;
+  }
   ${props =>
     props.tentative
       ? ``
@@ -37,6 +40,11 @@ const Container = styled.div`
 
         &:hover {
           opacity:1 !important;
+        }
+      }
+      &:hover {
+        & .pill {
+          opacity:1;
         }
       }
       
@@ -80,6 +88,8 @@ export default class AppointmentBox extends React.Component {
     const { status, name, tentative } = this.state;
     return (
       <Container tentative={tentative}>
+        {tentative ? <TimePill status={status}>Tentative</TimePill> : ``}
+
         <StatusCircle
           type={tentative ? "tentative" : this.formatStatus(this.props.type)}
         />
