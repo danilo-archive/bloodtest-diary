@@ -10,22 +10,24 @@ file_header = """-- This is a generated file. Please, do not modify it manually.
 
 USE BloodTestDB;
 
-DELETE FROM Carer;
 DELETE FROM Test;
 DELETE FROM Patient;
-DELETE FROM Laboratory;
+DELETE FROM Carer;
+DELETE FROM Hospital;
 DELETE FROM TokenControl;
+DELETE FROM ActionLog;
+DELETE FROM LoginCredentials;
 
 """
 
-patient_header = "INSERT INTO Patient (patient_no, patient_name, patient_surname, patient_email, patient_phone, lab_id) VALUES "
-carer_header = "INSERT INTO Carer (patient_no, carer_name, carer_email, carer_phone, relationship) VALUES "
-lab_header = "INSERT INTO Laboratory (lab_id, lab_name, lab_email) VALUES "
-test_header = "INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date) VALUES "
+patient_header = "INSERT INTO Patient (patient_no, patient_name, patient_surname, patient_email, patient_phone, carer_id, hospital_id) VALUES "
+carer_header = "INSERT INTO Carer (carer_id, carer_name, carer_email, carer_phone, relationship) VALUES "
+hospital_header = "INSERT INTO Hospital (hospital_id, hospital_name, hospital_email) VALUES "
+test_header = "INSERT INTO Test (patient_no, due_date, frequency, occurrences, completed_status, completed_date) VALUES "
 
 patient_numbers = []
 for i in range(500):
-    patient_numbers.append(randint(1, 1000000))
+    patient_numbers.append("P" + str(randint(1, 1000000)))
 
 patient_numbers = list(set(patient_numbers))
 
@@ -35,7 +37,7 @@ for i in range(500):
 
 phone_numbers = list(set(phone_numbers))
 
-# Generate a tuple of [added, first_due_date, completed_date]
+# Generate a tuple of [due_date, completed_date]
 def generateDates():
     year = 2019
     month = randint(1,3)
@@ -46,24 +48,13 @@ def generateDates():
     
     day = randint(1,28)
 
-    added = str(year) + pad(month) + pad(day)
-
-    if (day <= 21):
-        day += 7
-    else:
-        day += 7 - 28
-        month += 1
-        if (month == 13):
-            month = 1
-            year+=1
-    
-    first_due_date = str(year) + pad(month) + pad(day)
+    due_date = str(year) + pad(month) + pad(day)
 
     if (randint(0,3) == 0):
-        return [added, first_due_date, "NULL"] # patient haven't completed the test
+        return [due_date, "NULL"] # patient hasn't completed the test
     
     if (randint(0,2) == 0):
-        return [added, first_due_date, first_due_date] # patient has completed the test on time
+        return [due_date, due_date] # patient has completed the test on time
     
     if (day <= 18):
         day += 10
@@ -76,7 +67,7 @@ def generateDates():
 
     completed_date = str(year) + pad(month) + pad(day)
 
-    return [added, first_due_date, completed_date]
+    return [due_date, completed_date]
 
 
 # pad with a leading zero
@@ -85,31 +76,13 @@ def pad(num):
         return "0" + str(num)
     return str(num)
 
-#####################################################
-patients = ""
-for num in patient_numbers:
-    num = str(num)
-    patients += patient_header  \
-        + "('" + num \
-        + "', 'name" + num    \
-        +  "', 'surname" + num    \
-        + "', 'patient" + num + "@gmail.com', "
 
-    if (len(phone_numbers) > 0):
-        patients += "'" + str(phone_numbers.pop()) + "'"
-    else:
-        patients += "NULL"
-
-    patients += ", " + str(randint(1,20)) + ");\n"
-
-print("Generated patients...")
 #####################################################
 carers = ""
-for i in range(200):
+for i in range(1, 601):
     i = str(i)
-    pat_no = patient_numbers[randint(0, len(patient_numbers) - 1)]
     carers += carer_header  \
-        + "(" + str(pat_no) \
+        + "(" + i \
         + ", 'carer" + i    \
         + "', 'carer" + i + "@gmail.com', "
 
@@ -123,32 +96,75 @@ for i in range(200):
 
 print("Generated carers...")
 #####################################################
-labs = ""
-for i in range(1,21):
+hospitals = ""
+for i in range(1,601):
     i = str(i)
-    labs += lab_header  \
+    hospitals += hospital_header  \
         + "(" + i \
-        + ", 'lab" + i    \
-        + "', 'lab" + i + "@gmail.com');\n"
+        + ", 'hospital" + i    \
+        + "', 'hospital" + i + "@gmail.com');\n"
 
-print("Generated labs...")
+print("Generated hospitals...")
+#####################################################
+patients = ""
+for num in patient_numbers:
+    patients += patient_header  \
+        + "('" + num \
+        + "', 'name" + num    \
+        +  "', 'surname" + num
+
+    if (randint(0,3) == 0):
+        # no email, no phone
+        patients += "', NULL, NULL, "
+
+        # needs carer
+        patients += str(randint(1,600)) + ", "
+    else:
+        patients += "', 'patient" + num + "@gmail.com', "
+        if (len(phone_numbers) > 0):
+            patients += "'" + str(phone_numbers.pop()) + "', "
+        else:
+            patients += "NULL, "
+
+        # no carer
+        patients += "NULL, "
+
+    if (randint(0,6) == 0):
+        # client's patient
+        patients += "NULL);\n"
+    else:
+        patients += str(randint(1,600)) + ");\n"
+
+print("Generated patients...")
 #####################################################
 tests = ""
 for i in range(400):
     pat_no = patient_numbers[randint(0, len(patient_numbers) - 1)]
     dates = generateDates()
     tests += test_header  \
-        + "(" + str(pat_no) \
-        + ", " + dates[0]    \
-        + ", " + dates[1]    \
-        + ", 'weekly'"    \
-        + ", " + str(randint(1,20))
+        + "('" + str(pat_no) \
+        + "', " + dates[0] + ", "   
 
-    if (dates[2] == "NULL"):
+    rand = randint(0, 5)
+    # decide frequency + occurrences
+    if (rand == 0):
+        tests += "NULL, 1"
+    elif (rand == 1):
+        tests += "'10-D', " + str(randint(3, 10))
+    elif (rand == 2):
+        tests += "'2-W', " + str(randint(2, 8)) 
+    elif (rand == 3):
+        tests += "'4-W', " + str(randint(2, 10))
+    elif (rand == 4):
+        tests += "'26-W', " + str(randint(2, 5))
+    elif (rand == 5):
+        tests += "'1-Y', " + str(randint(2, 4))
+
+    if (dates[1] == "NULL"):
         tests += ", 'no', NULL);\n"
     else:
         completed = ["yes", "in review"]
-        tests += ", '" + completed[randint(0,len(completed) - 1)] + "', " + dates[2] + ");\n"
+        tests += ", '" + completed[randint(0,len(completed) - 1)] + "', " + dates[1] + ");\n"
 
 print("Generated tests...")
 #####################################################
@@ -156,7 +172,7 @@ print("Generated tests...")
 print("Writing to file...")
 
 file = open("insert.sql", "w+")
-file.write(file_header + labs + "\n" + patients + "\n" + carers + "\n" + tests)
+file.write(file_header + hospitals + "\n" + carers + "\n" + patients + "\n" + tests)
 file.close()
 
 print("Success!")

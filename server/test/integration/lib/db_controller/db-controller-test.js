@@ -18,23 +18,24 @@ const Database = require("../../../../lib/db_controller/Database");
 const dateFormat = require("dateformat");
 
 describe("Test main DB controller behaviour:", () => {
+
     describe("Test selectQuery() function:", () => {
 
         // Setup environment.
-        let test_lab_id = 0;
+        let test_hos_id = 0;
         before(async () => {
             const database = new Database(databaseConfig);
             
-            await database.query("INSERT INTO Laboratory (lab_name) VALUES ('Test Lab 123_S')")
+            await database.query("INSERT INTO Hospital (hospital_name, hospital_email) VALUES ('Test Lab 123_S', 'test@email')")
                         .then((result) => {
-                            test_lab_id = result.insertId;
+                            test_hos_id = result.insertId;
                         })
                         .catch((err) => {
                             printSetupError(err);
                         });
             await database.query("INSERT INTO Patient " + 
-                                "(patient_no, patient_name, patient_surname, lab_id) " +
-                                "VALUES ('test_no_S', 'testName', 'testSurname', '" + test_lab_id + "')")
+                                "(patient_no, patient_name, patient_surname, hospital_id) " +
+                                "VALUES ('test_no_S', 'testName', 'testSurname', '" + test_hos_id + "')")
                         .catch((err) => {
                             printSetupError(err);
                         });
@@ -67,7 +68,7 @@ describe("Test main DB controller behaviour:", () => {
                     expect(result.response.rows[0].patient_no).to.equal("test_no_S");
                     expect(result.response.rows[0].patient_name).to.equal("testName");
                     expect(result.response.rows[0].patient_surname).to.equal("testSurname");
-                    expect(result.response.rows[0].lab_id).to.equal(test_lab_id);
+                    expect(result.response.rows[0].hospital_id).to.equal(test_hos_id);
                 })
                 .then(() => {
                     done();
@@ -115,9 +116,9 @@ describe("Test main DB controller behaviour:", () => {
             });
         });
 
-        describe("> Select with a join Patient-Laboratory", () => {
+        describe("> Select with a join Patient-Hospital", () => {
             it("Should return one entry.", (done) => {
-                const sql = "SELECT * FROM Patient NATURAL JOIN Laboratory " +
+                const sql = "SELECT * FROM Patient NATURAL JOIN Hospital " +
                             "WHERE patient_no = 'test_no_S'";
 
                 db_controller.selectQuery(sql)
@@ -128,8 +129,8 @@ describe("Test main DB controller behaviour:", () => {
                     expect(result.response.rows[0].patient_no).to.equal("test_no_S");
                     expect(result.response.rows[0].patient_name).to.equal("testName");
                     expect(result.response.rows[0].patient_surname).to.equal("testSurname");
-                    expect(result.response.rows[0].lab_id).to.equal(test_lab_id);
-                    expect(result.response.rows[0].lab_name).to.equal("Test Lab 123_S");
+                    expect(result.response.rows[0].hospital_id).to.equal(test_hos_id);
+                    expect(result.response.rows[0].hospital_name).to.equal("Test Lab 123_S");
                 })
                 .then(() => {
                     done();
@@ -140,9 +141,9 @@ describe("Test main DB controller behaviour:", () => {
             });
         });
 
-        describe("> Select with a join Patient-Laboratory, but invalid SQL", () => {
+        describe("> Select with a join Patient-Hospital, but invalid SQL", () => {
             it("Should return an error message.", (done) => {
-                const sql = "SELECT * FROM Patient NATURAL JOIN Laboratory " +
+                const sql = "SELECT * FROM Patient NATURAL JOIN Hospital " +
                             "WHERE patient_no = 'test_no_S' invalid";
 
                 db_controller.selectQuery(sql)
@@ -171,11 +172,11 @@ describe("Test main DB controller behaviour:", () => {
                     expect(result.response.rows[0].patient_no).to.equal("test_no_S");
                     expect(result.response.rows[0].patient_name).to.equal("testName");
                     expect(result.response.rows[0].patient_surname).to.equal("testSurname");
-                    expect(result.response.rows[0].lab_id).to.equal(test_lab_id);
+                    expect(result.response.rows[0].hospital_id).to.equal(test_hos_id);
                     expect(result.response.rows[1].patient_no).to.equal("test_no_S2");
                     expect(result.response.rows[1].patient_name).to.equal("testName2");
                     expect(result.response.rows[1].patient_surname).to.equal("testSurname2");
-                    expect(result.response.rows[1].lab_id).to.equal(null);
+                    expect(result.response.rows[1].hospital_id).to.equal(null);
                 })
                 .then(() => {
                     done();
@@ -216,7 +217,7 @@ describe("Test main DB controller behaviour:", () => {
                     expect(result.response.rows[0].patient_no).to.equal("test_no_S2");
                     expect(result.response.rows[0].patient_name).to.equal("testName2");
                     expect(result.response.rows[0].patient_surname).to.equal("testSurname2");
-                    expect(result.response.rows[0].lab_id).to.equal(null);
+                    expect(result.response.rows[0].hospital_id).to.equal(null);
                 })
                 .then(() => {
                     done();
@@ -235,7 +236,7 @@ describe("Test main DB controller behaviour:", () => {
                             printSetupError(err);
                         });
 
-            await database.query("DELETE FROM Laboratory WHERE lab_id = " + test_lab_id)
+            await database.query("DELETE FROM Hospital WHERE hospital_id = " + test_hos_id)
                         .catch((err) => {
                             printSetupError(err);
                         });
@@ -285,7 +286,7 @@ describe("Test main DB controller behaviour:", () => {
         describe("> Insert one entry, invalid SQL", () => {
             it("Should return an error message.", (done) => {
                 const sql = "INSERT INTO Patient " + 
-                            "(patient_no, patient_nam, patient_surname) " +
+                            "(patient_no, patient_nam, patient_surname) " + // wrong spelling on purpose
                             "VALUES ('test_no_I2', 'testName_I', 'testSurname_I')";
 
                 db_controller.insertQuery(sql)
@@ -318,7 +319,7 @@ describe("Test main DB controller behaviour:", () => {
                 const sql = "INSERT INTO Patient " + 
                             "(patient_no, patient_name, patient_surname) " +
                             "VALUES ('test_no_I', 'testName_I', 'testSurname_I')";
-
+                let error = undefined;
                 db_controller.insertQuery(sql)
                 .then((result) => {
                     expect(result.status).to.equal("OK");
@@ -332,26 +333,27 @@ describe("Test main DB controller behaviour:", () => {
                         expect(result.status).to.equal("ERR");
                         expect(result.err.type).to.equal("SQL Error");
                     })
-                    .then(() => {
-                        done();
-                    })
                     .catch((err) => {
-                        done(err);
+                        error = err;
+                    })
+                    .then(() => {
+                        // clean entry
+                        const database = new Database(databaseConfig);
+                        database.query("DELETE FROM Patient WHERE patient_no = 'test_no_I'")
+                                                .catch((err) => {
+                                                    printSetupError(err);
+                                                })
+                                                .then(() => {
+                                                    database.close();
+                                                })
+                                                .then(() => {
+                                                    if (error) done(error);
+                                                    else done();
+                                                });
                     });
                 })
                 .catch((err) => {
                     done(err);
-                })
-                .then(() => {
-                    // clean entry
-                    const database = new Database(databaseConfig);
-                    database.query("DELETE FROM Patient WHERE patient_no = 'test_no_I'")
-                                            .catch((err) => {
-                                                printSetupError(err);
-                                            })
-                                            .then(() => {
-                                                database.close();
-                                            });
                 });
             });
         });
@@ -394,7 +396,7 @@ describe("Test main DB controller behaviour:", () => {
             it("Should return an error message.", (done) => {
                 const sql = "INSERT INTO Patient " + 
                             "(patient_no, patient_name, patient_surname) " +
-                            "VALUES ('test_no_I3', 'testName_I3', 'testSurname_I3') " +
+                            "VALUES ('test_no_I3', 'testName_I3', 'testSurname_I3') " + // missing comma on purpose
                             "('test_no_I4', 'testName_I4', 'testSurname_I4')";
 
                 db_controller.insertQuery(sql)
@@ -424,24 +426,24 @@ describe("Test main DB controller behaviour:", () => {
 
         describe("> Insert query with auto-incremented primary key", () => {
             it("Should return a valid primary key", (done) => {
-                const sql = "INSERT INTO Laboratory (lab_name) " +
-                            "VALUES ('Test_lab_INS')";
+                const sql = "INSERT INTO Hospital (hospital_name, hospital_email) " +
+                            "VALUES ('Test_lab_INS', 'test@email')";
 
                 let insId = 0;
                 db_controller.insertQuery(sql)
                 .then((result) => {
                     expect(result.status).to.equal("OK");
                     expect(result.response.query).to.equal("OK");
-                    //expect(result.response.affectedRows).to.equal(1);
+                    expect(result.response.affectedRows).to.equal(1);
                     expect(result.response.insertId).to.not.equal(0);
                     insId = result.response.insertId;
                 })
                 .then(() => {
                     const database = new Database(databaseConfig);
-                    database.query("SELECT * FROM Laboratory WHERE lab_id = " + insId)
+                    database.query("SELECT * FROM Hospital WHERE hospital_id = " + insId)
                     .then((result) => {
                         expect(result.length).to.equal(1);
-                        expect(result[0].lab_name).to.equal("Test_lab_INS");
+                        expect(result[0].hospital_name).to.equal("Test_lab_INS");
                     })
                     .then(() => {
                         database.close();
@@ -458,7 +460,7 @@ describe("Test main DB controller behaviour:", () => {
                 .then(() => {
                     // clean entry
                     const database = new Database(databaseConfig);
-                    database.query("DELETE FROM Laboratory WHERE lab_id = " + insId)
+                    database.query("DELETE FROM Hospital WHERE hospital_id = " + insId)
                                             .catch((err) => {
                                                 printSetupError(err);
                                             })
@@ -985,6 +987,7 @@ describe("Test main DB controller behaviour:", () => {
     describe("Test requestEditing() function:", () => {
 
         describe("> Request on entry that does not exist", () => {
+            // Three similar tests to ensure code coverage
             it("Should reject the request.", (done) => {
 
                 db_controller.requestEditing("Test", "invalid")
@@ -1001,7 +1004,7 @@ describe("Test main DB controller behaviour:", () => {
             });
             it("Should reject the request.", (done) => {
 
-                db_controller.requestEditing("Laboratory", "invalid")
+                db_controller.requestEditing("Hospital", "invalid")
                 .then((result) => {
                     expect(result.status).to.equal("ERR");
                     expect(result.err.type).to.equal("Invalid request.");
@@ -1032,7 +1035,7 @@ describe("Test main DB controller behaviour:", () => {
         describe("> Request on a valid entry", () => {
             it("Should return a token with correct validity", (done) => {
                 const database = new Database(databaseConfig);
-
+                let error = undefined;
                 database.query("INSERT INTO Patient " + 
                         "(patient_no, patient_name, patient_surname) " +
                         "VALUES ('test_no_R', 'testName', 'testSurname')")
@@ -1058,28 +1061,29 @@ describe("Test main DB controller behaviour:", () => {
                                 const shouldStartWith = dateFormat(new Date(), "yyyymmddHHMM");
                                 expect(result.response.token.startsWith(shouldStartWith)).to.be.true;
                             })
-                            .then(() => {
-                                done();
-                            })
                             .catch((err) => {
-                                done(err);
-                            });
-                        })
-                        .then(() => {
-                            const database1 = new Database(databaseConfig);
-
-                            database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R'")
+                                error = err;
+                            })
                             .then(() => {
-                                database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R'")
+                                const database1 = new Database(databaseConfig);
+    
+                                database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R'")
+                                .then(() => {
+                                    database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R'")
+                                    .catch((err) => {
+                                        printSetupError(err);
+                                    });
+                                })
                                 .catch((err) => {
                                     printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
                                 });
                             })
-                            .catch((err) => {
-                                printSetupError(err);
-                            })
                             .then(() => {
-                                database1.close();
+                                if (error) done(error);
+                                else done();
                             });
                         });
             });
@@ -1088,7 +1092,7 @@ describe("Test main DB controller behaviour:", () => {
         describe("> Request on a valid entry that is being edited", () => {
             it("Should reject the request", (done) => {
                 const database = new Database(databaseConfig);
-
+                let error = undefined;
                 database.query("INSERT INTO Patient " + 
                         "(patient_no, patient_name, patient_surname) " +
                         "VALUES ('test_no_R1', 'testName', 'testSurname')")
@@ -1111,11 +1115,8 @@ describe("Test main DB controller behaviour:", () => {
                                 expect(result.status).to.equal("ERR");
                                 expect(result.err.type).to.equal("Invalid request.");
                             })
-                            .then(() => {
-                                done();
-                            })
                             .catch((err) => {
-                                done(err);
+                                error = err;
                             });
                         })
                         .then(() => {
@@ -1134,6 +1135,10 @@ describe("Test main DB controller behaviour:", () => {
                             .then(() => {
                                 database1.close();
                             });
+                        })
+                        .then(() => {
+                            if (error) done(error);
+                            else done();
                         });
             });
         });
@@ -1141,7 +1146,7 @@ describe("Test main DB controller behaviour:", () => {
         describe("> Request on a valid entry with expired token", () => {
             it("Should return a token with correct validity, previous token should be deleted.", (done) => {
                 const database = new Database(databaseConfig);
-
+                let error = undefined;
                 database.query("INSERT INTO Patient " + 
                         "(patient_no, patient_name, patient_surname) " +
                         "VALUES ('test_no_R2', 'testName', 'testSurname')")
@@ -1182,34 +1187,35 @@ describe("Test main DB controller behaviour:", () => {
                                     expect(result.length).to.equal(0);
                                 })
                                 .catch((err) => {
-                                    done(err);
+                                    error = err;
                                 })
                                 .then(() => {
                                     database2.close();
                                 });
                             })
-                            .then(() => {
-                                done();
-                            })
                             .catch((err) => {
-                                done(err);
-                            });
-                        })
-                        .then(() => {
-                            const database1 = new Database(databaseConfig);
-
-                            database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R2'")
+                                error = err;
+                            })
                             .then(() => {
-                                database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R2'")
+                                const database1 = new Database(databaseConfig);
+    
+                                database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R2'")
+                                .then(() => {
+                                    database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R2'")
+                                    .catch((err) => {
+                                        printSetupError(err);
+                                    });
+                                })
                                 .catch((err) => {
                                     printSetupError(err);
+                                })
+                                .then(() => {
+                                    database1.close();
                                 });
                             })
-                            .catch((err) => {
-                                printSetupError(err);
-                            })
                             .then(() => {
-                                database1.close();
+                                if (error) done(error);
+                                else done();
                             });
                         });
             });
@@ -1236,7 +1242,7 @@ describe("Test main DB controller behaviour:", () => {
 
         describe("> Improper use of insertQuery", () => {
             it("Should throw an Error", (done) => {
-                const sql = "SELECT ...";
+                const sql = "     SELECT ...";
 
                 db_controller.insertQuery(sql)
                 .then((result) => {

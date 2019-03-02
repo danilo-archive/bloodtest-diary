@@ -6,6 +6,10 @@
  * It does so through token exchange system that gives editing rights to whoever
  * obtains it. The token only works for a particular entry in the database.
  * 
+ * Additionally, the functions for critical queries deleteQuery, updateQuery and 
+ * requestEditing will never be executed synchronously. This is implemented with 
+ * adapted Bakery algorithm.
+ * 
  * @author Luka Kralj
  * @version 1.0
  * 
@@ -27,6 +31,10 @@ const databaseConfig = require("../../config/database");
 const Database = require("./Database");
 
 const TOKEN_VALIDITY_MINUTES = 30;
+
+// Needed to ensure that critical queries are never executed concurrently.
+let current = 0;
+let next = 0;
 
 /**
  * Call this for SELECT queries.
@@ -64,31 +72,52 @@ async function insertQuery(sql) {
 }
 
 /**
+ * Await for this function to pause execution for a certain time.
+ *
+ * @param {number} ms Time in milliseconds
+ * @returns {Promise}
+ */
+function sleep(ms){
+    return new Promise((resolve) => {
+        setTimeout(resolve,ms);
+    });
+}
+
+/**
  * Call this for DELETE queries.
  *
  * @param {string} sql The SQL query.
  * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
  */
 async function deleteQuery(sql, entryTable, entryID) {
+    let waitFor = next;
+    next++;
+    while (waitFor != current) {
+        // waiting for the lock...
+        await sleep(1);
+    }
+
     if (!startsWith(sql, "delete") || entryTable === undefined || entryID === undefined) {
+        current++;
         throw new Error("Invalid use of deleteQuery.");
     }
 
     const database = new Database(databaseConfig);
     let response = undefined;
-
+    
     await isValidEntry(database, entryTable, entryID)
     .then(async (isValid) => {
         if (!isValid) {
             response = await getErrResponse("Invalid entry table and entry ID pair.");
         }
     })
-
+    
     if (response !== undefined) {
         database.close();
+        current++;
         return response;
     }
-
+    
     await tokenControlEntryExists(database, entryTable, entryID)
     .then(async (result) => {
         if (result) {
@@ -104,8 +133,9 @@ async function deleteQuery(sql, entryTable, entryID) {
             });
         } 
     });
-
+    
     database.close();
+    current++;
     return response;
 }
 
@@ -116,7 +146,15 @@ async function deleteQuery(sql, entryTable, entryID) {
  * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
  */
 async function updateQuery(sql, entryTable, entryID, token) {
+    let waitFor = next;
+    next++;
+    while (waitFor != current) {
+        // waiting for the lock...
+        await sleep(1);
+    }
+
     if (!startsWith(sql, "update") || entryTable === undefined || entryID === undefined || token === undefined) {
+        current++;
         throw new Error("Invalid use of updateQuery.");
     }
 
@@ -132,6 +170,7 @@ async function updateQuery(sql, entryTable, entryID, token) {
 
     if (response !== undefined) {
         database.close();
+        current++;
         return response;
     }
 
@@ -154,6 +193,7 @@ async function updateQuery(sql, entryTable, entryID, token) {
 
     if (response.status !== "OK") {
         database.close();
+        current++;
         return response;
     }
 
@@ -169,7 +209,7 @@ async function updateQuery(sql, entryTable, entryID, token) {
     });
 
     database.close();
-    
+    current++;
     return response;
 }
 
@@ -181,7 +221,15 @@ async function updateQuery(sql, entryTable, entryID, token) {
  * @returns {Promise<JSON>} Response containing the valid token, or error message.
  */
 async function requestEditing(entryTable, entryID) {
+    let waitFor = next;
+    next++;
+    while (waitFor != current) {
+        // waiting for the lock...
+        await sleep(1);
+    }
+
     if (entryTable === undefined || entryID === undefined) {
+        current++;
         throw new Error("Invalid use of requestEditing.");
     }
 
@@ -198,6 +246,7 @@ async function requestEditing(entryTable, entryID) {
 
     if (response !== undefined) {
         database.close();
+        current++;
         return response;
     }
 
@@ -213,6 +262,7 @@ async function requestEditing(entryTable, entryID) {
 
     if (response.status !== "OK") {
         database.close();
+        current++;
         return response;
     }
 
@@ -232,6 +282,7 @@ async function requestEditing(entryTable, entryID) {
     });
 
     database.close();
+    current++;
     return response;
 }
 
@@ -377,11 +428,13 @@ async function tokenControlEntryExists(database, entryTable, entryID, token) {
                     options.push(token);
                 }
                 delQuery = mysql.format(delQuery, options);
-
+                
                 await getResult(delQuery, database, async (result) => {
                     if (result.affectedRows != 1) {
+                        console.log("=====================");
                         console.log(result);
                         console.log("ERROR WHEN DELETING A TOKEN (" + entryTable + ", " + entryID + ")!");
+                        console.log("=====================");
                     }
                     return result;
                 });
@@ -415,7 +468,7 @@ async function tokenControlEntryExists(database, entryTable, entryID, token) {
 async function isValidEntry(database, entryTable, entryID) {
     let primaryKey = undefined;
     switch(entryTable) {
-        case "Laboratory": primaryKey = "lab_id"; break;
+        case "Hospital": primaryKey = "hospital_id"; break;
         case "Patient": primaryKey = "patient_no"; break;
         case "Carer": primaryKey = "carer_id"; break;
         case "Test": primaryKey = "test_id"; break;
@@ -423,7 +476,7 @@ async function isValidEntry(database, entryTable, entryID) {
     if (primaryKey === undefined) {
         return false;
     }
-
+    
     let sql = "SELECT * FROM " + entryTable + " WHERE " + primaryKey + " = ?";
     sql = mysql.format(sql, [entryID]);
     let response = await getResult(sql, database, (result) => {
@@ -434,6 +487,6 @@ async function isValidEntry(database, entryTable, entryID) {
             return false;
         }
     });
-
+    
     return response.response;
 }
