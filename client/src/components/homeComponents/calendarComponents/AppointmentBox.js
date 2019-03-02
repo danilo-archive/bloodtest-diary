@@ -5,6 +5,7 @@ import AppointmentInfo from "./AppointmentInfo";
 import IconSet from "./IconSet";
 import TimePill from "./TimePill";
 import {getServerConnect} from "../../../serverConnection.js";
+import {isPastDate} from "../../../lib/calendar-controller.js";
 const Container = styled.div`
   display: block;
   position: relative;
@@ -27,8 +28,8 @@ const Container = styled.div`
 
 const mapping = {
     "yes":"completed",
-    "no": "late",
-    "in review": "pending"
+    "no": "pending",
+    "in review": "inReview"
 }
 
 export default class AppointmentBox extends React.Component {
@@ -44,8 +45,11 @@ export default class AppointmentBox extends React.Component {
       this.serverConnect = getServerConnect();
 }
 
-  formatStatus(status){
-      if (status === "completed" || status === "pending" || status === "late"){
+  formatStatus(status, date){
+      if (status === "no" && isPastDate(date)){
+          return "late";
+      }
+      if (status === "completed" || status === "inReview" || status === "late"){
          return status;
      } else {
          return mapping[status];
@@ -61,7 +65,7 @@ export default class AppointmentBox extends React.Component {
     return (
       <Container>
         {time ? <TimePill status={status}>{time}</TimePill> : ``}
-        <StatusCircle type={this.formatStatus(this.props.type)} />
+        <StatusCircle type={this.formatStatus(this.props.type, this.props.dueDate)} />
         <AppointmentInfo name={name} />
         <IconSet onStatusClick={this.onStatusClick} />
       </Container>
