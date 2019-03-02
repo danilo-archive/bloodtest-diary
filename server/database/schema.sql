@@ -16,12 +16,15 @@ GRANT ALL PRIVILEGES ON BloodTestDB.*
     TO 'bloodTestAdmin'@localhost
     IDENTIFIED BY "Blood_admin1";
 
+
 DROP TABLE IF EXISTS Test;
 DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS Carer;
 DROP TABLE IF EXISTS Hospital;
-DROP TABLE IF EXISTS Laboratory;
 DROP TABLE IF EXISTS TokenControl;
+DROP TABLE IF EXISTS ActionLog;
+DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS LoginCredentials;
 
 CREATE TABLE Hospital (
     hospital_id INTEGER AUTO_INCREMENT,
@@ -46,7 +49,7 @@ CREATE TABLE Patient (
     patient_name VARCHAR(100) NOT NULL,
     patient_surname VARCHAR(100) NOT NULL,
     patient_email VARCHAR(100),
-    patient_phone VARCHAR(20),
+    patient_phone VARCHAR(15),
     hospital_id INTEGER,
     carer_id INTEGER,
     additional_info TEXT,
@@ -60,7 +63,7 @@ CREATE TABLE Test (
     patient_no VARCHAR(20) NOT NULL,
     due_date DATE NOT NULL,
     frequency VARCHAR(10),
-    occurrences INTEGER DEFAULT 1,
+    occurrences INTEGER NOT NULL DEFAULT 1,
     completed_status ENUM("yes", "no", "in review") NOT NULL DEFAULT "no",
     completed_date DATE,
     notes TEXT,
