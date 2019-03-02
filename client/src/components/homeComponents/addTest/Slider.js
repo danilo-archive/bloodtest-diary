@@ -4,10 +4,9 @@ import React from "react";
 const Slider = styled.input.attrs({ type: "range" })`
     appearance:none;
     outline:none;
-    width: 300px;
+    width: 100%;
     background-color: #e5e5e5;
-    height 5px;
-
+    height 8px;
     &::-webkit-slider-thumb{
         appearance:none;
         width:15px;
@@ -26,5 +25,11 @@ const Slider = styled.input.attrs({ type: "range" })`
 `;
 
 export default props => {
-  return <Slider min={props.min} max={props.max} />;
+  return (
+    <Slider
+      min={props.min}
+      max={props.max}
+      onInput={event => props.onChange(event.target.value)}
+    />
+  );
 };

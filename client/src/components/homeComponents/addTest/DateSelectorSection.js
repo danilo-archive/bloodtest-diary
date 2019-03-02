@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import TitleTab from "./TitleTab";
 import CalendarTable from "../../calendarComponents/Calendar";
+import FrequencySetter from "./FrequencySetter";
 
 const Container = styled.div`
   position: relative;
@@ -15,25 +16,40 @@ const Container = styled.div`
 const SecondHalfDiv = styled.div`
   position: absolute;
   width: 100%;
-  height: 70%;
-  top: 30%;
+  height: 90%;
+  top: 45%;
   left: 0;
-  background: red;
+  background: none;
   z-index: 0;
 `;
 const TextArea = styled.textarea`
   width: 98%;
-  height: 86%;
+  height: 47%;
   resize: none;
   outline: none;
 `;
 
 export default class DateSelectorSection extends React.Component {
-  state = { selectedDate: this.props.selectedDate, showCalendar: false };
+  state = {
+    selectedDate: this.props.selectedDate,
+    showCalendar: false,
+    frequency: {
+      timeAmount: this.props.timeAmount,
+      timmeUnit: this.props.timeUnit
+    }
+  };
   onInputClick = () => {
     this.setState({ showCalendar: true }); // [A] + [B] = [A,B]// [...arrayA,...arrayB] = [A,B]
   };
 
+  onSliderChange = timeAmount => {
+    this.setState({ timeAmount });
+    this.props.onTimeAmountChange(timeAmount);
+  };
+  onUnitChange = timeUnit => {
+    this.setState({ timeUnit });
+    this.props.onUnitChange(timeUnit);
+  };
   onDayClicked = day => {
     this.setState({ showCalendar: false });
   };
@@ -59,6 +75,14 @@ export default class DateSelectorSection extends React.Component {
           ) : (
             <></>
           )}
+          <FrequencySetter
+            unitOptions={this.props.unitOptions}
+            timeAmount={this.state.frequency.timeAmount}
+            timeUnit={this.state.frequency.timeUnit}
+            onSliderChange={value => this.onSliderChange(value)}
+            onSelectChange={value => this.onUnitChange(value)}
+          />
+
           <SecondHalfDiv>
             <TitleTab color="#0b999d">Observations</TitleTab>
             <TextArea

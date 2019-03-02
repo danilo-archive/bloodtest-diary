@@ -18,7 +18,12 @@ export default class AddTestView extends React.Component {
     selectedID: "",
     selectedDate: this.props.selectedDate,
     observations: "",
-    allPatients: ""
+    allPatients: "",
+    frequency: {
+      timeAmount: "12",
+      timeUnits: ["Days", "Weeks", "Months", "Years"],
+      timeUnit: "Days"
+    }
   };
   constructor(props) {
     super(props);
@@ -45,11 +50,21 @@ export default class AddTestView extends React.Component {
   };
   onDoneClick = () => {
     if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
-      this.serverConnect.addTest(this.state.selectedID, this.state.selectedDate, this.state.observations);
+      this.serverConnect.addTest(
+        this.state.selectedID,
+        this.state.selectedDate,
+        this.state.observations
+      );
       alert(
         `Patient ID: ${this.state.selectedID} \nObservations: ${
           this.state.observations
-        }\nScheduled Date: ${this.state.selectedDate}`
+        }\nScheduled Date: ${this.state.selectedDate}\nFrequency: ${
+          this.state.frequency.timeAmount === "0"
+            ? `Do not repeat`
+            : `Repeat every ${
+                this.state.frequency.timeAmount
+              } ${this.state.frequency.timeUnit.toLowerCase()}`
+        }`
       );
       this.setState({ open: false });
       this.props.closeModal();
@@ -58,34 +73,48 @@ export default class AddTestView extends React.Component {
     }
   };
   render() {
+    console.log(this.state);
     return (
       <>
-          <div
-            style={{
-              width: "35rem",
-              height: "30rem",
-              background: "rgba(244, 244, 244,0.7)"
-            }}
-          >
-            <TitleTab onClose={this.props.closeModal} main={true}>
-              Add Appointments
-            </TitleTab>
-            <DataContainer>
-              <PatientSelect
-                patients={this.state.allPatients}
-                onDoneClick={this.onDoneClick}
-                onSelectClick={id => this.setState({ selectedID: id })}
-              />
+        <div
+          style={{
+            width: "35rem",
+            height: "30rem",
+            background: "rgba(244, 244, 244,0.7)"
+          }}
+        >
+          <TitleTab onClose={this.props.closeModal} main={true}>
+            Add Appointments
+          </TitleTab>
+          <DataContainer>
+            <PatientSelect
+              patients={this.state.allPatients}
+              onDoneClick={this.onDoneClick}
+              onSelectClick={id => this.setState({ selectedID: id })}
+            />
 
-              <DateSelectorSection
-                selectedDate={this.state.selectedDate}
-                onDateSelect={day => this.onDateSelect(day)}
-                onObservationsChange={observations =>
-                  this.setState({ observations })
-                }
-              />
-            </DataContainer>
-          </div>
+            <DateSelectorSection
+              timeAmount={this.state.frequency.timeAmount}
+              timeUnit={this.state.frequency.timeUnit}
+              unitOptions={this.state.frequency.timeUnits}
+              onTimeAmountChange={timeAmount =>
+                this.setState({
+                  frequency: { ...this.state.frequency, timeAmount }
+                })
+              }
+              onUnitChange={timeUnit =>
+                this.setState({
+                  frequency: { ...this.state.frequency, timeUnit }
+                })
+              }
+              selectedDate={this.state.selectedDate}
+              onDateSelect={day => this.onDateSelect(day)}
+              onObservationsChange={observations =>
+                this.setState({ observations })
+              }
+            />
+          </DataContainer>
+        </div>
       </>
     );
   }
