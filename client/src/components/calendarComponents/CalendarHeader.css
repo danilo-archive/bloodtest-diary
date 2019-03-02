@@ -1,0 +1,25 @@
+td, td:hover {
+    color: white;
+    background-color: #0b989d;
+}
+
+td button:hover {
+    color: #0b989d;
+    background-color: white;
+}
+
+button {
+    background-color: transparent;
+    color: white;
+}
+
+.arrow, .arrow:hover {
+    font-size: 120%;
+    background-color: transparent;
+}
+
+.date {
+    font-size: 120%;
+}
+
+

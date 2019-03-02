@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import Label from "../Label";
+import Label from "../../Label";
 
 const Circle = styled.div`
   background-color: #028090;
@@ -17,7 +17,7 @@ const Circle = styled.div`
   transition: background-color 0.2s ease;
   margin: auto;
   transform: translate(-50%, -50%);
-  z-index: 100;
+  z-index: 10;
   &:hover {
     background-color: #00b0c6;
     transition: background-color 0.2s ease;
