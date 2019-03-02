@@ -71,10 +71,16 @@ async function insertQuery(sql) {
     })
 }
 
+/**
+ * Await for this function to pause execution for a certain time.
+ *
+ * @param {number} ms Time in milliseconds
+ * @returns {Promise}
+ */
 function sleep(ms){
-    return new Promise(resolve=>{
-        setTimeout(resolve,ms)
-    })
+    return new Promise((resolve) => {
+        setTimeout(resolve,ms);
+    });
 }
 
 /**
@@ -462,7 +468,7 @@ async function tokenControlEntryExists(database, entryTable, entryID, token) {
 async function isValidEntry(database, entryTable, entryID) {
     let primaryKey = undefined;
     switch(entryTable) {
-        case "Laboratory": primaryKey = "lab_id"; break;
+        case "Hospital": primaryKey = "hospital_id"; break;
         case "Patient": primaryKey = "patient_no"; break;
         case "Carer": primaryKey = "carer_id"; break;
         case "Test": primaryKey = "test_id"; break;
