@@ -101,6 +101,7 @@ io.on('connection',function(socket)
 
     socket.on('getOverdueTests', async () => {
         let response = await queryController.getOverdueTests();
+        //let response = await queryController.getOverdueTestsExtended();
         socket.emit('getOverdueTestsResponse', response);
     });
 

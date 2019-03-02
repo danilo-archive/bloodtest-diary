@@ -100,7 +100,7 @@ class Home extends Component {
     initOverduePanel() {
       this.serverConnect.getOverdueTests(res => {
         let groups = group(res);
-        console.log(groups);
+        console.log({groups});
         this.setState({
             overdueTests: groups,
             overdueReady: true

@@ -45,10 +45,10 @@ function sortByOverdueTime(tests, left, right){
     var pivot = tests[Math.floor((left + right) / 2)];
     var today = new Date();
     while (i <= j){
-        while (daysBetweenDates(tests[i].first_due_date, today) > daysBetweenDates(pivot.first_due_date, today)){
+        while (daysBetweenDates(tests[i].due_date, today) > daysBetweenDates(pivot.due_date, today)){
             i++;
         }
-        while (daysBetweenDates(tests[j].first_due_date, today) < daysBetweenDates(pivot.first_due_date, today)){
+        while (daysBetweenDates(tests[j].due_date, today) < daysBetweenDates(pivot.due_date, today)){
             j--;
         }
         if (i <= j){
@@ -83,19 +83,19 @@ function group(tests, testDay=undefined){
                   {class: "2-4 weeks", tests: []}, {class: "Less than 2 weeks", tests: []}];
 
     var i = 0;
-    while (i < sortedTests.length && yearsBetweenDates(sortedTests[i].first_due_date, today) > 0){
+    while (i < sortedTests.length && yearsBetweenDates(sortedTests[i].due_date, today) > 0){
         groups[0].tests = groups[0].tests.concat(sortedTests[i]);
         i++;
     }
-    while (i < sortedTests.length && monthsBetweenDates(sortedTests[i].first_due_date, today) > 6){
+    while (i < sortedTests.length && monthsBetweenDates(sortedTests[i].due_date, today) > 6){
         groups[1].tests = groups[1].tests.concat(sortedTests[i]);
         i++;
     }
-    while (i < sortedTests.length && monthsBetweenDates(sortedTests[i].first_due_date, today) >= 1){
+    while (i < sortedTests.length && monthsBetweenDates(sortedTests[i].due_date, today) >= 1){
         groups[2].tests = groups[2].tests.concat(sortedTests[i]);
         i++;
     }
-    while (i < sortedTests.length && weeksBetweenDates(sortedTests[i].first_due_date, today) >= 2){
+    while (i < sortedTests.length && weeksBetweenDates(sortedTests[i].due_date, today) >= 2){
         groups[3].tests = groups[3].tests.concat(sortedTests[i]);
         i++;
     }
