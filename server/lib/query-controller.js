@@ -68,6 +68,38 @@ async function getOverdueTestsExtended()
   return await selectQueryDatabase(sql);
 }
 
+async function getOverdueGroups()
+{
+      const today = new Date();
+      let tests = await getOverdueTestsExtended();
+      let sortedTests = tests.response;
+      let groups = [{class: "Year+", tests: []}, {class: "6+ months", tests: []},{class: "1-6 months", tests: []},
+                    {class: "2-4 weeks", tests: []}, {class: "Less than 2 weeks", tests: []}];
+
+      var i = 0;
+      while (i < sortedTests.length && (Math.floor(sortedTests[i].difference - 365)) >= 0){
+          groups[0].tests = groups[0].tests.concat(sortedTests[i]);
+          i++;
+      }
+      while (i < sortedTests.length && (Math.floor(sortedTests[i].difference - 365/2)) >= 0){
+          groups[1].tests = groups[1].tests.concat(sortedTests[i]);
+          i++;
+      }
+      while (i < sortedTests.length && (Math.floor(sortedTests[i].difference - 30)) >= 0){
+          groups[2].tests = groups[2].tests.concat(sortedTests[i]);
+          i++;
+      }
+      while (i < sortedTests.length && (Math.floor(sortedTests[i].difference - 14)) >= 0){
+          groups[3].tests = groups[3].tests.concat(sortedTests[i]);
+          i++;
+      }
+      while (i < sortedTests.length){
+          groups[4].tests = groups[4].tests.concat(sortedTests[i]);
+          i++;
+      }
+      return groups;
+}
+
 async function addTest(patient_no, date, notes, frequency, occurrences=1){
     date = utils.formatDate(new Date(date));
     let values = ``;
@@ -201,6 +233,7 @@ async function selectQueryDatabase(sql)
 
 module.exports = {
     getOverdueTestsExtended,
+    getOverdueGroups,
     getUser,
     getAllPatients,
     getAllTests,
