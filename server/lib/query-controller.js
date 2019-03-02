@@ -11,13 +11,19 @@ async function getAllPatients()
   return await selectQueryDatabase(sql)
 }
 
+async function getUser(username)
+{
+  let sql = `Select * From User Where username='${username}' Limit 1;`;
+  return await selectQueryDatabase(sql)
+}
+
 /**
 *Get all the tests from the database
 * @return {JSON} result of the query
 **/
 async function getAllTests()
 {
-  let sql = "Select * From Test;";
+  let sql = "Select * From Test ORDER BY due_date ASC;";
   return await selectQueryDatabase(sql)
 }
 
@@ -38,7 +44,7 @@ async function getTestsOfPatient(patientId){
 **/
 async function getAllTestsOnDate(date)
 {
-  let sql = `Select * From Test Where first_due_date = '${date}';`;
+  let sql = `Select * From Test Where due_date = '${date}';`;
   return await selectQueryDatabase(sql)
 }
 
@@ -48,17 +54,26 @@ async function getAllTestsOnDate(date)
 **/
 async function getOverdueTests()
 {
-  let sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where first_due_date < CURDATE() AND completed_status='no' `;
+  let sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
   return await selectQueryDatabase(sql);
 }
 
+/**
+* Get all the overdue tests from the database plus additional info about time difference
+* @return {JSON} result of the query
+**/
+async function getOverdueTestsExtended()
+{
+  let sql = `Select *, DATEDIFF(CURDATE(),due_date) AS difference From Test NATURAL JOIN Patient where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
+  return await selectQueryDatabase(sql);
+}
 
-async function addTest(patient_no, date, notes, frequency){
-    let today = utils.formatDate(new Date());
+async function addTest(patient_no, date, notes, frequency, occurrences=1){
     date = utils.formatDate(new Date(date));
     let values = ``;
-    console.log({today, date});
-    let sql =`INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date, notes) VALUES (${patient_no}, ${today}, ${date}, 'weekly', 1, 'in review', NULL, '${notes}');`;
+    console.log({date});
+    let sql =`INSERT INTO Test(patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes)
+    VALUES (${patient_no}, ${date}, 'weekly', ${occurrences}, 'no', NULL, '${notes}');`;
     console.log(sql);
     let response = await databaseController.insertQuery(sql);
     console.log(response);
@@ -124,12 +139,18 @@ function getTestsDuringTheWeek(date)
 {
   var weekDay = new Date(date).getDay();
   var daysInWeek=[]
-  for(var i=0;i<6;i++)
+  var sql;
+  var i = 0;
+  while(i<5)
   {
     day = -1*(weekDay - 1) + i;
-    sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where first_due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
+    sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
     daysInWeek.push(databaseController.selectQuery(sql));
+    i++;
   }
+  day = -1*(weekDay - 1) + i;
+  sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD('${date}', INTERVAL ${day} DAY) OR due_date = DATE_ADD('${date}', INTERVAL ${day+1} DAY);`;
+  daysInWeek.push(databaseController.selectQuery(sql));
   return daysInWeek;
 }
 
@@ -142,14 +163,20 @@ function getTestsDuringTheWeek(date)
 function checkMultipleQueriesStatus(queries)
 {
   var data = [];
+  var error = false;
   queries.forEach(query=>{
     if(query.status==="OK"){
       data.push(query.response.rows)
     }
-    else{
-      return {success:false, response:query.err}
+    else
+    {
+      error = true;
     }
   })
+  if(error)
+  {
+    return {success:false, response:"One query failed"};
+  }
   return {success:true, response:data};
 }
 
@@ -174,6 +201,8 @@ async function selectQueryDatabase(sql)
 
 
 module.exports = {
+    getOverdueTestsExtended,
+    getUser,
     getAllPatients,
     getAllTests,
     getTestsOfPatient,
