@@ -4,10 +4,14 @@
   "description": "Server side of the Blood Test Diary",
   "main": "app.js",
   "dependencies": {
-    "express": "^4.16.4",
-    "socket.io": "^2.2.0",
     "dateformat": "^3.0.3",
-    "mysql": "^2.16.0"
+    "express": "^4.16.4",
+    "mysql": "^2.16.0",
+    "rewire": "^4.0.1",
+    "save-dev": "^2.0.0",
+    "sinon": "^7.2.6",
+    "sinon-chai": "^3.3.0",
+    "socket.io": "^2.2.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
