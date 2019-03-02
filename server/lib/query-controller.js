@@ -72,8 +72,7 @@ async function addTest(patient_no, date, notes, frequency, occurrences=1){
     date = utils.formatDate(new Date(date));
     let values = ``;
     console.log({date});
-    let sql =`INSERT INTO Test(patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes)
-    VALUES (${patient_no}, ${date}, 'weekly', ${occurrences}, 'no', NULL, '${notes}');`;
+    let sql =`INSERT INTO Test(patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes) VALUES('${patient_no}', ${date}, 'weekly', ${occurrences}, 'no', NULL, '${notes}');`;
     console.log(sql);
     let response = await databaseController.insertQuery(sql);
     console.log(response);
