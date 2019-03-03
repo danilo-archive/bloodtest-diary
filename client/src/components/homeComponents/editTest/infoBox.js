@@ -24,7 +24,7 @@ export default class InfoBox extends React.Component {
       return (
         <Container>
           <Label>{this.props.label}</Label>
-          <LabelBox button={{onClick:()=>console.log("Yo"), icon:'check'}} text = {this.props.text} />
+          <LabelBox button={{onClick: this.props.onClick, icon: this.props.icon}} text = {this.props.text} />
         </Container>
       );
     }

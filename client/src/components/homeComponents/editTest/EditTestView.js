@@ -29,12 +29,17 @@ export default class AddTestView extends React.Component {
                   Edit Appointment
                 </TitleTab>
                     <InfoBox
-                        label = {"Full Name"}
-                        text = {"Luka Kralj"}
+                        label = {"Patient ID"}
+                        text = {"3212321"}
                     />
                     <InfoBox
                         label = {"Full Name"}
                         text = {"Alvaro Raussel"}
+                    />
+                    <InfoBox
+                        label = {"Due"}
+                        text = {"24-08-1998"}
+                        icon = "check"
                     />
              </div>
             </>

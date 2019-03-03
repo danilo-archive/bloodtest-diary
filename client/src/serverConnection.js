@@ -169,6 +169,13 @@ class ServerConnect {
         });
     }
 
+    requestTestEditing(testId, callback){
+        this.socket.emit("requestTestEditToken", testId);
+        this.socket.on("requestTestEditTokenResponse", token => {
+            callback(token);
+        });
+    }
+
     /**
     * Thim method emits a request to add a test into the database
     * @param patientId The number of the patient that has to take the test.
@@ -187,6 +194,21 @@ class ServerConnect {
     */
     changeTestStatus(testId, newStatus){
         this.socket.emit('testStatusChange', testId, newStatus);
+    }
+
+    /**
+    * Thim method emits a request to edit a test into the database.
+    * Response can be either success or failure.
+    * @param testId The id of the test to be changed.
+    * @param {JSON} newData All the information about the test
+    * @param token The token that grants editing priviledges.
+    * @callback callback Protocol to be called on response
+    */
+    editTest(testId, newData, token, callback){
+        this.socket.emit("editTest", newData, token);
+        this.socket.on("editTestReponse", response => {
+            callback(response)
+        });
     }
 }
 

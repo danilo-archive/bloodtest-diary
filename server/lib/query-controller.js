@@ -105,6 +105,11 @@ async function getOverdueGroups()
       return groups;
 }
 
+async function requestTestEditToken(testId){
+    var data = await databaseController.requestEditing("Test", testId).then( data => {return data;});
+    return data.response.token;
+}
+
 async function addTest(patient_no, date, notes, frequency, occurrences=1){
     date = utils.formatDate(new Date(date));
     frequency = frequency ? frequency : "NULL";
@@ -118,6 +123,16 @@ async function addTest(patient_no, date, notes, frequency, occurrences=1){
     }else {
         return {success: false};
     }
+}
+
+/**
+*  Edit test query
+* @param testId The id of the test to be updated
+* @param {JSON} newInfo All the information of the test (new and old)
+* @param token The token that grants edit priviledges
+*/
+async function editTest(testId, newInfo, token){
+    // TODO write query
 }
 
 /**
@@ -136,6 +151,7 @@ async function changeTestStatus(testId, newStatus)
   {
     switch(newStatus)
     {
+        // TODO fix bug that completed might reset the completed date
       case "completed": {status = "yes"; date=`CURDATE()`; break;}
       case "inReview" : {status = "in review"; date `CURDAte()`; break;}
       case "late": {status = "no"; date=`NULL`; break;}

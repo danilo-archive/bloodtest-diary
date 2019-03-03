@@ -113,6 +113,10 @@ io.on('connection',function(socket)
         socket.emit("getTestInfoResponse", response);
     });
 
+    socket.on("requestTestEditToken", async (testId) => {
+        //
+    });
+
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 
@@ -132,6 +136,15 @@ io.on('connection',function(socket)
         console.log(response);
         socket.emit('testStatusChange', testId, newStatus);
         io.in("main_page").emit('testStatusChange', testId, newStatus);
+    });
+
+    socket.on("editTest", async (testId, newInfo, token) => {
+        let response = await queryController.editTest(testId, newInfo, token);
+        if (response.success){
+            // broadcast new test
+        } else {
+            // emit failure to the socket
+        }
     });
 });
 
