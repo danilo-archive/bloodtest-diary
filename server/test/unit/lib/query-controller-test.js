@@ -111,8 +111,8 @@ describe("Insert queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("admin","21828728218","email@email.com");
-        spy.calledWith("admin","21828728218","email@email.com").should.equal(true);
+        let response = await spy({username:"admin",hashed_password:"21828728218",email:"email@email.com"});
+        spy.calledWith({username:"admin",hashed_password:"21828728218",email:"email@email.com"}).should.equal(true);
         spy.calledOnce.should.equal(true);
         response.success.should.equal(true);
       })
@@ -123,7 +123,7 @@ describe("Insert queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("admin","21828728218","email@email.com");
+        let response = await spy({username:"admin",hashed_password:"21828728218",email:"email@email.com"});
         spy.calledOnce.should.equal(true);
         response.success.should.equal(false);
       })
@@ -134,7 +134,7 @@ describe("Insert queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("admin","21828728218");
+        let response = await spy({username:"admin",hashed_password:"21828728218",email:"email@email.com"});
         spy.calledOnce.should.equal(true);
         response.success.should.equal(false);
       })
@@ -147,7 +147,7 @@ describe("Update queries tests", function(){
       beforeEach(()=>{
           spy = sinon.spy(queryController.changeTestStatus);
       })
-      it("Fail, as sombody is editing", async function(){
+      it("Fail, as sombody is editing (STUBBED)", async function(){
         var dbController = {
           requestEditing: async function(sql) {
             return {status: "ERR", response:{}}
@@ -158,7 +158,7 @@ describe("Update queries tests", function(){
         response.success.should.equal(false);
         spy.calledOnce.should.equal(true);
       })
-      it("Reject random update", async function(){
+      it("Reject random update (STUBBED)", async function(){
         var dbController = {
           requestEditing: async function(sql) {
             return {status: "Ok", response:{ token:"30000" }}
@@ -170,7 +170,7 @@ describe("Update queries tests", function(){
         response.response.should.equal("NO SUCH UPDATE");
         spy.calledOnce.should.equal(true);
       })
-      it("Accept completed update", async function(){
+      it("Accept completed update (STUBBED)", async function(){
         var dbController = {
           requestEditing: async function(sql) {
             return {status: "OK", response:{token:"2000"}}
@@ -185,22 +185,22 @@ describe("Update queries tests", function(){
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
       })
-      it("Reject compled update", async function(){
+      it("Reject completed update (STUBBED)", async function(){
         var dbController = {
           requestEditing: async function(sql) {
             return {status: "OK", response:{token:"2000"}}
           },
           updateQuery: async function(sql) {
-            return {status: "ERR", response:{error:"Error here"}}
+            return {status: "ERR", err:"Error here"}
           },
         }
         queryController.__set__("databaseController",dbController);
         let response = await spy("2000","completed");
-        response.success.should.equal(true);
-        response.response.error.should.equal("Error here");
+        response.success.should.equal(false);
+        response.response.should.equal("Error here");
         spy.calledOnce.should.equal(true);
       })
-      it("Accept late update", async function(){
+      it("Accept late update (STUBBED)", async function(){
         var dbController = {
           requestEditing: async function(sql) {
             return {status: "OK", response:{token:"2000"}}
@@ -215,19 +215,19 @@ describe("Update queries tests", function(){
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
       })
-      it("Reject late update", async function(){
+      it("Reject late update (STUBBED)", async function(){
         var dbController = {
           requestEditing: async function(sql) {
             return {status: "OK", response:{token:"2000"}}
           },
           updateQuery: async function(sql) {
-            return {status: "ERR", response:{error:"Error here"}}
+            return {status: "ERR", err:"Error here"}
           },
         }
         queryController.__set__("databaseController",dbController);
         let response = await spy("2000","late");
-        response.success.should.equal(true);
-        response.response.error.should.equal("Error here");
+        response.success.should.equal(false);
+        response.response.should.equal("Error here");
         spy.calledOnce.should.equal(true);
       })
     })
@@ -250,11 +250,11 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("admin","373723172173732");
+        let response = await spy({username:"admin",hashed_password:"373723172173732"});
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
-      it("Fail due to password beeing edited (STUBBED)", async function() {
+      it("Fail due to password being edited (STUBBED)", async function() {
         var dbController = {
           selectQuery: async function(sql) {
             return {status:"OK", response:{ rows:[{username:"admin",iterations:1000,salt:"30000"}]}}
@@ -267,9 +267,9 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("admin","373723172173732");
+        let response = await spy({username:"admin",hashed_password:"373723172173732"});
         response.success.should.equal(false);
-        response.response.should.equal("Token in use");
+        response.response.problem.should.equal("Token in use");
       })
       it("Fail due to no user found (STUBBED)", async function() {
         var dbController = {
@@ -284,7 +284,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("admin","373723172173732");
+        let response = await spy({username:"admin",hashed_password:"373723172173732"});
         response.success.should.equal(false);
         response.response.should.equal("No user found");
       })
@@ -297,13 +297,13 @@ describe("Update queries tests", function(){
             return {status: "OK", response:{token:"2000"}}
           },
           updateQuery: async function() {
-            return {status: "ERR", response: "ERROR"}
+            return {status: "ERR", err:"Error here"}
           }
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("admin","373723172173732");
-        response.success.should.equal(true);
-        response.response.should.equal("ERROR");
+        let response = await spy({username:"admin",hashed_password:"373723172173732"});
+        response.success.should.equal(false);
+        response.response.should.equal("Error here");
       })
       it("Fail due to getUser query error (STUBBED)", async function()
       {

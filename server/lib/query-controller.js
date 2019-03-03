@@ -1,9 +1,10 @@
 const databaseController = require('./db_controller/db-controller.js');
 const utils = require("./utils.js");
 const authenticator = require("./authenticator.js")
+
 /**
 * Get all the patients from the database
-* @return {JSON} result of the query
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getAllPatients()
 {
@@ -11,34 +12,36 @@ async function getAllPatients()
   return await selectQueryDatabase(sql)
 }
 
-async function addUser(username,hashed_password,email)
+/**
+* Update password of an user
+* @param {JSON} json - user
+* Obligatory properties:
+* @property username {String}
+* @property hashed_password {String}
+* @return {JSON} - {success:Boolean response:Array or Error}
+**/
+async function updatePassword(json)
 {
-  var iterations = authenticator.produceIterations();
-  var salt = authenticator.produceSalt();
-  //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
-  var hash = authenticator.produceHash(hashed_password,iterations,salt);
-  let sql = `INSERT INTO User VALUES(${username},${hash},${salt},${iterations},${email});`;
-  return await insertQueryDatabase(sql);
-}
-
-async function updatePassword(username,hashed_password)
-{
-  let response = await getUser(username);
-  if (!(response.response instanceof Array))
-  {
+  let response = await getUser(json.username);
+  if (!(response.response instanceof Array)){
     return response;
   }
   let user = response.response[0];
   if(user){
-    var hash = authenticator.produceHash(hashed_password,user.iterations,user.salt);
-    let sql = `UPDATE User SET hashed_password='${hash}', WHERE username = ${username} LIMIT 1;`;
-    return await updateQueryDatabase("User",username,sql);
+    var hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
+    let sql = `UPDATE User SET hashed_password='${hash}', WHERE username = ${json.username} LIMIT 1;`;
+    return await updateQueryDatabase("User",json.username,sql);
   }
   else{
     return {success:false , response:"No user found"}
   }
 }
 
+/**
+* Get user from database
+* @param {String} username - username to retrieve
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
+**/
 async function getUser(username)
 {
   let sql = `Select * From User Where username='${username}' Limit 1;`;
@@ -46,8 +49,8 @@ async function getUser(username)
 }
 
 /**
-*Get all the tests from the database
-* @return {JSON} result of the query
+* Get all the tests from the database
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getAllTests()
 {
@@ -58,7 +61,7 @@ async function getAllTests()
 /**
 * Get all the tests from a specific patient from the database
 * @param {String} patientId - id of a patient
-* @return {JSON} result of the query
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getTestsOfPatient(patientId){
   let sql = `Select * From Test Where patient_no = ${patientId}`;
@@ -68,7 +71,7 @@ async function getTestsOfPatient(patientId){
 /**
 * Get all the tests on specific date from the database
 * @param {String} date - date (format: "YYYY-MM-DD")
-* @return {JSON} result of the query
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getAllTestsOnDate(date)
 {
@@ -78,7 +81,7 @@ async function getAllTestsOnDate(date)
 
 /**
 * Get all the overdue tests from the database
-* @return {JSON} result of the query
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getOverdueTests()
 {
@@ -88,7 +91,7 @@ async function getOverdueTests()
 
 /**
 * Get all the overdue tests from the database plus additional info about time difference
-* @return {JSON} result of the query
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getOverdueTestsExtended()
 {
@@ -96,6 +99,10 @@ async function getOverdueTestsExtended()
   return await selectQueryDatabase(sql);
 }
 
+/**
+* Get all the overdue tests from the database separated within groups
+* @return {Array of JSON} result of the query - [{class:String test:Array}]
+**/
 async function getOverdueGroups()
 {
       const today = new Date();
@@ -128,40 +135,121 @@ async function getOverdueGroups()
       return groups;
 }
 
-async function addTest(patient_no, date, notes, frequency, occurrences=1){
-    date = utils.formatDate(new Date(date));
-    let values = ``;
-    console.log({date});
-    let sql =`INSERT INTO Test(patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes) VALUES('${patient_no}', ${date}, 'weekly', ${occurrences}, 'no', NULL, '${notes}');`;
-    console.log(sql);
-    return await insertQueryDatabase(sql);
+/**
+* Add new user to the database
+* @param {JSON} - user
+* Obligatory properties within JSON
+* @property username {String}
+* @property hashed_password {String}
+* @property email {String}
+* @return {JSON} result of the query - {success:Boolean}
+**/
+async function addUser(json)
+{
+  var iterations = authenticator.produceIterations();
+  var salt = authenticator.produceSalt();
+  //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
+  var hash = authenticator.produceHash(json.hashed_password,iterations,salt);
+  let sql = `INSERT INTO User VALUES(${json.username},${hash},${salt},${iterations},${json.email});`;
+  return await insertQueryDatabase(sql);
+}
+
+//TODO:Delete when changed to JSON one
+async function addTest(patient_no, date, notes, frequency, occurrences=1)
+{
+    var json = {patient_no:patient_no, due_date:date, notes:notes, frequency:frequency, occurrences:occurrences};
+    return await addTestJSON(json)
+}
+
+/**
+* Add new test to the database
+* @param {JSON} - entry to add
+* Obligatory properties within JSON
+* @property patient_no
+* @property due_date
+* @return {JSON} result of the query - {success:Boolean}
+**/
+//TODO:Delete JSON from name
+async function addTestJSON(json)
+{
+  var sql = prepareInsertSQL('Test',json);
+  return await insertQueryDatabase(sql);
+}
+
+/**
+* Add new patient to the database
+* @param {JSON} - entry to add
+* Obligatory properties within JSON
+* @property patient_no
+* @property patient_name
+* @property patient_surname
+* @property hospital_id
+* @property carer_id
+* @return {JSON} result of the query - {success:Boolean}
+**/
+async function addPatient(json)
+{
+  var sql = prepareInsertSQL('Patient',json);
+  return await insertQueryDatabase(sql);
+}
+
+/**
+* Add new Hospital to the database
+* @param {JSON} - entry to add
+* Obligatory properties within JSON
+* @property hospital_email
+* @return {JSON} result of the query - {success:Boolean}
+**/
+async function addHospital(json)
+{
+  var sql = prepareInsertSQL('Hospital',json);
+  return await insertQueryDatabase(sql);
+}
+
+/**
+* Add new carer to the database
+* @param {JSON} - entry to add
+* Obligatory properties within JSON
+* @property carer_email
+* @return {JSON} result of the query - {success:Boolean}
+**/
+async function addCarer(json)
+{
+  var sql = prepareInsertSQL('Carer',json);
+  return await insertQueryDatabase(sql);
+}
+
+//TODO: delete when json can be passed
+async function changeTestStatus(testId, newStatus)
+{
+    var test = {testId: testId, newStatus: newStatus}
+    return await changeTestStatusJSON(test)
 }
 
 /**
 * Change the status of the test in the database
-* @param {String} testId - id of a test to change
-* @param {String} newStatus - new status of a test {enum: "completed"/"late"}
-* @return {JSON} result of the query
+* @param {JSON} test
+* @property testId {String} - id of a test to change
+* @property newStatus {enum: "completed"/"late"} - new status of a test
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
-async function changeTestStatus(testId, newStatus)
+//TODO: delete JSON from name
+async function changeTestStatusJSON(test)
 {
-  //console.log("STATUS:" + newStatus);
-  //console.log(token);
-    switch(newStatus)
-    {
-      case "completed": {status = "yes"; date=`CURDATE()`; break;}
-      case "late": {status = "no"; date=`NULL`; break;}
-      default: return {success:false, response: "NO SUCH UPDATE"}
-    }
-    let sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${testId};`;
-    //console.log(sql);
-    return await updateQueryDatabase("Test", testId,sql);
+  switch(test.newStatus)
+  {
+    case "completed": {status = "yes"; date=`CURDATE()`; break;}
+    case "late": {status = "no"; date=`NULL`; break;}
+    default: return {success:false, response: "NO SUCH UPDATE"}
+  }
+  let sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${test.testId};`;
+  return await updateQueryDatabase("Test", test.testId,sql);
 }
 
 /**
 * Get all tests within the week from the database
 * @param {String} date - any date (from Monday to Friday) within the week to retrieve (format: "YYYY-MM-DD")
-* @return {JSON} result of the query
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getTestWithinWeek(date)
 {
@@ -202,8 +290,7 @@ function getTestsDuringTheWeek(date)
 /**
 * Run multiple gueries on the database
 * @param {Array} queries - array of queries to run
-* @return {Array} if no error: array of the results of the query
-* @return {JSON} if error: result of the faulty query
+* @return {JSON} result of the query - {success:true/false response:Array/String}
 **/
 function checkMultipleQueriesStatus(queries)
 {
@@ -228,7 +315,7 @@ function checkMultipleQueriesStatus(queries)
 /**
 * Run SELECT query on the database
 * @param {String} sql - SQL query
-* @return {JSON} result of the query
+* @return {JSON} result of the query - {success:Boolean response:Array/Error}
 **/
 async function selectQueryDatabase(sql)
 {
@@ -244,6 +331,11 @@ async function selectQueryDatabase(sql)
   return response;
 }
 
+/**
+* Run INSERT query on the database
+* @param {String} sql - SQL query
+* @return {JSON} result of the query - {success:Boolean}
+**/
 async function insertQueryDatabase(sql)
 {
   let response = await databaseController.insertQuery(sql);
@@ -254,6 +346,12 @@ async function insertQueryDatabase(sql)
   }
 }
 
+/**
+* Request edititng of an entry in table
+* @param {String} table - Table to edit
+* @param {String} id - id to edit
+* @return {String} token
+**/
 async function requestEditing(table, id)
 {
   var data = await databaseController.requestEditing(table,id).then( data => {return data;});
@@ -261,21 +359,56 @@ async function requestEditing(table, id)
   return token;
 }
 
+/**
+* Run UPDATE query on the database
+* @param {String} table - Table to edit
+* @param {String} id - id to edit
+* @param {String} sql - SQL query
+* @return {JSON} result of the query - {success:Boolean response:Array/Error}
+**/
 async function updateQueryDatabase(table,id,sql)
 {
   var token = await requestEditing(table,id);
   if(token!=undefined)
   {
-    return {success:true , response: await databaseController.updateQuery(sql, table, id, token).then(result => {return result.response})}
+    let response = await databaseController.updateQuery(sql, table, id, token)
+    if(response.status==="OK"){
+      return {success:true , response: response.response}
+    }
+    else{
+      return {success:false , response: response.err}
+    }
   }
   else {
-    return {success:false, response: "Token in use"}
+    return {success:false, response: {problem:"Token in use"} };
   }
 }
 
+/**
+* Run UPDATE query on the database
+* @param {String} table - Table in which to insert an entry
+* @param {JSON} object -  JSON, which is being entried
+* @return {String} SQL query
+**/
+function prepareInsertSQL(table,object)
+{
+  var sql = `INSERT INTO ${table}(`;
+  var properties = Object.keys(object);
+  for(var i=0; i<properties.length-1; i++)
+  {
+    sql += `${properties[i]},`;
+  }
+  sql += `${properties[properties.length-1]}) Values(`;
+  var values = Object.values(object);
+  for(var i=0; i<values.length-1; i++)
+  {
+      sql += `'${values[i]}',`;
+  }
+  sql += `'${values[values.length-1]}');`
+  return sql;
+}
+
 module.exports = {
-    addUser,
-    updatePassword,
     getOverdueTestsExtended,
     getOverdueGroups,
     getUser,
@@ -284,7 +417,12 @@ module.exports = {
     getTestsOfPatient,
     getAllTestsOnDate,
     getOverdueTests,
-    addTest,
-    changeTestStatus,
     getTestWithinWeek,
+    addTest,
+    addUser,
+    addPatient,
+    addHospital,
+    addCarer,
+    updatePassword,
+    changeTestStatus,
 };
