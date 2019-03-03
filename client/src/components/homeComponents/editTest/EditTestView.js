@@ -17,19 +17,27 @@ export default class AddTestView extends React.Component {
 
     render(){
         return (
-            <DataContainer>
+            <>
+            <div
+              style={{
+                width: "35rem",
+                height: "30rem",
+                background: "rgba(244, 244, 244,0.7)"
+              }}
+            >
                 <TitleTab main={true}>
                   Edit Appointment
                 </TitleTab>
-                <InfoBox
-                    label = {"Full Name"}
-                    text = {"Luka Kralj"}
-                />
-                <InfoBox
-                    label = {"Full Name"}
-                    text = {"Alvaro Raussel"}
-                />
-           </DataContainer>
+                    <InfoBox
+                        label = {"Full Name"}
+                        text = {"Luka Kralj"}
+                    />
+                    <InfoBox
+                        label = {"Full Name"}
+                        text = {"Alvaro Raussel"}
+                    />
+             </div>
+            </>
         );
     }
 

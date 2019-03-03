@@ -14,7 +14,7 @@ const Container = styled.div`
   height: 14%;
   border-radius: 0px;
   display: flex;
-  width: 100%;
+  width: auto;
   height: auto;
 
 `;
