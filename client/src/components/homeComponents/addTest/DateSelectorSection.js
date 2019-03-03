@@ -81,6 +81,7 @@ export default class DateSelectorSection extends React.Component {
             timeUnit={this.state.frequency.timeUnit}
             onSliderChange={value => this.onSliderChange(value)}
             onSelectChange={value => this.onUnitChange(value)}
+            onOccurrenceChange={value => this.props.onOccurrenceChange(value)}
           />
 
           <SecondHalfDiv>

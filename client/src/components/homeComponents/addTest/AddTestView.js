@@ -20,9 +20,10 @@ export default class AddTestView extends React.Component {
     observations: "",
     allPatients: "",
     frequency: {
-      timeAmount: "12",
+      timeAmount: null,
       timeUnits: ["Days", "Weeks", "Months", "Years"],
-      timeUnit: "Days"
+      timeUnit: "Days",
+      occurrences: 1
     }
   };
   constructor(props) {
@@ -50,10 +51,19 @@ export default class AddTestView extends React.Component {
   };
   onDoneClick = () => {
     if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
+      let frequency = undefined;
+      if (this.state.frequency.timeAmount) {
+        let { timeUnit, timeAmount } = this.state.frequency;
+        timeAmount = timeUnit === "Months" ? timeAmount * 4 : timeAmount;
+        timeUnit = timeUnit === "Months" ? "W" : timeUnit;
+        frequency = `${timeAmount}-${timeUnit}`;
+      }
       this.serverConnect.addTest(
         this.state.selectedID,
         this.state.selectedDate,
-        this.state.observations
+        this.state.observations,
+        frequency,
+        this.state.frequency.occurrences
       );
       alert(
         `Patient ID: ${this.state.selectedID} \nObservations: ${
@@ -63,7 +73,9 @@ export default class AddTestView extends React.Component {
             ? `Do not repeat`
             : `Repeat every ${
                 this.state.frequency.timeAmount
-              } ${this.state.frequency.timeUnit.toLowerCase()}`
+              } ${this.state.frequency.timeUnit.toLowerCase()} ${
+                this.state.frequency.occurrences
+              } times`
         }`
       );
       this.setState({ open: false });
@@ -97,11 +109,12 @@ export default class AddTestView extends React.Component {
               timeAmount={this.state.frequency.timeAmount}
               timeUnit={this.state.frequency.timeUnit}
               unitOptions={this.state.frequency.timeUnits}
-              onTimeAmountChange={timeAmount =>
+              onTimeAmountChange={timeAmount => {
+                timeAmount = parseInt(timeAmount);
                 this.setState({
                   frequency: { ...this.state.frequency, timeAmount }
-                })
-              }
+                });
+              }}
               onUnitChange={timeUnit =>
                 this.setState({
                   frequency: { ...this.state.frequency, timeUnit }
@@ -111,6 +124,14 @@ export default class AddTestView extends React.Component {
               onDateSelect={day => this.onDateSelect(day)}
               onObservationsChange={observations =>
                 this.setState({ observations })
+              }
+              onOccurrenceChange={value =>
+                this.setState({
+                  frequency: {
+                    ...this.state.frequency,
+                    occurrences: value ? parseInt(value) + 1 : 1
+                  }
+                })
               }
             />
           </DataContainer>
