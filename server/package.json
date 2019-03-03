@@ -16,7 +16,8 @@
     "eslint": "^5.13.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.10",
-    "nyc": "^13.3.0"
+    "nyc": "^13.3.0",
+    "rewire": "^4.0.1"
   },
   "scripts": {
     "eslint": "eslint",
