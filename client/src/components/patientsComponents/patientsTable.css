@@ -3,7 +3,12 @@
     border-radius:3px;
     border-collapse: collapse;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    display: block;
+
+    max-height: 400px;
+    overflow: auto;
 }
+
 
 th {
     font-size: 100%;
@@ -52,12 +57,16 @@ td {
     color: #010101;
     background:#FFFFFF;
     padding:20px;
-    text-align:left;
-    vertical-align:middle;
+    text-align: left;
+    vertical-align: middle;
     font-weight:300;
     font-size:18px;
     text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
     border-right: 1px solid #C1C3D1;
+}
+
+td::selection {
+    background: #97a9a9;
 }
 
 td:last-child {
@@ -68,41 +77,8 @@ th.text-left {
     text-align: center;
 }
 
-th.text-center {
-    text-align: center;
-}
-
-th.text-right {
-    text-align: right;
-}
-
 td.text-left {
     text-align: left;
 }
 
-td.text-center {
-    text-align: center;
-}
-
-td.text-right {
-    text-align: right;
-}
-
-.filter-row {
-    padding: 10px;
-}
-
-.filter-row:hover {
-    color: black;
-    background-color: white;
-}
-
-.input-filter {
-    width: 100%;
-}
-
-::-webkit-input-placeholder {
-    font-size: 90%;
-    color: #b0b0b0;
-}
 

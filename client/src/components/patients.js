@@ -35,20 +35,24 @@ class Patients extends Component {
     }
 
     render() {
-        return (
-            <div className={"patients"}>
-                <div className={"navbar"}>
-                    <Navbar
-                        onHomeClick={this.onHomeClick}
-                    />
+        if (this.state.allPatientsReady) {
+            return (
+                <div className={"patients"}>
+                    <div className={"navbar"}>
+                        <Navbar
+                            onHomeClick={this.onHomeClick}
+                        />
+                    </div>
+                    <div className={"patientsTable"}>
+                        <PatientsTable
+                            allPatients={this.state.allPatients}
+                        />
+                    </div>
                 </div>
-                <div className={"patientsTable"}>
-                    <PatientsTable
-                    allPatients={this.state.allPatients}
-                    />
-                </div>
-            </div>
-        );
+            );
+        } else {
+            return ("");
+        }
     }
 }
 
