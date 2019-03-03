@@ -25,7 +25,6 @@ class OverduePatients extends React.Component {
 
 
   render() {
-     console.log(this.props.anytimeAppointments);
     return (
       <>
         <Container>
@@ -55,6 +54,4 @@ class OverduePatients extends React.Component {
     );
   }
 }
-/*
-*/
 export default OverduePatients;
