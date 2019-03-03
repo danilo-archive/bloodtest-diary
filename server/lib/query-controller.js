@@ -133,6 +133,8 @@ async function addTest(patient_no, date, notes, frequency, occurrences=1){
 */
 async function editTest(testId, newInfo, token){
     // TODO write query
+    var sql = prepareUpdateSQL("Test",newInfo,"test_id");
+    return await updateQueryDatabase("Test",testId,sql,token);
 }
 
 /**
@@ -252,6 +254,53 @@ async function selectQueryDatabase(sql)
   return response;
 }
 
+async function requestEditing(table, id)
+{
+  var data = await databaseController.requestEditing(table,id).then( data => {return data;});
+  var token = data.response.token
+  return token;
+}
+
+async function updateQueryDatabase(table,id,sql,token)
+{
+  if(token!=undefined)
+  {
+    let response = await databaseController.updateQuery(sql, table, id, token)
+    if(response.status==="OK"){
+      return {success:true , response: response.response}
+    }
+    else{
+      return {success:false , response: response.err}
+    }
+  }
+  else {
+    return {success:false, response: {problem:"Token in use"} };
+  }
+}
+
+/**
+*
+**/
+function prepareUpdateSQL(table, object, idProperty)
+{
+  var sql = `Update ${table} SET `;
+  var properties = Object.keys(object);
+  var values = Object.values(object);
+  var pos;
+  for(var i=0; i<properties.length; i++)
+  {
+    if(properties[i]!= idProperty){
+      sql += `${properties[i]} = '${values[i]}', `;
+    }
+    else{
+      pos = i;
+    }
+  }
+  //delete ", " from sql query
+  sql = sql.substr(0,sql.length-2);
+  sql += ` WHERE ${idProperty} = '${values[pos]}';`
+  return sql;
+}
 
 module.exports = {
     getOverdueTestsExtended,
