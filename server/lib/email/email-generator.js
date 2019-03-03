@@ -27,12 +27,14 @@ const mjml2html = require("mjml");
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
 function testReminderForPatient(email_info) {
-  const header_image_url = "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
-  console.log("test due date is:" ,email_info);
-  
+  const header_image_url =
+    "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
+
   const test_date = beautifyDate(new Date(email_info.test.due_date));
   const hospital_name = email_info.hospital.hospital_name;
-  const patient_full_name = `${email_info.patient.patient_name} ${email_info.patient.patient_surname}`
+  const patient_full_name = `${email_info.patient.patient_name} ${
+    email_info.patient.patient_surname
+    }`;
   const computed_html = mjml2html(`
     <mjml>
        ${getHead("Reminder For Test")}
@@ -61,19 +63,17 @@ function testReminderForPatient(email_info) {
     </mjml>    
    `);
 
-  if (computed_html.errors.length === 0)
-    return computed_html.html
-  return null
-
+  if (computed_html.errors.length === 0) return computed_html.html;
+  return null;
 }
-
 
 /**
  * Generate an email aimed at hospitals which reminds of a blood test due for a patient of theirs
  * @param {JSON} email_info JSON containing patient, test and hospital information, for format module information
  */
 function testReminderForHospital(email_info) {
-  const header_image_url = "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
+  const header_image_url =
+    "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
 
   const test_date = beautifyDate(email_info.test.due_date);
   const patient = email_info.patient;
@@ -102,7 +102,7 @@ function testReminderForHospital(email_info) {
               </tr>
               <tr>
                 <td style="padding: 0 15px 0 0;">Full Name</td>
-                <td style="padding: 0 15px;">${patient.patient_name} ${patient.patient_surname}</td>
+                <td style="padding: 0 15px;white-space:nowrap;">${patient.patient_name} ${patient.patient_surname}</td>
               </tr>
               <tr>
                 <td style="padding: 0 15px 0 0;">Patient Number</td>
@@ -126,11 +126,9 @@ function testReminderForHospital(email_info) {
     </mjml>    
    `);
 
-  if (computed_html.errors.length === 0)
-    return computed_html.html
-  return null
+  if (computed_html.errors.length === 0) return computed_html.html;
+  return null;
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -153,7 +151,7 @@ function getTopImage(header_image_url) {
             <mj-image src="${header_image_url}" />
         </mj-column>
         </mj-section>
-        `
+        `;
 }
 
 /**
@@ -172,9 +170,8 @@ function getHead(title) {
           <mj-section padding="0px" />
        </mj-attributes>
     </mj-head>    
-    `
+    `;
 }
-
 
 /**
  * Get mjml code describing common footer of emails
@@ -182,9 +179,8 @@ function getHead(title) {
  */
 function getFooter() {
   //TODO: CREATE FOOTER
-  return ``
+  return ``;
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -197,22 +193,35 @@ function getFooter() {
  * @returns {string} the beautified date
  */
 function beautifyDate(date) {
-  const months = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
   ];
-  let suffix = 'th'
+  let suffix = "th";
   switch (date.getDate() % 10) {
     case 1:
-      suffix = 'st';
+      suffix = "st";
       break;
     case 2:
-      suffix = 'nd';
+      suffix = "nd";
       break;
     case 3:
-      suffix = 'rd';
+      suffix = "rd";
       break;
   }
-  return `${date.getDate()}${suffix} of ${months[date.getMonth()]}, ${date.getFullYear()}`
+  return `${date.getDate()}${suffix} of ${
+    months[date.getMonth()]
+    }, ${date.getFullYear()}`;
 }
 
 /*
@@ -221,5 +230,6 @@ function beautifyDate(date) {
 |--------------------------------------------------------------------------
 */
 module.exports = {
-  testReminderForPatient
-}
+  testReminderForPatient,
+  testReminderForHospital
+};
