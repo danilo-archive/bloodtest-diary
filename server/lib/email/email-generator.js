@@ -18,16 +18,33 @@ const mjml2html = require("mjml");
 
 /**
  * Return html for an email containing info about a test which is due for a patient.
- * 
  * @example <caption>The email_info JSON needs to reflect this format in order to be properly parsed:</caption>
- {
-    "patient": {
-        "name" : <PATIENT_NAME>
-    },
-    "test": {
-        "date" : <DATE_OF_DUE_TEST>,
-        "lab" :{
-            "name" : <LAB_NAME>,
+{
+    let email_info = {
+        "patient": {
+            patient_no: '127699',
+            patient_name: 'name127699',
+            patient_surname: 'surname127699',
+            patient_email: 'patient127699@gmail.com',
+            patient_phone: '7428137322',
+            lab_id: null
+        },
+        "test": {
+            test_id: 2,
+            patient_no: '612505',
+            added: 2018 - 11 - 15T00: 00: 00.000Z,
+            first_due_date: 2018 - 11 - 22T00: 00: 00.000Z,
+            frequency: 'weekly',
+            lab_id: 4,
+            completed_status: 'yes',
+            completed_date: 2018 - 12 - 04T00: 00: 00.000Z,
+            notes: null
+        },
+        "lab": {
+            lab_id: 1,
+            lab_name: 'lab1',
+            lab_email: 'lab1@gmail.com',
+            lab_phone: null
         }
     }
 }
@@ -37,7 +54,8 @@ const mjml2html = require("mjml");
 function testDueReminderForPatient(email_info) {
     const header_image_url = "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
 
-    const date = email_info.test.date;
+    const test_date = email_info.test.first_due_date;
+    const patient_name = `${email_info.patient.patient_name} ${email_info.patient.patient_surname}`
     const computed_html = mjml2html(`
     <mjml>
        ${getHead()}
@@ -45,7 +63,7 @@ function testDueReminderForPatient(email_info) {
           ${getTopImage(header_image_url)}
           <mj-section>
              <mj-column width="45%">
-                <mj-text align="center" font-weight="500" padding="0px" font-size="18px">BLOOD TEST REMINDER - ${date}</mj-text>
+                <mj-text align="center" font-weight="500" padding="0px" font-size="18px">BLOOD TEST REMINDER - ${test_date}</mj-text>
                 <mj-divider border-width="2px" border-color="#616161" />
                 <mj-divider border-width="2px" border-color="#616161" width="45%" />
              </mj-column>
@@ -53,10 +71,10 @@ function testDueReminderForPatient(email_info) {
           <mj-section padding-top="30px">
              <mj-column width="100%">
                 <mj-text>
-                   <p>Hello ${email_info.patient.name}.</p>
+                   <p>Hello ${patient_name}.</p>
                    <p>This is a reminder for your blood test</p>
-                   <p>The test is due on ${email_info.test.date}</p>
-                   <p>The test will be taken at ${email_info.test.lab.name}</p>
+                   <p>The test is due on ${test_date}</p>
+                   <p>The test will be taken at ${test_date}</p>
                 </mj-text>
              </mj-column>
           </mj-section>
@@ -123,4 +141,13 @@ function getHead() {
 function getFooter() {
     //TODO: CREATE FOOTER
     return ``
+}
+
+/*
+|--------------------------------------------------------------------------
+| MODULE EXPORTS
+|--------------------------------------------------------------------------
+*/
+module.exports = {
+    testDueReminderForPatient
 }
