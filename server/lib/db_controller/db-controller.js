@@ -72,18 +72,6 @@ async function insertQuery(sql) {
 }
 
 /**
- * Await for this function to pause execution for a certain time.
- *
- * @param {number} ms Time in milliseconds
- * @returns {Promise}
- */
-function sleep(ms){
-    return new Promise((resolve) => {
-        setTimeout(resolve,ms);
-    });
-}
-
-/**
  * Call this for DELETE queries.
  *
  * @param {string} sql The SQL query.
@@ -489,4 +477,16 @@ async function isValidEntry(database, entryTable, entryID) {
     });
     
     return response.response;
+}
+
+/**
+ * Await for this function to pause execution for a certain time.
+ *
+ * @param {number} ms Time in milliseconds
+ * @returns {Promise}
+ */
+function sleep(ms){
+    return new Promise((resolve) => {
+        setTimeout(resolve,ms);
+    });
 }
