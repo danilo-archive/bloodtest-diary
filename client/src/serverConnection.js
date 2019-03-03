@@ -148,7 +148,7 @@ class ServerConnect {
     getOverdueTests(callback){
         this.socket.emit('getOverdueTests');
         this.socket.on('getOverdueTestsResponse', res => {
-            callback(res.response);
+            callback(res);
         });
     }
 

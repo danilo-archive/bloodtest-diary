@@ -25,7 +25,7 @@ class Home extends Component {
         dashboardReady: false,
         overdueReady: false,
         weekDays: getCurrentWeek(),
-        overdueTests: [],
+        overdueTests: {},
         ongoingTests: {},
         calendar: {},
         openModal: false
