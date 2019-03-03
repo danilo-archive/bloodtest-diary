@@ -1,5 +1,5 @@
 {
-    "email": {
+    "transporter": {
         "host": "smtp.gmail.com",
         "port": 465,
         "secure": true,
@@ -9,24 +9,6 @@
         },
         "tls": {
             "rejectUnauthorized": false
-        }
-    },
-    "cron": {
-        "email_sender": {
-            "second": "",
-            "minute": "0",
-            "hour": "7",
-            "dayOfMonth": "*",
-            "month": "*",
-            "dayOfWeek": "1"
-        },
-        "backlog_update": {
-            "second": "",
-            "minute": "0",
-            "hour": "0",
-            "dayOfMonth": "*",
-            "month": "*",
-            "dayOfWeek": "*"
         }
     }
 }

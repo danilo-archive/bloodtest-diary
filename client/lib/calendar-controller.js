@@ -1,34 +1,31 @@
 /**
- * Controller functions to get dates using a frequency foramt
+ * Controller functions to get dates using a frequency format
  * @module calendar-controller
  * @author Danilo Del Busso
  * @version 0.0.1
  */
 const Holidays = require('date-holidays');
 const hd = new Holidays('GB');
-
+//TODO: WRITE FREQUENCY STRING FORMAT
 /**
  * Get all the next dates based on the frequency notation.
  * It does NOT return the original date
  * @param {string} frequency the frequency expressed as frequency notation
+ * @param {number} occurrence the number of subsequent occurrences to be returned
  * @param {Date} startingDate the starting date (not included in the result)
  * @returns {array<Date>} an array containing the next dates but not the given starting date
  */
-function getNextDates(frequency, startingDate) {
-    const f = frequency.split(':');
-    if (f.length != 2 || f[1] < 0) {
-        //console.error("The frequency format is wrong.")
+function getNextDates(frequency, occurrences, startingDate) {
+    if(occurrences.isNaN){
         return [];
     }
-    const repetitions = parseInt(f[1]);
     const allDates = [];
-    let date = getNextDate(f[0], startingDate);
+    let date = getNextDate(frequency, startingDate);
 
-    for (let i = 0; i < repetitions; i++) {
+    for (let i = 0; i < occurrences; i++) {
         allDates.push(date);
-        date = getNextDate(f[0], date);
+        date = getNextDate(frequency, date);
     }
-
     return allDates;
 }
 
@@ -42,7 +39,7 @@ function getNextDates(frequency, startingDate) {
  * @param {date} startingDate the starting date from which to calculate the next date
  */
 function getNextDate(frequency, startingDate) {
-    if(!validDate(startingDate))
+    if (!validDate(startingDate))
         return null
     if (frequency === null || frequency.split('-').length > 2 || frequency.split('-').length < 1) {
         //console.error("Error in formatting date. Date is either null or not in the right format");
@@ -55,7 +52,7 @@ function getNextDate(frequency, startingDate) {
     }
     const f_format = frequency.split('-')[1]; // the 'Y' in '2-Y'
     let date = null;
-    let year = startingDate.getFullYear();    
+    let year = startingDate.getFullYear();
     const month = startingDate.getMonth();
     let day = startingDate.getDate()
 
