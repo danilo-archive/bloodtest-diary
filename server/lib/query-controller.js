@@ -315,4 +315,5 @@ module.exports = {
     addTest,
     changeTestStatus,
     getTestWithinWeek,
+    editTest,
 };
