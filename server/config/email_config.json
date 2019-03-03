@@ -1,14 +1,13 @@
 {
     "transporter": {
-        "host": "smtp.gmail.com",
+        "host": "smtp.mail.yahoo.com",
         "port": 465,
-        "secure": true,
+        "service": "yahoo",
+        "secure": false,
         "auth": {
-            "user": "",
-            "pass": ""
+            "user": "danilodelbusso@yahoo.com",
+            "pass": "jJ825&j9yBRA"
         },
-        "tls": {
-            "rejectUnauthorized": false
-        }
+        "logger": true
     }
 }

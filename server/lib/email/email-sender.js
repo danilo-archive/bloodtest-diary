@@ -25,24 +25,7 @@ const email_generator = require('./email-generator');
 const nodeMailer = require('nodemailer');
 const jsonController = require('../json-controller');
 const CONFIG_ABSOLUTE_PATH = __dirname + '/../../config/email_config.json'; //the absolute path of the email_config.json file
-const query_controller = require('../query-controller')
-let transporter = null; //? is this a good idea? maybe not have it as a global variable
-
-//todo: remove this init when module is complete
-//init(CONFIG_ABSOLUTE_PATH, backlog);
-
-/**
- * Initialise and start CronJob and email sender service to be run in the background.
- *      
- @param {string} configPath the absolute path of the email-config.json file
- @param {array} backlog an array containing details of tests that have yet to be sent
- */
-function init(configPath) {
-    const config = jsonController.getJSON(configPath);
-    transporter = nodeMailer.createTransport(config.transporter);
-
-}
-
+const query_controller = require('../query-controller');
 /*
 |--------------------------------------------------------------------------
 | EMAIL SENDING FUNCTIONS SECTION
@@ -53,36 +36,43 @@ function init(configPath) {
 */
 
 /**
- //TODO: WRITE JSDOC
- * @param {array} test_ids
+ * Send one email for every test. The content of the email will depend on the email generator function 
+ * @param {array} testIDs the IDs of the tests to be send
+ * @param {function} emailGeneratorFunction the function needed to generate test emails
  */
-function sendEmails(testIDs) {
+function sendBloodtestsEmails(testIDs, emailGeneratorFunction) {
+    const subjectTitle = "Reminder for your test";
 
-    //send information about patients that are overdue to labs and doctors
-    //TODO WRITE EMAIL SENDING TO LABS
+    const config = jsonController.getJSON(CONFIG_ABSOLUTE_PATH);
+    const transporter = nodeMailer.createTransport(config.transporter);
 
-    //send email to every patient that has a test based on config file (every day/week/month)
-    //? WILL THE BACKLOG CLEANING HAPPEN BEFORE THE FOREACH IS FINISHED?
     testIDs.forEach(async (test) => {
 
         //if patient doesn't have email, send it to carer!
         const patient = await query_controller.getPatient(test.patient_no);
+        const hospital = await query_controller.getHospital(patient.hospital_id);
+        console.log(hospital.response);
+        
 
-        if (patient.patient_email == null) {
-            //TODO: GET CARERS CONNECTED TO PATIENT, HAVE TO WAIT FOR QUERY TO BE WRITTEN
-        }
-        const lab = await query_controller.getLab(test.lab_id);
-
-        const email_info = {
+        const emailInfo = {
             "patient": patient,
             "test": test,
-            "lab": lab
+            "hospital": hospital
+        }
+        if (patient.patient_email == null) {
+            emailInfo.carer = await query_controller.getCarer(patient.carer_id)
+        }
+        const receiverOptions = {
+            "from": transporter.options.auth.user,
+            "to": "delbussodanilo98@gmail.com",
+            "subject": subjectTitle,
+            "html": emailGeneratorFunction(emailInfo)+` 
+            <br><br><br>
+            ${JSON.stringify(emailInfo)}`
         }
 
-        const receiverOptions = await getOptionsForEmail(patient.patient_email, "SUBJECT EMAIL", email_info, email_generator.testDueReminderForPatient)
-
-        sendEmail(transporter, receiverOptions)
-    })
+        sendEmail(transporter, receiverOptions);
+    });
 }
 
 /**
@@ -99,32 +89,11 @@ function sendEmail(transporter, receiverOptions) {
 }
 
 
-/**
- * Get the receiver options needed to send an email
- * @async
- * @param {string} receiverEmail the receiver's email address
- * @param {string} subject the subject of the email
- * @param {JSON} email_info information needed to fill custom details of the email, depends on which email generator function is passed
- * @param {function} email_generator_function the function which generates the html, it should return a Promise.
- * @return {Promise<JSON>} the JSON containing the option needed to send an email to the specified patient
- */
-async function getOptionsForEmail(receiverEmail, subject, email_info, email_generator_function) {
-
-    //TODO : GENERALISE THIS! CURRENT FORMAT WILL ONLY WORK FOR PATIENTS
-    return {
-        "from": transporter.options.auth.user,
-        "to": receiverEmail,
-        "subject": subject,
-        "html": email_generator_function(email_info)
-    }
-
-}
-
 /*
 |--------------------------------------------------------------------------
 | MODULE EXPORTS
 |--------------------------------------------------------------------------
 */
 module.exports = {
-    init
+    sendBloodtestsEmails
 }

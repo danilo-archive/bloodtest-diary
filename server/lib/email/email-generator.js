@@ -1,6 +1,11 @@
 /**
-//TODO: WRITE MODULE DESCRIPTION
- * @module email-generator
+* The functions exported from this module generate different types of emails depending on their purpose.
+They all need information contained in the "email_info" JSON objects.
+* @example <caption>The email_info JSONs need to reflect this format in order to be properly parsed:</caption>
+{
+//TODO INSERT VALID JSON
+}
+* @module email-generator
  * @author Danilo Del Busso
  * @version 0.0.1
  */
@@ -14,51 +19,23 @@ const mjml2html = require("mjml");
 |
 */
 
-//TODO: UPDATE JSDOC BELOW WITH ACTUAL FORMAT NEEDED
-
+//TODO: UPDATE JSDOC BELOW WITH ACTUAL FORMAT NEEDED AND NEW DATABASE SCHEMA
 /**
  * Return html for an email containing info about a test which is due for a patient.
- * @example <caption>The email_info JSON needs to reflect this format in order to be properly parsed:</caption>
-{
-    let email_info = {
-        "patient": {
-            patient_no: '127699',
-            patient_name: 'name127699',
-            patient_surname: 'surname127699',
-            patient_email: 'patient127699@gmail.com',
-            patient_phone: '7428137322',
-            lab_id: null
-        },
-        "test": {
-            test_id: 2,
-            patient_no: '612505',
-            added: 2018 - 11 - 15T00: 00: 00.000Z,
-            first_due_date: 2018 - 11 - 22T00: 00: 00.000Z,
-            frequency: 'weekly',
-            lab_id: 4,
-            completed_status: 'yes',
-            completed_date: 2018 - 12 - 04T00: 00: 00.000Z,
-            notes: null
-        },
-        "lab": {
-            lab_id: 1,
-            lab_name: 'lab1',
-            lab_email: 'lab1@gmail.com',
-            lab_phone: null
-        }
-    }
 }
  * @param {JSON} email_info the json containing info needed to generate the email. For format info look at function example.
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
-function testDueReminderForPatient(email_info) {
-    const header_image_url = "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
-
-    const test_date = email_info.test.first_due_date;
-    const patient_name = `${email_info.patient.patient_name} ${email_info.patient.patient_surname}`
-    const computed_html = mjml2html(`
+function testReminderForPatient(email_info) {
+  const header_image_url = "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
+  console.log("test due date is:" ,email_info);
+  
+  const test_date = beautifyDate(new Date(email_info.test.due_date));
+  const hospital_name = email_info.hospital.hospital_name;
+  const patient_full_name = `${email_info.patient.patient_name} ${email_info.patient.patient_surname}`
+  const computed_html = mjml2html(`
     <mjml>
-       ${getHead()}
+       ${getHead("Reminder For Test")}
        <mj-body>
           ${getTopImage(header_image_url)}
           <mj-section>
@@ -71,10 +48,10 @@ function testDueReminderForPatient(email_info) {
           <mj-section padding-top="30px">
              <mj-column width="100%">
                 <mj-text>
-                   <p>Hello ${patient_name}.</p>
+                   <p>Hello ${patient_full_name}.</p>
                    <p>This is a reminder for your blood test</p>
                    <p>The test is due on ${test_date}</p>
-                   <p>The test will be taken at ${test_date}</p>
+                   <p>The test will be taken at ${hospital_name}</p>
                 </mj-text>
              </mj-column>
           </mj-section>
@@ -82,12 +59,76 @@ function testDueReminderForPatient(email_info) {
        ${getFooter()}
 
     </mjml>    
-   `)
+   `);
 
-    if (computed_html.errors.length === 0)
-        return computed_html.html
-    return null
+  if (computed_html.errors.length === 0)
+    return computed_html.html
+  return null
 
+}
+
+
+/**
+ * Generate an email aimed at hospitals which reminds of a blood test due for a patient of theirs
+ * @param {JSON} email_info JSON containing patient, test and hospital information, for format module information
+ */
+function testReminderForHospital(email_info) {
+  const header_image_url = "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
+
+  const test_date = beautifyDate(email_info.test.due_date);
+  const patient = email_info.patient;
+  const computed_html = mjml2html(`
+    <mjml>
+       ${getHead("Reminder For Patient Test")}
+       <mj-body>
+          ${getTopImage(header_image_url)}
+          <mj-section>
+             <mj-column width="45%">
+                <mj-text align="center" font-weight="500" padding="0px" font-size="18px">BLOOD TEST REMINDER - ${test_date}</mj-text>
+                <mj-divider border-width="2px" border-color="#616161" />
+                <mj-divider border-width="2px" border-color="#616161" width="45%" />
+             </mj-column>
+          </mj-section>
+          <mj-section padding-top="30px">
+          <mj-column width="100%">
+          <mj-text>
+            <p>${patient.patient_name} has a test due on the ${test_date}.</p>
+            <p>You will find the relevant information regarding this test underneath:</p>
+            <mj-table>
+              <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
+                <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
+                  <th style="padding: 0 15px 0 0;">Patient Information</th>
+                </tr>
+              </tr>
+              <tr>
+                <td style="padding: 0 15px 0 0;">Full Name</td>
+                <td style="padding: 0 15px;">${patient.patient_name} ${patient.patient_surname}</td>
+              </tr>
+              <tr>
+                <td style="padding: 0 15px 0 0;">Patient Number</td>
+                <td style="padding: 0 15px;">${patient.patient_no}</td>
+              </tr>
+              <tr>
+                <td style="padding: 0 15px 0 0;">Email Address</td>
+                <td style="padding: 0 15px;">${patient.patient_email}</td>
+              </tr>
+              <tr>
+                <td style="padding: 0 15px 0 0;">Phone Number</td>
+                <td style="padding: 0 15px;">${patient.patient_phone}</td>
+              </tr>
+            </mj-table>
+          </mj-text>
+        </mj-column>
+          </mj-section>
+       </mj-body>
+       ${getFooter()}
+
+    </mjml>    
+   `);
+
+  if (computed_html.errors.length === 0)
+    return computed_html.html
+  return null
 }
 
 
@@ -102,11 +143,11 @@ function testDueReminderForPatient(email_info) {
 
 /**
  * Get mjml code for image at the top of emails
- * @param {string} header_image_url url of iamge to be placed on top of emails
+ * @param {string} header_image_url url of image to be placed on top of emails
  * @return {string} mjml code for image at the top of emails
  */
 function getTopImage(header_image_url) {
-    return `
+  return `
         <mj-section>
         <mj-column width="100%">
             <mj-image src="${header_image_url}" />
@@ -117,12 +158,13 @@ function getTopImage(header_image_url) {
 
 /**
  * Get mjml code describing common head of emails
+ * @param {title} the title of the html document
  * @return {string} mjml code describing common head of emails
  */
-function getHead() {
-    return `
+function getHead(title) {
+  return `
     <mj-head>
-       <mj-title>Hello world</mj-title>
+       <mj-title>${title}</mj-title>
        <mj-font name="Roboto" href="https://fonts.googleapis.com/css?family=Roboto:300,500" />
        <mj-attributes>
           <mj-all font-family="Roboto, Helvetica, sans-serif" />
@@ -139,8 +181,38 @@ function getHead() {
  * @return {string} mjml code describing common footer of emails
  */
 function getFooter() {
-    //TODO: CREATE FOOTER
-    return ``
+  //TODO: CREATE FOOTER
+  return ``
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| HELPER FUNCTIONS
+|--------------------------------------------------------------------------
+*/
+/**
+ * Beautify a date object as a readable string of "1st of October, 2020" format
+ * @param {date} date the date object to be beautified
+ * @returns {string} the beautified date
+ */
+function beautifyDate(date) {
+  const months = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  let suffix = 'th'
+  switch (date.getDate() % 10) {
+    case 1:
+      suffix = 'st';
+      break;
+    case 2:
+      suffix = 'nd';
+      break;
+    case 3:
+      suffix = 'rd';
+      break;
+  }
+  return `${date.getDate()}${suffix} of ${months[date.getMonth()]}, ${date.getFullYear()}`
 }
 
 /*
@@ -149,5 +221,5 @@ function getFooter() {
 |--------------------------------------------------------------------------
 */
 module.exports = {
-    testDueReminderForPatient
+  testReminderForPatient
 }
