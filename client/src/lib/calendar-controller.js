@@ -7,6 +7,18 @@
 const Holidays = require('date-holidays');
 const hd = new Holidays('GB');
 
+function isPastDate(date){
+    let today = new Date();
+    date = new Date(date);
+    if (date.getFullYear() < today.getFullYear()){
+        return true;
+    }
+    if (date.getMonth() < today.getMonth()){
+        return true;
+    }
+    return date.getDate() < today.getDate();
+}
+
 /**
  * Gets the date object of the monday of the relative week
  * @param {Date} date any day of any week
@@ -185,6 +197,7 @@ function stringIsInteger(str) {
 
 module.exports = {
     isHoliday,
+    isPastDate,
     getNextWeek,
     getCurrentWeek,
     getPreviousWeek,
