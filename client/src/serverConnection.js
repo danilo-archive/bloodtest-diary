@@ -177,7 +177,8 @@ class ServerConnect {
     * @param frequency The frequency of the test
     */
     addTest(patientId, date, notes, frequency=""){
-        this.socket.emit("addTest", patientId, date, notes, frequency);
+        var patient = {patient_no:patientId, due_date:date, notes:notes, frequency:frequency, occurrences:1}
+        this.socket.emit("addTest", patient);
     }
 
     /**

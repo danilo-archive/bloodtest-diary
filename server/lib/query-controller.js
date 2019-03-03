@@ -154,13 +154,6 @@ async function addUser(json)
   return await insertQueryDatabase(sql);
 }
 
-//TODO:Delete when changed to JSON one
-async function addTest(patient_no, date, notes, frequency, occurrences=1)
-{
-    var json = {patient_no:patient_no, due_date:date, notes:notes, frequency:frequency, occurrences:occurrences};
-    return await addTestJSON(json)
-}
-
 /**
 * Add new test to the database
 * @param {JSON} - entry to add
@@ -169,10 +162,10 @@ async function addTest(patient_no, date, notes, frequency, occurrences=1)
 * @property due_date
 * @return {JSON} result of the query - {success:Boolean}
 **/
-//TODO:Delete JSON from name
-async function addTestJSON(json)
+async function addTest(json)
 {
   var sql = prepareInsertSQL('Test',json);
+  console.log(sql);
   return await insertQueryDatabase(sql);
 }
 
@@ -408,6 +401,8 @@ function prepareInsertSQL(table,object)
   return sql;
 }
 
+
+
 module.exports = {
     getOverdueTestsExtended,
     getOverdueGroups,
@@ -425,4 +420,6 @@ module.exports = {
     addCarer,
     updatePassword,
     changeTestStatus,
+    //TODO: delete
+    changeTestStatusJSON,
 };

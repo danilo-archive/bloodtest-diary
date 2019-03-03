@@ -73,30 +73,14 @@ describe("Insert queries tests", function(){
     context("Insert new test", function(){
       var spy;
       beforeEach(()=>{
-          spy = sinon.spy(queryController.addTest);
+          //TODO : delete JSON
+          spy = sinon.spy(queryController.addTestJSON);
       })
-      it("Should accept new test", async function() {
-        var dbController = {
-          insertQuery: async function(sql) {
-            return {status:"OK"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        let response = await spy("50005","2018-03-04",null,"weekly",1);
-        spy.calledWith("50005","2018-03-04",null,"weekly",1).should.equal(true);
-        spy.calledOnce.should.equal(true);
-        response.success.should.equal(true);
+      it("Should accept new test (STUBBED)", async function() {
+        stubbedPositiveInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
       })
-      it("Should reject new test", async function() {
-        var dbController = {
-          insertQuery: async function(sql) {
-            return {status:"ERR"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        let response = await spy();
-        spy.calledOnce.should.equal(true);
-        response.success.should.equal(false);
+      it("Should reject new test (STUBBED)", async function() {
+        stubbedErrorInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
       })
     })
     context("Add new User", function(){
@@ -104,39 +88,50 @@ describe("Insert queries tests", function(){
       beforeEach(()=>{
           spy = sinon.spy(queryController.addUser);
       })
-      it("Should accept new User  (STUBBED)", async function() {
-        var dbController = {
-          insertQuery: async function(sql) {
-            return {status:"OK"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        let response = await spy({username:"admin",hashed_password:"21828728218",email:"email@email.com"});
-        spy.calledWith({username:"admin",hashed_password:"21828728218",email:"email@email.com"}).should.equal(true);
-        spy.calledOnce.should.equal(true);
-        response.success.should.equal(true);
+      it("Should accept new User (STUBBED)", async function() {
+        stubbedPositiveInsertTest(spy,{username:"admin",hashed_password:"21828728218",email:"email@email.com"})
       })
-      it("Should reject new User  (STUBBED)", async function() {
-        var dbController = {
-          insertQuery: async function(sql) {
-            return {status:"ERR"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        let response = await spy({username:"admin",hashed_password:"21828728218",email:"email@email.com"});
-        spy.calledOnce.should.equal(true);
-        response.success.should.equal(false);
+      it("Should reject new User (STUBBED)", async function() {
+        stubbedErrorInsertTest(spy,{username:"admin",hashed_password:"21828728218",email:"email@email.com"})
       })
-      it("Should reject new User without full data (STUBBED)", async function() {
-        var dbController = {
-          insertQuery: async function(sql) {
-            return {status:"ERR"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        let response = await spy({username:"admin",hashed_password:"21828728218",email:"email@email.com"});
-        spy.calledOnce.should.equal(true);
-        response.success.should.equal(false);
+    })
+    context("Add new Patient", function(){
+      var spy;
+      beforeEach(()=>{
+          //TODO : delete JSON
+          spy = sinon.spy(queryController.addPatient);
+      })
+      it("Should accept new patient (STUBBED)", async function() {
+        stubbedPositiveInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
+      })
+      it("Should reject new patient (STUBBED)", async function() {
+        stubbedErrorInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
+      })
+    })
+    context("Add new Hospital", function(){
+      var spy;
+      beforeEach(()=>{
+          //TODO : delete JSON
+          spy = sinon.spy(queryController.addHospital);
+      })
+      it("Should accept new hospital (STUBBED)", async function() {
+        stubbedPositiveInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
+      })
+      it("Should reject new hospital (STUBBED)", async function() {
+        stubbedErrorInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
+      })
+    })
+    context("Add new Carer", function(){
+      var spy;
+      beforeEach(()=>{
+          //TODO : delete JSON
+          spy = sinon.spy(queryController.addCarer);
+      })
+      it("Should accept new carer (STUBBED)", async function() {
+        stubbedPositiveInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
+      })
+      it("Should reject new carer (STUBBED)", async function() {
+        stubbedErrorInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
       })
     })
 })
@@ -403,7 +398,21 @@ describe("Other functionality", function(){
     })
   })
 })
-
+async function stubbedErrorInsertTest(spy,data)
+{
+  setFaultyInsert();
+  let response = await spy(data);
+  spy.calledOnce.should.equal(true);
+  response.success.should.equal(false);
+}
+async function stubbedPositiveInsertTest(spy,data)
+{
+  setPositiveInsert();
+  let response = await spy(data);
+  spy.calledWith(data).should.equal(true);
+  spy.calledOnce.should.equal(true);
+  response.success.should.equal(true);
+}
 async function test(query,data=null)
 {
   var spy;
@@ -451,4 +460,24 @@ async function stubbedPositiveSelectTest(spy,data=null)
   spy.calledOnce.should.equal(true);
   response.success.should.equal(true);
   response.response.length.should.equal(0);
+}
+
+function setFaultyInsert()
+{
+  var dbController = {
+    insertQuery: async function(sql) {
+      return {status:"ERR"}
+    }
+  }
+  queryController.__set__("databaseController",dbController);
+}
+
+function setPositiveInsert()
+{
+  var dbController = {
+    insertQuery: async function(sql) {
+      return {status:"OK"}
+    }
+  }
+  queryController.__set__("databaseController",dbController);
 }
