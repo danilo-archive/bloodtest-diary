@@ -86,7 +86,7 @@ CREATE TABLE TokenControl (
 
 CREATE TABLE User (
     username VARCHAR(100),
-    password VARCHAR(255) NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
     salt VARCHAR(255) NOT NULL,
     iterations INTEGER NOT NULL,
     recovery_email VARCHAR(100) NOT NULL,

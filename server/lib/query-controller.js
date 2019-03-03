@@ -1,6 +1,6 @@
 const databaseController = require('./db_controller/db-controller.js');
 const utils = require("./utils.js");
-
+const authenticator = require("./authenticator.js")
 /**
 * Get all the patients from the database
 * @return {JSON} result of the query
@@ -9,6 +9,34 @@ async function getAllPatients()
 {
   let sql = "Select * From Patient;";
   return await selectQueryDatabase(sql)
+}
+
+async function addUser(username,hashed_password,email)
+{
+  var iterations = authenticator.produceIterations();
+  var salt = authenticator.produceSalt();
+  //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
+  var hash = authenticator.produceHash(hashed_password,iterations,salt);
+  let sql = `INSERT INTO User VALUES(${username},${hash},${salt},${iterations},${email});`;
+  return await insertQueryDatabase(sql);
+}
+
+async function updatePassword(username,hashed_password)
+{
+  let response = await getUser(username);
+  if (!(response.response instanceof Array))
+  {
+    return response;
+  }
+  let user = response.response[0];
+  if(user){
+    var hash = authenticator.produceHash(hashed_password,user.iterations,user.salt);
+    let sql = `UPDATE User SET hashed_password='${hash}', WHERE username = ${username} LIMIT 1;`;
+    return await updateQueryDatabase("User",username,sql);
+  }
+  else{
+    return {success:false , response:"No user found"}
+  }
 }
 
 async function getUser(username)
@@ -72,7 +100,7 @@ async function getOverdueGroups()
 {
       const today = new Date();
       let tests = await getOverdueTestsExtended();
-      let sortedTests = tests.response;
+      let sortedTests = tests.success ? tests.response : [];
       let groups = [{class: "Year+", tests: []}, {class: "6+ months", tests: []},{class: "1-6 months", tests: []},
                     {class: "2-4 weeks", tests: []}, {class: "Less than 2 weeks", tests: []}];
 
@@ -106,13 +134,7 @@ async function addTest(patient_no, date, notes, frequency, occurrences=1){
     console.log({date});
     let sql =`INSERT INTO Test(patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes) VALUES('${patient_no}', ${date}, 'weekly', ${occurrences}, 'no', NULL, '${notes}');`;
     console.log(sql);
-    let response = await databaseController.insertQuery(sql);
-    console.log(response);
-    if (response.status == "OK"){
-        return {success: true};
-    }else {
-        return {success: false};
-    }
+    return await insertQueryDatabase(sql);
 }
 
 /**
@@ -124,24 +146,16 @@ async function addTest(patient_no, date, notes, frequency, occurrences=1){
 async function changeTestStatus(testId, newStatus)
 {
   //console.log("STATUS:" + newStatus);
-  var data = await databaseController.requestEditing("Test", testId).then( data => {return data;});
-  var token = data.response.token
   //console.log(token);
-  if(token!=undefined)
-  {
     switch(newStatus)
     {
       case "completed": {status = "yes"; date=`CURDATE()`; break;}
       case "late": {status = "no"; date=`NULL`; break;}
-      default: return {success:false, response: data.response}
+      default: return {success:false, response: "NO SUCH UPDATE"}
     }
     let sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${testId};`;
     //console.log(sql);
-    return {success:true , response: await databaseController.updateQuery(sql, "Test", testId, token).then(result => {return result.response})}
-  }
-  else {
-    return {success:false, response: data.response}
-  }
+    return await updateQueryDatabase("Test", testId,sql);
 }
 
 /**
@@ -230,8 +244,38 @@ async function selectQueryDatabase(sql)
   return response;
 }
 
+async function insertQueryDatabase(sql)
+{
+  let response = await databaseController.insertQuery(sql);
+  if (response.status == "OK"){
+      return {success: true};
+  }else {
+      return {success: false};
+  }
+}
+
+async function requestEditing(table, id)
+{
+  var data = await databaseController.requestEditing(table,id).then( data => {return data;});
+  var token = data.response.token
+  return token;
+}
+
+async function updateQueryDatabase(table,id,sql)
+{
+  var token = await requestEditing(table,id);
+  if(token!=undefined)
+  {
+    return {success:true , response: await databaseController.updateQuery(sql, table, id, token).then(result => {return result.response})}
+  }
+  else {
+    return {success:false, response: "Token in use"}
+  }
+}
 
 module.exports = {
+    addUser,
+    updatePassword,
     getOverdueTestsExtended,
     getOverdueGroups,
     getUser,
