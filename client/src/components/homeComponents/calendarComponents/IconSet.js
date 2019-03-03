@@ -13,7 +13,7 @@ export default props => {
         right: "1%"
       }}
     >
-      <Icon icon="edit" />
+      <Icon icon="edit" onClick={() => {}} />
       <Icon icon="check" onClick={props.onStatusClick} />
       <Icon icon="times" onClick={props.onStatusClick} />
     </div>

@@ -9,6 +9,10 @@ module.exports = {canLogin:canLogin};
 */
 function canLogin(user, userInDatabase)
 {
+  if(userInDatabase==undefined)
+  {
+    return false;
+  }
   if(userInDatabase.length!==1)
   {
     return false;

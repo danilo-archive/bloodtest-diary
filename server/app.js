@@ -58,9 +58,10 @@ io.on('connection',function(socket)
     * @param {username:username, password:password} credentials Hashed json of credentials
     * @return {Boolean} True if credentials are correct
     */
-    socket.on('authenticate', (credentials) => {
+    socket.on('authenticate', async (credentials) => {
         console.log(`Authentication request from ${socket.id}`);
-        res = authenticator.canLogin(credentials,getUserInDatabase(credentials.username));
+        let user = await queryController.getUser(credentials.username);
+        res = authenticator.canLogin(credentials,user.response);
         console.log(`Authentication ${res ? "successful" : "unsuccesful"}`);
         socket.emit('authenticationResponse', res);
     });
