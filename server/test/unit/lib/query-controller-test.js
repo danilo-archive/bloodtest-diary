@@ -99,6 +99,46 @@ describe("Insert queries tests", function(){
         response.success.should.equal(false);
       })
     })
+    context("Add new User", function(){
+      var spy;
+      beforeEach(()=>{
+          spy = sinon.spy(queryController.addUser);
+      })
+      it("Should accept new User  (STUBBED)", async function() {
+        var dbController = {
+          insertQuery: async function(sql) {
+            return {status:"OK"}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        let response = await spy("admin","21828728218","email@email.com");
+        spy.calledWith("admin","21828728218","email@email.com").should.equal(true);
+        spy.calledOnce.should.equal(true);
+        response.success.should.equal(true);
+      })
+      it("Should reject new User  (STUBBED)", async function() {
+        var dbController = {
+          insertQuery: async function(sql) {
+            return {status:"ERR"}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        let response = await spy("admin","21828728218","email@email.com");
+        spy.calledOnce.should.equal(true);
+        response.success.should.equal(false);
+      })
+      it("Should reject new User without full data (STUBBED)", async function() {
+        var dbController = {
+          insertQuery: async function(sql) {
+            return {status:"ERR"}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        let response = await spy("admin","21828728218");
+        spy.calledOnce.should.equal(true);
+        response.success.should.equal(false);
+      })
+    })
 })
 
 describe("Update queries tests", function(){
@@ -114,7 +154,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("2000","ERRROR");
+        let response = await spy("2000","late");
         response.success.should.equal(false);
         spy.calledOnce.should.equal(true);
       })
@@ -127,7 +167,7 @@ describe("Update queries tests", function(){
         queryController.__set__("databaseController",dbController);
         let response = await spy("2000","ERRROR");
         response.success.should.equal(false);
-        response.response.token.should.equal("30000");
+        response.response.should.equal("NO SUCH UPDATE");
         spy.calledOnce.should.equal(true);
       })
       it("Accept completed update", async function(){
@@ -141,7 +181,6 @@ describe("Update queries tests", function(){
         }
         queryController.__set__("databaseController",dbController);
         let response = await spy("2000","completed");
-        console.log(response);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
@@ -157,7 +196,6 @@ describe("Update queries tests", function(){
         }
         queryController.__set__("databaseController",dbController);
         let response = await spy("2000","completed");
-        console.log(response);
         response.success.should.equal(true);
         response.response.error.should.equal("Error here");
         spy.calledOnce.should.equal(true);
@@ -173,7 +211,6 @@ describe("Update queries tests", function(){
         }
         queryController.__set__("databaseController",dbController);
         let response = await spy("2000","late");
-        console.log(response);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
@@ -189,12 +226,182 @@ describe("Update queries tests", function(){
         }
         queryController.__set__("databaseController",dbController);
         let response = await spy("2000","late");
-        console.log(response);
         response.success.should.equal(true);
         response.response.error.should.equal("Error here");
         spy.calledOnce.should.equal(true);
       })
     })
+    context("Update password", function(){
+      var spy;
+      beforeEach(()=>{
+          spy = sinon.spy(queryController.updatePassword);
+      })
+      it("Correctly update password (STUBBED)", async function()
+      {
+        var dbController = {
+          selectQuery: async function(sql) {
+            return {status:"OK", response:{ rows:[{username:"admin",iterations:1000,salt:"30000"}]}}
+          },
+          requestEditing: async function() {
+            return {status: "OK", response:{token:"2000"}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        let response = await spy("admin","373723172173732");
+        response.success.should.equal(true);
+        response.response.affectedRows.should.equal(1);
+      })
+      it("Fail due to password beeing edited (STUBBED)", async function() {
+        var dbController = {
+          selectQuery: async function(sql) {
+            return {status:"OK", response:{ rows:[{username:"admin",iterations:1000,salt:"30000"}]}}
+          },
+          requestEditing: async function() {
+            return {status:"ERR", response:"NO TOKEN"}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        let response = await spy("admin","373723172173732");
+        response.success.should.equal(false);
+        response.response.should.equal("Token in use");
+      })
+      it("Fail due to no user found (STUBBED)", async function() {
+        var dbController = {
+          selectQuery: async function(sql) {
+            return {status:"OK", response:{ rows:[]}}
+          },
+          requestEditing: async function() {
+            return {status:"ERR", response:"NO TOKEN"}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        let response = await spy("admin","373723172173732");
+        response.success.should.equal(false);
+        response.response.should.equal("No user found");
+      })
+      it("Fail due to update query error (STUBBED)", async function() {
+        var dbController = {
+          selectQuery: async function(sql) {
+            return {status:"OK", response:{ rows:[{username:"admin",iterations:1000,salt:"30000"}]}}
+          },
+          requestEditing: async function() {
+            return {status: "OK", response:{token:"2000"}}
+          },
+          updateQuery: async function() {
+            return {status: "ERR", response: "ERROR"}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        let response = await spy("admin","373723172173732");
+        response.success.should.equal(true);
+        response.response.should.equal("ERROR");
+      })
+      it("Fail due to getUser query error (STUBBED)", async function()
+      {
+        var dbController = {
+          selectQuery: async function(sql) {
+            return {status:"ERR", response:"ERROR"}
+          },
+          requestEditing: async function() {
+            return {status: "OK", response:{token:"2000"}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        let response = await spy("admin","373723172173732");
+        response.success.should.equal(false);
+      })
+    })
+})
+
+describe("Other functionality", function(){
+  context("Get Overdue Groups", function(){
+    var spy = spy = sinon.spy(queryController.getOverdueGroups);
+    it("Groups tests correctly by the intervals (STUBBED)", async function(){
+      var dbController = {
+        selectQuery: async function(sql) {
+          return {status:"OK",
+                  response:{
+                        rows:[{test_id:10, difference:400},
+                              {test_id:1, difference:366},
+                              {test_id:2, difference:200},
+                              {test_id:9, difference:200},
+                              {test_id:8, difference:50},
+                              {test_id:3, difference:30},
+                              {test_id:7, difference:20},
+                              {test_id:4, difference:14},
+                              {test_id:6, difference:7},
+                              {test_id:5, difference:5},
+                            ]
+                            }
+                  }
+        }
+      }
+      queryController.__set__("databaseController",dbController);
+      let response = await spy();
+      response[0].class.should.equal('Year+');
+      response[0].tests.length.should.equal(2);
+      response[0].tests[0].test_id.should.equal(10);
+      response[0].tests[1].test_id.should.equal(1);
+
+      response[1].class.should.equal('6+ months');
+      response[1].tests.length.should.equal(2);
+      response[1].tests[0].test_id.should.equal(2);
+      response[1].tests[1].test_id.should.equal(9);
+
+      response[2].class.should.equal('1-6 months');
+      response[2].tests.length.should.equal(2);
+      response[2].tests[0].test_id.should.equal(8);
+      response[2].tests[1].test_id.should.equal(3);
+
+      response[3].class.should.equal('2-4 weeks');
+      response[3].tests.length.should.equal(2);
+      response[3].tests[0].test_id.should.equal(7);
+      response[3].tests[1].test_id.should.equal(4);
+
+      response[4].class.should.equal('Less than 2 weeks');
+      response[4].tests.length.should.equal(2);
+      response[4].tests[0].test_id.should.equal(6);
+      response[4].tests[1].test_id.should.equal(5);
+    })
+    it("Error On the way (STUBBED)", async function()
+    {
+      var dbController = {
+        selectQuery: async function(sql) {
+          return {status:"ERR",
+                  response:{error:"ERROR"}
+                  }
+        }
+      }
+      queryController.__set__("databaseController",dbController);
+      let response = await spy();
+      response[0].class.should.equal('Year+');
+      response[0].tests.length.should.equal(0);
+
+      response[1].class.should.equal('6+ months');
+      response[1].tests.length.should.equal(0);
+
+      response[2].class.should.equal('1-6 months');
+      response[2].tests.length.should.equal(0);
+
+      response[3].class.should.equal('2-4 weeks');
+      response[3].tests.length.should.equal(0);
+
+      response[4].class.should.equal('Less than 2 weeks');
+      response[4].tests.length.should.equal(0);
+    })
+  })
 })
 
 async function test(query,data=null)
@@ -206,7 +413,7 @@ async function test(query,data=null)
   it("Should return error (STUBBED)", async function(){
       stubbedErrorSelectTest(spy,data)
   });
-  it("Should return all patients (STUBBED)", async function(){;
+  it("Should return all data (STUBBED)", async function(){;
       stubbedPositiveSelectTest(spy,data)
   });
 }
