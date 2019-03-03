@@ -102,9 +102,9 @@ async function getOverdueGroups()
 
 async function addTest(patient_no, date, notes, frequency, occurrences=1){
     date = utils.formatDate(new Date(date));
-    let values = ``;
+    frequency = frequency ? frequency : "NULL";
     console.log({date});
-    let sql =`INSERT INTO Test(patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes) VALUES('${patient_no}', ${date}, 'weekly', ${occurrences}, 'no', NULL, '${notes}');`;
+    let sql =`INSERT INTO Test(patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes) VALUES('${patient_no}', ${date}, '${frequency}', ${occurrences}, 'no', NULL, '${notes}');`;
     console.log(sql);
     let response = await databaseController.insertQuery(sql);
     console.log(response);
@@ -132,6 +132,7 @@ async function changeTestStatus(testId, newStatus)
     switch(newStatus)
     {
       case "completed": {status = "yes"; date=`CURDATE()`; break;}
+      case "inReview" : {status = "in review"; date `CURDAte()`; break;}
       case "late": {status = "no"; date=`NULL`; break;}
       default: return {success:false, response: data.response}
     }
