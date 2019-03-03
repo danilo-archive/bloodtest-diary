@@ -1,4 +1,5 @@
 const databaseController = require('./db_controller/db-controller.js');
+const utils = require("./utils.js");
 
 /**
  * Get the patient given its patient number
@@ -67,6 +68,23 @@ async function getOverdueTests()
 {
   let sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where first_due_date < CURDATE() AND completed_status='no' `;
   return await selectQueryDatabase(sql);
+}
+
+
+async function addTest(patient_no, date, notes, frequency){
+    let today = utils.formatDate(new Date());
+    date = utils.formatDate(new Date(date));
+    let values = ``;
+    console.log({today, date});
+    let sql =`INSERT INTO Test (patient_no, added, first_due_date, frequency, lab_id, completed_status, completed_date, notes) VALUES (${patient_no}, ${today}, ${date}, 'weekly', 1, 'in review', NULL, '${notes}');`;
+    console.log(sql);
+    let response = await databaseController.insertQuery(sql);
+    console.log(response);
+    if (response.status == "OK"){
+        return {success: true};
+    }else {
+        return {success: false};
+    }
 }
 
 /**
@@ -173,13 +191,12 @@ async function selectQueryDatabase(sql)
 }
 
 module.exports = {
-  getLab,
-  getPatient,
-  getAllPatients,
-  getAllTests,
-  getTestsOfPatient,
-  getAllTestsOnDate,
-  getOverdueTests,
-  changeTestStatus,
-  getTestWithinWeek,
+    getAllPatients,
+    getAllTests,
+    getTestsOfPatient,
+    getAllTestsOnDate,
+    getOverdueTests,
+    addTest,
+    changeTestStatus,
+    getTestWithinWeek,
 };

@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
+import TimePill from "../calendarComponents/TimePill";
 
 const Box = styled.div`
   position: relative;
@@ -36,10 +37,15 @@ const SelectButton = styled.button`
   align-items: center;
   justify-content: center;
   color: white;
-  background: #0d4e56;
+  background: ${props => (props.selected ? "#5BC714" : `#0d4e56`)};
   font-size: 1.25rem;
   cursor: pointer;
   outline: none;
+  border-radius: 0;
+
+  &:hover {
+    background: ${props => (props.selected ? "#62db13" : `#137f8c`)};
+  }
 `;
 
 export default props => {
@@ -47,8 +53,14 @@ export default props => {
     <>
       <Box>
         {props.patientName}
-        <SelectButton>
-          <i className="fa fa-check" />
+        {props.selected ? <TimePill>Selected</TimePill> : ``}
+        <SelectButton
+          selected={props.selected}
+          onClick={() => {
+            return props.onSelectClick(!props.selected ? props.patientID : "");
+          }}
+        >
+          <i className={`fa fa-${!props.selected ? `check` : `times`}`} />
         </SelectButton>
         {props.showID ? <IDBox>Patient ID: {props.patientID}</IDBox> : <></>}
       </Box>

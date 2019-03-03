@@ -33,14 +33,15 @@ class OverduePatients extends React.Component {
                 ? this.props.notificationNumber
                 : "0"
             }
-            dayName={"Overdue"}
+            dayName={"Outstanding"}
           />
           <ScrollBox>
             <AppointmentSection
               type="Appointments"
               appointments={this.props.anytimeAppointments}
             />
-            </ScrollBox>
+            <div style={{width:"100%",height:"10%"}}/>
+          </ScrollBox>
         </Container>
       </>
     );

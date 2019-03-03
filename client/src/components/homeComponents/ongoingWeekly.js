@@ -31,13 +31,14 @@ class OngoingWeekly extends React.Component {
                 ? this.props.notificationNumber
                 : "0"
             }
-            dayName={"Ongoing"}
+            dayName={"This Week"}
           />
           <ScrollBox>
             <AppointmentSection
               type="Appointments"
               appointments={this.props.anytimeAppointments}
             />
+            <div style={{width:"100%",height:"10%"}}/>
             </ScrollBox>
         </Container>
       </>

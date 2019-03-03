@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Label from "../../../Label";
+import Label from "../../Label";
 
 const XText = styled(Label)`
   font-size: 1rem;

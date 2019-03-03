@@ -24,7 +24,12 @@ class ServerConnect {
             this.socket.emit("join", "", this.currentRoom, true);
         });
 
+        this.onTestAdded = undefined;
         this.onTestStatusChange = undefined;
+
+        this.socket.on("testAdded", newTest => {
+            this.onTestAdded(newTest);
+        });
 
         this.socket.on("testStatusChange", (id, status) => {
             console.log("here");
@@ -32,41 +37,38 @@ class ServerConnect {
         });
     }
 
+    /**
+    * Joins the main page room in the server.
+    */
     joinMainPage(){
         this.socket.emit("join", this.currentRoom, "main_page");
         this.currentRoom = "main_page";
     }
 
+    /**
+    * Joins the login page room in the server.
+    */
     joinLoginPage(){
         this.socket.emit("join", this.currentRoom, "login_page");
         this.currentRoom = "login_page";
     }
 
-    changeStatus(id, newStatus){
-        this.socket.emit("testChange", id, newStatus);
+    /**
+    * Sets the callback to call when a new test is added.
+    * @callback callback "On test added" callback
+    */
+    setOnTestAdded(callback){
+        this.onTestAdded = callback;
     }
+
+    /**
+    * Sets the callback to call when a test status is changed
+    * @callback callback "On test status change" callback
+    */
     setOnTestStatusChange(callback){
         console.log("set");
         this.onTestStatusChange = callback;
     }
-
-
-
-    // TODO pls remove
-    TESTgetOverdueTests(){
-        return [{status: "late", patientName: "Test test"}, {status: "pending", patientName: "Test test2"}]
-    }
-    TESTgetTestsInWeek(date, anytime=false){
-        return [[{id: 1, status: "pending", patientName: "Test test monday"}],
-                [{id: 3, status: "pending", patientName: "Test test tuesday"}],
-                [{id: 4, status: "pending", patientName: "Test test wednesday"}],
-                [{id: 5, status: "pending", patientName: "Test test thursday"}],
-                [{id: 6, status: "pending", patientName: "Test test friday"}],
-                [{id: 7, status: "pending", patientName: "Test test weekly"}]]
-    }
-    TESTgetEmptyWeek(){
-        return [[], [], [], [], [], []];
-    };
 
     /**
      * Function to be called when user needs to be authenticated
@@ -90,20 +92,10 @@ class ServerConnect {
      * TODO eventually change name of the callback.
      */
     getAllPatients(callback){
-        //this.socket.emit('getAllPatients');
-        //this.socket.on("getAllPatientsResponse", res => {
-        //    callback(res);
-        //});
-        let mockedData = [{patient_name: "John", patient_surname: "Doe", patient_no: 1},
-                          {patient_name: "John", patient_surname: "Snow", patient_no: 2},
-                          {patient_name: "John", patient_surname: "Snow", patient_no: 3},
-                          {patient_name: "ReallyLongName", patient_surname: "ReallyLongSurname", patient_no: 4},
-                          {patient_name: "Mark", patient_surname: "Hamill", patient_no: 5},
-                          {patient_name: "Gandalf", patient_surname: "The Grey", patient_no: 6}];
-
-        setTimeout( () => {
-            callback(mockedData);
-        }, 2000);
+        this.socket.emit('getAllPatients');
+        this.socket.on("getAllPatientsResponse", res => {
+            callback(res);
+        });
     }
 
     /**
@@ -177,6 +169,22 @@ class ServerConnect {
         });
     }
 
+    /**
+    * Thim method emits a request to add a test into the database
+    * @param patientId The number of the patient that has to take the test.
+    * @param date The first due date of the test
+    * @param notes Additional info about the test
+    * @param frequency The frequency of the test
+    */
+    addTest(patientId, date, notes, frequency=""){
+        this.socket.emit("addTest", patientId, date, notes, frequency);
+    }
+
+    /**
+    * Thim method emits a request to add a test into the database
+    * @param testId The id of the test to be changed.
+    * @param newStatus The new status of the test
+    */
     changeTestStatus(testId, newStatus){
         this.socket.emit('testStatusChange', testId, newStatus);
     }

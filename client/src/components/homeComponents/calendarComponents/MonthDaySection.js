@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import DateText from "./DateText";
 import NotificationIcon from "./NotificationIcon";
-
+import { formatDate } from "../../../lib/utils";
 const MonthDayDiv = styled.div`
   padding-left: 35%;
   width: auto;
@@ -26,7 +26,7 @@ const MonthDaySection = props => {
           top="97%"
           size="40px"
           left="90%"
-          onClick={() => prompt("Add Appointment")}
+          onClick={() => props.openModal(formatDate(props.date))}
         />
       </MonthDayDiv>
     </>

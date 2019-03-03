@@ -4,7 +4,7 @@ import StatusCircle from "./StatusCircle";
 import AppointmentInfo from "./AppointmentInfo";
 import IconSet from "./IconSet";
 import TimePill from "./TimePill";
-import {getServerConnect} from "../../../../serverConnection.js";
+import {getServerConnect} from "../../../serverConnection.js";
 const Container = styled.div`
   display: block;
   position: relative;
@@ -14,10 +14,15 @@ const Container = styled.div`
   margin: 2.5%;
   padding: 0%;
   height: 14%;
-  border: solid 1px rgb(100, 100, 100, 0.2);
+  border: solid 1px rgb(100, 100, 100, 0);
+  border-radius: 5px;
   display: flex;
   align-items: center;
   z-index: 3;
+
+  :hover {
+  border: solid 1px rgb(100, 100, 100, 0.2);
+  }
 `;
 
 const mapping = {

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import Label from "../../../Label";
+import Label from "../../Label";
 
 const Circle = styled.div`
   background-color: #028090;

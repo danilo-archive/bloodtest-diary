@@ -67,7 +67,8 @@ io.on('connection',function(socket)
 
     socket.on('getAllPatients', async () => {
         let response = await queryController.getAllPatients();
-        socket.emit("getAllPatientsResponse", response);
+        console.log({response});
+        socket.emit("getAllPatientsResponse", response.response);
     });
 
     socket.on('getAllTests', async () => {
@@ -104,6 +105,16 @@ io.on('connection',function(socket)
 
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
+
+    socket.on("addTest", async (patientId, date, notes, frequency) => {
+        let response = await queryController.addTest(patientId, date, notes, frequency);
+        if (response.success){
+            socket.emit("testAdded", response.response);
+            socket.in("main_page").emit("testAdded", response.response)
+        }else{
+            console.log("error in insert");
+        }
+    });
 
     socket.on('testStatusChange', async (testId, newStatus) => {
         // TODO change test status, if success, return testId, testDueDate and newStatus

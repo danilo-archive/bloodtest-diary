@@ -34,6 +34,7 @@ class WeeklyCalendar extends React.Component {
             dayName = {"Monday"}
             anytimeAppointments={this.props.calendar[0]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+            openModal={this.props.openModal}
           />
           <CalendarDay
             notificationNumber={
@@ -43,6 +44,7 @@ class WeeklyCalendar extends React.Component {
             dayName = {"Tuesday"}
             anytimeAppointments={this.props.calendar[1]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+            openModal={this.props.openModal}
           />
           <CalendarDay
             notificationNumber={
@@ -52,6 +54,7 @@ class WeeklyCalendar extends React.Component {
             dayName = {"Wednesday"}
             anytimeAppointments={this.props.calendar[2]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+            openModal={this.props.openModal}
           />
           <CalendarDay
             notificationNumber={
@@ -61,6 +64,7 @@ class WeeklyCalendar extends React.Component {
             dayName = {"Thursday"}
             anytimeAppointments={this.props.calendar[3]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+            openModal={this.props.openModal}
           />
           <CalendarDay
             notificationNumber={
@@ -70,6 +74,7 @@ class WeeklyCalendar extends React.Component {
             dayName = {"Friday"}
             anytimeAppointments={this.props.calendar[4]}
             scheduledAppointments={APPOINTMENTS_EXAMPLE_SCHEDULED}
+            openModal={this.props.openModal}
           />
 
 

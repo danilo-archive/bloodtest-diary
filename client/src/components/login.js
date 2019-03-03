@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import Header from './header.js';
 import LoginForm from './loginComponents/loginForm.js';
 import LoginBackgroundAnimation from './loginComponents/loginBackgroundAnimation.js';
 import {getServerConnect} from "./../serverConnection.js";
@@ -19,7 +18,6 @@ class Login extends Component {
     return (
 
       <div className={"login"}>
-        <Header />
         <LoginForm serverConnect={this.serverConnect} />
         <LoginBackgroundAnimation />
       </div>
