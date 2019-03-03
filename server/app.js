@@ -104,6 +104,15 @@ io.on('connection',function(socket)
         socket.emit('getOverdueTestsResponse', response);
     });
 
+    socket.on('requestTestEditing', async (testId) => {
+
+    })
+
+    socket.on('getTestInfo', async (testId) => {
+        let response = await queryController.getTestInfo(testId);
+        socket.emit("getTestInfoResponse", response);
+    });
+
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 

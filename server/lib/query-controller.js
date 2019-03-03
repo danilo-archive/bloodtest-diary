@@ -48,6 +48,11 @@ async function getAllTestsOnDate(date)
   return await selectQueryDatabase(sql)
 }
 
+async function getTestInfo(test_no){
+    let sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_no='${test_no}'`;
+    return await selectQueryDatabase(sql);
+}
+
 /**
 * Get all the overdue tests from the database
 * @return {JSON} result of the query
@@ -238,6 +243,7 @@ module.exports = {
     getUser,
     getAllPatients,
     getAllTests,
+    getTestInfo,
     getTestsOfPatient,
     getAllTestsOnDate,
     getOverdueTests,
