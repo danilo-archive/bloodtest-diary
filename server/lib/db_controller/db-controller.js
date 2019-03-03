@@ -21,7 +21,9 @@ module.exports = {
     insertQuery,
     deleteQuery,
     updateQuery,
-    requestEditing
+    requestEditing,
+    refreshToken,
+    cancelEditing
 };
 
 const mysql = require("mysql");
@@ -274,6 +276,72 @@ async function requestEditing(entryTable, entryID) {
     return response;
 }
 
+async function refreshToken(entryTable, entryID, token) {
+    if (entryTable === undefined || entryID === undefined || token === undefined) {
+        throw new Error("Invalid use of refreshToken.");
+    }
+
+    const database = new Database(databaseConfig);
+
+    let response = undefined;
+    await tokenControlEntryExists(database, entryTable, entryID, token)
+    .then(async (result) => {
+        if (result) {
+            // Token is valid. Update it.
+            let sql = mysql.format("DELETE FROM TokenControl WHERE token = ?", [token]); 
+            await getResult(sql, database, (result) => {
+                return result;
+            });
+
+            const token_ = tokenGenerator.generateToken();
+            let nowDate = new Date();
+            nowDate.setMinutes(nowDate.getMinutes() + TOKEN_VALIDITY_MINUTES);
+            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
+            const insertQuery = mysql.format("INSERT INTO TokenControl VALUES (?, ?, ?, ?)", 
+                                                [token_, entryTable, entryID, expires]);
+
+            response = await getResult(insertQuery, database, (result) => {
+                return {
+                    token: token_,
+                    expires: dateFormat(nowDate, "yyyy-mm-dd HH:MM:ss")
+                };
+            });
+        }
+        else {
+            response = await getErrResponse("Invalid token.");
+        }
+    });
+
+    database.close();
+    return response;
+}
+
+async function cancelEditing(entryTable, entryID, token) {
+    if (entryTable === undefined || entryID === undefined || token === undefined) {
+        throw new Error("Invalid use of cancelEditing.");
+    }
+    const database = new Database(databaseConfig);
+    let response = undefined;
+    await tokenControlEntryExists(database, entryTable, entryID, token)
+    .then(async (result) => {
+        if (result) {
+            // Token is valid. Delete it.
+            let sql = mysql.format("DELETE FROM TokenControl WHERE token = ?", [token]); 
+            await getResult(sql, database, (result) => {
+                return result;
+            });
+
+            response = getSuccessfulResponse("Editing successfully cancelled.")
+        }
+        else {
+            response = await getErrResponse("Invalid token.");
+        }
+    });
+
+    database.close();
+    return response;
+}
+
 //=====================================
 //  HELPER FUNCTIONS BELOW:
 //=====================================
@@ -460,6 +528,8 @@ async function isValidEntry(database, entryTable, entryID) {
         case "Patient": primaryKey = "patient_no"; break;
         case "Carer": primaryKey = "carer_id"; break;
         case "Test": primaryKey = "test_id"; break;
+        case "User": primaryKey = "username"; break;
+        case "ActionLog": primaryKey = "action_id"; break;
     }
     if (primaryKey === undefined) {
         return false;
