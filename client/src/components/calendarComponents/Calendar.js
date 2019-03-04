@@ -1,68 +1,13 @@
 import React, { Component } from 'react';
 import './Calendar.css';
-import './CalendarFunctions.js';
+import {getCalendar} from './CalendarFunctions.js';
 import DayCell from './DayCell.js';
 import CalendarHeader from './CalendarHeader.js';
 
-const DAYS_IN_A_WEEK = 7;
 const HALF_MONTH = 15;
-const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-
-function getDaysInMonth(year, month) {
-  return new Date(year, month, 0).getDate();
-}
-
-function getYearOf(date) {
-  return date.getFullYear(date);
-}
-
-function getMonthOf(date) {
-  return date.getMonth();
-}
-
-function getFirstDayOf(year, month) {
-  return new Date(year, month-1, 1).getDay();
-}
-
-
+const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 var dayBelongsToCurrentMonth = false;
-
-function getCalendar(date) {
-  let currentYear = getYearOf(date);
-  let currentMonth = getMonthOf(date) + 1;
-  let firstDay = getFirstDayOf(currentYear, currentMonth); //first week day of the month
-  let lastDay = getDaysInMonth(currentYear, currentMonth); //days in the month
-  let prevMonthLastDay = getDaysInMonth(currentYear, currentMonth - 1);
-  let arrCalendar = [];
-  let calendar = [];
-  let whiteCells = 0;
-
-  for (let i = 0; i < firstDay; ++i) {
-    arrCalendar.unshift(prevMonthLastDay - i);
-  }
-
-  for (let i = 0; i < lastDay;) {
-    arrCalendar.push(++i);
-  }
-
-  whiteCells = DAYS_IN_A_WEEK - (arrCalendar.length % DAYS_IN_A_WEEK);
-
-  for (let i = lastDay; whiteCells > 0; ++i) {
-    arrCalendar.push(i - lastDay + 1);
-    whiteCells--;
-  }
-
-  let rows = arrCalendar.length / DAYS_IN_A_WEEK;
-
-  for (let i = 0; i < rows; ++i) {
-    calendar[i] = new Array(DAYS_IN_A_WEEK);
-    for (let j = 0; j < DAYS_IN_A_WEEK; j++) {
-      calendar[i].push(arrCalendar[DAYS_IN_A_WEEK * i + j]);
-    }
-  }
-  return calendar;
-}
 
 class CalendarTable extends Component {
   constructor(props) {
@@ -77,7 +22,6 @@ class CalendarTable extends Component {
     this.select = this.select;
     this.nextMonth = this.nextMonth;
     this.prevMonth = this.prevMonth;
-    this.getDaysInMonth = getDaysInMonth;
     this.returnDate = this.returnDate;
 
     this.prevMonth = () => {
@@ -134,7 +78,7 @@ class CalendarTable extends Component {
             prevMonth={this.prevMonth}
             nextMonth={this.nextMonth} />
           <tr>
-            {days.map((day) => {
+            {weekDays.map((day) => {
               return (
                 <th key={day}>
                   {day}
