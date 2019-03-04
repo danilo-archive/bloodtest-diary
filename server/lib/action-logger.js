@@ -25,9 +25,10 @@ const dateFormat = require('dateformat');
  * @param {string} tableName The table that was involved in the action.
  * @param {string} entryID The key of the entry from the previous table that was involved in the action.
  * @param {string} message Optional message that can provide more details about the action.
+ * @param {function} Optional action, called with the result of insertQuery.
  */
-function logInsert(username, tableName, entryID, message) {
-    log("insert", username, tableName, entryID, message);
+function logInsert(username, tableName, entryID, message = undefined, callback = undefined) {
+    log("insert", username, tableName, entryID, message, callback);
 }
 
 /**
@@ -37,9 +38,10 @@ function logInsert(username, tableName, entryID, message) {
  * @param {string} tableName The table that was involved in the action.
  * @param {string} entryID The key of the entry from the previous table that was involved in the action.
  * @param {string} message Optional message that can provide more details about the action.
+ * @param {function} Optional action, called with the result of insertQuery.
  */
-function logUpdate(username, tableName, entryID, message) {
-    log("update", username, tableName, entryID, message);
+function logUpdate(username, tableName, entryID, message = undefined, callback = undefined) {
+    log("update", username, tableName, entryID, message, callback);
 }
 
 /**
@@ -49,9 +51,10 @@ function logUpdate(username, tableName, entryID, message) {
  * @param {string} tableName The table that was involved in the action.
  * @param {string} entryID The key of the entry from the previous table that was involved in the action.
  * @param {string} message Optional message that can provide more details about the action.
+ * @param {function} Optional action, called with the result of insertQuery.
  */
-function logDelete(username, tableName, entryID, message) {
-    log("delete", username, tableName, entryID, message);
+function logDelete(username, tableName, entryID, message = undefined, callback = undefined) {
+    log("delete", username, tableName, entryID, message, callback);
 }
 
 /**
@@ -62,8 +65,9 @@ function logDelete(username, tableName, entryID, message) {
  * @param {string} tableName The table that was involved in the action.
  * @param {string} entryID The key of the entry from the previous table that was involved in the action.
  * @param {string} message Optional message that can provide more details about the action.
+ * @param {function} Optional action, called with the result of insertQuery.
  */
-function log(type, username, tableName, entryID, message) {
+function log(type, username, tableName, entryID, message = undefined, callback = undefined) {
     if (username === undefined || tableName === undefined || entryID === undefined) {
         throw new Error("Invalid use of a logger function.");
     }
@@ -87,13 +91,14 @@ function log(type, username, tableName, entryID, message) {
     db_controller.insertQuery(sql)
     .then((result) => {
         if (result.status === "OK") {
-            console.log("Successful log: " + username + " " + s + " " + tableName + "(" + entryID + ").");
+            console.log("Successful log: user " + username + " " + s + " " + tableName + "(" + entryID + ").");
         }
         else {
             console.log("===========================");
-            console.log("ERROR logging: " + username + " " + s + " " + tableName + "(" + entryID + "):");
+            console.log("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "):");
             console.log(result.err);
             console.log("===========================");
         }
+        if (callback) callback(result);
     });
 }

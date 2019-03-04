@@ -1,11 +1,11 @@
 /**
- * This file contains tests that test the behaviour of tokenGenerator.js
+ * This file contains tests that test the behaviour of token-generator.js
  * 
  * @author Luka Kralj
  * @version 1.0
  * 
- * @module tokenGeneratorTest
- * @see module:tokenGenerator
+ * @module token-generator-test
+ * @see module:token-generator
  */
 
 const expect = require("chai").expect;
