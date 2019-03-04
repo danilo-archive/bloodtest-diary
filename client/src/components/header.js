@@ -6,6 +6,7 @@ import './header.css';
 import minimize from "../images/minimize.png"
 import maximize from "../images/maximize.png"
 import close from "../images/close.png"
+import settings from "../images/settings.png"
 
 
 const navbarIcons = styled.div`
@@ -24,6 +25,16 @@ class Header extends Component {
           </div>
           <div className={navbarIcons}>
            <div id="window-controls">
+               <div className="dropdown">
+                   <div className="button" id="settings-button">
+                       <img className={"icon"} src={settings} alt={"Settings Button"}/>
+                   </div>
+                   <div class="dropdown-content">
+                    <a href="#">Link 1</a>
+                    <a href="#">Link 2</a>
+                    <a href="#">Link 3</a>
+                  </div>
+               </div>
                <div className="button" id="min-button">
                    <img className={"icon"} src={minimize} alt={"Minimize Button"}/>
                </div>
