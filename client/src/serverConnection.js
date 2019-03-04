@@ -19,9 +19,18 @@ class ServerConnect {
     constructor(){
         this.currentRoom = "";
         this.socket = openSocket(`${host}:${port}`);
+
+        this.onConnected = undefined;
         this.socket.on("connected", () => {
             console.log("connected successfully");
             this.socket.emit("join", "", this.currentRoom, true);
+            this.onConnected();
+        });
+
+        this.onDisconnect = undefined;
+
+        this.socket.on("disconnect" () => {
+            this.onDisconnect();
         });
 
         this.onTestAdded = undefined;
@@ -51,6 +60,14 @@ class ServerConnect {
     joinLoginPage(){
         this.socket.emit("join", this.currentRoom, "login_page");
         this.currentRoom = "login_page";
+    }
+
+    setOnConnect(callback){
+        this.onConnected = callback;
+    }
+
+    setOnDisconnect(callback){
+        this.onDisconnect = callback;
     }
 
     /**
