@@ -23,6 +23,7 @@ body {
   font-weight: var(--bodyFontWeight);
   height: auto;
   line-height: var(--bodyLineHeight);
+  overflow: hidden;
 }
 
 

@@ -10,18 +10,14 @@ import styled from "styled-components";
 import App from "./components/App";
 import { Route, Link, BrowserRouter as Router, Switch } from "react-router-dom";
 
-const Offline = styled.div`
-  background-color: 'black';
-`;
+
 
 const routing = (
   <Router>
     <div className={"routes"}>
       <Route path="/" component={Header} />
-      <Offline>
         <Route exact path="/" component={Login} />
         <Route path="/home" component={Home} />
-      </Offline>
     </div>
   </Router>
 );

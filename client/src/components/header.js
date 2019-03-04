@@ -7,6 +7,8 @@ import minimize from "../images/minimize.png"
 import maximize from "../images/maximize.png"
 import close from "../images/close.png"
 import settings from "../images/settings.png"
+import OfflineScreen from "./OfflineScreen.js";
+import {getServerConnect} from "../serverConnection.js";
 
 
 const navbarIcons = styled.div`
@@ -16,12 +18,29 @@ const navbarIcons = styled.div`
     }
 `;
 
+
 class Header extends Component {
+  constructor(props){
+      super(props);
+      this.state = {
+          disabled: true
+      }
+      this.serverConnect = getServerConnect();
+      this.serverConnect.setOnConnect( () => {
+         this.setState({disabled: false});
+      });
+      this.serverConnect.setOnDisconnect( () => {
+         this.setState({disabled: true});
+      });
+
+  }
+
   render() {
     return (
+    <>
       <header id="titlebar">
           <div id="window-title">
-            <span>King's College London NHS</span>
+            <span>King s College London NHS</span>
           </div>
           <div className={navbarIcons}>
            <div id="window-controls">
@@ -46,8 +65,11 @@ class Header extends Component {
               </div>
           </div>
         </div>
-
       </header>
+      <OfflineScreen
+        disabled = {this.state.disabled}
+      />
+      </>
     );
   }
 }
