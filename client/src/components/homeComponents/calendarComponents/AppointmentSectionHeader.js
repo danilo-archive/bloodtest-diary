@@ -4,7 +4,8 @@ import HorizontalLine from "./HorizontalLine";
 
 const Heading = styled.h3`
   padding: 0;
-  margin: 2.5%;
+  margin-top: 2.5%;
+  margin-bottom: 2.5%;
   color: #646464;
   border-radius: 5px;
   font-family: "Rajdhani", sans-serif;

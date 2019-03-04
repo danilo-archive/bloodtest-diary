@@ -139,46 +139,48 @@ class Home extends Component {
     render() {
       if (this.state.dashboardReady && this.state.overdueReady) {
         return (
-          <div className={"dashboard"}>
-            <div className={"overduePatients"}>
-              <OverduePatients
-                notificationNumber={getNumberOfTestsInGroup(this.state.overdueTests)}
-                anytimeAppointments={this.state.overdueTests}
-              />
-            </div>
-            <div className={"rightSideDash"}>
-              <div className={"navbar"}>
-                <Navbar onPrev={this.handlePrevious} onNext={this.handleNext} />
+          <div className={"home"}>
+            <div className={"dashboard"}>
+              <div className={"overduePatients"}>
+                <OverduePatients
+                  notificationNumber={getNumberOfTestsInGroup(this.state.overdueTests)}
+                  anytimeAppointments={this.state.overdueTests}
+                />
               </div>
-              <div className={"bottomSideDash"}>
-                <div className={"calendar"}>
-                  <WeeklyCalendar
-                    calendar={this.state.calendar}
-                    weekDays={this.state.weekDays}
-                    openModal={this.onOpenModal}
-                  />
+              <div className={"rightSideDash"}>
+                <div className={"navbar"}>
+                  <Navbar onPrev={this.handlePrevious} onNext={this.handleNext} />
                 </div>
-                <div className={"ongoingWeekly"}>
-                  <OngoingWeekly
-                    currentMonday={this.currentMonday}
-                    notificationNumber={this.state.ongoingTests.length}
-                    anytimeAppointments={this.state.ongoingTests}
-                  />
+                <div className={"bottomSideDash"}>
+                  <div className={"calendar"}>
+                    <WeeklyCalendar
+                      calendar={this.state.calendar}
+                      weekDays={this.state.weekDays}
+                      openModal={this.onOpenModal}
+                    />
+                  </div>
+                  <div className={"ongoingWeekly"}>
+                    <OngoingWeekly
+                      currentMonday={this.currentMonday}
+                      notificationNumber={this.state.ongoingTests.length}
+                      anytimeAppointments={this.state.ongoingTests}
+                    />
+                  </div>
                 </div>
               </div>
+              <Modal
+                open={this.state.openModal}
+                onClose={this.onCloseModal}
+                showCloseIcon={false}
+                style={modalStyles}
+                center
+              >
+                <AddTest
+                  selectedDate={this.state.selectedDate}
+                  closeModal={this.onCloseModal}
+                />
+              </Modal>
             </div>
-            <Modal
-              open={this.state.openModal}
-              onClose={this.onCloseModal}
-              showCloseIcon={false}
-              style={modalStyles}
-              center
-            >
-              <AddTest
-                selectedDate={this.state.selectedDate}
-                closeModal={this.onCloseModal}
-              />
-            </Modal>
           </div>
         );
       } else {

@@ -28,11 +28,12 @@ body {
 
 .home {
   display: flow-root;
+  height: 100vh;
 }
 
 .dashboard {
   border: blue 0px solid;
-  height: calc(100vh - 65px);
+  height: calc(100vh - 75px);
   width: auto;
   position: relative;
   top: 30px;
@@ -74,10 +75,10 @@ body {
 
 
 .navbar {
-  border: #839595 3px solid;
-  border-radius: 10px;
-  margin-left: 0.5%;
-  margin-bottom: 9px;
+  border: #839595 0px solid;
+
+  padding: 0.5%;
+
 
   max-height: 225px;
   min-height: 200px;
@@ -90,12 +91,11 @@ body {
 }
 
 .overduePatients {
-  border: #839595 3px solid;
-  border-radius: 10px;
-  padding: 4px;
-  margin-right: 0.5%;
+  border: #839595 0px solid;
+  padding: 0.5%;
 
-  background-color: ;
+
+  background-color: rgb(13,78,86, 0.3);
 
   min-width: 150px;
   max-width: 325px;
@@ -108,11 +108,11 @@ body {
 }
 
 .calendar {
-  border: #839595 3px solid;
-  border-radius: 10px;
-  padding: 4px;
-  margin-right: 0.5%;
-  margin-left: 0.5%;
+  border: #839595 0px solid;
+
+  background-color: rgb(13,78,86, 0.2);
+
+  padding: 0.5%;
 
   width: 200px;
   overflow: hidden;
@@ -121,10 +121,12 @@ body {
 }
 
 .ongoingWeekly {
-  border: #839595 3px solid;
-  border-radius: 10px;
-  padding: 4px;
-  margin-left: 0.5%;
+  border: #839595 0px solid;
+
+  background-color: rgb(13,78,86, 0.2);
+
+
+  padding: 0.5%;
 
   background-color: ;
 

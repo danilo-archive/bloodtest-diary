@@ -9,9 +9,8 @@ const Container = styled.div`
   display: block;
   position: relative;
   background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
-  margin-top: 0;
-  margin-bottom: 0;
-  margin: 2.5%;
+  margin-top: 2.5%;
+  margin-bottom: 2.5%;
   padding: 0%;
   height: 14%;
   border: solid 1px rgb(100, 100, 100, 0);
@@ -47,7 +46,7 @@ const Container = styled.div`
           opacity:1;
         }
       }
-      
+
         `
       : ``}
 `;

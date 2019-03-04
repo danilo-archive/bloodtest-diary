@@ -5,15 +5,23 @@ import Home from "./components/home.js";
 import Header from "./components/header.js";
 import * as serviceWorker from "./serviceWorker";
 
+import styled from "styled-components";
+
 import App from "./components/App";
 import { Route, Link, BrowserRouter as Router, Switch } from "react-router-dom";
+
+const Offline = styled.div`
+  background-color: 'black';
+`;
 
 const routing = (
   <Router>
     <div className={"routes"}>
       <Route path="/" component={Header} />
-      <Route exact path="/" component={Login} />
-      <Route path="/home" component={Home} />
+      <Offline>
+        <Route exact path="/" component={Login} />
+        <Route path="/home" component={Home} />
+      </Offline>
     </div>
   </Router>
 );

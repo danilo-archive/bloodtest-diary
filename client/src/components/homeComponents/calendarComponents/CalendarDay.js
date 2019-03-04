@@ -15,7 +15,7 @@ const CalendarContainer = styled.div`
   background-color: white;
   padding: 0;
   position: relative;
-  border: solid 1px #839595;
+  border: solid 0px white;
   min-width: 17rem;
 `;
 const monthNames = [
