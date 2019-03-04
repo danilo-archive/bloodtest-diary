@@ -7,13 +7,13 @@
  * obtains it. The token only works for a particular entry in the database.
  * 
  * Additionally, the functions for critical queries deleteQuery, updateQuery and 
- * requestEditing will never be executed synchronously. This is implemented with 
+ * requestEditing will never be executed synchronously. This is implemented with an
  * adapted Bakery algorithm.
  * 
  * @author Luka Kralj
  * @version 1.0
  * 
- * @module db_controller
+ * @module db-controller
  */
 
 module.exports = {
@@ -77,6 +77,8 @@ async function insertQuery(sql) {
  * Call this for DELETE queries.
  *
  * @param {string} sql The SQL query.
+ * @param {string} entryTable Name of the table involved in the query.
+ * @param {string} entryID Key of the entry that is being deleted.
  * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
  */
 async function deleteQuery(sql, entryTable, entryID) {
@@ -133,6 +135,9 @@ async function deleteQuery(sql, entryTable, entryID) {
  * Call this for UPDATE queries.
  *
  * @param {string} sql The SQL query.
+ * @param {string} entryTable Name of the table involved in the query.
+ * @param {string} entryID Key of the entry that is being updated.
+ * @param {string} token Token that is used for verifying the edit permissions.
  * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
  */
 async function updateQuery(sql, entryTable, entryID, token) {
@@ -276,6 +281,16 @@ async function requestEditing(entryTable, entryID) {
     return response;
 }
 
+/**
+ * Call this to refresh the current token. This will generate a new token
+ * with a new expiration time. If the token is invalid, an error
+ * message will be returned.
+ *
+ * @param {string} entryTable Name of the table that we are editing.
+ * @param {string} entryID Key of the entry that we are editing
+ * @param {string} token Token that is used for verifying the edit permissions.
+ * @returns {Promise<JSON>} JSON object that contains response data or error message.
+ */
 async function refreshToken(entryTable, entryID, token) {
     if (entryTable === undefined || entryID === undefined || token === undefined) {
         throw new Error("Invalid use of refreshToken.");
@@ -316,6 +331,16 @@ async function refreshToken(entryTable, entryID, token) {
     return response;
 }
 
+/**
+ * Call this to delete the current token. This will allow other users
+ * to edit this entry. If the token is invalid, an error
+ * message will be returned.
+ *
+ * @param {string} entryTable Name of the table that we are editing.
+ * @param {string} entryID Key of the entry that we are editing
+ * @param {string} token Token that is used for verifying the edit permissions.
+ * @returns {Promise<JSON>} JSON object that contains response data or error message.
+ */
 async function cancelEditing(entryTable, entryID, token) {
     if (entryTable === undefined || entryID === undefined || token === undefined) {
         throw new Error("Invalid use of cancelEditing.");
