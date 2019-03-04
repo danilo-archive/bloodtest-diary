@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import InfoBox from "./InfoBox";
 import TitleTab from "../addTest/TitleTab.js";
-
+import CalendarTable from "../../calendarComponents/Calendar";
 
 const DataContainer = styled.div`
   position: relative;
@@ -11,40 +11,71 @@ const DataContainer = styled.div`
   background: rgba(0, 0, 0, 0);
 `;
 
-export default class AddTestView extends React.Component {
-
-
-
-    render(){
-        return (
-            <>
-            <div
-              style={{
-                width: "35rem",
-                height: "30rem",
-                background: "rgba(244, 244, 244,0.7)"
+export default class EditTestView extends React.Component {
+  state = {
+    patient: { name: this.props.patient.name, id: this.props.patient.id },
+    test: {
+      id: this.props.test.id,
+      date: {
+        dueDate: this.props.test.date.dueDate,
+        frequency: this.props.test.date.frequency,
+        occurrences: this.props.test.date.occurrences
+      },
+      status: this.props.test.status
+    },
+    showCalendar: false
+  };
+  render() {
+    console.log(this.state);
+    return (
+      <>
+        <div
+          style={{
+            width: "35rem",
+            height: "30rem",
+            background: "rgba(244, 244, 244,0.7)",
+            position: "relative"
+          }}
+        >
+          <TitleTab main={true}>Edit Appointment</TitleTab>
+          <div style={{ padding: "1rem 1rem" }}>
+            <InfoBox
+              label={"Full Name"}
+              text={this.state.patient.name}
+              icon="arrow-circle-right"
+              onClick={() => {
+                alert("This is supposed to open the patient view");
               }}
-            >
-                <TitleTab main={true}>
-                  Edit Appointment
-                </TitleTab>
-                    <InfoBox
-                        label = {"Patient ID"}
-                        text = {"3212321"}
-                    />
-                    <InfoBox
-                        label = {"Full Name"}
-                        text = {"Alvaro Raussel"}
-                    />
-                    <InfoBox
-                        label = {"Due"}
-                        text = {"24-08-1998"}
-                        icon = "check"
-                    />
-             </div>
-            </>
-        );
-    }
-
-
+            />
+            {this.state.showCalendar ? (
+              <CalendarTable
+                style={{ width: "50%", top: "15%", left: "63%" }}
+                onDaySelected={day => {
+                  console.log(`Selected day ${day}`);
+                  this.setState({
+                    showCalendar: false,
+                    test: {
+                      ...this.state.test,
+                      date: {
+                        ...this.state.test.date,
+                        dueDate: day
+                      }
+                    }
+                  });
+                }}
+              />
+            ) : (
+              ``
+            )}
+            <InfoBox
+              label={"Due"}
+              text={this.state.test.date.dueDate}
+              icon="edit"
+              onClick={() => this.setState({ showCalendar: true })}
+            />
+          </div>
+        </div>
+      </>
+    );
+  }
 }
