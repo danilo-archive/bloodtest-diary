@@ -34,8 +34,7 @@ function getDateOfFirstDayOf(year, month) {
  * @param {integer} daysInCurrentMonth: last day of the current month (eg. )
  */
 function generateCalendarArr(lastDaysFromPrevMonth, prevMonthLastDay, daysInCurrentMonth){
-  let arrCalendar = [];
-  let whiteCells = 0;
+  const arrCalendar = [];
   //days from the previous month
   for (let i = 0; i < lastDaysFromPrevMonth; ++i) {
     arrCalendar.unshift(prevMonthLastDay - i);
@@ -45,7 +44,7 @@ function generateCalendarArr(lastDaysFromPrevMonth, prevMonthLastDay, daysInCurr
     arrCalendar.push(++i);
   }
   //remaining cells to be filled in to make (arrCalendar.length % DAYS_IN_A_WEEK) = 0.
-  whiteCells = DAYS_IN_A_WEEK - (arrCalendar.length % DAYS_IN_A_WEEK);
+  let whiteCells = DAYS_IN_A_WEEK - (arrCalendar.length % DAYS_IN_A_WEEK);
   //days from next month
   for (let i = daysInCurrentMonth; whiteCells > 0; ++i) {
     arrCalendar.push(i - daysInCurrentMonth + 1);
@@ -63,8 +62,8 @@ function generateCalendarArr(lastDaysFromPrevMonth, prevMonthLastDay, daysInCurr
  *  number of columns equal to cols
  */
 function convertArrayIntoMatrix(array, cols){
-  let rows = array.length / cols;
-  let matrix = [];
+  const rows = array.length / cols;
+  const matrix = [];
   for (let i = 0; i < rows; ++i) {
     matrix[i] = new Array(cols);
     for (let j = 0; j < cols; j++) {
@@ -87,17 +86,15 @@ function convertArrayIntoMatrix(array, cols){
  *  surrounding the month.
  */
 function getCalendar(date) {
-  let currentYear = date.getFullYear();
-  let currentMonth = date.getMonth() + 1;
-  let lastDaysFromPrevMonth = getDateOfFirstDayOf(currentYear, currentMonth);
-  let daysInCurrentMonth = getDaysInMonth(currentYear, currentMonth);
-  let prevMonthLastDay = getDaysInMonth(currentYear, currentMonth - 1);
-  let arrCalendar = generateCalendarArr(lastDaysFromPrevMonth, prevMonthLastDay, daysInCurrentMonth);
-  let calendar = convertArrayIntoMatrix(arrCalendar, DAYS_IN_A_WEEK);
+  const currentYear = date.getFullYear();
+  const currentMonth = date.getMonth() + 1;
+  const lastDaysFromPrevMonth = getDateOfFirstDayOf(currentYear, currentMonth);
+  const daysInCurrentMonth = getDaysInMonth(currentYear, currentMonth);
+  const prevMonthLastDay = getDaysInMonth(currentYear, currentMonth - 1);
+  const arrCalendar = generateCalendarArr(lastDaysFromPrevMonth, prevMonthLastDay, daysInCurrentMonth);
+  const calendar = convertArrayIntoMatrix(arrCalendar, DAYS_IN_A_WEEK);
   return calendar;
 }
-
-
 
 //-----------------DayCell functions---------------------
 
@@ -159,7 +156,7 @@ function selectedDayIsFromNextMonth(selectedDate, currentDate, day){
  * @return {boolean} True if the day is selected, False otherwise
  */
 function isSelected(isFromThisMonth, selectedDay, currentDate, day){
-  let selectedDate = new Date(selectedDay);
+  const selectedDate = new Date(selectedDay);
   return selectedDate.getDate() === day &&
           //current month
           ((isFromThisMonth && selectedDayIsFromCurrentMonth(selectedDate, currentDate)) || 

@@ -1,13 +1,13 @@
 import React from 'react';
 import './DayCell.css';
-import {isSelected} from './CalendarFunctions.js';
+import {isSelected} from '../../lib/calendar-functions.js';
 
 const DayCell = props => {
-      let day = props.dayOfMonth;
-      let currentDate = props.date;
-      let isFromThisMonth = props.isFromThisMonth;
-      let selectedDay = props.selectedDay;
-      let selected = isSelected(isFromThisMonth, selectedDay, currentDate, day);
+      const day = props.dayOfMonth;
+      const currentDate = props.date;
+      const isFromThisMonth = props.isFromThisMonth;
+      const selectedDay = props.selectedDay;
+      const selected = isSelected(isFromThisMonth, selectedDay, currentDate, day);
       return(
         <label style={{color: (!isFromThisMonth) ? '#0b989d' : 'white'}}>
           <button className={(selected) ? 'selected' : 'notSelected'}
