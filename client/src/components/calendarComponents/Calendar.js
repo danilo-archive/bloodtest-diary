@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import './Calendar.css';
-import {getCalendar} from './CalendarFunctions.js';
+import {getCalendar} from '../../lib/calendar-functions.js';
 import DayCell from './DayCell.js';
 import CalendarHeader from './CalendarHeader.js';
 
 const HALF_MONTH = 15;
 const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-var dayBelongsToCurrentMonth = false;
+let dayBelongsToCurrentMonth = false;
 
 class CalendarTable extends Component {
   constructor(props) {
     super(props);
-    let currentDate = new Date();
+    const currentDate = new Date();
     this.state = {
       date: currentDate,
       calendar: getCalendar(currentDate),
@@ -25,23 +25,23 @@ class CalendarTable extends Component {
     this.returnDate = this.returnDate;
 
     this.prevMonth = () => {
-      let date = this.state.date;
-      let newDate = new Date(date.setMonth(date.getMonth() - 1));
+      const date = this.state.date;
+      const newDate = new Date(date.setMonth(date.getMonth() - 1));
       this.setState({
         date: newDate,
         calendar: getCalendar(newDate)
       });
     };
     this.nextMonth = () => {
-      let date = this.state.date;
-      let newDate = new Date(date.setMonth(date.getMonth() + 1));
+      const date = this.state.date;
+      const newDate = new Date(date.setMonth(date.getMonth() + 1));
       this.setState({
         date: newDate,
         calendar: getCalendar(newDate)
       })
     };
     this.selectDay = (day, isFromThisMonth) => {
-      let date = this.state.date;
+      const date = this.state.date;
       //  the month returned by Date class is always smaller by 1
       //  then it should be, for the date to be useable by the database
       //  the monthCorrector starts from 1 to add it back.
