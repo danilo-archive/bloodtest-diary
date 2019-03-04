@@ -26,6 +26,7 @@ class ServerConnect {
 
         this.onTestAdded = undefined;
         this.onTestStatusChange = undefined;
+        this.onTestEdit = undefined;
 
         this.socket.on("testAdded", newTest => {
             this.onTestAdded(newTest);
@@ -68,6 +69,10 @@ class ServerConnect {
     setOnTestStatusChange(callback){
         console.log("set");
         this.onTestStatusChange = callback;
+    }
+
+    setOnTestEdit(callback){
+        this.onTestEdit = callback;
     }
 
     /**
