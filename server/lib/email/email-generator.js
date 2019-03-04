@@ -1,13 +1,38 @@
 /**
 * The functions exported from this module generate different types of emails depending on their purpose.
 They all need information contained in the "email_info" JSON objects.
-* @example <caption>The email_info JSONs need to reflect this format in order to be properly parsed:</caption>
+* @example <caption>The email_info JSON needs to reflect this format in order to be properly parsed:</caption>
 {
-//TODO INSERT VALID JSON
+  "patient": {
+    "patient_no": "P799886",
+    "patient_name": "nameP799886",
+    "patient_surname": "surnameP799886",
+    "patient_email": "patientP799886@gmail.com",
+    "patient_phone": null,
+    "hospital_id": 551,
+    "carer_id": null,
+    "additional_info": null
+  },
+  "test": {
+    "test_id": 1,
+    "patient_no": "P799886",
+    "due_date": date_obj,  //a date object
+    "frequency": "4-W",
+    "occurrences": 9,
+    "completed_status": "yes",
+    "completed_date": date_obj, //a date object
+    "notes": null
+  },
+  "hospital": {
+    "hospital_id": 551,
+    "hospital_name": "hospital551",
+    "hospital_email": "hospital551@gmail.com",
+    "hospital_phone": null
+  }
 }
 * @module email-generator
  * @author Danilo Del Busso
- * @version 0.0.1
+ * @version 0.0.2
  */
 const mjml2html = require("mjml");
 
@@ -19,11 +44,25 @@ const mjml2html = require("mjml");
 |
 */
 
-//TODO: UPDATE JSDOC BELOW WITH ACTUAL FORMAT NEEDED AND NEW DATABASE SCHEMA
+function overdueTestReminderForPatient(email_info) {
+  const header_image_url =
+    "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
+
+  const test_date = beautifyDate(new Date(email_info.test.due_date));
+  const hospital_name = email_info.hospital.hospital_name;
+  const patient_full_name = `${email_info.patient.patient_name} ${
+    email_info.patient.patient_surname
+    }`;
+  const computed_html = mjml2html(``);
+  if (computed_html.errors.length === 0)
+    return computed_html.html;
+  return null;
+}
+
+
 /**
  * Return html for an email containing info about a test which is due for a patient.
-}
- * @param {JSON} email_info the json containing info needed to generate the email. For format info look at function example.
+ * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
 function testReminderForPatient(email_info) {
@@ -63,14 +102,15 @@ function testReminderForPatient(email_info) {
     </mjml>    
    `);
 
-  if (computed_html.errors.length === 0) return computed_html.html;
+  if (computed_html.errors.length === 0)
+    return computed_html.html;
   return null;
 }
 
 /**
  * Generate an email aimed at hospitals which reminds of a blood test due for a patient of theirs
- * @param {JSON} email_info JSON containing patient, test and hospital information, for format module information
- */
+ * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
+*/
 function testReminderForHospital(email_info) {
   const header_image_url =
     "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
@@ -126,7 +166,8 @@ function testReminderForHospital(email_info) {
     </mjml>    
    `);
 
-  if (computed_html.errors.length === 0) return computed_html.html;
+  if (computed_html.errors.length === 0)
+    return computed_html.html;
   return null;
 }
 
