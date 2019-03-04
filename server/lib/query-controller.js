@@ -23,6 +23,7 @@ async function getAllPatients()
 async function updatePassword(json)
 {
   let response = await getUser(json.username);
+  var token = await requestEditing("User",json.username)
   if (!(response.response instanceof Array)){
     return response;
   }
@@ -30,7 +31,7 @@ async function updatePassword(json)
   if(user){
     var hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
     let sql = `UPDATE User SET hashed_password='${hash}', WHERE username = ${json.username} LIMIT 1;`;
-    return await updateQueryDatabase("User",json.username,sql);
+    return await updateQueryDatabase("User",json.username,sql,token);
   }
   else{
     return {success:false , response:"No user found"}
@@ -77,6 +78,11 @@ async function getAllTestsOnDate(date)
 {
   let sql = `Select * From Test Where due_date = '${date}';`;
   return await selectQueryDatabase(sql)
+}
+
+async function getTestInfo(test_no){
+    let sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_no='${test_no}'`;
+    return await selectQueryDatabase(sql);
 }
 
 /**
@@ -179,6 +185,24 @@ async function addTest(json)
 * @property hospital_id
 * @property carer_id
 * @return {JSON} result of the query - {success:Boolean}
+
+/**
+* Edit test query
+* @param testId The id of the test to be updated
+* @param {JSON} newInfo All the information of the test (new and old)
+* @param token The token that grants edit priviledges
+*/
+async function editTest(testId, newInfo, token){
+    // TODO write query
+    var sql = prepareUpdateSQL("Test",newInfo,"test_id");
+    return await updateQueryDatabase("Test",testId,sql,token);
+}
+
+/**
+* Change the status of the test in the database
+* @param {String} testId - id of a test to change
+* @param {String} newStatus - new status of a test {enum: "completed"/"late"}
+* @return {JSON} result of the query
 **/
 async function addPatient(json)
 {
@@ -229,14 +253,17 @@ async function changeTestStatus(testId, newStatus)
 //TODO: delete JSON from name
 async function changeTestStatusJSON(test)
 {
+  var token = await requestEditing("Test",test.test_id);
+  //TODO
   switch(test.newStatus)
   {
     case "completed": {status = "yes"; date=`CURDATE()`; break;}
     case "late": {status = "no"; date=`NULL`; break;}
+    case "inReview" : {status = "in review"; date=`CURDATE()`; break;}
     default: return {success:false, response: "NO SUCH UPDATE"}
   }
   let sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${test.testId};`;
-  return await updateQueryDatabase("Test", test.testId,sql);
+  return await updateQueryDatabase("Test",test.testId,sql,token);
 }
 
 /**
@@ -359,9 +386,8 @@ async function requestEditing(table, id)
 * @param {String} sql - SQL query
 * @return {JSON} result of the query - {success:Boolean response:Array/Error}
 **/
-async function updateQueryDatabase(table,id,sql)
+async function updateQueryDatabase(table,id,sql,token)
 {
-  var token = await requestEditing(table,id);
   if(token!=undefined)
   {
     let response = await databaseController.updateQuery(sql, table, id, token)
@@ -401,6 +427,29 @@ function prepareInsertSQL(table,object)
   return sql;
 }
 
+/**
+*
+**/
+function prepareUpdateSQL(table, object, idProperty)
+{
+  var sql = `Update ${table} SET `;
+  var properties = Object.keys(object);
+  var values = Object.values(object);
+  var pos;
+  for(var i=0; i<properties.length; i++)
+  {
+    if(properties[i]!= idProperty){
+      sql += `${properties[i]} = '${values[i]}', `;
+    }
+    else{
+      pos = i;
+    }
+  }
+  //delete ", " from sql query
+  sql = sql.substr(0,sql.length-2);
+  sql += ` WHERE ${idProperty} = '${values[pos]}';`
+  return sql;
+}
 
 
 module.exports = {
@@ -409,6 +458,7 @@ module.exports = {
     getUser,
     getAllPatients,
     getAllTests,
+    getTestInfo,
     getTestsOfPatient,
     getAllTestsOnDate,
     getOverdueTests,
@@ -422,4 +472,5 @@ module.exports = {
     changeTestStatus,
     //TODO: delete
     changeTestStatusJSON,
+    editTest,
 };
