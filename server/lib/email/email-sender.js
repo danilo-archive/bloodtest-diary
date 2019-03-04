@@ -5,15 +5,12 @@
  * @example <caption>Example of the config file.</caption>
  {
     "transporter": {
-        "host": "smtp.gmail.com",
+        "host": "smtp.gotham.mail.com",  //example of SMTP host
         "port": 465,
         "secure": true, //this value true only with port 465
         "auth": {
-            "user": "",
-            "pass": ""
-        },
-        "tls": {
-            "rejectUnauthorized": false
+            "user": "imnotbatman@gotham.com", //example of email
+            "pass": "jokerisajoke42" //password
         }
     }
 }

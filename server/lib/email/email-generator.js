@@ -5,9 +5,9 @@ They all need information contained in the "email_info" JSON objects.
 {
   "patient": {
     "patient_no": "P799886",
-    "patient_name": "nameP799886",
-    "patient_surname": "surnameP799886",
-    "patient_email": "patientP799886@gmail.com",
+    "patient_name": "Bruce",
+    "patient_surname": "Wayne",
+    "patient_email": "imnotbatman@gotham.com",
     "patient_phone": null,
     "hospital_id": 551,
     "carer_id": null,
@@ -25,10 +25,10 @@ They all need information contained in the "email_info" JSON objects.
   },
   "hospital": {
     "hospital_id": 551,
-    "hospital_name": "hospital551",
-    "hospital_email": "hospital551@gmail.com",
+    "hospital_name": "Gotham City Hospital",
+    "hospital_email": "hospital@gotham.com",
     "hospital_phone": null
-  }n
+  }
 }
 * @module email-generator
  * @author Danilo Del Busso
