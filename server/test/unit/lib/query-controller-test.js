@@ -149,7 +149,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("2000","late");
+        let response = await spy({testId:"2000",newStatus:"late"});
         response.success.should.equal(false);
         spy.calledOnce.should.equal(true);
       })
@@ -160,7 +160,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("2000","ERRROR");
+        let response = await spy({testId:"2000",newStatus:"ERRROR"});
         response.success.should.equal(false);
         response.response.should.equal("NO SUCH UPDATE");
         spy.calledOnce.should.equal(true);
@@ -175,7 +175,7 @@ describe("Update queries tests", function(){
           },
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("2000","completed");
+        let response = await spy({testId:"2000",newStatus:"completed"});
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
@@ -190,7 +190,7 @@ describe("Update queries tests", function(){
           },
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("2000","completed");
+        let response = await spy({testId:"2000",newStatus:"completed"});
         response.success.should.equal(false);
         response.response.should.equal("Error here");
         spy.calledOnce.should.equal(true);
@@ -205,7 +205,7 @@ describe("Update queries tests", function(){
           },
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("2000","late");
+        let response = await spy({testId:"2000",newStatus:"late"});
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
@@ -220,7 +220,7 @@ describe("Update queries tests", function(){
           },
         }
         queryController.__set__("databaseController",dbController);
-        let response = await spy("2000","late");
+        let response = await spy({testId:"2000",newStatus:"late"});
         response.success.should.equal(false);
         response.response.should.equal("Error here");
         spy.calledOnce.should.equal(true);

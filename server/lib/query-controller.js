@@ -236,12 +236,6 @@ async function addCarer(json)
   return await insertQueryDatabase(sql);
 }
 
-//TODO: delete when json can be passed
-async function changeTestStatus(testId, newStatus)
-{
-    var test = {testId: testId, newStatus: newStatus}
-    return await changeTestStatusJSON(test)
-}
 
 /**
 * Change the status of the test in the database
@@ -250,11 +244,9 @@ async function changeTestStatus(testId, newStatus)
 * @property newStatus {enum: "completed"/"late"} - new status of a test
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
-//TODO: delete JSON from name
-async function changeTestStatusJSON(test)
+async function changeTestStatus(test)
 {
-  var token = await requestEditing("Test",test.test_id);
-  //TODO
+  var token = await requestEditing("Test",test.testId);
   switch(test.newStatus)
   {
     case "completed": {status = "yes"; date=`CURDATE()`; break;}
@@ -470,7 +462,5 @@ module.exports = {
     addCarer,
     updatePassword,
     changeTestStatus,
-    //TODO: delete
-    changeTestStatusJSON,
     editTest,
 };
