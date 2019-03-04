@@ -1334,7 +1334,6 @@ describe("Test main DB controller behaviour:", () => {
                             const database1 = new Database(databaseConfig);
                             database1.query("SELECT * FROM TokenControl WHERE table_name = 'Patient' AND table_key = 'rand_id'")
                             .then((result) => {
-                                console.log(result);
                                 expect(result.length).to.equal(1);
                             })
                             .catch((err) => {
@@ -1383,7 +1382,6 @@ describe("Test main DB controller behaviour:", () => {
                             const database1 = new Database(databaseConfig);
                             database1.query("SELECT * FROM TokenControl WHERE table_name = 'Patient' AND table_key = 'rand_id2'")
                             .then((result) => {
-                                console.log(result);
                                 expect(result.length).to.equal(0);
                             })
                             .catch((err) => {
@@ -1452,7 +1450,6 @@ describe("Test main DB controller behaviour:", () => {
                             const database1 = new Database(databaseConfig);
                             database1.query("SELECT * FROM TokenControl WHERE table_name = 'Patient' AND table_key = 'rand_id3'")
                             .then((result) => {
-                                console.log(result);
                                 expect(result.length).to.equal(0);
                             })
                             .catch((err) => {
