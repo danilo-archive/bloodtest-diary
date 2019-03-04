@@ -24,6 +24,11 @@ class ServerConnect {
             this.socket.emit("join", "", this.currentRoom, true);
         });
 
+        this.socket.on("disconnect", () => {
+            console.log("Server lost...");
+            console.log("Trying reconnecting");
+        });
+
         this.onTestAdded = undefined;
         this.onTestStatusChange = undefined;
         this.onTestEdit = undefined;
