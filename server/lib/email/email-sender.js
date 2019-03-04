@@ -21,18 +21,21 @@
  * @author Jacopo Madaluni, Danilo Del Busso
  * @version 0.0.2
  */
+
 const email_generator = require("./email-generator");
 const nodeMailer = require("nodemailer");
 const jsonController = require("../json-controller");
 const CONFIG_ABSOLUTE_PATH = __dirname + "/../../config/email_config.json"; //the absolute path of the email_config.json file
 const query_controller = require("../query-controller");
+
+
 /*
 |--------------------------------------------------------------------------
-| EMAIL SENDING FUNCTIONS SECTION
+| MAIN EMAIL SENDING FUNCTIONS
 |--------------------------------------------------------------------------
-| This section contains the functions which send emails and handle
-| email creation
-|
+| This section contains the functions which can be called externally to send emails,
+| these functions do not directly handle data and generate emails. They are written to simplify
+| usage of the module.
 */
 
 /**
@@ -57,15 +60,31 @@ function sendReminderEmailToHospital(testIDs) {
 }
 
 /**
- * Send overdue tests reminders to hospitals.
+ * Send overdue tests reminders to patients.
  * The reminder is in the form of an email, one is sent for each test corresponding 
  * to a testID in the testIDs array
  * @param {array} testIDs the IDs of the tests to be sent 
  */
 function sendOverdueTestReminderToPatient(testIDs) {
-
+  sendEmails(testIDs, email_generator.overdueTestReminderForPatient, "Reminder for your overdue test")
+}
+/**
+ * Send overdue tests reminders to hospitals.
+ * The reminder is in the form of an email, one is sent for each test corresponding 
+ * to a testID in the testIDs array
+ * @param {array} testIDs the IDs of the tests to be sent 
+ */
+function sendOverdueTestReminderToHospital(testIDs) {
+  sendEmails(testIDs, email_generator.overdueTestReminderForHospital, "Reminder for an overdue test")
 }
 
+/*
+|--------------------------------------------------------------------------
+| EMAIL GENERATING AND SENDING FUNCTIONS SECTION
+|--------------------------------------------------------------------------
+| This section contains the functions which send emails and handle
+| email creation, as well as fetch the necessary data
+*/
 
 /**
  * Send one email for every test. The content of the email will depend on the email generator function
@@ -225,5 +244,7 @@ function sendEmail(tdelbussodaniloransporter, receiverOptions) {
 */
 module.exports = {
   sendReminderEmailToPatient,
-  sendReminderEmailToHospital
+  sendReminderEmailToHospital,
+  sendOverdueTestReminderToPatient,
+  sendOverdueTestReminderToHospital
 };

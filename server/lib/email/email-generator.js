@@ -44,6 +44,76 @@ const mjml2html = require("mjml");
 |
 */
 
+/**
+ * Return html for an email containing info about a test which is overdue for a patient.
+ * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
+ * @returns {string} html for an email containing info about a test which is due for a patient
+ */
+function overdueTestReminderForPatient(email_info) {
+  const header_image_url =
+    "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
+
+  const test_date = beautifyDate(email_info.test.due_date);
+  const patient = email_info.patient;
+  const computed_html = mjml2html(`
+  <mjml>
+     ${getHead("Reminder For Overdue Patient Test")}
+     <mj-body>
+        ${getTopImage(header_image_url)}
+        <mj-section>
+           <mj-column width="45%">
+              <mj-text align="center" font-weight="500" padding="0px" font-size="18px">A BLOOD TEST IS OVERDUE</mj-text>
+              <mj-divider border-width="2px" border-color="#616161" />
+              <mj-divider border-width="2px" border-color="#616161" width="45%" />
+           </mj-column>
+        </mj-section>
+        <mj-section padding-top="30px">
+        <mj-column width="100%">
+        <mj-text>
+          <p>${patient.patient_name} had a test due on the ${test_date}.</p>
+          <p>You will find the relevant information regarding this test underneath:</p>
+          <mj-table>
+            <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
+              <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
+                <th style="padding: 0 15px 0 0;">Patient Information</th>
+              </tr>
+            </tr>
+            <tr>
+              <td style="padding: 0 15px 0 0;">Full Name</td>
+              <td style="padding: 0 15px;white-space:nowrap;">${patient.patient_name} ${patient.patient_surname}</td>
+            </tr>
+            <tr>
+              <td style="padding: 0 15px 0 0;">Patient Number</td>
+              <td style="padding: 0 15px;">${patient.patient_no}</td>
+            </tr>
+            <tr>
+              <td style="padding: 0 15px 0 0;">Email Address</td>
+              <td style="padding: 0 15px;">${patient.patient_email}</td>
+            </tr>
+            <tr>
+              <td style="padding: 0 15px 0 0;">Phone Number</td>
+              <td style="padding: 0 15px;">${patient.patient_phone}</td>
+            </tr>
+          </mj-table>
+        </mj-text>
+      </mj-column>
+        </mj-section>
+     </mj-body>
+     ${getFooter()}
+
+  </mjml>    
+ `);
+
+  if (computed_html.errors.length === 0)
+    return computed_html.html;
+  return null;
+}
+
+/**
+ * Return html for an email containing info about a test which is overdue for a patient.
+ * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
+ * @returns {string} html for an email containing info about a test which is due for a patient
+ */
 function overdueTestReminderForPatient(email_info) {
   const header_image_url =
     "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
@@ -53,12 +123,38 @@ function overdueTestReminderForPatient(email_info) {
   const patient_full_name = `${email_info.patient.patient_name} ${
     email_info.patient.patient_surname
     }`;
-  const computed_html = mjml2html(``);
+  const computed_html = mjml2html(`
+  <mjml>
+       ${getHead("Reminder For Overdue Test")}
+       <mj-body>
+          ${getTopImage(header_image_url)}
+          <mj-section>
+             <mj-column width="45%">
+                <mj-text align="center" font-weight="500" padding="0px" font-size="18px">YOUR BLOOD TEST IS OVERDUE</mj-text>
+                <mj-divider border-width="2px" border-color="#616161" />
+                <mj-divider border-width="2px" border-color="#616161" width="45%" />
+             </mj-column>
+          </mj-section>
+          <mj-section padding-top="30px">
+             <mj-column width="100%">
+                <mj-text>
+                   <p>Hello ${patient_full_name}.</p>
+                   <p>This is a reminder for your blood test</p>
+                   <p>The test was due on ${test_date}</p>
+                   <p>The test had to be taken at ${hospital_name}</p>
+                   <p>Please contact the hospital if a new test has not been arranged yet.</p>
+                </mj-text>
+             </mj-column>
+          </mj-section>
+       </mj-body>
+       ${getFooter()}
+    </mjml>   
+  `);
+
   if (computed_html.errors.length === 0)
     return computed_html.html;
   return null;
 }
-
 
 /**
  * Return html for an email containing info about a test which is due for a patient.
@@ -173,7 +269,7 @@ function testReminderForHospital(email_info) {
 
 /*
 |--------------------------------------------------------------------------
-| EMAIL COMMON ELEMENTS
+| COMMON EMAIL ELEMENTS
 |--------------------------------------------------------------------------
 | This section contains the functions which generate mjml code for common elements in
 | the emails
@@ -272,5 +368,7 @@ function beautifyDate(date) {
 */
 module.exports = {
   testReminderForPatient,
-  testReminderForHospital
+  testReminderForHospital,
+  overdueTestReminderForPatient,
+  overdueTestReminderForHospital
 };
