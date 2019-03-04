@@ -5,6 +5,16 @@
  * @version 0.0.2
  */
 
+/*
+|--------------------------------------------------------------------------
+| MODULE EXPORTS
+|--------------------------------------------------------------------------
+*/
+module.exports = {
+    getJSON,
+    isJSON
+}
+
 const fs = require('fs');
 
 /**
@@ -37,9 +47,4 @@ function isJSON(data) {
         console.error(`The file is not in JSON format`);
         return null;
     }
-}
-
-module.exports = {
-    getJSON,
-    isJSON
 }

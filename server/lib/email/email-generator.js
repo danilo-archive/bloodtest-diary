@@ -28,12 +28,27 @@ They all need information contained in the "email_info" JSON objects.
     "hospital_name": "hospital551",
     "hospital_email": "hospital551@gmail.com",
     "hospital_phone": null
-  }
+  }n
 }
 * @module email-generator
  * @author Danilo Del Busso
  * @version 0.0.2
  */
+
+
+/*
+|--------------------------------------------------------------------------
+| MODULE EXPORTS
+|--------------------------------------------------------------------------
+*/
+module.exports = {
+  testReminderForPatient,
+  testReminderForHospital,
+  overdueTestReminderForPatient,
+  overdueTestReminderForHospital
+};
+
+
 const mjml2html = require("mjml");
 
 /*
@@ -49,7 +64,7 @@ const mjml2html = require("mjml");
  * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
-function overdueTestReminderForPatient(email_info) {
+function overdueTestReminderForHospital(email_info) {
   const header_image_url =
     "https://images.unsplash.com/photo-1528872042734-8f50f9d3c59b";
 
@@ -360,15 +375,3 @@ function beautifyDate(date) {
     months[date.getMonth()]
     }, ${date.getFullYear()}`;
 }
-
-/*
-|--------------------------------------------------------------------------
-| MODULE EXPORTS
-|--------------------------------------------------------------------------
-*/
-module.exports = {
-  testReminderForPatient,
-  testReminderForHospital,
-  overdueTestReminderForPatient,
-  overdueTestReminderForHospital
-};

@@ -18,9 +18,22 @@
     }
 }
  * @module email-sender
- * @author Jacopo Madaluni, Danilo Del Busso
- * @version 0.0.2
+ * @author Danilo Del Busso, Jacopo Madaluni
+ * @version 0.0.3
  */
+
+/*
+|--------------------------------------------------------------------------
+| MODULE EXPORTS
+|--------------------------------------------------------------------------
+*/
+module.exports = {
+  sendReminderEmailToPatient,
+  sendReminderEmailToHospital,
+  sendOverdueTestReminderToPatient,
+  sendOverdueTestReminderToHospital
+};
+
 
 const email_generator = require("./email-generator");
 const nodeMailer = require("nodemailer");
@@ -46,7 +59,6 @@ const query_controller = require("../query-controller");
  */
 function sendReminderEmailToPatient(testIDs) {
   sendEmails(testIDs, email_generator.testReminderForPatient, "Reminder for your test");
-
 }
 
 /**
@@ -97,8 +109,16 @@ function sendEmails(testIDs, emailGeneratorFunction, subjectTitle) {
   if (Array.isArray(testIDs)) {
     const failed = []; //array will contain the test ids of emails for which the html generation failed
     testIDs.forEach(async testID => {
-      const emailInfo = getEmailInfo(testID, failed); //fetch the relevant data linked to the test for the email generation
-      sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle);
+      let emailInfo = null;
+      await getEmailInfo(testID, failed).then(result => {
+        emailInfo = result;
+      }); //fetch the relevant data linked to the test for the email generation
+      if (emailInfo !== null) {
+        sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle);
+      }
+      else{
+        console.error("Could not generate emailInfo JSON")
+      }
     });
     //for every failed email, log an error to the console
     if (failed.length !== 0) {
@@ -125,11 +145,11 @@ function sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
     //TODO: REMOVE HARD-CODED OPTIONS BEFORE DEPLOYMENT
     const receiverOptions = {
       from: transporter.options.auth.user,
-      to: "delbussodanilo98@gmail.com",
+      to: emailInfo.patient.patient_email,
       subject: subjectTitle,
       html: emailGeneratorFunction(emailInfo)
     };
-    if (receiverOptions.hmtl != null)
+    if (receiverOptions.html != null)
       sendEmail(transporter, receiverOptions);
     else
       failed.push(testID);
@@ -141,7 +161,7 @@ function sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
  * @param {number} testID the id of the test for which to generate the email
  * @param {array} failed 
  */
-function getEmailInfo(testID, failed) {
+async function getEmailInfo(testID, failed) {
   //Get the test information from the database
   let test = null;
   await query_controller.getTest(testID).then(r => {
@@ -217,15 +237,7 @@ function getEmailInfo(testID, failed) {
  * @param {transporter} transporter the transporter from which emails are being sent
  * @param {JSON} receiverOptions the options of the email address to be sent, as well as the content of the mail
  */
-function sendEmail(tdelbussodaniloransporter, receiverOptions) {
-  transporter.verify(function (error, success) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Server is ready to take our messages");
-    }
-  });
-
+function sendEmail(transporter, receiverOptions) {
   //TODO: TEST THIS FOR GOD'S SAKE
   transporter.sendMail(receiverOptions, (err, info) => {
     if (err) {
@@ -236,15 +248,3 @@ function sendEmail(tdelbussodaniloransporter, receiverOptions) {
     }
   });
 }
-
-/*
-|--------------------------------------------------------------------------
-| MODULE EXPORTS
-|--------------------------------------------------------------------------
-*/
-module.exports = {
-  sendReminderEmailToPatient,
-  sendReminderEmailToHospital,
-  sendOverdueTestReminderToPatient,
-  sendOverdueTestReminderToHospital
-};
