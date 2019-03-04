@@ -8,7 +8,7 @@ const Screen = styled.div`
   overflow:hidden;
   height: 100vh;
   width: 100vw;
-  background-color: ${props => (props.disabled ? `rgb(0, 0, 0, 0.5)` : ` rgb(0, 0, 0, 0.0)`)};
+  background-color: ${props => (props.disabled ? `rgb(0, 0, 0, 0.7)` : ` rgb(0, 0, 0, 0.0)`)};
   z-index: ${props => (props.disabled ? `100` : `0`)};
 `;
 
@@ -18,8 +18,8 @@ export default class OfflineScreen extends Component {
         if (this.props.disabled){
             return (
                 <>
-                <LoadingScreen />
-                <Screen disabled = {true}/>
+                  <LoadingScreen />
+                  <Screen disabled = {true}/>
                 </>
             )
         } else {

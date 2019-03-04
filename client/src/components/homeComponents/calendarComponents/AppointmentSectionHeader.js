@@ -11,7 +11,7 @@ const Heading = styled.h3`
   font-family: "Rajdhani", sans-serif;
   font-size: 150%;
   overflow: hidden;
-  zIndex: 5;
+  z-index: 5;
   background-color: white;
 `;
 

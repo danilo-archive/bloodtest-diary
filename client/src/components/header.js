@@ -40,7 +40,7 @@ class Header extends Component {
     <>
       <header id="titlebar">
           <div id="window-title">
-            <span>King s College London NHS</span>
+            <span>King's College London NHS</span>
           </div>
           <div className={navbarIcons}>
            <div id="window-controls">

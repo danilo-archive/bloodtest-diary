@@ -8,6 +8,7 @@
   width: 100%;
   background-color: #0b989d;
   color: #f4f9fd;
+  z-index: 1000;
   -webkit-app-region: drag;
   user-select: none;
   -moz-user-select: none;
@@ -76,7 +77,7 @@
   background-color: #f9f9f9;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+  z-index: 101;
 }
 
 .dropdown-content a {
@@ -85,27 +86,4 @@
   text-decoration: none;
   display: block;
   text-align: left;
-}
-
-.dialog {
-	display: block;
-	position: absolute;
-	width: 20%;
-	min-width: 300px;
-	max-width: 600px;
-	left: 50%;
-	top: 50%;
-	font-size: 20px;
-	line-height: 1.3;
-	font-weight: 400;
-	font-family: sans-serif;
-	border-radius: 0.5em;
-	border: none;
-	margin: 0;
-	opacity: 0;
-	transform: translate(-50%, 0);
-	background: rgba(255, 255, 255, 0);
-	animation: slideDown 800ms cubic-bezier(0.645, 0.045, 0.355, 1) both,
-		dropShadow 800ms cubic-bezier(0.55, 0.055, 0.675, 0.19) both,
-		textColor 400ms cubic-bezier(0.645, 0.045, 0.355, 1) 400ms both;
 }

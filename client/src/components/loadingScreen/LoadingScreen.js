@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import "./style.css";
+import "./loadingScreen.css";
 
 
 export default class extends Component{
     render(){
         return(
-              <div id="main">
-                <div class='centralise'>
+              <div className={"alertWindow"}>
+                <div className={"loadingAnimation"}>
                   <div id='l1' class='line'></div>
                   <div id='l2' class='line'></div>
                   <div id='l3' class='line'></div>
@@ -17,6 +17,10 @@ export default class extends Component{
                   <div id='l8' class='line'></div>
                   <div id='l9' class='line'></div>
                   <div id='l10' class='line'></div>
+                </div>
+                <div className={"dialog"}>
+                  <h3 className="override">Connection to server lost...</h3>
+                  <p className="override">If the problem presists contact your IT department.</p>
                 </div>
               </div>
         )
