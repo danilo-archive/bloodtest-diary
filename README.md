@@ -55,12 +55,17 @@ To check ```path/to/app.js```:
 It is advised to install editor extensions which will allow to check for errors automatically.
 VSCode: [vscode-eslint](https://github.com/Microsoft/vscode-eslint)
 Atom: [linter-eslint](https://atom.io/packages/linter-eslint)
-#### Moch, Chai, and Instanbul
+#### Mocha, Chai, and Instanbul
 
-To recursively run tests in ```path/```:<br>
+To recursively run tests in ```server/```:<br>
 ```
-    $ cd path
+    $ cd server
     $ npm test
+```
+To recursively run tests in ```client/```<br>
+```
+    $ cd client
+    $ npm test -- --recursive
 ```
 
 <hr>
