@@ -62,12 +62,6 @@ const mapping = {
 export default class AppointmentBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      id: this.props.id,
-      status: this.props.type,
-      name: this.props.name,
-      tentative: this.props.tentative | false
-    };
     this.serverConnect = getServerConnect();
   }
 
@@ -85,20 +79,19 @@ export default class AppointmentBox extends React.Component {
   }
 
   onStatusClick = status => {
-    this.serverConnect.changeTestStatus(this.state.id, status);
+    this.serverConnect.changeTestStatus(this.props.id, status);
   };
 
   render() {
-    const { status, name, tentative } = this.state;
     return (
-      <Container tentative={tentative}>
-        {tentative ? <TimePill status={status}>Tentative</TimePill> : ``}
+      <Container tentative={this.props.tentative}>
+        {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
 
         <StatusCircle
-          type={tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
+          type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
         />
-        <AppointmentInfo name={name} />
-        <IconSet onStatusClick={tentative ? () => {} : this.onStatusClick} />
+        <AppointmentInfo name={this.props.name} />
+        <IconSet onStatusClick={this.props.tentative ? () => {} : this.onStatusClick} />
       </Container>
     );
   }

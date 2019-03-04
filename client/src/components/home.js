@@ -86,13 +86,14 @@ class Home extends Component {
 
     updateDashboard(newWeek=undefined) {
       let monday = newWeek ? newWeek[0] : this.state.weekDays[0];
+      newWeek = newWeek ? newWeek : this.state.weekDays;
       this.serverConnect.getTestsInWeek(monday, res => {
-        this.setState( prevState => {return {
+        this.setState({
               ongoingTests: res[5],
               calendar: res.slice(0, 5),
               dashboardReady: true,
-              weekDays: newWeek ? newWeek : prevState.weekDays
-          }});
+              weekDays: newWeek
+          });
         });
     }
 
