@@ -4,7 +4,7 @@ import React from "react";
 const NameDiv = styled.div`
   padding-left: 3%;
   margin: 2.5%;
-  width: 50%;
+  width: 100%;
   height: 200%;
   color: #646464;
   font-family: "Rajdhani", sans-serif;

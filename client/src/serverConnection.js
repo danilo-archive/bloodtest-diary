@@ -29,7 +29,7 @@ class ServerConnect {
 
         this.onDisconnect = undefined;
 
-        this.socket.on("disconnect" () => {
+        this.socket.on("disconnect", () => {
             this.onDisconnect();
         });
 

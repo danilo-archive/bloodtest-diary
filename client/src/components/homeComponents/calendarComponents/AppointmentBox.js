@@ -16,6 +16,7 @@ const Container = styled.div`
   border: solid 1px rgb(100, 100, 100, 0);
   border-radius: 5px;
   display: flex;
+  flex-direction: row;
   align-items: center;
   z-index: 3;
   & .pill {
