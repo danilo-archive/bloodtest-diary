@@ -57,13 +57,6 @@ class Home extends Component {
       });
     }
 
-    initOnTestStatusChange2(){
-        this.serverConnect.setOnTestStatusChange((id, status) => {
-            let indexes = findTestInState(...this.state);
-
-        });
-    }
-
     initOnTestStatusChange() {
       this.serverConnect.setOnTestStatusChange((id, status) => {
         this.modifyTest(id, test => {
