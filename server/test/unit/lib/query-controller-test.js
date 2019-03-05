@@ -73,8 +73,7 @@ describe("Insert queries tests", function(){
     context("Insert new test", function(){
       var spy;
       beforeEach(()=>{
-          //TODO : delete JSON
-          spy = sinon.spy(queryController.addTestJSON);
+          spy = sinon.spy(queryController.addTest);
       })
       it("Should accept new test (STUBBED)", async function() {
         stubbedPositiveInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
