@@ -3,6 +3,9 @@ import styled from "styled-components";
 
 const PillDiv = styled.div`
   position: absolute;
+  display: flex;
+  justify-content: center;
+  width: auto;
   background-color: #0b999d;
   color: white;
   font-family: "Rajdhani", sans-serif;
@@ -15,7 +18,7 @@ const PillDiv = styled.div`
 export default props => {
   return (
     <>
-      <PillDiv>{props.children}</PillDiv>
+      <PillDiv className="pill">{props.children}</PillDiv>
     </>
   );
 };
