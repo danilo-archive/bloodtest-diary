@@ -110,6 +110,7 @@ io.on('connection',function(socket)
 
     socket.on('getTestInfo', async (testId) => {
         let response = await queryController.getTestInfo(testId);
+        console.log({response});
         socket.emit("getTestInfoResponse", response);
     });
 

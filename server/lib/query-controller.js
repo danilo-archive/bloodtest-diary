@@ -48,8 +48,8 @@ async function getAllTestsOnDate(date)
   return await selectQueryDatabase(sql)
 }
 
-async function getTestInfo(test_no){
-    let sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_no='${test_no}'`;
+async function getTestInfo(test_id){
+    let sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_id=${test_id}`;
     return await selectQueryDatabase(sql);
 }
 
