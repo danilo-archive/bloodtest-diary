@@ -10,7 +10,6 @@ export default props => {
         alignItems: "center",
         margin: "0",
         position: "absolute",
-        right: "1%"
       }}
     >
       <Icon icon="edit" />

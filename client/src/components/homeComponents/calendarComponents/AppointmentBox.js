@@ -17,7 +17,7 @@ const Container = styled.div`
   border-radius: 5px;
   display: flex;
   flex-direction: row;
-  align-items: center;
+
   z-index: 3;
   & .pill {
     opacity: 0;
@@ -87,12 +87,17 @@ export default class AppointmentBox extends React.Component {
     return (
       <Container tentative={tentative}>
         {tentative ? <TimePill status={status}>Tentative</TimePill> : ``}
-
-        <StatusCircle
-          type={tentative ? "tentative" : this.formatStatus(this.props.type)}
-        />
-        <AppointmentInfo name={name} />
-        <IconSet onStatusClick={tentative ? () => {} : this.onStatusClick} />
+        <div>
+          <StatusCircle
+            type={tentative ? "tentative" : this.formatStatus(this.props.type)}
+          />
+        </div>
+        <div>
+          <AppointmentInfo name={name} />
+        </div>
+        <div >
+          <IconSet onStatusClick={tentative ? () => {} : this.onStatusClick} />
+        </div>
       </Container>
     );
   }
