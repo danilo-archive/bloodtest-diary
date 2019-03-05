@@ -179,6 +179,13 @@ class ServerConnect {
         });
     }
 
+    getTestInfo(testId, callback){
+        this.socket.emit("getTestInfo", testId);
+        this.socket.on("getTestInfoResponse", res => {
+            callback(res.response[0]);
+        });
+    }
+
     requestTestEditing(testId, callback){
         this.socket.emit("requestTestEditToken", testId);
         this.socket.on("requestTestEditTokenResponse", token => {
