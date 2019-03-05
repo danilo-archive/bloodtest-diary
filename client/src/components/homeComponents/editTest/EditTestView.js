@@ -38,7 +38,8 @@ export default class EditTestView extends React.Component {
   }
 
   init(){
-      this.serverConnect.getTestInfo(this.props.testId, res => {
+      this.serverConnect.getMockTest(this.props.testId, res => {
+          console.log({res});
          this.setState({
              patient: {name: res.patient_name, id: res.patient_no},
              test: {

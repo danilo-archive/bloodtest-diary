@@ -179,6 +179,26 @@ class ServerConnect {
         });
     }
 
+    getMockTest(testId, callback){
+        let duedate = new Date(2019, 3, 4);
+        let mockedTest = {
+            patient_name: "John Doe",
+            patient_no: "P123890",
+            test_id: 123,
+            due_date: "2019-3-3",
+            frequency: "2-W",
+            occurrences: 3,
+            completed_status: "no",
+            notes: "This guys is basically just an idiot",
+            completedDate: null,
+            hospitalId: 3
+
+        }
+        setTimeout( () => {
+            callback(mockedTest);
+        }, 3000);
+    }
+
     getTestInfo(testId, callback){
         this.socket.emit("getTestInfo", testId);
         this.socket.on("getTestInfoResponse", res => {
