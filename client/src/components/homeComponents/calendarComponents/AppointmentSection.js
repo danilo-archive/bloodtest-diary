@@ -24,6 +24,7 @@ export default props => {
           name={`${appointment.patient_name} ${appointment.patient_surname}`}
           time={appointment.time}
           dueDate={appointment.due_date}
+          editTest={props.editTest}
         />
       ))}
     </AppointmentSection>
