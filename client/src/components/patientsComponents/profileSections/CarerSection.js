@@ -5,7 +5,7 @@ import InputCell from "./profileCells/InputCell";
 
 const Container = styled.div`
   margin: 3%;
-  padding: 3%;
+  padding: 1%;
   border: #839595 3px solid;
   border-radius: 10px;\`;
 `;

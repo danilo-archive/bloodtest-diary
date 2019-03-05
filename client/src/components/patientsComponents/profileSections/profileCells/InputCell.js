@@ -21,12 +21,13 @@ const Field = styled.div`
   align-items:center;;
 `;
 
-const Value = styled.input`
+const Value = styled.input.attrs({ type: "text" , spellCheck: "false"})`
   font-size: 125%;
   width: 63%;
   height: 10%;
   font-family: "Rajdhani", sans-serif;
   background: inherit;
+  outline: none;
 `;
 
 
@@ -36,7 +37,6 @@ export default class InfoCell extends React.Component {
             <Container >
                 <Field>{this.props.field}</Field>
                 <Value
-                    type={"text"}
                     defaultValue={this.props.value}
                 />
             </Container>
