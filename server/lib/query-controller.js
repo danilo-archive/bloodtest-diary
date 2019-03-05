@@ -1,6 +1,7 @@
 const databaseController = require('./db_controller/db-controller.js');
 const utils = require("./utils.js");
 const authenticator = require("./authenticator.js")
+const _ = require("lodash");
 
 /**
 * Get all the patients from the database
@@ -103,6 +104,26 @@ async function getOverdueTestsExtended()
 {
   let sql = `Select *, DATEDIFF(CURDATE(),due_date) AS difference From Test NATURAL JOIN Patient where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
   return await selectQueryDatabase(sql);
+}
+
+/**
+* Get all the overdue tests from the database plus additional info about time difference
+* @return {JSON} result of the query - {success:true/false response:SortedWeeks/Error}
+* @typedef {SortedWeeks}
+* @property monday - array of test in that monday; property name is encoded like 'Mon Mar 04 2019 00:00:00 GMT+0000 (GMT)'
+**/
+async function getSortedOverdueWeeks()
+{
+  let sql = `Select *, IF(((DAYOFWEEK(due_date)-2) = -1),DATE_ADD(due_date,Interval (-6) Day),DATE_ADD(due_date,Interval (-(DAYOFWEEK(due_date)-2)) Day)) AS Monday
+            From Test NATURAL JOIN Patient where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`
+  let response = await selectQueryDatabase(sql);
+  if(response.success == false)
+  {
+    return response;
+  }
+  let tests = response.response;
+  let sortedWeeks = _.groupBy(tests,"Monday");
+  return {success: true , response: sortedWeeks};
 }
 
 /**
