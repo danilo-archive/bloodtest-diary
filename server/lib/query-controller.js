@@ -23,13 +23,13 @@ async function getAllPatients()
 async function updatePassword(json)
 {
   let response = await getUser(json.username);
-  var token = await requestEditing("User",json.username)
+  let token = await requestEditing("User",json.username)
   if (!(response.response instanceof Array)){
     return response;
   }
   let user = response.response[0];
   if(user){
-    var hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
+    let hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
     let sql = `UPDATE User SET hashed_password='${hash}', WHERE username = ${json.username} LIMIT 1;`;
     return await updateQueryDatabase("User",json.username,sql,token);
   }
@@ -116,8 +116,7 @@ async function getOverdueGroups()
       let sortedTests = tests.success ? tests.response : [];
       let groups = [{class: "Year+", tests: []}, {class: "6+ months", tests: []},{class: "1-6 months", tests: []},
                     {class: "2-4 weeks", tests: []}, {class: "Less than 2 weeks", tests: []}];
-
-      var i = 0;
+      let i = 0;
       while (i < sortedTests.length && (Math.floor(sortedTests[i].difference - 365)) >= 0){
           groups[0].tests = groups[0].tests.concat(sortedTests[i]);
           i++;
@@ -152,10 +151,10 @@ async function getOverdueGroups()
 **/
 async function addUser(json)
 {
-  var iterations = authenticator.produceIterations();
-  var salt = authenticator.produceSalt();
+  let iterations = authenticator.produceIterations();
+  let salt = authenticator.produceSalt();
   //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
-  var hash = authenticator.produceHash(json.hashed_password,iterations,salt);
+  let hash = authenticator.produceHash(json.hashed_password,iterations,salt);
   let sql = `INSERT INTO User VALUES(${json.username},${hash},${salt},${iterations},${json.email});`;
   return await insertQueryDatabase(sql);
 }
@@ -170,9 +169,55 @@ async function addUser(json)
 **/
 async function addTest(json)
 {
-  var sql = prepareInsertSQL('Test',json);
+  let sql = prepareInsertSQL('Test',json);
   console.log(sql);
   return await insertQueryDatabase(sql);
+}
+
+/**
+* Edit test query
+* @param testId The id of the test to be updated
+* @param {JSON} newInfo All the information of the test (new and old)
+* @param token The token that grants edit priviledges
+*/
+async function editTest(testId, newInfo, token){
+    let sql = prepareUpdateSQL("Test",newInfo,"test_id");
+    return await updateQueryDatabase("Test",testId,sql,token);
+}
+
+/**
+* Edit patient query
+* @param {JSON} newInfo All the information of the patient to update
+* Obligatory fields in JSON
+* @property patient_no {String}
+* @param token The token that grants edit priviledges
+*/
+async function editPatient(newInfo, token){
+    let sql = prepareUpdateSQL("Patient",newInfo,"patient_no");
+    return await updateQueryDatabase("Patient",newInfo.patient_no,sql,token);
+}
+
+/**
+* Edit hospital query
+* @param {JSON} newInfo All the information of the hospital to update
+* Obligatory fields in JSON
+* @property hospital_id {String}
+* @param token The token that grants edit priviledges
+*/
+async function editHospital(newInfo, token){
+    let sql = prepareUpdateSQL("Hospital",newInfo,"hospital_id");
+    return await updateQueryDatabase("Hospital",newInfo.hospital_id,sql,token);
+}
+
+/**
+* Edit carer query
+* @param {JSON} newInfo All the information of the carer to update
+* @property carer_id {String}
+* @param token The token that grants edit priviledges
+*/
+async function editCarer(newInfo, token){
+    let sql = prepareUpdateSQL("Carer",newInfo,"carer_id");
+    return await updateQueryDatabase("Carer",newInfo.carer_id,sql,token);
 }
 
 /**
@@ -185,28 +230,10 @@ async function addTest(json)
 * @property hospital_id
 * @property carer_id
 * @return {JSON} result of the query - {success:Boolean}
-
-/**
-* Edit test query
-* @param testId The id of the test to be updated
-* @param {JSON} newInfo All the information of the test (new and old)
-* @param token The token that grants edit priviledges
-*/
-async function editTest(testId, newInfo, token){
-    // TODO write query
-    var sql = prepareUpdateSQL("Test",newInfo,"test_id");
-    return await updateQueryDatabase("Test",testId,sql,token);
-}
-
-/**
-* Change the status of the test in the database
-* @param {String} testId - id of a test to change
-* @param {String} newStatus - new status of a test {enum: "completed"/"late"}
-* @return {JSON} result of the query
 **/
 async function addPatient(json)
 {
-  var sql = prepareInsertSQL('Patient',json);
+  let sql = prepareInsertSQL('Patient',json);
   return await insertQueryDatabase(sql);
 }
 
@@ -219,7 +246,7 @@ async function addPatient(json)
 **/
 async function addHospital(json)
 {
-  var sql = prepareInsertSQL('Hospital',json);
+  let sql = prepareInsertSQL('Hospital',json);
   return await insertQueryDatabase(sql);
 }
 
@@ -232,7 +259,7 @@ async function addHospital(json)
 **/
 async function addCarer(json)
 {
-  var sql = prepareInsertSQL('Carer',json);
+  let sql = prepareInsertSQL('Carer',json);
   return await insertQueryDatabase(sql);
 }
 
@@ -241,12 +268,12 @@ async function addCarer(json)
 * Change the status of the test in the database
 * @param {JSON} test
 * @property testId {String} - id of a test to change
-* @property newStatus {enum: "completed"/"late"} - new status of a test
+* @property newStatus {enum: "completed"/"late"/"inReview"} - new status of a test
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function changeTestStatus(test)
 {
-  var token = await requestEditing("Test",test.testId);
+  let token = await requestEditing("Test",test.testId);
   switch(test.newStatus)
   {
     case "completed": {status = "yes"; date=`CURDATE()`; break;}
@@ -265,7 +292,7 @@ async function changeTestStatus(test)
 **/
 async function getTestWithinWeek(date)
 {
-  var response = await Promise.all(getTestsDuringTheWeek(date))
+  let response = await Promise.all(getTestsDuringTheWeek(date))
                               .then(days => {return checkMultipleQueriesStatus(days)})
                               .then(data => {return data})
   return response;
@@ -282,10 +309,10 @@ async function getTestWithinWeek(date)
 **/
 function getTestsDuringTheWeek(date)
 {
-  var weekDay = new Date(date).getDay();
-  var daysInWeek=[]
-  var sql;
-  var i = 0;
+  let weekDay = new Date(date).getDay();
+  let daysInWeek=[]
+  let sql;
+  let i = 0;
   while(i<5)
   {
     day = -1*(weekDay - 1) + i;
@@ -306,8 +333,8 @@ function getTestsDuringTheWeek(date)
 **/
 function checkMultipleQueriesStatus(queries)
 {
-  var data = [];
-  var error = false;
+  let data = [];
+  let error = false;
   queries.forEach(query=>{
     if(query.status==="OK"){
       data.push(query.response.rows)
@@ -331,7 +358,7 @@ function checkMultipleQueriesStatus(queries)
 **/
 async function selectQueryDatabase(sql)
 {
-  var response = await databaseController.selectQuery(sql).then((queryResponse) =>{
+  let response = await databaseController.selectQuery(sql).then((queryResponse) =>{
     if(queryResponse.status==="OK"){
       data = queryResponse.response.rows;
       return {success:true, response:data}
@@ -366,8 +393,8 @@ async function insertQueryDatabase(sql)
 **/
 async function requestEditing(table, id)
 {
-  var data = await databaseController.requestEditing(table,id).then( data => {return data;});
-  var token = data.response.token
+  let data = await databaseController.requestEditing(table,id).then( data => {return data;});
+  let token = data.response.token
   return token;
 }
 
@@ -396,22 +423,22 @@ async function updateQueryDatabase(table,id,sql,token)
 }
 
 /**
-* Run UPDATE query on the database
+* Prapare INSERT query on the database
 * @param {String} table - Table in which to insert an entry
-* @param {JSON} object -  JSON, which is being entried
+* @param {JSON} object -  JSON, which is being entered
 * @return {String} SQL query
 **/
 function prepareInsertSQL(table,object)
 {
-  var sql = `INSERT INTO ${table}(`;
-  var properties = Object.keys(object);
-  for(var i=0; i<properties.length-1; i++)
+  let sql = `INSERT INTO ${table}(`;
+  let properties = Object.keys(object);
+  for(let i=0; i<properties.length-1; i++)
   {
     sql += `${properties[i]},`;
   }
   sql += `${properties[properties.length-1]}) Values(`;
-  var values = Object.values(object);
-  for(var i=0; i<values.length-1; i++)
+  let values = Object.values(object);
+  for(let i=0; i<values.length-1; i++)
   {
       sql += `'${values[i]}',`;
   }
@@ -420,15 +447,19 @@ function prepareInsertSQL(table,object)
 }
 
 /**
-*
+* Prapare UPDATE query on the database
+* @param {String} table - Table in which to insert an entry
+* @param {JSON} object -  JSON, which is being entered
+* @param {String} idProperty - property, that the entry can be idenfied with
+* @return {String} SQL query
 **/
 function prepareUpdateSQL(table, object, idProperty)
 {
-  var sql = `Update ${table} SET `;
-  var properties = Object.keys(object);
-  var values = Object.values(object);
-  var pos;
-  for(var i=0; i<properties.length; i++)
+  let sql = `Update ${table} SET `;
+  let properties = Object.keys(object);
+  let values = Object.values(object);
+  let pos;
+  for(let i=0; i<properties.length; i++)
   {
     if(properties[i]!= idProperty){
       sql += `${properties[i]} = '${values[i]}', `;
@@ -443,6 +474,18 @@ function prepareUpdateSQL(table, object, idProperty)
   return sql;
 }
 
+/**
+* Prapare UPDATE query on the database
+* @param {String} table - Table in which to insert an entry
+* @param {String} idProperty - property, that the entry can be idenfied with
+* @param {String} id - value of idProperty
+* @return {String} SQL query
+**/
+function prepareDeleteSQL(table, idProperty, id)
+{
+  let sql = `DELETE FROM ${table} WHERE ${idProperty}='${id}' LIMIT 1`;
+  return sql;
+}
 
 module.exports = {
     getOverdueTestsExtended,
