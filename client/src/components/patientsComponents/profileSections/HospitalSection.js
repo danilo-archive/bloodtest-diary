@@ -7,26 +7,19 @@ const Container = styled.div`
   margin: 3%;
   padding: 3%;
   border: #839595 3px solid;
-  border-radius: 10px;
-`;
-
+  border-radius: 10px;`;
 
 export default class PatientSection extends React.Component {
     render() {
         return (
             <Container>
                 <InfoCell
-                    field={"Patient ID"}
+                    field={"Hospital ID"}
                     value={"some value"}
                 />
 
                 <InputCell
                     field={"Name"}
-                    value={"some value"}
-                />
-
-                <InputCell
-                    field={"Surname"}
                     value={"some value"}
                 />
 

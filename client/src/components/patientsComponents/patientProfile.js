@@ -2,9 +2,9 @@ import React from "react";
 import styled from "styled-components";
 
 import PatientSection from "./profileSections/PatientSection";
-/*import CarerSection from "./profileSections/CarerSection";
+import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
-import TestSection from "./profileSections/TestSection";*/
+import TestSection from "./profileSections/TestSection";
 
 
 const Container = styled.div`
@@ -19,6 +19,9 @@ export default class PatientProfile extends React.Component {
             <>
                 <Container>
                     <PatientSection/>
+                    <CarerSection/>
+                    <HospitalSection/>
+                    <TestSection/>
                 </Container>
             </>
         );

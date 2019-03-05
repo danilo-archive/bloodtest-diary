@@ -17,7 +17,7 @@ const Field = styled.div`
   font-size: 200%;
   overflow: scroll;
   display:flex;
-  align-items:center;
+  align-items: center;
 `;
 
 // TODO : vertical align
@@ -27,10 +27,10 @@ const Value = styled.div`
   width: auto;
   min-width: 10%;
   margin: 0 2.5%;
-  height: 100%;
+  height: auto;
   color: inherit;
   font-family: "Rajdhani", sans-serif;
-  font-size: 100%;
+  font-size: 125%;
   overflow: scroll;
   display:flex;
   align-items:center;

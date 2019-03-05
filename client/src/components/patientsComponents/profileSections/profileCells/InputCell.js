@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const Container = styled.div`
   display: flex;
+  align-items: center;
 `;
 
 const Field = styled.div`
@@ -20,9 +21,13 @@ const Field = styled.div`
   align-items:center;;
 `;
 
-const Value = styled.textarea`
-  width: 10%;
+const Value = styled.input`
+  font-size: 125%;
+  width: auto;
   height: 10%;
+  font-family: "Rajdhani", sans-serif;
+  background: inherit;
+  text-align: center;
 `;
 
 
@@ -31,7 +36,10 @@ export default class InfoCell extends React.Component {
         return (
             <Container >
                 <Field>{this.props.field}</Field>
-                <Value>{this.props.value}</Value>
+                <Value
+                    type={"text"}
+                    defaultValue={this.props.value}
+                />
             </Container>
         );
     }
