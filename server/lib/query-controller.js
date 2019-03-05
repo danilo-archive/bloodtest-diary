@@ -1,5 +1,4 @@
 const databaseController = require('./db_controller/db-controller.js');
-const utils = require("./utils.js");
 const authenticator = require("./authenticator.js")
 const _ = require("lodash");
 
@@ -9,7 +8,7 @@ const _ = require("lodash");
 **/
 async function getAllPatients()
 {
-  let sql = "Select * From Patient;";
+  const sql = "Select * From Patient;";
   return await selectQueryDatabase(sql)
 }
 
@@ -23,15 +22,15 @@ async function getAllPatients()
 **/
 async function updatePassword(json)
 {
-  let response = await getUser(json.username);
-  let token = await requestEditing("User",json.username)
+  const response = await getUser(json.username);
+  const token = await requestEditing("User",json.username)
   if (!(response.response instanceof Array)){
     return response;
   }
-  let user = response.response[0];
+  const user = response.response[0];
   if(user){
-    let hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
-    let sql = `UPDATE User SET hashed_password='${hash}', WHERE username = ${json.username} LIMIT 1;`;
+    const hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
+    const sql = `UPDATE User SET hashed_password='${hash}', WHERE username = ${json.username} LIMIT 1;`;
     return await updateQueryDatabase("User",json.username,sql,token);
   }
   else{
@@ -46,7 +45,7 @@ async function updatePassword(json)
 **/
 async function getUser(username)
 {
-  let sql = `Select * From User Where username='${username}' Limit 1;`;
+  const sql = `Select * From User Where username='${username}' Limit 1;`;
   return await selectQueryDatabase(sql)
 }
 
@@ -56,7 +55,7 @@ async function getUser(username)
 **/
 async function getAllTests()
 {
-  let sql = "Select * From Test ORDER BY due_date ASC;";
+  const sql = "Select * From Test ORDER BY due_date ASC;";
   return await selectQueryDatabase(sql)
 }
 
@@ -66,7 +65,7 @@ async function getAllTests()
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getTestsOfPatient(patientId){
-  let sql = `Select * From Test Where patient_no = ${patientId}`;
+  const sql = `Select * From Test Where patient_no = ${patientId}`;
   return await selectQueryDatabase(sql)
 }
 
@@ -77,12 +76,12 @@ async function getTestsOfPatient(patientId){
 **/
 async function getAllTestsOnDate(date)
 {
-  let sql = `Select * From Test Where due_date = '${date}';`;
+  const sql = `Select * From Test Where due_date = '${date}';`;
   return await selectQueryDatabase(sql)
 }
 
 async function getTestInfo(test_no){
-    let sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_no='${test_no}'`;
+    const sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_no='${test_no}'`;
     return await selectQueryDatabase(sql);
 }
 
@@ -92,7 +91,7 @@ async function getTestInfo(test_no){
 **/
 async function getOverdueTests()
 {
-  let sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
+  const sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
   return await selectQueryDatabase(sql);
 }
 
@@ -102,7 +101,7 @@ async function getOverdueTests()
 **/
 async function getOverdueTestsExtended()
 {
-  let sql = `Select *, DATEDIFF(CURDATE(),due_date) AS difference From Test NATURAL JOIN Patient where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
+  const sql = `Select *, DATEDIFF(CURDATE(),due_date) AS difference From Test NATURAL JOIN Patient where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
   return await selectQueryDatabase(sql);
 }
 
@@ -114,15 +113,15 @@ async function getOverdueTestsExtended()
 **/
 async function getSortedOverdueWeeks()
 {
-  let sql = `Select *, IF(((DAYOFWEEK(due_date)-2) = -1),DATE_ADD(due_date,Interval (-6) Day),DATE_ADD(due_date,Interval (-(DAYOFWEEK(due_date)-2)) Day)) AS Monday
+  const sql = `Select *, IF(((DAYOFWEEK(due_date)-2) = -1),DATE_ADD(due_date,Interval (-6) Day),DATE_ADD(due_date,Interval (-(DAYOFWEEK(due_date)-2)) Day)) AS Monday
             From Test NATURAL JOIN Patient where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`
-  let response = await selectQueryDatabase(sql);
+  const response = await selectQueryDatabase(sql);
   if(response.success == false)
   {
     return response;
   }
-  let tests = response.response;
-  let sortedWeeks = _.groupBy(tests,"Monday");
+  const tests = response.response;
+  const sortedWeeks = _.groupBy(tests,"Monday");
   return {success: true , response: sortedWeeks};
 }
 
@@ -132,10 +131,9 @@ async function getSortedOverdueWeeks()
 **/
 async function getOverdueGroups()
 {
-      const today = new Date();
-      let tests = await getOverdueTestsExtended();
-      let sortedTests = tests.success ? tests.response : [];
-      let groups = [{class: "Year+", tests: []}, {class: "6+ months", tests: []},{class: "1-6 months", tests: []},
+      const tests = await getOverdueTestsExtended();
+      const sortedTests = tests.success ? tests.response : [];
+      const groups = [{class: "Year+", tests: []}, {class: "6+ months", tests: []},{class: "1-6 months", tests: []},
                     {class: "2-4 weeks", tests: []}, {class: "Less than 2 weeks", tests: []}];
       let i = 0;
       while (i < sortedTests.length && (Math.floor(sortedTests[i].difference - 365)) >= 0){
@@ -172,11 +170,11 @@ async function getOverdueGroups()
 **/
 async function addUser(json)
 {
-  let iterations = authenticator.produceIterations();
-  let salt = authenticator.produceSalt();
+  const iterations = authenticator.produceIterations();
+  const salt = authenticator.produceSalt();
   //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
-  let hash = authenticator.produceHash(json.hashed_password,iterations,salt);
-  let sql = `INSERT INTO User VALUES(${json.username},${hash},${salt},${iterations},${json.email});`;
+  const hash = authenticator.produceHash(json.hashed_password,iterations,salt);
+  const sql = `INSERT INTO User VALUES(${json.username},${hash},${salt},${iterations},${json.email});`;
   return await insertQueryDatabase(sql);
 }
 
@@ -190,8 +188,7 @@ async function addUser(json)
 **/
 async function addTest(json)
 {
-  let sql = prepareInsertSQL('Test',json);
-  console.log(sql);
+  const sql = prepareInsertSQL('Test',json);
   return await insertQueryDatabase(sql);
 }
 
@@ -202,7 +199,7 @@ async function addTest(json)
 * @param token The token that grants edit priviledges
 */
 async function editTest(testId, newInfo, token){
-    let sql = prepareUpdateSQL("Test",newInfo,"test_id");
+    const sql = prepareUpdateSQL("Test",newInfo,"test_id");
     return await updateQueryDatabase("Test",testId,sql,token);
 }
 
@@ -214,7 +211,7 @@ async function editTest(testId, newInfo, token){
 * @param token The token that grants edit priviledges
 */
 async function editPatient(newInfo, token){
-    let sql = prepareUpdateSQL("Patient",newInfo,"patient_no");
+    const sql = prepareUpdateSQL("Patient",newInfo,"patient_no");
     return await updateQueryDatabase("Patient",newInfo.patient_no,sql,token);
 }
 
@@ -226,7 +223,7 @@ async function editPatient(newInfo, token){
 * @param token The token that grants edit priviledges
 */
 async function editHospital(newInfo, token){
-    let sql = prepareUpdateSQL("Hospital",newInfo,"hospital_id");
+    const sql = prepareUpdateSQL("Hospital",newInfo,"hospital_id");
     return await updateQueryDatabase("Hospital",newInfo.hospital_id,sql,token);
 }
 
@@ -237,7 +234,7 @@ async function editHospital(newInfo, token){
 * @param token The token that grants edit priviledges
 */
 async function editCarer(newInfo, token){
-    let sql = prepareUpdateSQL("Carer",newInfo,"carer_id");
+    const sql = prepareUpdateSQL("Carer",newInfo,"carer_id");
     return await updateQueryDatabase("Carer",newInfo.carer_id,sql,token);
 }
 
@@ -254,7 +251,7 @@ async function editCarer(newInfo, token){
 **/
 async function addPatient(json)
 {
-  let sql = prepareInsertSQL('Patient',json);
+  const sql = prepareInsertSQL('Patient',json);
   return await insertQueryDatabase(sql);
 }
 
@@ -267,7 +264,7 @@ async function addPatient(json)
 **/
 async function addHospital(json)
 {
-  let sql = prepareInsertSQL('Hospital',json);
+  const sql = prepareInsertSQL('Hospital',json);
   return await insertQueryDatabase(sql);
 }
 
@@ -280,7 +277,7 @@ async function addHospital(json)
 **/
 async function addCarer(json)
 {
-  let sql = prepareInsertSQL('Carer',json);
+  const sql = prepareInsertSQL('Carer',json);
   return await insertQueryDatabase(sql);
 }
 
@@ -294,7 +291,9 @@ async function addCarer(json)
 **/
 async function changeTestStatus(test)
 {
-  let token = await requestEditing("Test",test.testId);
+  const token = await requestEditing("Test",test.testId);
+  let status;
+  let date;
   switch(test.newStatus)
   {
     case "completed": {status = "yes"; date=`CURDATE()`; break;}
@@ -302,7 +301,7 @@ async function changeTestStatus(test)
     case "inReview" : {status = "in review"; date=`CURDATE()`; break;}
     default: return {success:false, response: "NO SUCH UPDATE"}
   }
-  let sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${test.testId};`;
+  const sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${test.testId};`;
   return await updateQueryDatabase("Test",test.testId,sql,token);
 }
 
@@ -313,7 +312,7 @@ async function changeTestStatus(test)
 **/
 async function getTestWithinWeek(date)
 {
-  let response = await Promise.all(getTestsDuringTheWeek(date))
+  const response = await Promise.all(getTestsDuringTheWeek(date))
                               .then(days => {return checkMultipleQueriesStatus(days)})
                               .then(data => {return data})
   return response;
@@ -330,18 +329,18 @@ async function getTestWithinWeek(date)
 **/
 function getTestsDuringTheWeek(date)
 {
-  let weekDay = new Date(date).getDay();
+  const weekDay = new Date(date).getDay();
   let daysInWeek=[]
   let sql;
   let i = 0;
   while(i<5)
   {
-    day = -1*(weekDay - 1) + i;
+    const day = -1*(weekDay - 1) + i;
     sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
     daysInWeek.push(databaseController.selectQuery(sql));
     i++;
   }
-  day = -1*(weekDay - 1) + i;
+  const day = -1*(weekDay - 1) + i;
   sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD('${date}', INTERVAL ${day} DAY) OR due_date = DATE_ADD('${date}', INTERVAL ${day+1} DAY);`;
   daysInWeek.push(databaseController.selectQuery(sql));
   return daysInWeek;
@@ -379,9 +378,9 @@ function checkMultipleQueriesStatus(queries)
 **/
 async function selectQueryDatabase(sql)
 {
-  let response = await databaseController.selectQuery(sql).then((queryResponse) =>{
+  const response = await databaseController.selectQuery(sql).then((queryResponse) =>{
     if(queryResponse.status==="OK"){
-      data = queryResponse.response.rows;
+      const data = queryResponse.response.rows;
       return {success:true, response:data}
     }
     else{
@@ -398,7 +397,7 @@ async function selectQueryDatabase(sql)
 **/
 async function insertQueryDatabase(sql)
 {
-  let response = await databaseController.insertQuery(sql);
+  const response = await databaseController.insertQuery(sql);
   if (response.status == "OK"){
       return {success: true};
   }else {
@@ -414,8 +413,8 @@ async function insertQueryDatabase(sql)
 **/
 async function requestEditing(table, id)
 {
-  let data = await databaseController.requestEditing(table,id).then( data => {return data;});
-  let token = data.response.token
+  const data = await databaseController.requestEditing(table,id).then( data => {return data;});
+  const token = data.response.token
   return token;
 }
 
@@ -430,7 +429,7 @@ async function updateQueryDatabase(table,id,sql,token)
 {
   if(token!=undefined)
   {
-    let response = await databaseController.updateQuery(sql, table, id, token)
+    const response = await databaseController.updateQuery(sql, table, id, token)
     if(response.status==="OK"){
       return {success:true , response: response.response}
     }
@@ -452,13 +451,13 @@ async function updateQueryDatabase(table,id,sql,token)
 function prepareInsertSQL(table,object)
 {
   let sql = `INSERT INTO ${table}(`;
-  let properties = Object.keys(object);
+  const properties = Object.keys(object);
   for(let i=0; i<properties.length-1; i++)
   {
     sql += `${properties[i]},`;
   }
   sql += `${properties[properties.length-1]}) Values(`;
-  let values = Object.values(object);
+  const values = Object.values(object);
   for(let i=0; i<values.length-1; i++)
   {
       sql += `'${values[i]}',`;
@@ -477,8 +476,8 @@ function prepareInsertSQL(table,object)
 function prepareUpdateSQL(table, object, idProperty)
 {
   let sql = `Update ${table} SET `;
-  let properties = Object.keys(object);
-  let values = Object.values(object);
+  const properties = Object.keys(object);
+  const values = Object.values(object);
   let pos;
   for(let i=0; i<properties.length; i++)
   {
@@ -504,7 +503,7 @@ function prepareUpdateSQL(table, object, idProperty)
 **/
 function prepareDeleteSQL(table, idProperty, id)
 {
-  let sql = `DELETE FROM ${table} WHERE ${idProperty}='${id}' LIMIT 1`;
+  const sql = `DELETE FROM ${table} WHERE ${idProperty}='${id}' LIMIT 1`;
   return sql;
 }
 
