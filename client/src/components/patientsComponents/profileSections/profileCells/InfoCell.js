@@ -8,7 +8,7 @@ const Container = styled.div`
 const Field = styled.div`
   position: relative;
   padding-left: 1%;
-  width: auto;
+  width: 30%;
   min-width: 10%;
   margin: 0 2.5%;
   height: 100%;
@@ -20,13 +20,9 @@ const Field = styled.div`
   align-items: center;
 `;
 
-// TODO : vertical align
 const Value = styled.div`
   position: relative;
-  padding-left: 1%;
-  width: auto;
-  min-width: 10%;
-  margin: 0 2.5%;
+  width: 63%;
   height: auto;
   color: inherit;
   font-family: "Rajdhani", sans-serif;

@@ -9,7 +9,7 @@ const Container = styled.div`
 const Field = styled.div`
   position: relative;
   padding-left: 1%;
-  width: auto;
+  width: 30%;
   min-width: 10%;
   margin: 0 2.5%;
   height: 100%;
@@ -23,11 +23,10 @@ const Field = styled.div`
 
 const Value = styled.input`
   font-size: 125%;
-  width: auto;
+  width: 63%;
   height: 10%;
   font-family: "Rajdhani", sans-serif;
   background: inherit;
-  text-align: center;
 `;
 
 
