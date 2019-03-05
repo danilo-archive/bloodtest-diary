@@ -28,7 +28,7 @@ class Home extends Component {
         overdueTests: {},
         ongoingTests: {},
         calendar: {},
-        openModal: false
+        openAddTestModal: false
       };
 
     }
@@ -41,8 +41,8 @@ class Home extends Component {
         this.handleNext = this.handleNext.bind(this);
         this.handlePrevious = this.handlePrevious.bind(this);
 
-        this.onOpenModal = this.onOpenModal.bind(this);
-        this.onCloseModal = this.onCloseModal.bind(this);
+        this.onAddTestOpenModal = this.onAddTestOpenModal.bind(this);
+        this.onAddTestCloseModal = this.onAddTestCloseModal.bind(this);
     }
 
 
@@ -150,12 +150,12 @@ class Home extends Component {
       this.updateDashboard(previousWeek);
     }
 
-    onOpenModal = selectedDate => {
-      this.setState({ openModal: true, selectedDate });
+    onAddTestOpenModal = selectedDate => {
+      this.setState({ openAddTestModal: true, selectedDate });
     };
 
-    onCloseModal = () => {
-      this.setState({ openModal: false, selectedDate: undefined });
+    onAddTestCloseModal = () => {
+      this.setState({ openAddTestModal: false, selectedDate: undefined });
     };
 
     render() {
@@ -177,7 +177,7 @@ class Home extends Component {
                   <WeeklyCalendar
                     calendar={this.state.calendar}
                     weekDays={this.state.weekDays}
-                    openModal={this.onOpenModal}
+                    openModal={this.onAddTestOpenModal}
                   />
                 </div>
                 <div className={"ongoingWeekly"}>
@@ -190,15 +190,15 @@ class Home extends Component {
               </div>
             </div>
             <Modal
-              open={this.state.openModal}
-              onClose={this.onCloseModal}
+              open={this.state.openAddTestModal}
+              onClose={this.onAddTestCloseModal}
               showCloseIcon={false}
               style={modalStyles}
               center
             >
               <AddTest
                 selectedDate={this.state.selectedDate}
-                closeModal={this.onCloseModal}
+                closeModal={this.onAddTestCloseModal}
               />
             </Modal>
           </div>
