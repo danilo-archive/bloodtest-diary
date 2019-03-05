@@ -4,6 +4,7 @@ import Navbar from "./homeComponents/navbar";
 import './patients.css';
 import PatientsTable from "./patientsComponents/patientsTable";
 import {getServerConnect} from "../serverConnection.js";
+import PatientProfile from "./patientsComponents/patientProfile";
 
 
 class Patients extends Component {
@@ -34,6 +35,7 @@ class Patients extends Component {
         this.props.history.push("home")
     }
 
+    //TODO : rename all components to capital case
     render() {
         if (this.state.allPatientsReady) {
             return (
@@ -43,11 +45,12 @@ class Patients extends Component {
                             onHomeClick={this.onHomeClick}
                         />
                     </div>
-                    <div className={"patientsTable"}>
+                    <PatientProfile/>
+                    {/*<div className={"patientsTable"}>
                         <PatientsTable
                             allPatients={this.state.allPatients}
                         />
-                    </div>
+                    </div>*/}
                 </div>
             );
         } else {
