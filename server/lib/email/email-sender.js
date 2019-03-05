@@ -25,6 +25,8 @@
 |--------------------------------------------------------------------------
 */
 module.exports = {
+  sendEmails,
+  getEmailInfo,
   sendReminderEmailToPatient,
   sendReminderEmailToHospital,
   sendOverdueTestReminderToPatient,
@@ -104,24 +106,28 @@ function sendOverdueTestReminderToHospital(testIDs) {
  */
 function sendEmails(testIDs, emailGeneratorFunction, subjectTitle) {
   if (Array.isArray(testIDs)) {
-    const failed = []; //array will contain the test ids of emails for which the html generation failed
-    testIDs.forEach(async testID => {
-      let emailInfo = null;
-      await getEmailInfo(testID, failed).then(result => {
-        emailInfo = result;
-      }); //fetch the relevant data linked to the test for the email generation
-      if (emailInfo !== null) {
-        sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle);
-      }
-      else{
-        console.error("Could not generate emailInfo JSON")
-      }
-    });
-    //for every failed email, log an error to the console
-    if (failed.length !== 0) {
-      failed.forEach(failedTestID => {
-        console.error("Could not generate reminder to hospital email for testID: " + failedTestID);
+    if (testIDs.length === 0) {
+      console.error("The TestIDs array is empty, could not send any mail");
+    } else {
+      const failed = []; //array will contain the test ids of emails for which the html generation failed
+      testIDs.forEach(async testID => {
+        let emailInfo = null;
+        await getEmailInfo(testID, failed).then(result => {
+          emailInfo = result;
+        }); //fetch the relevant data linked to the test for the email generation
+        if (emailInfo !== null) {
+          sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle);
+        }
+        else {
+          console.error("Could not generate emailInfo JSON")
+        }
       });
+      //for every failed email, log an error to the console
+      if (failed.length !== 0) {
+        failed.forEach(failedTestID => {
+          console.error("Could not generate reminder to hospital email for testID: " + failedTestID);
+        });
+      }
     }
   } else {
     console.error("The testIDs object is not an array")
@@ -146,7 +152,7 @@ function sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
       subject: subjectTitle,
       html: emailGeneratorFunction(emailInfo)
     };
-    if (receiverOptions.html != null)
+    if (receiverOptions.html != null && emailInfo != null && subjectTitle != null)
       sendEmail(transporter, receiverOptions);
     else
       failed.push(testID);
@@ -156,51 +162,24 @@ function sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
 /**
  * Aggregate the information following the format required by the email-generator module documentation and return a valid JSON object with the right formatting 
  * @param {number} testID the id of the test for which to generate the email
- * @param {array} failed 
+ * @param {array} failed an array which contains the test ids of emails for which the html generation failed
  */
 async function getEmailInfo(testID, failed) {
+  
   //Get the test information from the database
   let test = null;
-  await query_controller.getTest(testID).then(r => {
-    try {
-      test = r.response[0];
-      if (test === undefined) {
-        throw "The testID doesn't exist"
-      }//it will fail if response is undefined
-    }
-    catch{
-      failed.push(testID);
-      return; //no need to continue executing the function, since the call failed
-    }
-  });
+  await query_controller.getTest(testID).then(r => { test = processResult(r, failed, testID) });
+  if (test === undefined || !test) return null;  //no need to continue executing the function, since the call failed
+
   //Get the patient who has to take the test
   let patient = null;
-  await query_controller.getPatient(test.patient_no).then(r => {
-    try {
-      patient = r.response[0];
-      if (patient === undefined) {
-        throw "The patient_no doesn't exist"
-      }//it will fail if response is undefined
-    }
-    catch{
-      failed.push(testID);
-      return; //no need to continue executing the function, since the call failed
-    }
-  });
+  await query_controller.getPatient(test.patient_no).then(r => { patient = processResult(r, failed, testID) });
+  if (patient === undefined || !patient) return null; //no need to continue executing the function, since the call failed
+
   //Get the hospital connected to the patient
   let hospital = null;
-  await query_controller.getHospital(patient.hospital_id).then(r => {
-    try {
-      hospital = r.response[0];
-      if (hospital === undefined) {
-        throw "The hospital_id doesn't exist"
-      }//it will fail if response is undefined
-    }
-    catch{
-      failed.push(testID);
-      return; //no need to continue executing the function, since the call failed
-    }
-  });
+  await query_controller.getHospital(patient.hospital_id).then(r => { hospital = processResult(r, failed, testID) });
+  if (hospital === undefined || !hospital) return null;   //no need to continue executing the function, since the call failed
 
   let emailInfo = {
     patient: patient,
@@ -208,25 +187,36 @@ async function getEmailInfo(testID, failed) {
     hospital: hospital
   };
 
-
   //in case the patient does not have an email, we try and fetch the carer's information
   if (patient.patient_email == null) {
     let carer = null;
-    await query_controller.getCarer(patient.carer_id).then(r => {
-      try {
-        carer = r.response[0];
-        if (carer === undefined) {
-          throw "The carer_id doesn't exist"
-        }//it will fail if response is undefined
-      }
-      catch{
-        failed.push(testID);
-        return; //no need to continue executing the function, since the call failed
-      }
-    });
+    await query_controller.getCarer(patient.carer_id).then(r => { carer = processResult(r, failed, testID) });
+    if (carer === undefined || !carer) return null;
     emailInfo.carer = carer;
   }
+
   return emailInfo;
+}
+
+/**
+ * Process the result of a query and check if it is a valid one.
+ * @param {JSON} r the result of a query
+ * @param {array} failed an array which contains the test ids of emails for which the html generation failed
+ * @param {number} testID the id of the test for which to generate the email
+ * @returns {JSON} result the final result to be modified if it is valid, if not, it is set as undefined
+ */
+function processResult(r, failed, testID) {
+  let result = undefined
+  try {
+    result = r.response[0];
+    if (result === undefined || r.response.length === 0) {
+      throw "The testID doesn't exist"
+    }//it will fail if response is undefined
+  }
+  catch{
+    failed.push(testID);
+  }
+  return result;
 }
 
 /**
@@ -245,3 +235,4 @@ function sendEmail(transporter, receiverOptions) {
     }
   });
 }
+
