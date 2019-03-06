@@ -97,7 +97,7 @@ CREATE TABLE ActionLog (
     action_id INTEGER AUTO_INCREMENT,
     username VARCHAR(100) NOT NULL,
     action_timestamp DATETIME NOT NULL,
-    action_type ENUM("insert", "update", "delete") NOT NULL,
+    action_type ENUM("insert", "update", "delete", "other") NOT NULL,
     table_affected ENUM("Carer", "Hospital", "Patient", "Test", "User") NOT NULL,
     entry_affected VARCHAR(50) NOT NULL,
     additional_info TEXT,
