@@ -139,6 +139,9 @@ describe("Update queries tests", function(){
         const dbController = {
           requestEditing: async function() {
             return {status: "ERR", response:{}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
           }
         }
         queryController.__set__("databaseController",dbController);

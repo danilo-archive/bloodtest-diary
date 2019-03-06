@@ -472,7 +472,9 @@ async function insertQueryDatabase(sql)
 async function requestEditing(table, id)
 {
   const data = await databaseController.requestEditing(table,id).then( data => {return data;});
-  const token = data.response.token
+  let token;
+  if(typeof data.response != 'undefined'){
+    token = data.response.token;}
   return token;
 }
 
@@ -485,7 +487,7 @@ async function requestEditing(table, id)
 **/
 async function updateQueryDatabase(table,id,sql,token)
 {
-  if(token!=undefined)
+  if(typeof token!='undefined')
   {
     const response = await databaseController.updateQuery(sql, table, id, token)
     if(response.status==="OK"){
