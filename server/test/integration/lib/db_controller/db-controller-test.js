@@ -1060,20 +1060,6 @@ describe("Test main DB controller behaviour:", () => {
             });
             it("Should reject the request.", (done) => {
 
-                db_controller.requestEditing("ActionLog", "invalid")
-                .then((result) => {
-                    expect(result.status).to.equal("ERR");
-                    expect(result.err.type).to.equal("Invalid request.");
-                })
-                .then(() => {
-                    done();
-                })
-                .catch((err) => {
-                    done(err);
-                });
-            });
-            it("Should reject the request.", (done) => {
-
                 db_controller.requestEditing("invalid", "invalid")
                 .then((result) => {
                     expect(result.status).to.equal("ERR");

@@ -71,19 +71,6 @@ CREATE TABLE Test (
     FOREIGN KEY (patient_no) REFERENCES Patient(patient_no)
 );
 
--- ================================
--- Tables below are do not store any core
--- data. They only provide additional functionality.
--- ================================
-
-CREATE TABLE TokenControl (
-    token VARCHAR(50),
-    table_name ENUM("Carer", "Hospital", "Patient", "Test") NOT NULL,
-    table_key VARCHAR(50) NOT NULL,
-    expiration DATETIME NOT NULL,
-    PRIMARY KEY (token)
-);
-
 CREATE TABLE User (
     username VARCHAR(100),
     hashed_password VARCHAR(255) NOT NULL,
@@ -93,12 +80,25 @@ CREATE TABLE User (
     PRIMARY KEY (username)
 );
 
+-- ================================
+-- Tables below are do not store any core
+-- data. They only provide additional functionality.
+-- ================================
+
+CREATE TABLE TokenControl (
+    token VARCHAR(50),
+    table_name ENUM("Carer", "Hospital", "Patient", "Test", "User") NOT NULL,
+    table_key VARCHAR(50) NOT NULL,
+    expiration DATETIME NOT NULL,
+    PRIMARY KEY (token)
+);
+
 CREATE TABLE ActionLog (
     action_id INTEGER AUTO_INCREMENT,
     username VARCHAR(100) NOT NULL,
     action_timestamp DATETIME NOT NULL,
     action_type ENUM("insert", "update", "delete") NOT NULL,
-    table_affected ENUM("Carer", "Hospital", "Patient", "Test") NOT NULL,
+    table_affected ENUM("Carer", "Hospital", "Patient", "Test", "User") NOT NULL,
     entry_affected VARCHAR(50) NOT NULL,
     additional_info TEXT,
     PRIMARY KEY (action_id),
