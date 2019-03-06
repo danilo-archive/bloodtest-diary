@@ -166,6 +166,10 @@ describe("Update queries tests", function(){
           updateQuery: async function() {
             return {status: "OK", response:{affectedRows:1}}
           },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
+          }
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"completed"});
@@ -181,6 +185,10 @@ describe("Update queries tests", function(){
           updateQuery: async function() {
             return {status: "ERR", err:"Error here"}
           },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
+          }
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"completed"});
