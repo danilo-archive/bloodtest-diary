@@ -5,6 +5,7 @@ import TitleTab from "../addTest/TitleTab.js";
 import CalendarTable from "../../calendarComponents/Calendar";
 import FrequencySelector from "./FrequencySelector";
 import StatusSetter from "./StatusSetter";
+import { getServerConnect } from "../../../serverConnection.js";
 
 const DataContainer = styled.div`
   position: relative;
@@ -19,22 +20,38 @@ const SetterValues = [
   { value: "Y", name: "Years" }
 ];
 export default class EditTestView extends React.Component {
-  state = {
-    patient: { name: this.props.patient.name, id: this.props.patient.id },
-    test: {
-      id: this.props.test.id,
-      date: {
-        dueDate: this.props.test.date.dueDate,
-        frequency: this.props.test.date.frequency,
-        occurrences: this.props.test.date.occurrences
-      },
-      status: this.props.test.status
-    },
-    showCalendar: false
-  };
+  constructor(props) {
+    super(props);
+    this.serverConnect = getServerConnect();
+    this.state = {
+      ready: false
+    };
+    this.init();
+  }
+
+  init() {
+    this.serverConnect.getMockTest(this.props.testId, res => {
+      console.log({ res });
+      this.setState({
+        patient: { name: res.patient_name, id: res.patient_no },
+        test: {
+          id: res.test_id,
+          date: {
+            dueDate: res.due_date,
+            frequency: res.frequency,
+            occurrences: res.occurrences
+          },
+          status: res.completed_status
+        },
+        showCalendar: false,
+        ready: true
+      });
+    });
+  }
+
   render() {
     console.log(this.state.test.date.frequency[-1]);
-    return (
+    return this.state.ready ? (
       <>
         <div
           style={{
@@ -147,6 +164,8 @@ export default class EditTestView extends React.Component {
           </div>
         </div>
       </>
+    ) : (
+      ``
     );
   }
 }

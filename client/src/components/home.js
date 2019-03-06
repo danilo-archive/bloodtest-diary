@@ -9,6 +9,7 @@ import WeeklyCalendar from "./homeComponents/weeklyCalendar";
 import OngoingWeekly from "./homeComponents/ongoingWeekly";
 import arrow from "../images/arrow.png";
 import AddTest from "./homeComponents/addTest/AddTestView";
+import EditTest from "./homeComponents/editTest/EditTestView";
 import {getNextDates, getMondayOfWeek, getCurrentWeek, getPreviousWeek, getNextWeek} from "../lib/calendar-controller";
 import {getServerConnect} from "../serverConnection.js";
 import {group, getNumberOfTestsInGroup} from "../lib/overdue-controller.js";
@@ -28,7 +29,9 @@ class Home extends Component {
         overdueTests: {},
         ongoingTests: {},
         calendar: {},
-        openAddTestModal: false
+        openAddTestModal: false,
+        openEditTestModal: false,
+        editTestId: undefined
       };
 
     }
@@ -158,6 +161,16 @@ class Home extends Component {
       this.setState({ openAddTestModal: false, selectedDate: undefined });
     };
 
+    onEditTestOpenModal = testId => {
+        // TODO ask for edit token
+        this.setState({openEditTestModal: true, editTestId: testId});
+    };
+
+    onEditTestCloseModal = () => {
+        // TODO remove token if not used
+        this.setState({openEditTestModal: false, editTestId: undefined});
+    };
+
     render() {
       if (this.state.dashboardReady && this.state.overdueReady) {
         return (
@@ -166,6 +179,7 @@ class Home extends Component {
               <OverduePatients
                 notificationNumber={getNumberOfTestsInGroup(this.state.overdueTests)}
                 anytimeAppointments={this.state.overdueTests}
+                editTest={this.onEditTestOpenModal}
               />
             </div>
             <div className={"rightSideDash"}>
@@ -178,6 +192,7 @@ class Home extends Component {
                     calendar={this.state.calendar}
                     weekDays={this.state.weekDays}
                     openModal={this.onAddTestOpenModal}
+                    editTest={this.onEditTestOpenModal}
                   />
                 </div>
                 <div className={"ongoingWeekly"}>
@@ -185,6 +200,7 @@ class Home extends Component {
                     currentMonday={this.currentMonday}
                     notificationNumber={this.state.ongoingTests.length}
                     anytimeAppointments={this.state.ongoingTests}
+                    editTest={this.onEditTestOpenModal}
                   />
                 </div>
               </div>
@@ -199,6 +215,18 @@ class Home extends Component {
               <AddTest
                 selectedDate={this.state.selectedDate}
                 closeModal={this.onAddTestCloseModal}
+              />
+            </Modal>
+            <Modal
+                open={this.state.openEditTestModal}
+                onClose={this.onEditTestCloseModal}
+                showCloseIcon={false}
+                style={modalStyles}
+                center
+            >
+              <EditTest
+                 testId = {this.state.editTestId}
+                 closeModal={this.onEditTestCloseModal}
               />
             </Modal>
           </div>

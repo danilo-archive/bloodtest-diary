@@ -43,6 +43,7 @@ class OverduePatients extends React.Component {
                           <AppointmentSection
                               type = {group.class}
                               appointments = {group.tests}
+                              editTest={this.props.editTest}
                           />
                       )
                 }
