@@ -11,23 +11,13 @@ const AppointmentSection = styled.div`
   position: relative;
   padding: 0;
   width: inherit;
+  background: ${props => props.background};
 `;
 
-function collect(connect, monitor){
-  return {
-    connectDropTarget: connect.dropTarget(),
-    hovered: monitor.isOver(),
-    item: monitor.getItem()
-  }
-}
 
-
-
-export default DropTarget("appointment", {}, collect) (props => {
-  const { connectDropTarget, hovered, item} = props;
+export default props => {
   return (
-    <div>
-      <AppointmentSection>
+      <AppointmentSection background = {props.background}>
         <VerticalLine />
         <AppointmentSectionHeader>{props.type}</AppointmentSectionHeader>
         {props.appointments.map(appointment => (
@@ -41,6 +31,5 @@ export default DropTarget("appointment", {}, collect) (props => {
           />
         ))}
       </AppointmentSection>
-    </div>
   );
-});
+}

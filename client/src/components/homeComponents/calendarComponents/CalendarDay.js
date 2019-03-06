@@ -5,6 +5,7 @@ import WeekDaySection from "./WeekDaySection";
 import MonthDaySection from "./MonthDaySection";
 import ScrollBox from "./ScrollBox";
 import AppointmentSection from "./AppointmentSection";
+import { DropTarget } from "react-dnd";
 
 const CalendarContainer = styled.div`
   margin: 3px;
@@ -33,12 +34,33 @@ const monthNames = [
   "Dec"
 ];
 
+function collect(connect, monitor){
+  return {
+    connectDropTarget: connect.dropTarget(),
+    hovered: monitor.isOver(),
+    item: monitor.getItem()
+  }
+}
+
+const spec = {
+  drop: function(props, monitor, component){
+    console.log("called");
+    return {newDate: props.sectionDate}
+  },
+  hover: function(props, monitor, component){
+    console.log("over mee");
+  }
+}
+
+
 class CalendarDay extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render() {
+    const { connectDropTarget, hovered, item} = this.props;
+    const backgroundColor = hovered ? "#c0f7ad" : "white";
     return (
       <>
         <CalendarContainer>
@@ -58,8 +80,10 @@ class CalendarDay extends React.Component {
           />
           <ScrollBox>
             <AppointmentSection
+              background = {backgroundColor}
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
+              sectionDate={this.props.date}
               editTest={this.props.editTest}
             />
             <div style={{width:"100%",height:"30%"}}/>
@@ -70,4 +94,5 @@ class CalendarDay extends React.Component {
   }
 }
 
-export default CalendarDay;
+export default DropTarget("appointment", spec, collect)(CalendarDay);
+// 

@@ -232,6 +232,9 @@ class ServerConnect {
     changeTestStatus(testId, newStatus){
         this.socket.emit('testStatusChange', testId, newStatus);
     }
+    changeTestDueDate(testId, newDate){
+        this.socket.emit("changeTestDueDate", testId, newDate);
+    }
 
     /**
     * Thim method emits a request to edit a test into the database.

@@ -63,10 +63,13 @@ const mapping = {
 
 const spec = {
   beginDrag(props){
-    return props;
+    return {
+      type: 'appointment',
+      testId: props.id
+    };
   },
   endDrag(props, monitor, component){
-    console.log("End drag");
+    console.log(monitor.getDropResult());
     //return props.handleDrop(props.id);
   }
 }
@@ -76,6 +79,7 @@ function collect(connect, monitor){
     connectDragSource: connect.dragSource(),
     connectDragPreview: connect.dragPreview(),
     isDragging: monitor.isDragging()
+
   }
 }
 

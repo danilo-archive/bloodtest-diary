@@ -137,6 +137,17 @@ async function editTest(testId, newInfo, token){
     return await updateQueryDatabase("Test",testId,sql,token);
 }
 
+async function changeTestDueDate(testId, newDate){
+    var data = await databaseController.requestEditing("Test", testId).then( data => {return data;});
+    var token = data.response.token;
+    newDate = utils.formatDate(newDate);
+    if (token != undefined){
+      let sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
+      return {success:true , response: await databaseController.updateQuery(sql, "Test", testId, token).then(result => {return result.response})}
+    }
+    return {success:false, response: data.response}
+}
+
 /**
 * Change the status of the test in the database
 * @param {String} testId - id of a test to change

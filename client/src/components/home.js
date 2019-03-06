@@ -173,6 +173,16 @@ class Home extends Component {
         this.setState({openEditTestModal: false, editTestId: undefined});
     };
 
+    // ----------------- ADDED TEST METHODS --------------------------
+
+    moveTest(from, to, test){
+
+    }
+
+    handleDrop = (section, testId) => {
+
+    }
+
     render() {
       if (this.state.dashboardReady && this.state.overdueReady) {
         return (
