@@ -21,6 +21,7 @@ const RadioButtonComponent = styled.input.attrs({ type: "checkbox" })`
   margin: 0 5px 0 0;
   padding: 0;
   transition: 100ms;
+  cursor: pointer;
   &::before {
     content: "";
     position: absolute;

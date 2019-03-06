@@ -17,6 +17,7 @@ const ButtonDiv = styled.div`
   font-size: 35px;
   color: white;
   transition: 250ms;
+  cursor: pointer;
 
   &:hover {
     background: #08797c;

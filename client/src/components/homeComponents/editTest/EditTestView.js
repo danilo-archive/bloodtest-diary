@@ -3,6 +3,8 @@ import styled from "styled-components";
 import InfoBox from "./InfoBox";
 import TitleTab from "../addTest/TitleTab.js";
 import CalendarTable from "../../calendarComponents/Calendar";
+import FrequencySelector from "./FrequencySelector";
+import StatusSetter from "./StatusSetter";
 
 const DataContainer = styled.div`
   position: relative;
@@ -10,7 +12,12 @@ const DataContainer = styled.div`
   height: 80px;
   background: rgba(0, 0, 0, 0);
 `;
-
+const SetterValues = [
+  { value: "D", name: "Days" },
+  { value: "W", name: "Weeks" },
+  { value: "M", name: "Months" },
+  { value: "Y", name: "Years" }
+];
 export default class EditTestView extends React.Component {
   state = {
     patient: { name: this.props.patient.name, id: this.props.patient.id },
@@ -26,7 +33,7 @@ export default class EditTestView extends React.Component {
     showCalendar: false
   };
   render() {
-    console.log(this.state);
+    console.log(this.state.test.date.frequency[-1]);
     return (
       <>
         <div
@@ -49,9 +56,8 @@ export default class EditTestView extends React.Component {
             />
             {this.state.showCalendar ? (
               <CalendarTable
-                style={{ width: "50%", top: "15%", left: "63%" }}
+                style={{ width: "50%", top: "47%", left: "37%" }}
                 onDaySelected={day => {
-                  console.log(`Selected day ${day}`);
                   this.setState({
                     showCalendar: false,
                     test: {
@@ -72,6 +78,71 @@ export default class EditTestView extends React.Component {
               text={this.state.test.date.dueDate}
               icon="edit"
               onClick={() => this.setState({ showCalendar: true })}
+            />
+            <FrequencySelector
+              values={SetterValues}
+              frequencyTimes={
+                this.state.test.date.frequency.split("-")[0] !== "0"
+                  ? this.state.test.date.frequency.split("-")[0]
+                  : ""
+              }
+              frequencyUnit={
+                this.state.test.date.frequency[
+                  this.state.test.date.frequency.length - 1
+                ]
+              }
+              occurrences={this.state.test.date.occurrences}
+              onUnitChange={unit =>
+                this.setState({
+                  showCalendar: false,
+                  test: {
+                    ...this.state.test,
+                    date: {
+                      ...this.state.test.date,
+                      frequency: `${this.state.test.date.frequency.slice(
+                        0,
+                        -1
+                      )}${unit}`
+                    }
+                  }
+                })
+              }
+              onFrequencyChange={time => {
+                time = time === "" ? "0" : time;
+                this.setState({
+                  showCalendar: false,
+                  test: {
+                    ...this.state.test,
+                    date: {
+                      ...this.state.test.date,
+                      frequency: `${time}-${
+                        this.state.test.date.frequency.split("-")[1]
+                      }`
+                    }
+                  }
+                });
+              }}
+              onOccurrencesChange={value => {
+                this.setState({
+                  showCalendar: false,
+                  test: {
+                    ...this.state.test,
+                    date: {
+                      ...this.state.test.date,
+                      occurrences: value
+                    }
+                  }
+                });
+              }}
+            />
+            <hr />
+            <StatusSetter
+              currentStatus={this.state.status}
+              onStatusCheck={(status, checked) => {
+                if (checked) {
+                  this.setState({ status });
+                }
+              }}
             />
           </div>
         </div>

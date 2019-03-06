@@ -11,6 +11,8 @@ const Container = styled.div`
   white-space: nowrap;
   align-items: center;
   margin: 0 1rem;
+  cursor: pointer;
+
   & > p {
     margin-left: 5px;
     user-select: none;
@@ -24,7 +26,7 @@ const RadioLabel = styled(Label)`
 
 const TextRadioButton = props => {
   return (
-    <Container>
+    <Container onClick={props.onCheck}>
       <RadioButton checked={props.checked} onCheck={props.onCheck} />
       <RadioLabel checked={props.checked}>{props.text}</RadioLabel>
     </Container>
