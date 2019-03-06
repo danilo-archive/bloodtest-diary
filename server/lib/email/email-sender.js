@@ -162,9 +162,9 @@ function sendOneEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
 
     const receiverOptions = {
       from: transporter.options.auth.user,
-      to: to,
+      to:  emailGeneratorFunction(emailInfo).to,
       subject: subjectTitle,
-      html: emailGeneratorFunction(emailInfo)
+      html: emailGeneratorFunction(emailInfo).html
     };    
     
     if (receiverOptions.html != null && emailInfo != null && subjectTitle != null)

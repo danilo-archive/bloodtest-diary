@@ -119,9 +119,9 @@ function overdueTestReminderForHospital(email_info) {
   </mjml>    
  `);
 
-  if (computed_html.errors.length === 0)
-    return computed_html.html;
-  return null;
+ if (computed_html.errors.length === 0)
+ return { "to": email_info.hospital.hospital_email, "html": computed_html.html };
+return null;
 }
 
 /**
@@ -166,8 +166,13 @@ function overdueTestReminderForPatient(email_info) {
     </mjml>   
   `);
 
-  if (computed_html.errors.length === 0)
-    return computed_html.html;
+  if (computed_html.errors.length === 0) {
+    let email = email_info.patient.patient_email;
+    if(email == null){
+      email = email_info.carer.carer_email;
+    }
+    return { "to": email, "html": computed_html.html };
+  }
   return null;
 }
 
@@ -213,8 +218,13 @@ function testReminderForPatient(email_info) {
     </mjml>    
    `);
 
-  if (computed_html.errors.length === 0)
-    return computed_html.html;
+  if (computed_html.errors.length === 0) {
+    let email = email_info.patient.patient_email;
+    if(email == null){
+      email = email_info.carer.carer_email;
+    }
+    return { "to": email, "html": computed_html.html };
+  }
   return null;
 }
 
@@ -278,7 +288,7 @@ function testReminderForHospital(email_info) {
    `);
 
   if (computed_html.errors.length === 0)
-    return computed_html.html;
+    return { "to": email_info.hospital.hospital_email, "html": computed_html.html };
   return null;
 }
 
