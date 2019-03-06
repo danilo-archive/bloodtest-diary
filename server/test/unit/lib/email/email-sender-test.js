@@ -5,9 +5,8 @@ const sinon = require('sinon');
 const proxyquire = require('proxyquire')
 let email_sender = require('./../../../../lib/email/email-sender'); 
 require('mocha-sinon'); //needed for checking console log
-/**
-* TODO: WRITE TEST DESCRIPTION
-*/
+
+
 describe("Test getEmailInfo method with patient email", function () {
     before(function () {
         let query_controller = require('./../../../../lib/query-controller')

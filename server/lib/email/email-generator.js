@@ -330,7 +330,6 @@ function getHead(title) {
  * @return {string} mjml code describing common footer of emails
  */
 function getFooter() {
-  //TODO: CREATE FOOTER
   return ``;
 }
 

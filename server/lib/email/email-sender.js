@@ -160,7 +160,6 @@ function sendOneEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
       to = emailInfo.carer.carer_email;
     }
 
-    //TODO: REMOVE HARD-CODED OPTIONS BEFORE DEPLOYMENT
     const receiverOptions = {
       from: transporter.options.auth.user,
       to: to,
