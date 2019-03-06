@@ -316,4 +316,5 @@ module.exports = {
     changeTestStatus,
     getTestWithinWeek,
     editTest,
+    requestEditing
 };

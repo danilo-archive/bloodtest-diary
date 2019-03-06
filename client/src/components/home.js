@@ -31,7 +31,8 @@ class Home extends Component {
         calendar: {},
         openAddTestModal: false,
         openEditTestModal: false,
-        editTestId: undefined
+        editTestId: undefined,
+        editToken: undefined
       };
 
     }
@@ -109,7 +110,7 @@ class Home extends Component {
                 let newOverdueTests = [...this.state.overdueTests];
                 let testToModify = newOverdueTests[i].tests[j]
                 let modifiedTest = modificationFunction(testToModify);
-                //newOverdueTests[i].tests[j].completed_status = status;
+                newOverdueTests[i].tests[j] = modifiedTest;
                 this.setState({overdueTests: newOverdueTests});
               }
           }
@@ -121,7 +122,7 @@ class Home extends Component {
             let newOngoingTests = [...this.state.ongoingTests];
             let testToModify = newOngoingTests[i];
             let modifiedTest = modificationFunction(testToModify);
-            //newOngoingTests[i].completed_status = status;
+            newOngoingTests[i] = modifiedTest;
             this.setState({ongoingTests: newOngoingTests});
             return;
           }
@@ -135,7 +136,7 @@ class Home extends Component {
               let newCalendar = [...this.state.calendar];
               let testToModify = newCalendar[i][j];
               let modifiedTest = modificationFunction(testToModify);
-              //newCalendar[i][j].completed_status = status;
+              newCalendar[i][j] = modifiedTest;
               this.setState({calendar: newCalendar});
               return;
             }
@@ -162,13 +163,17 @@ class Home extends Component {
     };
 
     onEditTestOpenModal = testId => {
-        // TODO ask for edit token
-        this.setState({openEditTestModal: true, editTestId: testId});
+        this.serverConnect.requestTestEditing(testId, token => {
+          if (token !== undefined){
+            console.log({token});
+            this.setState({openEditTestModal: true, editTestId: testId, editToken: token});
+          }
+        });     
     };
 
     onEditTestCloseModal = () => {
         // TODO remove token if not used
-        this.setState({openEditTestModal: false, editTestId: undefined});
+        this.setState({openEditTestModal: false, editTestId: undefined, editToken: undefined});
     };
 
     render() {
@@ -221,6 +226,7 @@ class Home extends Component {
                 open={this.state.openEditTestModal}
                 onClose={this.onEditTestCloseModal}
                 showCloseIcon={false}
+                token={this.state.editToken}
                 style={modalStyles}
                 center
             >

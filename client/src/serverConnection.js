@@ -242,7 +242,8 @@ class ServerConnect {
     * @callback callback Protocol to be called on response
     */
     editTest(testId, newData, token, callback){
-        this.socket.emit("editTest", newData, token);
+        console.log({newData});
+        this.socket.emit("editTest", testId, newData, token);
         this.socket.on("editTestReponse", response => {
             callback(response)
         });

@@ -30,6 +30,7 @@ export default class EditTestView extends React.Component {
   constructor(props) {
     super(props);
     this.serverConnect = getServerConnect();
+    this.token = props.token;
     this.state = {
       ready: false
     };
@@ -37,7 +38,7 @@ export default class EditTestView extends React.Component {
   }
 
   init() {
-    this.serverConnect.getMockTest(this.props.testId, res => {
+    this.serverConnect.getTestInfo(this.props.testId, res => {
       console.log({ res });
       this.setState({
         patient: { name: res.patient_name, id: res.patient_no },
@@ -60,7 +61,6 @@ export default class EditTestView extends React.Component {
   saveTest = () => {
     const { test, patient } = this.state;
     const params = {
-      test_id: test.id,
       patient_no: patient.id,
       dueDate: test.date.dueDate,
       frequency: test.date.frequency,
@@ -74,7 +74,7 @@ export default class EditTestView extends React.Component {
       notes: test.notes
     };
 
-    this.serverConnect.editTest(params);
+    this.serverConnect.editTest(this.state.test.id, params, this.token);
   };
   render() {
     return this.state.ready ? (

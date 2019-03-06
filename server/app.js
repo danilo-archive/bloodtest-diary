@@ -115,7 +115,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("requestTestEditToken", async (testId) => {
-        //
+        let response = await queryController.requestEditing("Test", testId);
+        socket.emit("requestTestEditTokenResponse", response);
     });
 
     // updates of database --------------------------------
@@ -141,8 +142,10 @@ io.on('connection',function(socket)
 
     socket.on("editTest", async (testId, newInfo, token) => {
         let response = await queryController.editTest(testId, newInfo, token);
+        console.log({response});
         if (response.success){
-            // broadcast new test
+            socket.emit("testAdded", response.response);
+            socket.in("main_page").emit("testAdded", response.response);
         } else {
             // emit failure to the socket
         }
