@@ -1,9 +1,6 @@
 {
     "transporter": {
-        "host": "smtp.mail.yahoo.com",
-        "port": 465,
-        "service": "yahoo",
-        "secure": false,
+        "service": "Yahoo",
         "auth": {
             "user": "danilodelbusso@yahoo.com",
             "pass": "jJ825&j9yBRA"
