@@ -104,11 +104,25 @@ io.on('connection',function(socket)
         socket.emit('getOverdueTestsResponse', response);
     });
 
+    socket.on('requestTestEditing', async (testId) => {
+
+    })
+
+    socket.on('getTestInfo', async (testId) => {
+        let response = await queryController.getTestInfo(testId);
+        socket.emit("getTestInfoResponse", response);
+    });
+
+    socket.on("requestTestEditToken", async (testId) => {
+        //
+    });
+
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 
-    socket.on("addTest", async (patientId, date, notes, frequency) => {
-        let response = await queryController.addTest(patientId, date, notes, frequency);
+    socket.on("addTest", async (patientId, date, notes, frequency, occurrences) => {
+        let test = {patient_no:patientId, due_date:date, notes:notes, frequency:frequency, occurrences:occurrences}
+        let response = await queryController.addTest(test);
         if (response.success){
             socket.emit("testAdded", response.response);
             socket.in("main_page").emit("testAdded", response.response)
@@ -118,11 +132,19 @@ io.on('connection',function(socket)
     });
 
     socket.on('testStatusChange', async (testId, newStatus) => {
-        // TODO change test status, if success, return testId, testDueDate and newStatus
-        let response = await queryController.changeTestStatus(testId,newStatus);
-        console.log(response);
+        let test = {testId: testId, newStatus: newStatus}
+        let response = await queryController.changeTestStatus(test);
         socket.emit('testStatusChange', testId, newStatus);
         io.in("main_page").emit('testStatusChange', testId, newStatus);
+    });
+
+    socket.on("editTest", async (testId, newInfo, token) => {
+        let response = await queryController.editTest(testId, newInfo, token);
+        if (response.success){
+            // broadcast new test
+        } else {
+            // emit failure to the socket
+        }
     });
 });
 

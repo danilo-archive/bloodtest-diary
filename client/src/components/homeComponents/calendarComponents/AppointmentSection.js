@@ -23,6 +23,7 @@ export default props => {
           type={appointment.completed_status}
           name={`${appointment.patient_name} ${appointment.patient_surname}`}
           time={appointment.time}
+          dueDate={appointment.due_date}
         />
       ))}
     </AppointmentSection>
