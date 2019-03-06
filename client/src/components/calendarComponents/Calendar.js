@@ -3,6 +3,67 @@ import "./Calendar.css";
 import DayCell from "./DayCell.js";
 import CalendarHeader from "./CalendarHeader.js";
 
+import styled from "styled-components";
+
+
+const Table = styled.table`
+  position: absolute;
+  width: 100%;
+  height: 60%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  background-color: #0b989d;
+  margin: 0;
+  padding-bottom: 1%;
+  padding-top: 1%;
+  padding-right: 1%;
+  padding-left: 1%;
+  table-layout: fixed;
+  border-radius: 10%;
+  white-space: nowrap;
+  opacity: 0.9;
+  z-index: 1;
+`;
+
+const Td = styled.td`
+  padding: 10px;
+  text-align: center;
+  color: white;
+  background-color: #0b989d;
+  line-height: 0;
+  :hover {
+    color: #0b989d;
+    background-color: white;
+  }
+`;
+
+const Th = styled.th`
+  padding: 15px;
+  text-align: center;
+  color: white;
+  background-color: #0b989d;
+  line-height: 0;
+`;
+
+const Button = styled.button`
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  margin: 0;
+  font-size: 100%;
+  color: white;
+  background-color: #0b989d;
+  border-radius: 100%;
+  
+  :hover {
+  color: white;
+  background-color: #0b989d;
+  }
+`;
+
+
+
 const WEEK_DAYS = 7;
 
 function getDaysInMonth(year, month) {
@@ -103,7 +164,7 @@ class CalendarTable extends Component {
 
   render() {
     return (
-      <table id={"daysTable"} cellPadding={0} cellSpacing={0}>
+      <Table id={"daysTable"} cellPadding={0} cellSpacing={0}>
         <thead>
           <CalendarHeader
             currentDate={this.state.date}
@@ -112,7 +173,7 @@ class CalendarTable extends Component {
           />
           <tr>
             {days.map(day => {
-              return <th key={day}>{day}</th>;
+              return <Th key={day}>{day}</Th>;
             })}
           </tr>
         </thead>
@@ -125,7 +186,7 @@ class CalendarTable extends Component {
                     dayBelongsToCurrentMonth = !dayBelongsToCurrentMonth;
                   }
                   return (
-                    <td
+                    <Td
                       key={tdIndex}
                       className={`${
                         dayBelongsToCurrentMonth ? "in" : "out"
@@ -138,14 +199,14 @@ class CalendarTable extends Component {
                           isFromThisMonth={dayBelongsToCurrentMonth}
                         />
                       }
-                    </td>
+                    </Td>
                   );
                 })}
               </tr>
             );
           })}
         </tbody>
-      </table>
+      </Table>
     );
   }
 }

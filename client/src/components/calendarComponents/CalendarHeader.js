@@ -1,5 +1,25 @@
 import React from 'react';
 import './CalendarHeader.css';
+import styled from "styled-components";
+
+const Td = styled.td`
+    color: white;
+    background-color: #0b989d;
+    :hover {
+      color: white;
+      background-color: #0b989d;
+    }
+`;
+
+const Button = styled.button`
+    background-color: transparent;
+    color: white;
+    
+    :hover {
+    color: #0b989d;
+    background-color: white;
+}
+`;
 
 const monthNames = ["January",
                     "February",
@@ -41,13 +61,13 @@ class CalendarHeader extends React.Component{
     render(){
         return(
             <tr>
-                <td colSpan={arrColspan} className={'arrow'} onClick={this.prevMonth}>
-                    <button>&lt;</button>
-                </td>
-                <td colSpan={monthColspan} className={'date'}>{getMonthAndYear(this.state.date)}</td>
-                <td colSpan={arrColspan} className={'arrow'} onClick={this.nextMonth}>
-                    <button>&gt;</button>
-                </td>
+                <Td colSpan={arrColspan} className={'arrow'} onClick={this.prevMonth}>
+                    <Button>&lt;</Button>
+                </Td>
+                <Td colSpan={monthColspan} className={'date'}>{getMonthAndYear(this.state.date)}</Td>
+                <Td colSpan={arrColspan} className={'arrow'} onClick={this.nextMonth}>
+                    <Button>&gt;</Button>
+                </Td>
             </tr>
         )
     }
