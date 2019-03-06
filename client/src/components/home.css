@@ -1,6 +1,6 @@
 :root {
   --htmlFontSize: 100%;
-  --bodyBackgroundColor: #f4f9fd;
+  --bodyBackgroundColor: rgb(244,249,253);
   --bodyColor: #000000;
   --bodyFontFamily: 'Open Sans';
   --bodyFontFamilyFallback: sans-serif;
@@ -8,6 +8,8 @@
   --bodyFontWeight: 400;
   --bodyLineHeight: 1.5;
 }
+
+f4f9fd
 
 html {
   box-sizing: border-box;
@@ -77,6 +79,8 @@ body {
 
   flex-grow: 1;
   flex-shrink: 1;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 
@@ -98,7 +102,10 @@ body {
   flex-grow: 1;
   flex-shrink: 2;
 
-  overflow: visible;
+  overflow: hidden;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+
 }
 
 .overduePatients {
@@ -115,13 +122,15 @@ body {
   background-color: white;
 
   min-width: 200px;
-  max-width: 325px;
+  max-width: 340px;
 
   overflow: hidden;
 
   flex-grow: 1;
   flex-shrink: 2;
   align-self: stretch;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .calendar {
@@ -135,6 +144,8 @@ body {
   overflow: hidden;
   flex-grow: 5;
   flex-shrink: 1;
+
+
 }
 
 .ongoingWeekly {
@@ -152,10 +163,11 @@ body {
   height: auto;
 
   min-width: 200px;
-  max-width: 325px;
+  max-width: 340px;
 
   flex-grow: 1;
   flex-shrink: 2;
+
 
 }
 
@@ -164,6 +176,8 @@ body {
 
 
   padding: 0.5%;
+  padding-left: 1%;
+  padding-right: 0.5%;
 
   overflow: hidden;
 

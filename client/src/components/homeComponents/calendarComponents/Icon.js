@@ -10,10 +10,9 @@ const combinations = {
 const Icon = styled.i`
   transition: opacity ease-in 250ms;
   opacity: 1;
-  cursor: pointer;
-  
+  margin-left: 7px;
   &:hover {
-    opacity: 0.5;
+    opacity: 0.3;
   }
 `;
 
@@ -22,7 +21,13 @@ export default props => {
     <Icon
       className={`fa fa-${props.icon}`}
       style={{ color: combinations[props.icon].color, fontSize: "150%" }}
-      onClick={() => props.onClick(combinations[props.icon].status)}
+      onClick={() => {
+          if (props.icon === "check"){
+              props.onClick(combinations[props.icon].status);
+          } else {
+              props.onClick(props.testId);
+          }
+      }}
     />
   );
 };
