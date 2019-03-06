@@ -9,14 +9,15 @@ const DayCell = props => {
       const selectedDay = props.selectedDay;
       const selected = isSelected(isFromThisMonth, selectedDay, currentDate, day);
       return(
-        <label style={{color: (!isFromThisMonth) ? '#0b989d' : 'white'}}>
-          <button className={(selected) ? 'selected' : 'notSelected'}
-                  id={`${day}${isFromThisMonth}`}
-                  onClick={() => props.selectDay(day, isFromThisMonth)} >
-            {day}
-          </button>
-        </label>
+        <button id={`${day}${isFromThisMonth}`}
+                className={`${(isFromThisMonth) ? 'current' : 'not-current'}
+                            ${(selected) ? 'selected' : 'not-selected'} 
+                            day-number`}
+                onClick={() => props.selectDay(day, isFromThisMonth)} >
+          {day}
+        </button>
       );
   }
 
 export default DayCell;
+

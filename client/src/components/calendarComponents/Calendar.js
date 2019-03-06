@@ -72,15 +72,15 @@ class CalendarTable extends Component {
 
   render() {
     return (
-      <table id={'daysTable'} cellPadding={0} cellSpacing={0}>
+      <table className={'calendar'} cellPadding={0} cellSpacing={0}>
         <thead>
           <CalendarHeader currentDate={this.state.date}
-            prevMonth={this.prevMonth}
-            nextMonth={this.nextMonth} />
+                          prevMonth={this.prevMonth}
+                          nextMonth={this.nextMonth} />
           <tr>
             {weekDays.map((day) => {
               return (
-                <th key={day}>
+                <th key={day} className={'day-of-the-week'}>
                   {day}
                 </th>
               );
@@ -96,12 +96,12 @@ class CalendarTable extends Component {
                     dayBelongsToCurrentMonth = !dayBelongsToCurrentMonth;
                   }
                   return (
-                    <td key={tdIndex} className={`${(dayBelongsToCurrentMonth) ? "in" : "out"} day`}>
+                    <td key={tdIndex}>
                       {<DayCell selectDay={this.selectDay}
-                        selectedDay={this.state.selected}
-                        date={this.state.date}
-                        dayOfMonth={day}
-                        isFromThisMonth={dayBelongsToCurrentMonth} />}
+                                selectedDay={this.state.selected}
+                                date={this.state.date}
+                                dayOfMonth={day}
+                                isFromThisMonth={dayBelongsToCurrentMonth} />}
                     </td>
                   );
                 }
