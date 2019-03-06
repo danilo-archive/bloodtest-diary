@@ -13,6 +13,8 @@ import EditTest from "./homeComponents/editTest/EditTestView";
 import {getNextDates, getMondayOfWeek, getCurrentWeek, getPreviousWeek, getNextWeek} from "../lib/calendar-controller";
 import {getServerConnect} from "../serverConnection.js";
 import {group, getNumberOfTestsInGroup} from "../lib/overdue-controller.js";
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContext } from 'react-dnd'
 import './home.css';
 
 class Home extends Component {
@@ -242,4 +244,5 @@ class Home extends Component {
     padding: 0
   };
 
-export default Home;
+  export default DragDropContext(HTML5Backend)(Home);
+//export default Home;

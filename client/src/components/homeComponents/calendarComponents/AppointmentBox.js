@@ -6,7 +6,9 @@ import IconSet from "./IconSet";
 import TimePill from "./TimePill";
 import {getServerConnect} from "../../../serverConnection.js";
 import {isPastDate} from "../../../lib/calendar-controller.js";
+import { DragSource } from "react-dnd";
 const Container = styled.div`
+  opacity: ${props => props.isDragging ? 0 : 1}
   display: block;
   position: relative;
   background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
@@ -59,7 +61,25 @@ const mapping = {
     "in review": "inReview"
 }
 
-export default class AppointmentBox extends React.Component {
+const spec = {
+  beginDrag(props){
+    return props;
+  },
+  endDrag(props, monitor, component){
+    console.log("End drag");
+    //return props.handleDrop(props.id);
+  }
+}
+
+function collect(connect, monitor){
+  return {
+    connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
+    isDragging: monitor.isDragging()
+  }
+}
+
+class AppointmentBox extends React.Component {
   constructor(props) {
     super(props);
     this.serverConnect = getServerConnect();
@@ -83,20 +103,25 @@ export default class AppointmentBox extends React.Component {
   };
 
   render() {
-    return (
-      <Container tentative={this.props.tentative}>
-        {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
+    const {isDragging, connectDragSource} = this.props;
+    return connectDragSource(
+      <div>
+        <Container isDragging={isDragging} tentative={this.props.tentative}>
+          {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
 
-        <StatusCircle
-          type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
-        />
-        <AppointmentInfo name={this.props.name} />
-        <IconSet
-            onStatusClick={this.props.tentative ? () => {} : this.onStatusClick}
-            editTest={this.props.editTest}
-            testId={this.props.id}
-        />
-      </Container>
+          <StatusCircle
+            type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
+          />
+          <AppointmentInfo name={this.props.name} />
+          <IconSet
+              onStatusClick={this.props.tentative ? () => {} : this.onStatusClick}
+              editTest={this.props.editTest}
+              testId={this.props.id}
+          />
+        </Container>
+      </div>
     );
   }
 }
+
+export default DragSource("appointment", spec, collect)(AppointmentBox);
