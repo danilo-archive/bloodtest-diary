@@ -137,6 +137,7 @@ async function editTest(testId, newInfo, token){
     return await updateQueryDatabase("Test",testId,sql,token);
 }
 
+// TODO testing method to remove
 async function changeTestDueDate(testId, newDate){
     var data = await databaseController.requestEditing("Test", testId).then( data => {return data;});
     var token = data.response.token;
@@ -325,6 +326,7 @@ module.exports = {
     getOverdueTests,
     addTest,
     changeTestStatus,
+    changeTestDueDate,
     getTestWithinWeek,
     editTest,
 };

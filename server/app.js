@@ -149,7 +149,7 @@ io.on('connection',function(socket)
     });
 
     socket.on("changeTestDueDate", async (testId, newDate) => {
-        let response = await queryController.changeTestDueDate(test, newDate);
+        let response = await queryController.changeTestDueDate(testId, newDate);
         if (response.success){
             socket.emit("testAdded", response.response);
             io.in("main_page").emit("testAdded", response.response);

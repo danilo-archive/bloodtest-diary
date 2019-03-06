@@ -7,6 +7,8 @@ import TimePill from "./TimePill";
 import {getServerConnect} from "../../../serverConnection.js";
 import {isPastDate} from "../../../lib/calendar-controller.js";
 import { DragSource } from "react-dnd";
+
+const serverConnect = getServerConnect();
 const Container = styled.div`
   opacity: ${props => props.isDragging ? 0 : 1}
   display: block;
@@ -69,7 +71,10 @@ const spec = {
     };
   },
   endDrag(props, monitor, component){
-    console.log(monitor.getDropResult());
+    const newDate = monitor.getDropResult().newDate;
+    if (newDate){
+      serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate);
+    }
     //return props.handleDrop(props.id);
   }
 }

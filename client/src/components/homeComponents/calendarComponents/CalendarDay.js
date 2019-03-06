@@ -35,20 +35,20 @@ const monthNames = [
 ];
 
 function collect(connect, monitor){
+  console.log(monitor.isOver());
   return {
     connectDropTarget: connect.dropTarget(),
     hovered: monitor.isOver(),
+    hightlighted: monitor.canDrop(),
     item: monitor.getItem()
   }
 }
 
 const spec = {
   drop: function(props, monitor, component){
-    console.log("called");
-    return {newDate: props.sectionDate}
+    return {newDate: props.date}
   },
   hover: function(props, monitor, component){
-    console.log("over mee");
   }
 }
 
@@ -61,8 +61,8 @@ class CalendarDay extends React.Component {
   render() {
     const { connectDropTarget, hovered, item} = this.props;
     const backgroundColor = hovered ? "#c0f7ad" : "white";
-    return (
-      <>
+    return connectDropTarget(
+      <div style={{height: "inherit"}}>
         <CalendarContainer>
           <WeekDaySection
             notificationNumber={
@@ -78,7 +78,7 @@ class CalendarDay extends React.Component {
             monthName={monthNames[this.props.date.getMonth()]}
             openModal={date => this.props.openModal(date)}
           />
-          <ScrollBox>
+          <ScrollBox style={{background: backgroundColor}}>
             <AppointmentSection
               background = {backgroundColor}
               type="Anytime Today"
@@ -89,7 +89,7 @@ class CalendarDay extends React.Component {
             <div style={{width:"100%",height:"30%"}}/>
           </ScrollBox>
         </CalendarContainer>
-      </>
+      </div>
     );
   }
 }
