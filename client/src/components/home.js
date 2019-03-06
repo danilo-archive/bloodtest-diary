@@ -210,6 +210,7 @@ class Home extends Component {
                 <div className={"ongoingWeekly"}>
                   <OngoingWeekly
                     currentMonday={this.currentMonday}
+                    date={this.state.weekDays[5]}
                     notificationNumber={this.state.ongoingTests.length}
                     anytimeAppointments={this.state.ongoingTests}
                     editTest={this.onEditTestOpenModal}

@@ -71,11 +71,15 @@ const spec = {
     };
   },
   endDrag(props, monitor, component){
-    const newDate = monitor.getDropResult().newDate;
-    if (newDate){
-      serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate);
+    if (monitor.didDrop()){
+      const newDate = monitor.getDropResult().newDate;
+      if (newDate){
+        serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate);
+      }
     }
-    //return props.handleDrop(props.id);
+  },
+  canDrag(props, monitor){
+    return (props.section !== "overdue");
   }
 }
 
