@@ -6,7 +6,7 @@ import CalendarTable from "../../calendarComponents/Calendar";
 import FrequencySelector from "./FrequencySelector";
 import StatusSetter from "./StatusSetter";
 import { getServerConnect } from "../../../serverConnection.js";
-
+import Button from "./Button";
 const DataContainer = styled.div`
   position: relative;
   width: 45rem;
@@ -19,6 +19,13 @@ const SetterValues = [
   { value: "M", name: "Months" },
   { value: "Y", name: "Years" }
 ];
+
+const TextArea = styled.textarea`
+  width: 40%;
+  height: 10rem;
+  outline: none;
+`;
+
 export default class EditTestView extends React.Component {
   constructor(props) {
     super(props);
@@ -41,7 +48,8 @@ export default class EditTestView extends React.Component {
             frequency: res.frequency,
             occurrences: res.occurrences
           },
-          status: res.completed_status
+          status: res.completed_status,
+          notes: res.notes
         },
         showCalendar: false,
         ready: true
@@ -49,14 +57,32 @@ export default class EditTestView extends React.Component {
     });
   }
 
+  saveTest = () => {
+    const { test, patient } = this.state;
+    const params = {
+      test_id: test.id,
+      patient_no: patient.id,
+      dueDate: test.date.dueDate,
+      frequency: test.date.frequency,
+      occurrences: test.date.occurrences,
+      completed_status:
+        test.status === "completed"
+          ? "yes"
+          : test.status === "in review"
+          ? "in review"
+          : "no",
+      notes: test.notes
+    };
+
+    this.serverConnect.editTest(params);
+  };
   render() {
-    console.log(this.state.test.date.frequency[-1]);
     return this.state.ready ? (
       <>
         <div
           style={{
             width: "35rem",
-            height: "30rem",
+            height: "35rem",
             background: "rgba(244, 244, 244,0.7)",
             position: "relative"
           }}
@@ -161,6 +187,34 @@ export default class EditTestView extends React.Component {
                 }
               }}
             />
+            <hr />
+            <div style={{ display: "flex" }}>
+              <TextArea
+                value={this.state.test.notes}
+                onChange={event =>
+                  this.setState({
+                    test: {
+                      ...this.state.test,
+                      notes: event.target.value
+                    }
+                  })
+                }
+              />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-end"
+                }}
+              >
+                <Button save onClick={this.saveTest}>
+                  Save Changes
+                </Button>
+                <Button onClick={() => alert("Unschedule test")}>
+                  Unschedule test
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </>

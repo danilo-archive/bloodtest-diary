@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export default styled.div`
-  width: ${props => (props.save ? `70%` : `20%`)};
-  height: 20%;
+  width: ${props => (props.save ? `20rem` : `15rem`)};
+  height: 5rem;
   background: ${props => (props.save ? `#5BC714` : `#D10505`)};
   transition: 250ms;
   display: flex;
@@ -12,10 +12,11 @@ export default styled.div`
   user-select: none;
   color: white;
   font-size: 35px;
+  white-space: nowrap;
   &:hover {
-    opacity: 0.8;
-  }
+    background: ${props => (props.save ? `#469b0d` : `#a00303`)};  }
   &:active {
-    opacity: 0.4;
+    background: ${props => (props.save ? `#387c0b` : `#680101`)};  }
+
   }
 `;
