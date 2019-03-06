@@ -18,6 +18,7 @@ export default styled.div`
   position: relative;
   display: flex;
   justify-content: center;
+  
 
   &::after {
     content: '${props => props.type}';

@@ -9,6 +9,8 @@ export default props => {
         width: "auto",
         display: "inline-block",
         whiteSpace: "nowrap",
+        marginLeft: "7px",
+        marginRight: "7px",
       }}
     >
       <Icon icon="edit" />

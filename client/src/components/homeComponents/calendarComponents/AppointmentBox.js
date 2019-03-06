@@ -11,18 +11,17 @@ const Container = styled.div`
   background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
   margin-top: 3.5%;
   margin-bottom: 3.5%;
-  padding: 0%;
+  padding-top: 1%;
+  padding-bottom: 1%;
   height: 35px;
-  border: solid 0.1px rgb(100, 100, 100, 0.1);
-  border-radius: 0px;
+  border: solid 0.5px rgb(100, 100, 100, 0.1);
+  border-radius: 3px;
+
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
   width: auto;
-
-  box-shadow: 0 1px 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.12);
-  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 
   z-index: 3;
   & .pill {
@@ -33,7 +32,7 @@ const Container = styled.div`
     props.tentative
       ? ``
       : `&:hover {
-        box-shadow: 0 2px 2px rgba(0,0,0,0.16), 2px 2px rgba(0,0,0,0.16);
+        border: solid 0.5px rgb(100, 100, 100, 0.5);
     }`}
 
   ${props =>
@@ -113,12 +112,8 @@ export default class AppointmentBox extends React.Component {
             type={tentative ? "tentative" : this.formatStatus(this.props.type)}
           />
         </div>
-        <div className={"info"}>
           <AppointmentInfo name={name} />
-        </div>
-        <div className={"iconsSet"}>
           <IconSet onStatusClick={tentative ? () => {} : this.onStatusClick} />
-        </div>
       </Container>
     );
   }

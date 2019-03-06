@@ -9,6 +9,9 @@ const NameDiv = styled.div`
   font-size: 120%;
   white-space: nowrap;
   text-align: left;
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: scroll;
 `;
 export default props => {
   return <NameDiv>{props.name}</NameDiv>;
