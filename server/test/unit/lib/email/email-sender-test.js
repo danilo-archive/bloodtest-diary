@@ -218,8 +218,6 @@ describe("Test getEmailInfo method with patient email", function () {
 describe("Test sendEmails method", function () {
     beforeEach(function () {
         this.sinon.stub(console, 'error');
-        getEmailInfoStub = sinon.stub(email_sender, "getEmailInfo");
-        email_sender = proxyquire('./../../../../lib/email/email-sender', { getEmailInfo: getEmailInfoStub })
     })
 
     it('should fail if the testIDs parameter is not an Array', () => {
@@ -255,6 +253,22 @@ describe("Test sendEmails method", function () {
         expect(console.error.calledWith("Could not generate reminder to hospital email for testID: null"))
 
     });
+
+    it('should successfully send an email', function(){
+
+        email_sender = proxyquire('./../../../../lib/email/email-sender', { query_controller: { getTest: getTestStub, getPatient: getPatientStub, getHospital: getHospitalStub, getCarer: getCarerStub } })
+
+        getTestStub.callsFake(fakeGetQuery);
+        getHospitalStub.callsFake(fakeGetQuery);
+        getPatientStub.callsFake(fakeGetQuery);
+        getCarerStub.callsFake(fakeGetQuery);
+        this.sinon.stub(console, 'log');
+
+        email_sender.sendEmails([1], fakeEmailGeneratingFunction, "Test Title");
+
+        expect(console.error.calledWith("Email sent successfully"))
+
+    })
 });
 
 function fakeEmailGeneratingFunction() {
