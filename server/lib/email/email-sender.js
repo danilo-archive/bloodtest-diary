@@ -104,24 +104,35 @@ function sendOverdueTestReminderToHospital(testIDs) {
  * @param {function} emailGeneratorFunction the function needed to generate test emails
  * @returns {array} an array which contains the test ids of emails for which the html generation failed
  */
-function sendEmails(testIDs, emailGeneratorFunction, subjectTitle) {
+async function sendEmails(testIDs, emailGeneratorFunction, subjectTitle) {
   if (Array.isArray(testIDs)) {
     if (testIDs.length === 0) {
       console.error("The TestIDs array is empty, could not send any mail");
     } else {
       const failed = []; //array will contain the test ids of emails for which the html generation failed
+      let completed = 0;
       testIDs.forEach(async testID => {
         let emailInfo = null;
         await getEmailInfo(testID, failed).then(result => {
           emailInfo = result;
-        }); //fetch the relevant data linked to the test for the email generation
+          completed++;
+        });
+
+        //fetch the relevant data linked to the test for the email generation
         if (emailInfo !== null) {
-          sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle);
+          sendOneEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle);
         }
         else {
           console.error("Could not generate emailInfo JSON")
         }
+
       });
+
+      while (completed != testIDs.length) {
+        //awaiting for all testIDs to be checked before sending error messages
+        await sleep(1);
+      }
+
       //for every failed email, log an error to the console
       if (failed.length !== 0) {
         failed.forEach(failedTestID => {
@@ -134,24 +145,29 @@ function sendEmails(testIDs, emailGeneratorFunction, subjectTitle) {
   }
 }
 
-
 /**
  * Generate and send a single email
  * @param {number} testID the id of the test for which to generate the email
  * @param {array} failed an array which contains the test ids of emails for which the html generation failed
  */
-function sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
+function sendOneEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
   {
     const config = jsonController.getJSON(CONFIG_ABSOLUTE_PATH);
     const transporter = nodeMailer.createTransport(config.transporter);
+    console.log(transporter);
+    let to =  emailInfo.patient.patient_email;
+    if(to == null){
+      to = emailInfo.carer.carer_email;
+    }
 
     //TODO: REMOVE HARD-CODED OPTIONS BEFORE DEPLOYMENT
     const receiverOptions = {
       from: transporter.options.auth.user,
-      to: emailInfo.patient.patient_email,
+      to: to,
       subject: subjectTitle,
       html: emailGeneratorFunction(emailInfo)
-    };
+    };    
+    
     if (receiverOptions.html != null && emailInfo != null && subjectTitle != null)
       sendEmail(transporter, receiverOptions);
     else
@@ -165,7 +181,6 @@ function sendEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
  * @param {array} failed an array which contains the test ids of emails for which the html generation failed
  */
 async function getEmailInfo(testID, failed) {
-  
   //Get the test information from the database
   let test = null;
   await query_controller.getTest(testID).then(r => { test = processResult(r, failed, testID) });
@@ -190,7 +205,10 @@ async function getEmailInfo(testID, failed) {
   //in case the patient does not have an email, we try and fetch the carer's information
   if (patient.patient_email == null) {
     let carer = null;
-    await query_controller.getCarer(patient.carer_id).then(r => { carer = processResult(r, failed, testID) });
+    await query_controller.getCarer(patient.carer_id).then(r => {
+      carer = processResult(r, failed, testID);
+    });
+
     if (carer === undefined || !carer) return null;
     emailInfo.carer = carer;
   }
@@ -225,14 +243,27 @@ function processResult(r, failed, testID) {
  * @param {JSON} receiverOptions the options of the email address to be sent, as well as the content of the mail
  */
 function sendEmail(transporter, receiverOptions) {
-  //TODO: TEST THIS FOR GOD'S SAKE
   transporter.sendMail(receiverOptions, (err, info) => {
     if (err) {
       console.log(err);
     } else {
+      console.log("Email sent successfully")
       console.log(info);
       transporter.close();
     }
+  });
+}
+
+
+/**
+* Await for this function to pause execution for a certain time.
+*
+* @param {number} ms Time in milliseconds
+* @returns {Promise}
+*/
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
   });
 }
 
