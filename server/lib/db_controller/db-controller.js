@@ -27,7 +27,7 @@ module.exports = {
 };
 
 const mysql = require("mysql");
-const tokenGenerator = require("../token-generator");
+const tokenGenerator = require("./token-generator");
 const dateFormat = require("dateformat");
 const databaseConfig = require("../../config/database");
 const Database = require("./Database");
