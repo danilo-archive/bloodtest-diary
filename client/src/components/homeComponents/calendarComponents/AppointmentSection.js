@@ -16,7 +16,7 @@ export default props => {
   return (
     <AppointmentSection>
       <VerticalLine />
-      <AppointmentSectionHeader>{props.type}</AppointmentSectionHeader>
+      <AppointmentSectionHeader color={props.color}>{props.type}</AppointmentSectionHeader>
       {props.appointments.map(appointment => (
         <AppointmentBox
           id = {appointment.test_id}

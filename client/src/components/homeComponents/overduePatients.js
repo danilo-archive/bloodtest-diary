@@ -42,6 +42,7 @@ class OverduePatients extends React.Component {
                       return (
                           <AppointmentSection
                               type = {group.class}
+                              color = {"#ffe266"}
                               appointments = {group.tests}
                           />
                       )
