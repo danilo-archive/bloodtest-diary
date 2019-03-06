@@ -96,7 +96,7 @@ const Container = styled.div`
 
 `;
 
-const WeekDayDiv = styled.div`
+const Header = styled.div`
   width: auto;
   height: 50px
   margin: 3px;
@@ -128,7 +128,7 @@ class Navbar extends React.Component {
   render() {
     return (
       <>
-      <WeekDayDiv>Welcome!</WeekDayDiv>
+      <Header>Dashboard</Header>
       <Container>
           <div className={"calendarControls"}>
             <div className={"scrollButtons"}>

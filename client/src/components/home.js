@@ -9,6 +9,9 @@ import WeeklyCalendar from "./homeComponents/weeklyCalendar";
 import OngoingWeekly from "./homeComponents/ongoingWeekly";
 import arrow from "../images/arrow.png";
 import AddTest from "./homeComponents/addTest/AddTestView";
+import VerticalLine from "./homeComponents/calendarComponents/VerticalLine";
+import LoadingAnimation from "./loadingScreen/loadingAnimation";
+
 import {getNextDates, getMondayOfWeek, getCurrentWeek, getPreviousWeek, getNextWeek} from "../lib/calendar-controller";
 import {getServerConnect} from "../serverConnection.js";
 import {group, getNumberOfTestsInGroup} from "../lib/overdue-controller.js";
@@ -159,6 +162,9 @@ class Home extends Component {
                       openModal={this.onOpenModal}
                     />
                   </div>
+                  <div className={"divider"}>
+                    <VerticalLine/>
+                  </div>
                   <div className={"ongoingWeekly"}>
                     <OngoingWeekly
                       currentMonday={this.currentMonday}
@@ -184,8 +190,12 @@ class Home extends Component {
           </div>
         );
       } else {
-        // TODO loading screen.
-        return "";
+        return (
+          <div style={{
+          }}>
+          <LoadingAnimation/>
+        </div>
+      )
       }
     }
   }

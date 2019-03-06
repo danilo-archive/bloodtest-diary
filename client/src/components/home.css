@@ -86,6 +86,7 @@ body {
   background-color: white;
 
   margin-bottom: 1%;
+
   padding-top: 10px;
   padding-bottom: 0.5%;
   padding-left: 0.5%;
@@ -104,6 +105,7 @@ body {
   border: #839595 0px solid;
 
   margin-right: 1%;
+
   padding-top: 10px;
   padding-bottom: 0.5%;
   padding-left: 0.5%;
@@ -127,10 +129,7 @@ body {
 
   background-color: white;
 
-  padding-top: 0.5%;
-  padding-bottom: 0.5%;
-  padding-left: 0.5%;
-  padding-right: 0.5%;
+  padding: 0.5%;
 
   width: 200px;
   overflow: hidden;
@@ -144,10 +143,7 @@ body {
   background-color: white;
 
 
-  padding-top: 0.5%;
-  padding-bottom: 0.5%;
-  padding-left: 0.5%;
-  padding-right: 0.5%;
+  padding: 0.5%;
 
   background-color: ;
 
@@ -155,11 +151,24 @@ body {
 
   height: auto;
 
-  min-width: 150px;
+  min-width: 200px;
   max-width: 325px;
 
   flex-grow: 1;
   flex-shrink: 2;
+
+}
+
+.divider {
+  background-color: white;
+
+
+  padding: 0.5%;
+
+  overflow: hidden;
+
+  height: auto;
+
 }
 
 

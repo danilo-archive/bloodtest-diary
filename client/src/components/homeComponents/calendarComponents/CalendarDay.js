@@ -11,11 +11,11 @@ const CalendarContainer = styled.div`
   margin-bottom: 5px;
   padding: 0%;
   width: 16vw;
-  height: inherit;
+  height: calc(100% - 10px);
   background-color: white;
   padding: 0;
   position: relative;
-  border: solid 0px white;
+  border: solid 1px rgb(131,149,149, 0.2);
   min-width: 17rem;
 `;
 const monthNames = [

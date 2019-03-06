@@ -11,7 +11,6 @@ const Container = styled.div`
   width: auto;
   height: 100%;
   overflow: hidden;
-
 `;
 
 class OngoingWeekly extends React.Component {

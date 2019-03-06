@@ -15,7 +15,6 @@ const AppointmentSection = styled.div`
 export default props => {
   return (
     <AppointmentSection>
-      <VerticalLine />
       <AppointmentSectionHeader>{props.type}</AppointmentSectionHeader>
       {props.appointments.map(appointment => (
         <AppointmentBox
