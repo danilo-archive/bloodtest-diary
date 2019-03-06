@@ -20,6 +20,11 @@ export default class PatientSection extends React.Component {
                 />
 
                 <InputCell
+                    field={"Relationship"}
+                    value={"some value"}
+                />
+
+                <InputCell
                     field={"Name"}
                     value={"some value"}
                 />

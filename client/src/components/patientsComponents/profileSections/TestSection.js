@@ -13,7 +13,7 @@ export default class PatientSection extends React.Component {
     render() {
         return (
             <Container>
-                There will be two boxes here
+                Will contain all test data about patients
             </Container>
         );
     }
