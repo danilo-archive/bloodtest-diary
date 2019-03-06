@@ -30,6 +30,12 @@ body {
 .home {
   display: flow-root;
   height: 100vh;
+
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
 }
 
 .dashboard {
@@ -42,7 +48,6 @@ body {
 
   display: flex;
   flex-direction: row;
-  justify-content: ;
   align-items: flex-end;
 }
 
@@ -68,7 +73,7 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: stretch ;
+  align-items: stretch;
 
   flex-grow: 1;
   flex-shrink: 1;
@@ -78,42 +83,54 @@ body {
 .navbar {
   border: #839595 0px solid;
 
-  padding: 0.5%;
+  background-color: white;
 
+  margin-bottom: 1%;
+  padding-top: 10px;
+  padding-bottom: 0.5%;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
 
-  max-height: 225px;
   min-height: 200px;
-  width: auto;
+  max-height: 200px;
 
   flex-grow: 1;
-  flex-shrink: 1;
+  flex-shrink: 2;
 
-  overflow: scroll;
+  overflow: visible;
 }
 
 .overduePatients {
   border: #839595 0px solid;
-  padding: 0.5%;
+
+  margin-right: 1%;
+  padding-top: 10px;
+  padding-bottom: 0.5%;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
 
 
-  background-color: rgb(13,78,86, 0.3);
+  background-color: white;
 
-  min-width: 150px;
+  min-width: 200px;
   max-width: 325px;
 
   overflow: hidden;
 
   flex-grow: 1;
-  flex-shrink: 20;
+  flex-shrink: 2;
   align-self: stretch;
 }
 
 .calendar {
   border: #839595 0px solid;
 
-  background-color: rgb(13,78,86, 0.2);
+  background-color: white;
 
-  padding: 0.5%;
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
 
   width: 200px;
   overflow: hidden;
@@ -124,23 +141,25 @@ body {
 .ongoingWeekly {
   border: #839595 0px solid;
 
-  background-color: rgb(13,78,86, 0.2);
+  background-color: white;
 
 
-  padding: 0.5%;
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
 
   background-color: ;
 
   overflow: hidden;
 
   height: auto;
-  width: auto;
 
   min-width: 150px;
   max-width: 325px;
 
   flex-grow: 1;
-  flex-shrink: 1;
+  flex-shrink: 2;
 }
 
 

@@ -67,7 +67,7 @@ class CalendarDay extends React.Component {
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
             />
-            <div style={{width:"100%",height:"30%"}}/>
+            <div style={{width:"100%",height:"130px"}}/>
           </ScrollBox>
         </CalendarContainer>
       </>

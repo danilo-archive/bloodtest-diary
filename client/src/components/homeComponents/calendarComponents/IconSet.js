@@ -6,10 +6,9 @@ export default props => {
   return (
     <div
       style={{
-        display: "flex",
-        alignItems: "center",
-        margin: "0",
-        position: "absolute",
+        width: "auto",
+        display: "inline-block",
+        whiteSpace: "nowrap",
       }}
     >
       <Icon icon="edit" />

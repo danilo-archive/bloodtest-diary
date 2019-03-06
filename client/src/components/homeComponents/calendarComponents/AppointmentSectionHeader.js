@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import React from "react";
-import HorizontalLine from "./HorizontalLine";
 
 const Heading = styled.h3`
   padding: 0;
@@ -10,6 +9,7 @@ const Heading = styled.h3`
   border-radius: 5px;
   font-family: "Rajdhani", sans-serif;
   font-size: 150%;
+  height: 35px;
   overflow: hidden;
   z-index: 5;
   background-color: white;

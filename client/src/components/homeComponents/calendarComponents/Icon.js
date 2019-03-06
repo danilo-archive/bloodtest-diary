@@ -10,9 +10,10 @@ const combinations = {
 const Icon = styled.i`
   transition: opacity ease-in 250ms;
   opacity: 1;
-
+  cursor: pointer;
+  
   &:hover {
-    opacity: 0.3;
+    opacity: 0.5;
   }
 `;
 

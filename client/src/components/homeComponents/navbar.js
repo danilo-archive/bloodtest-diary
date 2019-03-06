@@ -5,93 +5,89 @@ import arrow from "./../../images/arrow.png";
 
 
 const Container = styled.div`
-
   border: red 0px solid;
-  margin: 3px;
-  padding: 8px;
+  padding: 0%;
   width: auto;
   height: auto;
+  overflow: hidden;
 
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: flex-end;
-  align-content: flex-end;
+  align-items: flex-end;
 
+  .controlButtons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: space-around;
+    width: 320px;
+    height: 100%;
+    overflow: hidden;
+  }
 
-  .signOut {
+  .signOutButton {
     background-color: #55cdd1;
     color: #eee;
     font-weight: 700;
     text-transform: uppercase;
     width: 150px;
-    border-radius:  0.25rem;
+    height: 50px;
+    border-radius:  0;
     cursor: pointer;
     border: none;
     outline:none;
     padding: 10px;
-    margin: 10px;
-
+    margin: 5px;
   }
-
-  .patients {
+  .patientsButton {
     background-color: #97a9a9;
     color: #eee;
     font-weight: 700;
     text-transform: uppercase;
     width: 150px;
-    border-radius:  0.25rem;
+    height: 50px;
+    border-radius:  0;
     cursor: pointer;
     border: none;
     outline:none;
     padding: 10px;
-    margin: 10px;
-
+    margin: 5px;
   }
-
-  .home {
+  .homeButton {
     background-color: #97a9a9;
     color: #eee;
     font-weight: 700;
     text-transform: uppercase;
     width: 150px;
-    border-radius:  0.25rem;
+    height: 50px;
+    border-radius:  0;
     cursor: pointer;
     border: none;
     outline:none;
     padding: 10px;
-    margin: 10px;
-
+    margin: 5px;
   }
-
-  .signOut:focus,
+  .signOutButton:focus,
   .signOut:hover {
     background-color: #0b989d;
   }
-
-  .patients:focus,
+  .patientsButton:focus,
   .patients:hover {
     background-color: #abbdbd;
   }
-
-  .home:focus,
+  .homeButton:focus,
   .home:hover {
     background-color: #abbdbd;
   }
-
   .scrollButtons {
-    background-color: #f4f9fd;
     padding: 4px;
     width: 100px;
-
-
   }
-
   .prevButton {
     width: 50%;
     cursor: pointer;
   }
-
-
   .nextButton {
     width: 50%;
     cursor: pointer;
@@ -100,32 +96,51 @@ const Container = styled.div`
 
 `;
 
+const WeekDayDiv = styled.div`
+  width: auto;
+  height: 50px
+  margin: 3px;
+  padding-left: 15px;
+  background-color: #0d4e56;
+  align-self: flex-start;
+  display: flex;
+  text-align: left;
+  flex-direction: column;
+  justify-content: center;
+
+  font-family: "Rajdhani", sans-serif;
+  color: #e2e2d9;
+  font-size: 150%;
+`;
+
+
 class Navbar extends React.Component {
 
   constructor(props){
       super(props);
       this.onPrev = props.onPrev;
       this.onNext = props.onNext;
+      this.onPatientsClick = props.onPatientsClick;
+      this.onHomeClick = props.onHomeClick;
   }
+
 
   render() {
     return (
       <>
+      <WeekDayDiv>Welcome!</WeekDayDiv>
       <Container>
-
-          <div className={"controlButtons"}>
-            <button className={"home"}>Home</button>
-
-            <button className={"patients"}>Patients</button>
-
-            <button className={"signOut"}>Sign Out</button>
-          </div>
-          <div className={"calanderControls"}>
+          <div className={"calendarControls"}>
             <div className={"scrollButtons"}>
                 <img src={arrow} className={"prevButton"} onClick={this.onPrev} alt={"Previous Date"}/>
                 <img src={arrow} className={"nextButton"} onClick={this.onNext} alt={"Next Date"}/>
             </div>
-          </div>
+            </div>
+            <div className={"controlButtons"}>
+                <button className={"homeButton"} onClick={this.onHomeClick}>Home</button>
+                <button className={"patientsButton"} onClick={this.onPatientsClick}>Patients</button>
+                <button className={"signOutButton"}>Sign Out</button>
+            </div>
       </Container>
       </>
     );

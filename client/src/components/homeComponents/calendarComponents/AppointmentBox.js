@@ -12,11 +12,15 @@ const Container = styled.div`
   margin-top: 2.5%;
   margin-bottom: 2.5%;
   padding: 0%;
-  height: 14%;
+  height: 35px;
   border: solid 1px rgb(100, 100, 100, 0);
   border-radius: 5px;
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: auto;
+
 
   z-index: 3;
   & .pill {
@@ -50,6 +54,21 @@ const Container = styled.div`
 
         `
       : ``}
+
+
+      .status {
+        margin-left: 7px;
+        margin-right: 7px;
+      }
+      .info {
+        flex-grow: 1;
+        flex-shrink: 1;
+        overflow: scroll;
+      }
+      .iconsSet {
+        margin-left: 7px;
+        margin-right: 7px;
+      }
 `;
 
 const mapping = {
@@ -66,7 +85,7 @@ export default class AppointmentBox extends React.Component {
       status: this.props.type,
       name: this.props.name,
       tentative: this.props.tentative | false
-    };
+     };
     this.serverConnect = getServerConnect();
   }
 
@@ -87,15 +106,15 @@ export default class AppointmentBox extends React.Component {
     return (
       <Container tentative={tentative}>
         {tentative ? <TimePill status={status}>Tentative</TimePill> : ``}
-        <div>
+        <div className={"status"}>
           <StatusCircle
             type={tentative ? "tentative" : this.formatStatus(this.props.type)}
           />
         </div>
-        <div>
+        <div className={"info"}>
           <AppointmentInfo name={name} />
         </div>
-        <div >
+        <div className={"iconsSet"}>
           <IconSet onStatusClick={tentative ? () => {} : this.onStatusClick} />
         </div>
       </Container>

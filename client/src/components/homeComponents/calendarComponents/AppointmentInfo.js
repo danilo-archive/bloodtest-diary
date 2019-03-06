@@ -3,12 +3,12 @@ import React from "react";
 
 const NameDiv = styled.div`
   width: 100%;
-  height: 200%;
+  height: 100%;
   color: #646464;
   font-family: "Rajdhani", sans-serif;
   font-size: 120%;
-  overflow: scroll;
   white-space: nowrap;
+  text-align: left;
 `;
 export default props => {
   return <NameDiv>{props.name}</NameDiv>;

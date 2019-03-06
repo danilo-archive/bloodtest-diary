@@ -27,7 +27,6 @@ export default styled.div`
     padding-left: 50%;
     padding-right: 50%;
     bottom: 0%;
-
     transform: scale(0);
     transition: all ease-in 100ms;
     background-color: ${props => combinations[props.type]};
