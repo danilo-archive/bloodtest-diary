@@ -1,5 +1,6 @@
 const databaseController = require('./db_controller/db-controller.js');
-const authenticator = require("./authenticator.js")
+const authenticator = require("./authenticator.js");
+const calendarController = require("./calendar-controller.js");
 const _ = require("lodash");
 
 /**
@@ -56,6 +57,17 @@ async function getUser(username)
 async function getAllTests()
 {
   const sql = "Select * From Test ORDER BY due_date ASC;";
+  return await selectQueryDatabase(sql)
+}
+
+/**
+* Get test from the database
+* @param {String} test_id - id of test
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
+**/
+async function getTest(test_id)
+{
+  const sql = `Select * From Test Where test_id=${test_id};`;
   return await selectQueryDatabase(sql)
 }
 
@@ -130,7 +142,6 @@ async function getSortedOverdueWeeks()
   }
   return {success: true , response: classedTests};
 }
-getSortedOverdueWeeks();
 /**
 * Get all the overdue tests from the database separated within groups
 * @return {Array of JSON} result of the query - [{class:String test:Array}]
@@ -204,11 +215,15 @@ async function addTest(json)
 * @param {JSON} newInfo All the information of the test (new and old)
 * @param token The token that grants edit priviledges
 */
-async function editTest(testId, newInfo, token){
+async function editTest(testId, newInfo,token){
+    if(newInfo.completed_status=="yes"||newInfo.completed_status=="in review")
+    {
+      newInfo['completed_date'] = new Date().toISOString().substring(0,10);
+      await scheduleNextTest(testId,newInfo);
+    }
     const sql = prepareUpdateSQL("Test",newInfo,"test_id");
     return await updateQueryDatabase("Test",testId,sql,token);
 }
-
 /**
 * Edit patient query
 * @param {JSON} newInfo All the information of the patient to update
@@ -302,9 +317,9 @@ async function changeTestStatus(test)
   let date;
   switch(test.newStatus)
   {
-    case "completed": {status = "yes"; date=`CURDATE()`; break;}
+    case "completed": {status = "yes"; date=`CURDATE()`; await scheduleNextTest(test.testId); break;}
     case "late": {status = "no"; date=`NULL`; break;}
-    case "inReview" : {status = "in review"; date=`CURDATE()`; break;}
+    case "inReview" : {status = "in review"; date=`CURDATE()`; await scheduleNextTest(test.testId); break;}
     default: return {success:false, response: "NO SUCH UPDATE"}
   }
   const sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${test.testId};`;
@@ -350,6 +365,43 @@ function getTestsDuringTheWeek(date)
   sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD('${date}', INTERVAL ${day} DAY) OR due_date = DATE_ADD('${date}', INTERVAL ${day+1} DAY);`;
   daysInWeek.push(databaseController.selectQuery(sql));
   return daysInWeek;
+}
+
+/**
+* Get next due date of a test in "YYYY-MM-DD" format; relative to today
+* @param frequency {String} - frequency of the test as stored in database
+* @returns {String} - next due date in "YYYY-MM-DD" format
+**/
+function getNextDueDate(frequency)
+{
+  const dateInZoneFormat = calendarController.getNextDate(frequency,new Date());
+  const dateInISO = (new Date(dateInZoneFormat)).toISOString()
+  return dateInISO.substring(0,10)
+}
+
+/**
+* Schedule next blood test based on information in database and/or new information provided
+* New information have priority over stored in database (new info > database info)
+* @param testId {String} - id of a string from which to take the info
+* @param newInfo {JSON} - (optional) new info to add into database with new test
+* @returns {JSON} - result of query {success:true/false reply:(optional;when no new entry inserted due to finished range of tests)}
+**/
+async function scheduleNextTest(testId,newInfo={})
+{
+  const response = await getTest(testId);
+  const test = response.response[0];
+  if(test.occurrences > 0){
+    const newTest = {
+      patient_no: (typeof newInfo.patient_no == 'undefined') ? test.patient_no : newInfo.patient_no,
+      frequency:(typeof newInfo.frequency == 'undefined') ? test.frequency : newInfo.frequency,
+      due_date: (typeof newInfo.due_date == 'undefined') ? getNextDueDate(test.frequency) : newInfo.due_date,
+      occurrences: (typeof newInfo.occurrences == 'undefined') ? (test.occurrences-1) : (newInfo.occurrences-1),
+      notes: (typeof newInfo.notes == 'undefined') ? test.notes : newInfo.notes
+    }
+    const res = await addTest(newTest);
+    return res;
+  }
+  return {success: true, reply: "No new tests"};
 }
 
 /**
