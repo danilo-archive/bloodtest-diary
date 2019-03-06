@@ -107,9 +107,10 @@ async function getOverdueTestsExtended()
 
 /**
 * Get all the overdue tests from the database plus additional info about time difference
-* @return {JSON} result of the query - {success:true/false response:SortedWeeks/Error}
-* @typedef {SortedWeeks}
-* @property monday - array of test in that monday; property name is encoded like 'Mon Mar 04 2019 00:00:00 GMT+0000 (GMT)'
+* @return {JSON} result of the query - {success:true/false response:Array{SortedWeek}/Error}
+* @typedef {SortedWeek}
+* @property  class {String} - monday of the week, format: 'Mon Mar 04 2019 00:00:00 GMT+0000 (GMT)'
+* @property  tests {Array[JSON]} - tests within week
 **/
 async function getSortedOverdueWeeks()
 {
@@ -120,11 +121,16 @@ async function getSortedOverdueWeeks()
   {
     return response;
   }
-  const tests = response.response;
-  const sortedWeeks = _.groupBy(tests,"Monday");
-  return {success: true , response: sortedWeeks};
+  const groupedTests = _.groupBy(response.response,"Monday");
+  const keys = Object.keys(groupedTests);
+  let classedTests = [];
+  for(let i=0; i<keys.length; i++)
+  {
+      classedTests=classedTests.concat({class:keys[i], tests:groupedTests[keys[i]]});
+  }
+  return {success: true , response: classedTests};
 }
-
+getSortedOverdueWeeks();
 /**
 * Get all the overdue tests from the database separated within groups
 * @return {Array of JSON} result of the query - [{class:String test:Array}]
