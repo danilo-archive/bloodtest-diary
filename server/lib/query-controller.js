@@ -1,6 +1,9 @@
 const databaseController = require('./db_controller/db-controller.js');
 const authenticator = require("./authenticator.js")
 const _ = require("lodash");
+const logger = require('./action-logger');
+
+// TODO: REPLACE ALL "admin" WITH ACTUAL USERNAMES IN ACTION LOGGING!
 
 /**
 * Get all the patients from the database
@@ -130,7 +133,7 @@ async function getSortedOverdueWeeks()
   }
   return {success: true , response: classedTests};
 }
-getSortedOverdueWeeks();
+
 /**
 * Get all the overdue tests from the database separated within groups
 * @return {Array of JSON} result of the query - [{class:String test:Array}]
@@ -181,7 +184,7 @@ async function addUser(json)
   //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
   const hash = authenticator.produceHash(json.hashed_password,iterations,salt);
   const sql = `INSERT INTO User VALUES(${json.username},${hash},${salt},${iterations},${json.email});`;
-  return await insertQueryDatabase(sql);
+  return await insertQueryDatabase(sql, "User", json.username);
 }
 
 /**
@@ -195,7 +198,7 @@ async function addUser(json)
 async function addTest(json)
 {
   const sql = prepareInsertSQL('Test',json);
-  return await insertQueryDatabase(sql);
+  return await insertQueryDatabase(sql, "Test");
 }
 
 /**
@@ -258,7 +261,7 @@ async function editCarer(newInfo, token){
 async function addPatient(json)
 {
   const sql = prepareInsertSQL('Patient',json);
-  return await insertQueryDatabase(sql);
+  return await insertQueryDatabase(sql, "Patient", json.patient_no);
 }
 
 /**
@@ -271,7 +274,7 @@ async function addPatient(json)
 async function addHospital(json)
 {
   const sql = prepareInsertSQL('Hospital',json);
-  return await insertQueryDatabase(sql);
+  return await insertQueryDatabase(sql, "Hospital");
 }
 
 /**
@@ -284,7 +287,7 @@ async function addHospital(json)
 async function addCarer(json)
 {
   const sql = prepareInsertSQL('Carer',json);
-  return await insertQueryDatabase(sql);
+  return await insertQueryDatabase(sql, "Carer");
 }
 
 
@@ -399,14 +402,26 @@ async function selectQueryDatabase(sql)
 /**
 * Run INSERT query on the database
 * @param {String} sql - SQL query
+* @param {string} tableName Name of the table which we are inserting into.
+* @param {string} id Specify new entry's ID, unless the ID is auto generated.
 * @return {JSON} result of the query - {success:Boolean}
 **/
-async function insertQueryDatabase(sql)
+async function insertQueryDatabase(sql, tableName, id = undefined)
 {
   const response = await databaseController.insertQuery(sql);
   if (response.status == "OK"){
+      id = (id === undefined) ? response.response.insertId : id;
+      logger.logInsert("admin", tableName, id, "Successful.");
       return {success: true};
   }else {
+      if (response.err.type === "SQL Error") {
+        logger.logInsert("admin", tableName, "0", 
+        "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. SQL Error message: START>>>" + response.err.sqlMessage + "<<<END.");
+      }
+      else {
+        logger.logInsert("admin", tableName, "0", 
+        "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. Invalid request error message: START>>>" + response.err.cause + "<<<END.");
+      }
       return {success: false};
   }
 }
@@ -420,8 +435,16 @@ async function insertQueryDatabase(sql)
 async function requestEditing(table, id)
 {
   const data = await databaseController.requestEditing(table,id).then( data => {return data;});
-  const token = data.response.token
-  return token;
+console.log(table + id);
+  if (data.status == "OK"){
+    logger.logOther("admin", table, id, "Request for editing was approved.");
+    return data.response.token;
+  }else {
+    
+      logger.logOther("admin", table, id, 
+        "Request for editing was rejected with message: START>>>" + data.err.cause + "<<<END.");
+        return undefined;
+  }
 }
 
 /**
@@ -435,13 +458,22 @@ async function updateQueryDatabase(table,id,sql,token)
 {
   if(token!=undefined)
   {
-    const response = await databaseController.updateQuery(sql, table, id, token)
-    if(response.status==="OK"){
-      return {success:true , response: response.response}
-    }
-    else{
-      return {success:false , response: response.err}
-    }
+      const response = await databaseController.updateQuery(sql, table, id, token);
+      if(response.status==="OK"){
+        //logger.logUpdate("admin", table, id, "Successful.");
+        return {success:true , response: response.response}
+      }
+      else{
+        if (response.err.type === "SQL Error") {
+          logger.logUpdate("admin", table, id, 
+          "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. SQL Error message: START>>>" + response.err.sqlMessage + "<<<END.");
+        }
+        else {
+          logger.logUpdate("admin", table, id, 
+          "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. Invalid request error message: START>>>" + response.err.cause + "<<<END.");
+        }
+        return {success:false , response: response.err}
+      }
   }
   else {
     return {success:false, response: {problem:"Token in use"} };

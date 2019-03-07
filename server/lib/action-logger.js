@@ -12,12 +12,28 @@ module.exports = {
     logInsert,
     logUpdate,
     logDelete,
-    logOther
+    logOther,
+    enableConsoleOutput,
+    disableConsoleOutput
 };
 
 const  mysql = require('mysql');
 const db_controller = require('./db_controller/db-controller');
 const dateFormat = require('dateformat');
+
+/** 
+ * If true, it will output to the console, otherwise it will not output anything.
+ * It's good to turn it off in testing to increase readability. Leave on for debugging.
+ */
+let showConsoleOutput = true;
+
+function enableConsoleOutput() {
+    showConsoleOutput = true;
+}
+
+function disableConsoleOutput() {
+    showConsoleOutput = false;
+}
 
 /**
  * Call this to log an insert action.
@@ -109,24 +125,27 @@ function log(type, username, tableName, entryID, message = undefined, callback =
 
     db_controller.insertQuery(sql)
     .then((result) => {
-        if (s.length > 0 && result.status === "OK") {
-            console.log("Successful log: user " + username + " " + s + " " + tableName + "(" + entryID + ").");
+        if (showConsoleOutput) {
+            if (s.length > 0 && result.status === "OK") {
+                console.log("Successful log: user " + username + " " + s + " " + tableName + "(" + entryID + ").");
+            }
+            else if (s.length > 0) {
+                console.log("===========================");
+                console.log("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "):");
+                console.log(result.err);
+                console.log("===========================");
+            }
+            else if (result.status === "OK") {
+                console.log("Successful log: user " + username + " committed other action: " + message);
+            }
+            else {
+                console.log("===========================");
+                console.log("ERROR logging: user " + username + " committed other action: " + message);
+                console.log(result.err);
+                console.log("===========================");
+            }
         }
-        else if (s.length > 0) {
-            console.log("===========================");
-            console.log("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "):");
-            console.log(result.err);
-            console.log("===========================");
-        }
-        else if (result.status === "OK") {
-            console.log("Successful log: user " + username + " committed other action: " + message);
-        }
-        else {
-            console.log("===========================");
-            console.log("ERROR logging: user " + username + " committed other action: " + message);
-            console.log(result.err);
-            console.log("===========================");
-        }
+
         if (callback) callback(result);
     });
 }
