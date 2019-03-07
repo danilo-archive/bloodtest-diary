@@ -4,7 +4,7 @@ const calendarController = require("./calendar-controller.js");
 const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
-const dateformat = require("dateformat");
+
 
 
 /**
