@@ -107,7 +107,7 @@ function log(type, username, tableName, entryID, message = undefined, callback =
     }
     message = (message === undefined) ? "NULL" : message;
     let date = new Date();
-    date = dateFormat(date, "yyyymmddHHMMss");
+    date = dateFormat(date, "yyyymmddHHMMss.lll");
 
     let sql = "INSERT INTO ActionLog " + 
         "(username, action_timestamp, action_type, table_affected, entry_affected, additional_info)" +
