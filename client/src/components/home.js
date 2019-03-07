@@ -165,7 +165,6 @@ class Home extends Component {
     onEditTestOpenModal = testId => {
         this.serverConnect.requestTestEditing(testId, token => {
           if (token !== undefined){
-            console.log({token});
             this.setState({openEditTestModal: true, editTestId: testId, editToken: token});
           }
         });     
@@ -225,14 +224,14 @@ class Home extends Component {
             <Modal
                 open={this.state.openEditTestModal}
                 onClose={this.onEditTestCloseModal}
-                showCloseIcon={false}
-                token={this.state.editToken}
+                showCloseIcon={false}              
                 style={modalStyles}
                 center
             >
               <EditTest
                  testId = {this.state.editTestId}
                  closeModal={this.onEditTestCloseModal}
+                 token={this.state.editToken}
               />
             </Modal>
           </div>

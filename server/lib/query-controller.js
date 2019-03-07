@@ -257,13 +257,16 @@ async function selectQueryDatabase(sql)
 async function requestEditing(table, id)
 {
   var data = await databaseController.requestEditing(table,id).then( data => {return data;});
-  var token = data.response.token
-  return token;
+  //var token = data.response.token
+  if (data.status === 'OK') {
+    return data.response.token;
+  }
+  return undefined;
 }
 
 async function updateQueryDatabase(table,id,sql,token)
 {
-  if(token!=undefined)
+  if(token)
   {
     let response = await databaseController.updateQuery(sql, table, id, token)
     if(response.status==="OK"){
