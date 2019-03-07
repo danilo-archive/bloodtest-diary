@@ -48,7 +48,7 @@ module.exports = {
   overdueTestReminderForHospital
 };
 
-
+const dateformat = require('dateformat');
 const mjml2html = require("mjml");
 
 /*
@@ -85,7 +85,7 @@ function overdueTestReminderForHospital(email_info) {
         <mj-section padding-top="30px">
         <mj-column width="100%">
         <mj-text>
-          <p>${patient.patient_name} had a test due on the ${test_date}.</p>
+          <p>${patient.patient_name} had a test due on ${test_date}.</p>
           <p>You will find the relevant information regarding this test underneath:</p>
           <mj-table>
             <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
@@ -253,7 +253,7 @@ function testReminderForHospital(email_info) {
           <mj-section padding-top="30px">
           <mj-column width="100%">
           <mj-text>
-            <p>${patient.patient_name} has a test due on the ${test_date}.</p>
+            <p>${patient.patient_name} has a test due on ${test_date}.</p>
             <p>You will find the relevant information regarding this test underneath:</p>
             <mj-table>
               <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
@@ -349,38 +349,10 @@ function getFooter() {
 |--------------------------------------------------------------------------
 */
 /**
- * Beautify a date object as a readable string of "1st of October, 2020" format
+ * Beautify a date object as a readable string of "1st October 2020" format
  * @param {date} date the date object to be beautified
  * @returns {string} the beautified date
  */
 function beautifyDate(date) {
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
-  let suffix = "th";
-  switch (date.getDate() % 10) {
-    case 1:
-      suffix = "st";
-      break;
-    case 2:
-      suffix = "nd";
-      break;
-    case 3:
-      suffix = "rd";
-      break;
-  }
-  return `${date.getDate()}${suffix} of ${
-    months[date.getMonth()]
-    }, ${date.getFullYear()}`;
+  return dateformat(date, "dS mmmm yyyy")
 }
