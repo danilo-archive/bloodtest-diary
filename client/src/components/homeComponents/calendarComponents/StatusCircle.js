@@ -7,8 +7,8 @@ const combinations = {
 };
 
 export default styled.div`
-  height: 25px;
-  width: 33.5px;
+  min-height: 27px;
+  min-width: 27px;
   margin-left: 7px;
   margin-right: 7px;
   background-color: transparent;

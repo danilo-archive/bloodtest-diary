@@ -10,21 +10,26 @@ const Container = styled.div`
   position: relative;
   background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
 
-  margin-top: 2.5%;
-  margin-bottom: 2.5%;
+  margin-top: 3.5%;
+  margin-bottom: 3.5%;
   margin-left: ${props => (props.isCalendar ? `2.5%` : `0`)};
   margin-right: ${props => (props.isCalendar ? `2.5%` : `0`)};
 
-  padding-top: 1%;
-  padding-bottom: 1%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+
   height: 35px;
-  border: solid 1px rgb(100, 100, 100, 0.2);
+  width: auto;
+  border: solid 1px rgb(100, 100, 100, 0);
   border-radius: 3px;
 
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+
+  //box-shadow: 0 1px 1px rgba(0,0,0,0.16), 0 1px 1px rgba(0,0,0,0.16);
+
 
   z-index: 3;
   & .pill {
@@ -36,6 +41,7 @@ const Container = styled.div`
       ? ``
       : `&:hover {
         border: solid 1px rgb(100, 100, 100, 0.4);
+        font-weight: bold;
     }`}
 
   ${props =>

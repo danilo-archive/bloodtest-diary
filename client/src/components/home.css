@@ -80,7 +80,6 @@ body {
   flex-grow: 1;
   flex-shrink: 1;
 
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 
@@ -145,7 +144,7 @@ body {
   flex-grow: 5;
   flex-shrink: 1;
 
-
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .ongoingWeekly {
@@ -168,21 +167,12 @@ body {
   flex-grow: 1;
   flex-shrink: 2;
 
-
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .divider {
-  background-color: white;
-
-
   padding: 0.5%;
-  padding-left: 1%;
-  padding-right: 0.5%;
-
-  overflow: hidden;
-
   height: auto;
-
 }
 
 
