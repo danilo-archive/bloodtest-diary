@@ -66,7 +66,7 @@ export default class PatientProfile extends React.Component {
                 <PatientSection/>
                 <CarerSection/>
                 <HospitalSection/>
-                <TestSection/>
+                <TestSection tests={[{due_date:"2019-02-02", notes: "Some notes"}]}/>
 
                 <ButtonContainer>
                     <CloseButton>Close</CloseButton>
