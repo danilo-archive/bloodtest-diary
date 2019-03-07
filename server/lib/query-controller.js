@@ -610,6 +610,7 @@ function prepareUpdateSQL(table, object, idProperty)
 **/
 function prepareDeleteSQL(table, idProperty, id)
 {
+  // TODO: add logging in delete
   const sql = `DELETE FROM ${table} WHERE ${idProperty}='${id}' LIMIT 1`;
   return sql;
 }
