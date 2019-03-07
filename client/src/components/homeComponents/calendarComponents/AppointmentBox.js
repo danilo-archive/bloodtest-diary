@@ -9,19 +9,22 @@ const Container = styled.div`
   display: block;
   position: relative;
   background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
-  margin-top: 3.5%;
-  margin-bottom: 3.5%;
+
+  margin-top: 2.5%;
+  margin-bottom: 2.5%;
+  margin-left: ${props => (props.isCalendar ? `2.5%` : `0`)};
+  margin-right: ${props => (props.isCalendar ? `2.5%` : `0`)};
+
   padding-top: 1%;
   padding-bottom: 1%;
   height: 35px;
-  border: solid 0.5px rgb(100, 100, 100, 0.1);
+  border: solid 1px rgb(100, 100, 100, 0.2);
   border-radius: 3px;
 
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  width: auto;
 
   z-index: 3;
   & .pill {
@@ -32,7 +35,7 @@ const Container = styled.div`
     props.tentative
       ? ``
       : `&:hover {
-        border: solid 0.5px rgb(100, 100, 100, 0.5);
+        border: solid 1px rgb(100, 100, 100, 0.4);
     }`}
 
   ${props =>
@@ -85,7 +88,7 @@ export default class AppointmentBox extends React.Component {
       id: this.props.id,
       status: this.props.type,
       name: this.props.name,
-      tentative: this.props.tentative | false
+      tentative: this.props.tentative | false,
      };
     this.serverConnect = getServerConnect();
   }
@@ -107,11 +110,9 @@ export default class AppointmentBox extends React.Component {
     return (
       <Container tentative={tentative}>
         {tentative ? <TimePill status={status}>Tentative</TimePill> : ``}
-        <div className={"status"}>
           <StatusCircle
             type={tentative ? "tentative" : this.formatStatus(this.props.type)}
           />
-        </div>
           <AppointmentInfo name={name} />
           <IconSet onStatusClick={tentative ? () => {} : this.onStatusClick} />
       </Container>
