@@ -139,6 +139,9 @@ describe("Update queries tests", function(){
         const dbController = {
           requestEditing: async function() {
             return {status: "ERR", err:{ type: "Invalid request.", cause: "stubbed error" }}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
           }
         }
         queryController.__set__("databaseController",dbController);
@@ -166,6 +169,10 @@ describe("Update queries tests", function(){
           updateQuery: async function() {
             return {status: "OK", response:{affectedRows:1}}
           },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
+          }
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"completed"});
@@ -181,6 +188,10 @@ describe("Update queries tests", function(){
           updateQuery: async function() {
             return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
           },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
+          }
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"completed"});
