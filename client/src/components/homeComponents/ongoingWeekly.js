@@ -42,7 +42,7 @@ class OngoingWeekly extends React.Component {
 
   render() {
     const { connectDropTarget, hovered, item} = this.props;
-    const backgroundColor = hovered ? "#c0f7ad" : "white";
+    const backgroundColor = hovered ? "#dbfffc" : "white";
     return connectDropTarget(
       <div style={{background: backgroundColor}}>
         <Container background={backgroundColor}>
@@ -56,6 +56,7 @@ class OngoingWeekly extends React.Component {
           />
           <ScrollBox style={{background: backgroundColor}}>
             <AppointmentSection
+              background = {backgroundColor}
               type="Appointments"
               appointments={this.props.anytimeAppointments}
               editTest={this.props.editTest}

@@ -4,8 +4,8 @@ import AppointmentBoxDragPreview from './calendarComponents/AppointmentBoxDragPr
 
 // original 32
 function snapToGrid(x, y) {
-	const snappedX = Math.round(x / 32) * 32
-	const snappedY = Math.round(y / 32) * 32
+	const snappedX = Math.round(x / 40) * 40
+	const snappedY = Math.round(y / 40) * 40
 	return [snappedX, snappedY]
 }
 

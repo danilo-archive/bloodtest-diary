@@ -60,7 +60,7 @@ class CalendarDay extends React.Component {
 
   render() {
     const { connectDropTarget, hovered, item} = this.props;
-    const backgroundColor = hovered ? "#c0f7ad" : "white";
+    const backgroundColor = hovered ? "#dbfffc" : "white";
     return connectDropTarget(
       <div style={{height: "inherit"}}>
         <CalendarContainer>
