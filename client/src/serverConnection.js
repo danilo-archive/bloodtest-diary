@@ -8,7 +8,7 @@
  */
 
 import openSocket from 'socket.io-client';
-import {formatDate} from './lib/utils.js';
+import formatDate from 'dateformat';
 
 const host = "http://localhost";
 const port = 3265;
@@ -24,8 +24,14 @@ class ServerConnect {
             this.socket.emit("join", "", this.currentRoom, true);
         });
 
+        this.socket.on("disconnect", () => {
+            console.log("Server lost...");
+            console.log("Trying reconnecting");
+        });
+
         this.onTestAdded = undefined;
         this.onTestStatusChange = undefined;
+        this.onTestEdit = undefined;
 
         this.socket.on("testAdded", newTest => {
             this.onTestAdded(newTest);
@@ -68,6 +74,10 @@ class ServerConnect {
     setOnTestStatusChange(callback){
         console.log("set");
         this.onTestStatusChange = callback;
+    }
+
+    setOnTestEdit(callback){
+        this.onTestEdit = callback;
     }
 
     /**
@@ -161,11 +171,18 @@ class ServerConnect {
      * TODO eventually change name of the callback.
      */
     getTestsInWeek(date, callback, anydayTestsOnly=false){
-        let dateString = formatDate(date);
+        let dateString = formatDate(date, "yyyy-mm-dd");
         this.socket.emit('getTestsInWeek', dateString, anydayTestsOnly);
         this.socket.on('getTestsInWeekResponse', res => {
             console.log(res.response);
             callback(res.response);
+        });
+    }
+
+    requestTestEditing(testId, callback){
+        this.socket.emit("requestTestEditToken", testId);
+        this.socket.on("requestTestEditTokenResponse", token => {
+            callback(token);
         });
     }
 
@@ -176,8 +193,8 @@ class ServerConnect {
     * @param notes Additional info about the test
     * @param frequency The frequency of the test
     */
-    addTest(patientId, date, notes, frequency=""){
-        this.socket.emit("addTest", patientId, date, notes, frequency);
+    addTest(patientId, date, notes, frequency, occurrences){
+        this.socket.emit("addTest", patientId, date, notes, frequency, occurrences);
     }
 
     /**
@@ -187,6 +204,21 @@ class ServerConnect {
     */
     changeTestStatus(testId, newStatus){
         this.socket.emit('testStatusChange', testId, newStatus);
+    }
+
+    /**
+    * Thim method emits a request to edit a test into the database.
+    * Response can be either success or failure.
+    * @param testId The id of the test to be changed.
+    * @param {JSON} newData All the information about the test
+    * @param token The token that grants editing priviledges.
+    * @callback callback Protocol to be called on response
+    */
+    editTest(testId, newData, token, callback){
+        this.socket.emit("editTest", newData, token);
+        this.socket.on("editTestReponse", response => {
+            callback(response)
+        });
     }
 }
 

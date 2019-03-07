@@ -5,10 +5,11 @@ import AppointmentInfo from "./AppointmentInfo";
 import IconSet from "./IconSet";
 import TimePill from "./TimePill";
 import {getServerConnect} from "../../../serverConnection.js";
+import {isPastDate} from "../../../lib/calendar-controller.js";
 const Container = styled.div`
   display: block;
   position: relative;
-  background-color: white;
+  background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
   margin-top: 0;
   margin-bottom: 0;
   margin: 2.5%;
@@ -19,51 +20,78 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   z-index: 3;
-
-  :hover {
-  border: solid 1px rgb(100, 100, 100, 0.2);
+  & .pill {
+    opacity: 0;
+    transition: opacity 150ms;
   }
+  ${props =>
+    props.tentative
+      ? ``
+      : `&:hover {
+    border: solid 1px rgb(100, 100, 100, 0.2);
+    }`}
+
+  ${props =>
+    props.tentative
+      ? `
+      & *{
+        background-color: ${props => (props.tentative ? `grey` : `white`)};
+        color: white!important;
+        transition-property:none;
+
+        &:hover {
+          opacity:1 !important;
+        }
+      }
+      &:hover {
+        & .pill {
+          opacity:1;
+        }
+      }
+
+        `
+      : ``}
 `;
 
 const mapping = {
     "yes":"completed",
-    "no": "late",
-    "in review": "pending"
+    "no": "pending",
+    "in review": "inReview"
 }
 
 export default class AppointmentBox extends React.Component {
+  constructor(props) {
+    super(props);
+    this.serverConnect = getServerConnect();
+  }
 
-  constructor(props){
-      super(props);
-      this.state = {
-        id: this.props.id,
-        status: this.props.type,
-        time: this.props.time,
-        name: this.props.name
-      };
-      this.serverConnect = getServerConnect();
-}
 
-  formatStatus(status){
-      if (status === "completed" || status === "pending" || status === "late"){
+  formatStatus(status, date){
+      if (status === "no" && isPastDate(date)){
+          return "late";
+      }
+      if (status === "completed" || status === "inReview" || status === "late"){
          return status;
      } else {
          return mapping[status];
      }
+
   }
 
   onStatusClick = status => {
-    this.serverConnect.changeTestStatus(this.state.id, status);
+    this.serverConnect.changeTestStatus(this.props.id, status);
   };
 
   render() {
-    const { status, time, name } = this.state;
     return (
-      <Container>
-        {time ? <TimePill status={status}>{time}</TimePill> : ``}
-        <StatusCircle type={this.formatStatus(this.props.type)} />
-        <AppointmentInfo name={name} />
-        <IconSet onStatusClick={this.onStatusClick} />
+      <Container tentative={this.props.tentative}>
+        {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
+
+        <StatusCircle
+          type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
+        />
+        <AppointmentInfo name={this.props.name} />
+        <IconSet onStatusClick={this.props.tentative ? () => {} : this.onStatusClick} />
       </Container>
     );
   }
