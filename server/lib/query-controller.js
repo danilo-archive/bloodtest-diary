@@ -513,7 +513,7 @@ async function updateQueryDatabase(table,id,sql,token)
   {
       const response = await databaseController.updateQuery(sql, table, id, token);
       if(response.status==="OK"){
-        //logger.logUpdate("admin", table, id, "Successful.");
+        logger.logUpdate("admin", table, id, "Successful.");
         return {success:true , response: response.response}
       }
       else{
