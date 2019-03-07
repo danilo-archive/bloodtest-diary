@@ -15,6 +15,7 @@ import {getServerConnect} from "../serverConnection.js";
 import {group, getNumberOfTestsInGroup} from "../lib/overdue-controller.js";
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
+import CustomDragLayer from "./homeComponents/CustomDragLayer.js";
 import './home.css';
 
 class Home extends Component {
@@ -182,11 +183,12 @@ class Home extends Component {
     handleDrop = (section, testId) => {
 
     }
-
+// 
     render() {
       if (this.state.dashboardReady && this.state.overdueReady) {
         return (
           <div className={"dashboard"}>
+            <CustomDragLayer snapToGrid={true} />
             <div className={"overduePatients"}>
               <OverduePatients
                 notificationNumber={getNumberOfTestsInGroup(this.state.overdueTests)}

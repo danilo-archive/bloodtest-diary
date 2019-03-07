@@ -7,6 +7,7 @@ import TimePill from "./TimePill";
 import {getServerConnect} from "../../../serverConnection.js";
 import {isPastDate} from "../../../lib/calendar-controller.js";
 import { DragSource } from "react-dnd";
+import { getEmptyImage } from "react-dnd-html5-backend";
 
 const serverConnect = getServerConnect();
 const Container = styled.div`
@@ -67,7 +68,9 @@ const spec = {
   beginDrag(props){
     return {
       type: 'appointment',
-      testId: props.id
+      test_id: props.id,
+      completed_status: props.type,
+      patient_name: props.name
     };
   },
   endDrag(props, monitor, component){
@@ -96,6 +99,13 @@ class AppointmentBox extends React.Component {
   constructor(props) {
     super(props);
     this.serverConnect = getServerConnect();
+  }
+
+  componentDidMount(){
+    const {connectDragPreview} = this.props;
+    if (connectDragPreview){
+      connectDragPreview(getEmptyImage(), {captureDraggingState: true});
+    }
   }
 
 
