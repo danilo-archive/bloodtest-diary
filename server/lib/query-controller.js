@@ -1,5 +1,5 @@
 const databaseController = require('./db_controller/db-controller.js');
-const utils = require("./utils.js");
+const dateformat = require("dateformat");
 
 /**
  * Get the patient given its patient number
@@ -130,7 +130,8 @@ async function getOverdueGroups() {
 }
 
 async function addTest(patient_no, date, notes, frequency, occurrences = 1) {
-  date = utils.formatDate(new Date(date));
+  date = (date) ? date : new Date();
+  date = dateformat(date, "yyyymmdd");
   let values = ``;
   console.log({ date });
   let sql = `INSERT INTO Test(patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes) VALUES('${patient_no}', ${date}, 'weekly', ${occurrences}, 'no', NULL, '${notes}');`;
