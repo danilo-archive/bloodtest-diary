@@ -47,7 +47,7 @@ let next = 0;
 async function selectQuery(sql) {
     return await nonCriticalQuery(sql, "select", async (result) => {
         const rows_ = [];
-        for (let key in result) {
+        for (const key in result) {
             rows_.push(result[key]);
         }
         return {

@@ -1,6 +1,6 @@
 /**
- * The module responsible for all the queries on the dataabase
- * and processing of the data retrived.
+ * The module responsible for all the queries on the database
+ * and processing of the data retrieved.
  * @module server
  * @author Mateusz Nowak & Jacopo Madaluni
  * @version 0.0.1

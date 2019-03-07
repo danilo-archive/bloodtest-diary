@@ -218,7 +218,7 @@ async function addTest(json)
 * Edit test query
 * @param testId The id of the test to be updated
 * @param {JSON} newInfo All the information of the test (new and old)
-* @param token The token that grants edit priviledges
+* @param token The token that grants edit privileges
 */
 async function editTest(testId, newInfo,token){
     // TODO: first check if it can edit. If edit successful then schedule a new one.
@@ -241,7 +241,7 @@ async function editTest(testId, newInfo,token){
 * @param {JSON} newInfo All the information of the patient to update
 * Obligatory fields in JSON
 * @property patient_no {String}
-* @param token The token that grants edit priviledges
+* @param token The token that grants edit privileges
 */
 async function editPatient(newInfo, token){
     const sql = prepareUpdateSQL("Patient",newInfo,"patient_no");
@@ -253,7 +253,7 @@ async function editPatient(newInfo, token){
 * @param {JSON} newInfo All the information of the hospital to update
 * Obligatory fields in JSON
 * @property hospital_id {String}
-* @param token The token that grants edit priviledges
+* @param token The token that grants edit privileges
 */
 async function editHospital(newInfo, token){
     const sql = prepareUpdateSQL("Hospital",newInfo,"hospital_id");
@@ -264,7 +264,7 @@ async function editHospital(newInfo, token){
 * Edit carer query
 * @param {JSON} newInfo All the information of the carer to update
 * @property carer_id {String}
-* @param token The token that grants edit priviledges
+* @param token The token that grants edit privileges
 */
 async function editCarer(newInfo, token){
     const sql = prepareUpdateSQL("Carer",newInfo,"carer_id");
@@ -363,14 +363,14 @@ async function getTestWithinWeek(date)
 //=====================================
 
 /**
-* Produce multiple gueries on the database to retrieve test within the week
+* Produce multiple queries on the database to retrieve test within the week
 * @param {String} date - date in the week to retrieve tests (format: "YYYY-MM-DD")
 * @return {Array} array of queries to run
 **/
 function getTestsDuringTheWeek(date)
 {
   const weekDay = new Date(date).getDay();
-  let daysInWeek=[]
+  const daysInWeek=[]
   let sql;
   let i = 0;
   while(i<5)
@@ -495,7 +495,7 @@ async function insertQueryDatabase(sql, tableName, id = undefined)
 }
 
 /**
-* Request edititng of an entry in table
+* Request editing of an entry in table
 * @param {String} table - Table to edit
 * @param {String} id - id to edit
 * @return {String} token
@@ -550,7 +550,7 @@ async function updateQueryDatabase(table,id,sql,token)
 }
 
 /**
-* Prapare INSERT query on the database
+* Prepare INSERT query on the database
 * @param {String} table - Table in which to insert an entry
 * @param {JSON} object -  JSON, which is being entered
 * @return {String} SQL query
@@ -574,10 +574,10 @@ function prepareInsertSQL(table,object)
 }
 
 /**
-* Prapare UPDATE query on the database
+* Prepare UPDATE query on the database
 * @param {String} table - Table in which to insert an entry
 * @param {JSON} object -  JSON, which is being entered
-* @param {String} idProperty - property, that the entry can be idenfied with
+* @param {String} idProperty - property, that the entry can be identified with
 * @return {String} SQL query
 **/
 function prepareUpdateSQL(table, object, idProperty)
@@ -602,9 +602,9 @@ function prepareUpdateSQL(table, object, idProperty)
 }
 
 /**
-* Prapare UPDATE query on the database
+* Prepare UPDATE query on the database
 * @param {String} table - Table in which to insert an entry
-* @param {String} idProperty - property, that the entry can be idenfied with
+* @param {String} idProperty - property, that the entry can be identified with
 * @param {String} id - value of idProperty
 * @return {String} SQL query
 **/

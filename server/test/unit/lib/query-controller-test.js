@@ -8,6 +8,9 @@ chai.use(sinonChai);
 
 const queryController = rewire("../../../lib/query-controller");
 
+const logger = require('./../../../lib/action-logger');
+logger.disableConsoleOutput(); // for a cleaner output
+
 describe("Select queries tests", function(){
   context("Get All patients", function(){
     test(queryController.getAllPatients);
@@ -156,7 +159,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"ERRROR"});
+        const response = await spy({testId:"2000",newStatus:"ERROR"});
         response.success.should.equal(false);
         response.response.should.equal("NO SUCH UPDATE");
         spy.calledOnce.should.equal(true);
