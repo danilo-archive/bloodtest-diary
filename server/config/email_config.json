@@ -1,0 +1,9 @@
+{
+    "transporter": {
+        "service": "Yahoo",
+        "auth": {
+            "user": "danilodelbusso@yahoo.com",
+            "pass": "jJ825&j9yBRA"
+        }
+    }
+}

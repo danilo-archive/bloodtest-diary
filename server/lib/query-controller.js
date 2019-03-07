@@ -8,6 +8,42 @@ const dateformat = require('dateformat');
 // TODO: REPLACE ALL "admin" WITH ACTUAL USERNAMES IN ACTION LOGGING!
 
 /**
+ * Get the patient given its patient number
+ * @param {string} patient_no the patient number
+ */
+async function getPatient(patient_no) {
+  const sql = `SELECT * FROM Patient WHERE patient_no = '${patient_no}';`
+  return await selectQueryDatabase(sql);
+}
+
+/**
+ * Get the carer given its carer id
+ * @param {string} carerID the carer id
+ */
+async function getCarer(carerID) {
+  const sql = `SELECT * FROM Carer WHERE carer_id = '${carerID}';`
+  return await selectQueryDatabase(sql);
+}
+
+/**
+ * Get the hospital given its hospital id
+ * @param {string} hospital_id the hospital id
+ */
+async function getHospital(hospital_id) {
+  const sql = `SELECT * FROM Hospital WHERE hospital_id = '${hospital_id}';`
+  return await selectQueryDatabase(sql);
+}
+
+/**
+ * Get the test given its test id
+ * @param {string} test_id the test id
+ */
+async function getTest(test_id) {
+  const sql = `SELECT * FROM Test WHERE test_id = '${test_id}';`
+  return await selectQueryDatabase(sql);
+}
+
+/**
 * Get all the patients from the database
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
@@ -436,16 +472,14 @@ function checkMultipleQueriesStatus(queries)
     if(query.status==="OK"){
       data.push(query.response.rows)
     }
-    else
-    {
+    else {
       error = true;
     }
   })
-  if(error)
-  {
-    return {success:false, response:"One query failed"};
+  if (error) {
+    return { success: false, response: "One query failed" };
   }
-  return {success:true, response:data};
+  return { success: true, response: data };
 }
 
 /**
@@ -460,8 +494,8 @@ async function selectQueryDatabase(sql)
       const data = queryResponse.response.rows;
       return {success:true, response:data}
     }
-    else{
-      return {success:false, response:queryResponse.err}
+    else {
+      return { success: false, response: queryResponse.err }
     }
   });
   return response;
@@ -616,6 +650,10 @@ function prepareDeleteSQL(table, idProperty, id)
 }
 
 module.exports = {
+    getPatient,
+    getTest,
+    getHospital,
+    getCarer,
     getOverdueTestsExtended,
     getOverdueGroups,
     getUser,
