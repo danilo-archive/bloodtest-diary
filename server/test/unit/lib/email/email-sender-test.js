@@ -213,7 +213,6 @@ describe("Test getEmailInfo method with patient email", function () {
 });
 
 
-
 describe("Test sendEmails method", function () {
     beforeEach(function () {
         this.sinon.stub(console, 'error');
@@ -316,7 +315,6 @@ const fakeGetQuery = async function (resultID) {
     };
     return result;
 }
-
 
 
 /**
@@ -434,8 +432,6 @@ const fakeGetQueryNoHospital = async function (resultID) {
     };
     return result;
 }
-
-
 
 /**
  * A fake get query to use for stubs for replacing queries inside the query-controller module.

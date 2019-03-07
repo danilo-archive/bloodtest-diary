@@ -46,8 +46,8 @@ let next = 0;
  */
 async function selectQuery(sql) {
     return await nonCriticalQuery(sql, "select", async (result) => {
-        let rows_ = [];
-        for (let key in result) {
+        const rows_ = [];
+        for (const key in result) {
             rows_.push(result[key]);
         }
         return {
@@ -82,7 +82,7 @@ async function insertQuery(sql) {
  * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
  */
 async function deleteQuery(sql, entryTable, entryID) {
-    let waitFor = next;
+    const waitFor = next;
     next++;
     while (waitFor != current) {
         // waiting for the lock...
@@ -141,7 +141,7 @@ async function deleteQuery(sql, entryTable, entryID) {
  * @returns {Promise<JSON>} JSON object that contains response data or error message, if the query was unsuccessful.
  */
 async function updateQuery(sql, entryTable, entryID, token) {
-    let waitFor = next;
+    const waitFor = next;
     next++;
     while (waitFor != current) {
         // waiting for the lock...
@@ -216,7 +216,7 @@ async function updateQuery(sql, entryTable, entryID, token) {
  * @returns {Promise<JSON>} Response containing the valid token, or error message.
  */
 async function requestEditing(entryTable, entryID) {
-    let waitFor = next;
+    const waitFor = next;
     next++;
     while (waitFor != current) {
         // waiting for the lock...
@@ -263,13 +263,13 @@ async function requestEditing(entryTable, entryID) {
 
     // entry is not being edited, generate token, store it and return it
     const token_ = tokenGenerator.generateToken();
-    let nowDate = new Date();
+    const nowDate = new Date();
     nowDate.setMinutes(nowDate.getMinutes() + TOKEN_VALIDITY_MINUTES);
     const expires = dateFormat(nowDate, "yyyymmddHHMMss");
     const insertQuery = mysql.format("INSERT INTO TokenControl VALUES (?, ?, ?, ?)", 
                                         [token_, entryTable, entryID, expires]);
 
-    response = await getResult(insertQuery, database, (result) => {
+    response = await getResult(insertQuery, database, () => {
         return {
             token: token_,
             expires: dateFormat(nowDate, "yyyy-mm-dd HH:MM:ss")
@@ -303,19 +303,19 @@ async function refreshToken(entryTable, entryID, token) {
     .then(async (result) => {
         if (result) {
             // Token is valid. Update it.
-            let sql = mysql.format("DELETE FROM TokenControl WHERE token = ?", [token]); 
+            const sql = mysql.format("DELETE FROM TokenControl WHERE token = ?", [token]); 
             await getResult(sql, database, (result) => {
                 return result;
             });
 
             const token_ = tokenGenerator.generateToken();
-            let nowDate = new Date();
+            const nowDate = new Date();
             nowDate.setMinutes(nowDate.getMinutes() + TOKEN_VALIDITY_MINUTES);
             const expires = dateFormat(nowDate, "yyyymmddHHMMss");
             const insertQuery = mysql.format("INSERT INTO TokenControl VALUES (?, ?, ?, ?)", 
                                                 [token_, entryTable, entryID, expires]);
 
-            response = await getResult(insertQuery, database, (result) => {
+            response = await getResult(insertQuery, database, () => {
                 return {
                     token: token_,
                     expires: dateFormat(nowDate, "yyyy-mm-dd HH:MM:ss")
@@ -351,7 +351,7 @@ async function cancelEditing(entryTable, entryID, token) {
     .then(async (result) => {
         if (result) {
             // Token is valid. Delete it.
-            let sql = mysql.format("DELETE FROM TokenControl WHERE token = ?", [token]); 
+            const sql = mysql.format("DELETE FROM TokenControl WHERE token = ?", [token]); 
             await getResult(sql, database, (result) => {
                 return result;
             });
@@ -488,7 +488,7 @@ async function tokenControlEntryExists(database, entryTable, entryID, token) {
 
     let tokenQuery = "SELECT * FROM TokenControl "
     tokenQuery += "WHERE table_name = ? AND table_key = ?";
-    let options = [entryTable, entryID];
+    const options = [entryTable, entryID];
     if (token !== undefined) {
         tokenQuery += " AND token = ?";
         options.push(token);
@@ -497,13 +497,13 @@ async function tokenControlEntryExists(database, entryTable, entryID, token) {
 
     const queryResult = await getResult(tokenQuery, database, async (result) => {
         if (result.length == 1) {
-            let expires = new Date(result[0].expiration);
+            const expires = new Date(result[0].expiration);
             if ((expires - new Date()) <= 0) {
                 // Token has expired.
                 
                 let delQuery = "DELETE FROM TokenControl "
                 delQuery += "WHERE table_name = ? AND table_key = ?";
-                let options = [entryTable, entryID];
+                const options = [entryTable, entryID];
                 if (token !== undefined) {
                     delQuery += " AND token = ?";
                     options.push(token);
@@ -554,7 +554,6 @@ async function isValidEntry(database, entryTable, entryID) {
         case "Carer": primaryKey = "carer_id"; break;
         case "Test": primaryKey = "test_id"; break;
         case "User": primaryKey = "username"; break;
-        case "ActionLog": primaryKey = "action_id"; break;
     }
     if (primaryKey === undefined) {
         return false;
@@ -562,7 +561,7 @@ async function isValidEntry(database, entryTable, entryID) {
     
     let sql = "SELECT * FROM " + entryTable + " WHERE " + primaryKey + " = ?";
     sql = mysql.format(sql, [entryID]);
-    let response = await getResult(sql, database, (result) => {
+    const response = await getResult(sql, database, (result) => {
         if (result.length > 0) {
             return true;
         }
