@@ -2,6 +2,10 @@ const databaseController = require('./db_controller/db-controller.js');
 const authenticator = require("./authenticator.js");
 const calendarController = require("./calendar-controller.js");
 const _ = require("lodash");
+const logger = require('./action-logger');
+const dateformat = require('dateformat');
+
+// TODO: REPLACE ALL "admin" WITH ACTUAL USERNAMES IN ACTION LOGGING!
 
 /**
 * Get all the patients from the database
@@ -25,7 +29,7 @@ async function updatePassword(json)
 {
   const response = await getUser(json.username);
   const token = await requestEditing("User",json.username)
-  if (!(response.response instanceof Array)){
+  if (!response.success){
     return response;
   }
   const user = response.response[0];
@@ -142,6 +146,7 @@ async function getSortedOverdueWeeks()
   }
   return {success: true , response: classedTests};
 }
+
 /**
 * Get all the overdue tests from the database separated within groups
 * @return {Array of JSON} result of the query - [{class:String test:Array}]
@@ -192,7 +197,7 @@ async function addUser(json)
   //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
   const hash = authenticator.produceHash(json.hashed_password,iterations,salt);
   const sql = `INSERT INTO User VALUES(${json.username},${hash},${salt},${iterations},${json.email});`;
-  return await insertQueryDatabase(sql);
+  return await insertQueryDatabase(sql, "User", json.username);
 }
 
 /**
@@ -206,30 +211,37 @@ async function addUser(json)
 async function addTest(json)
 {
   const sql = prepareInsertSQL('Test',json);
-  return await insertQueryDatabase(sql);
+  return await insertQueryDatabase(sql, "Test");
 }
 
 /**
 * Edit test query
 * @param testId The id of the test to be updated
 * @param {JSON} newInfo All the information of the test (new and old)
-* @param token The token that grants edit priviledges
+* @param token The token that grants edit privileges
 */
 async function editTest(testId, newInfo,token){
-    if(newInfo.completed_status=="yes"||newInfo.completed_status=="in review")
+    // TODO: first check if it can edit. If edit successful then schedule a new one.
+    let scheduleNew = false;
+    if(newInfo.completed_status == "yes" || newInfo.completed_status == "in review")
     {
-      newInfo['completed_date'] = new Date().toISOString().substring(0,10);
-      await scheduleNextTest(testId,newInfo);
+      scheduleNew = true;
+      newInfo['completed_date'] = dateformat(new Date(), "yyyymmdd");
     }
     const sql = prepareUpdateSQL("Test",newInfo,"test_id");
-    return await updateQueryDatabase("Test",testId,sql,token);
+    const res = await updateQueryDatabase("Test",testId,sql,token);
+
+    if (res.success && scheduleNew) {
+      await scheduleNextTest(testId,newInfo);
+    }
+    return res;
 }
 /**
 * Edit patient query
 * @param {JSON} newInfo All the information of the patient to update
 * Obligatory fields in JSON
 * @property patient_no {String}
-* @param token The token that grants edit priviledges
+* @param token The token that grants edit privileges
 */
 async function editPatient(newInfo, token){
     const sql = prepareUpdateSQL("Patient",newInfo,"patient_no");
@@ -241,7 +253,7 @@ async function editPatient(newInfo, token){
 * @param {JSON} newInfo All the information of the hospital to update
 * Obligatory fields in JSON
 * @property hospital_id {String}
-* @param token The token that grants edit priviledges
+* @param token The token that grants edit privileges
 */
 async function editHospital(newInfo, token){
     const sql = prepareUpdateSQL("Hospital",newInfo,"hospital_id");
@@ -252,7 +264,7 @@ async function editHospital(newInfo, token){
 * Edit carer query
 * @param {JSON} newInfo All the information of the carer to update
 * @property carer_id {String}
-* @param token The token that grants edit priviledges
+* @param token The token that grants edit privileges
 */
 async function editCarer(newInfo, token){
     const sql = prepareUpdateSQL("Carer",newInfo,"carer_id");
@@ -273,7 +285,7 @@ async function editCarer(newInfo, token){
 async function addPatient(json)
 {
   const sql = prepareInsertSQL('Patient',json);
-  return await insertQueryDatabase(sql);
+  return await insertQueryDatabase(sql, "Patient", json.patient_no);
 }
 
 /**
@@ -286,7 +298,7 @@ async function addPatient(json)
 async function addHospital(json)
 {
   const sql = prepareInsertSQL('Hospital',json);
-  return await insertQueryDatabase(sql);
+  return await insertQueryDatabase(sql, "Hospital");
 }
 
 /**
@@ -299,7 +311,7 @@ async function addHospital(json)
 async function addCarer(json)
 {
   const sql = prepareInsertSQL('Carer',json);
-  return await insertQueryDatabase(sql);
+  return await insertQueryDatabase(sql, "Carer");
 }
 
 
@@ -315,15 +327,22 @@ async function changeTestStatus(test)
   const token = await requestEditing("Test",test.testId);
   let status;
   let date;
+  // TODO: first check if it can edit. If edit successful then schedule a new one.
+  let scheduleNew = false;
   switch(test.newStatus)
   {
-    case "completed": {status = "yes"; date=`CURDATE()`; await scheduleNextTest(test.testId); break;}
+    case "completed": {status = "yes"; date=`CURDATE()`;scheduleNew = true; break;}
     case "late": {status = "no"; date=`NULL`; break;}
-    case "inReview" : {status = "in review"; date=`CURDATE()`; await scheduleNextTest(test.testId); break;}
+    case "inReview" : {status = "in review"; date=`CURDATE()`; scheduleNew = true; break;}
     default: return {success:false, response: "NO SUCH UPDATE"}
   }
   const sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${test.testId};`;
-  return await updateQueryDatabase("Test",test.testId,sql,token);
+  const res = await updateQueryDatabase("Test",test.testId,sql,token);
+
+  if (res.success && scheduleNew) {
+    await scheduleNextTest(test.testId);
+  }
+  return res;
 }
 
 /**
@@ -344,14 +363,14 @@ async function getTestWithinWeek(date)
 //=====================================
 
 /**
-* Produce multiple gueries on the database to retrieve test within the week
+* Produce multiple queries on the database to retrieve test within the week
 * @param {String} date - date in the week to retrieve tests (format: "YYYY-MM-DD")
 * @return {Array} array of queries to run
 **/
 function getTestsDuringTheWeek(date)
 {
   const weekDay = new Date(date).getDay();
-  let daysInWeek=[]
+  const daysInWeek=[]
   let sql;
   let i = 0;
   while(i<5)
@@ -372,11 +391,10 @@ function getTestsDuringTheWeek(date)
 * @param frequency {String} - frequency of the test as stored in database
 * @returns {String} - next due date in "YYYY-MM-DD" format
 **/
-function getNextDueDate(frequency)
+function getNextDueDate(frequency, completed_date)
 {
-  const dateInZoneFormat = calendarController.getNextDate(frequency,new Date());
-  const dateInISO = (new Date(dateInZoneFormat)).toISOString()
-  return dateInISO.substring(0,10)
+  const dateInZoneFormat = calendarController.getNextDate(frequency,new Date(completed_date));
+  return dateformat(new Date(dateInZoneFormat), "yyyymmdd")
 }
 
 /**
@@ -390,28 +408,29 @@ async function scheduleNextTest(testId,newInfo={})
 {
   const response = await getTest(testId);
   const test = response.response[0];
-  if(test.occurrences > 0){
+  // TODO: needs to be more than 1. if there is only one occurrence it does not need to be repeated.
+  // also frequency needs to be defined (not null)
+  if(test.frequency !== null && test.occurrences > 1){ 
     const newTest = {
-      patient_no: (typeof newInfo.patient_no == 'undefined') ? test.patient_no : newInfo.patient_no,
-      frequency:(typeof newInfo.frequency == 'undefined') ? test.frequency : newInfo.frequency,
-      due_date: (typeof newInfo.due_date == 'undefined') ? getNextDueDate(test.frequency) : newInfo.due_date,
-      occurrences: (typeof newInfo.occurrences == 'undefined') ? (test.occurrences-1) : (newInfo.occurrences-1),
-      notes: (typeof newInfo.notes == 'undefined') ? test.notes : newInfo.notes
+      patient_no: (!newInfo.patient_no) ? test.patient_no : newInfo.patient_no,
+      frequency:(!newInfo.frequency) ? test.frequency : newInfo.frequency,
+      due_date: (!newInfo.due_date) ? getNextDueDate(test.frequency, test.completed_date) : newInfo.due_date, // TODO: use completed_date that is stored in the DB instead of creating a new one on the go
+      occurrences: (!newInfo.occurrences) ? (test.occurrences-1) : (newInfo.occurrences), // TODO: newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
+      notes: (!newInfo.notes) ? test.notes : newInfo.notes
     }
-    const res = await addTest(newTest);
-    return res;
+    return await addTest(newTest);
   }
   return {success: true, reply: "No new tests"};
 }
 
 /**
-* Run multiple gueries on the database
+* Run multiple queries on the database
 * @param {Array} queries - array of queries to run
 * @return {JSON} result of the query - {success:true/false response:Array/String}
 **/
 function checkMultipleQueriesStatus(queries)
 {
-  let data = [];
+  const data = [];
   let error = false;
   queries.forEach(query=>{
     if(query.status==="OK"){
@@ -451,20 +470,32 @@ async function selectQueryDatabase(sql)
 /**
 * Run INSERT query on the database
 * @param {String} sql - SQL query
+* @param {string} tableName Name of the table which we are inserting into.
+* @param {string} id Specify new entry's ID, unless the ID is auto generated.
 * @return {JSON} result of the query - {success:Boolean}
 **/
-async function insertQueryDatabase(sql)
+async function insertQueryDatabase(sql, tableName, id = undefined)
 {
   const response = await databaseController.insertQuery(sql);
   if (response.status == "OK"){
-      return {success: true};
+      id = (id === undefined) ? response.response.insertId : id;
+      logger.logInsert("admin", tableName, id, "Successful.");
+      return {success: true, insertId: id};
   }else {
+      if (response.err.type === "SQL Error") {
+        logger.logInsert("admin", tableName, "-1", 
+        "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. SQL Error message: START>>>" + response.err.sqlMessage + "<<<END.");
+      }
+      else {
+        logger.logInsert("admin", tableName, "-1", 
+        "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. Invalid request error message: START>>>" + response.err.cause + "<<<END.");
+      }
       return {success: false};
   }
 }
 
 /**
-* Request edititng of an entry in table
+* Request editing of an entry in table
 * @param {String} table - Table to edit
 * @param {String} id - id to edit
 * @return {String} token
@@ -472,10 +503,17 @@ async function insertQueryDatabase(sql)
 async function requestEditing(table, id)
 {
   const data = await databaseController.requestEditing(table,id).then( data => {return data;});
-  let token;
-  if(typeof data.response != 'undefined'){
-    token = data.response.token;}
-  return token;
+
+  // TODO: return token + expiration
+  if (data.status == "OK"){
+    logger.logOther("admin", table, id, "Request for editing was approved.");
+    return data.response.token;
+  }else {
+    
+      logger.logOther("admin", table, id, 
+        "Request for editing was rejected with message: START>>>" + data.err.cause + "<<<END.");
+        return undefined;
+  }
 }
 
 /**
@@ -487,15 +525,24 @@ async function requestEditing(table, id)
 **/
 async function updateQueryDatabase(table,id,sql,token)
 {
-  if(typeof token!='undefined')
+  if(token)
   {
-    const response = await databaseController.updateQuery(sql, table, id, token)
-    if(response.status==="OK"){
-      return {success:true , response: response.response}
-    }
-    else{
-      return {success:false , response: response.err}
-    }
+      const response = await databaseController.updateQuery(sql, table, id, token);
+      if(response.status === "OK"){
+        logger.logUpdate("admin", table, id, "Successful.");
+        return {success:true , response: response.response}
+      }
+      else{
+        if (response.err.type === "SQL Error") {
+          logger.logUpdate("admin", table, id, 
+          "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. SQL Error message: START>>>" + response.err.sqlMessage + "<<<END.");
+        }
+        else {
+          logger.logUpdate("admin", table, id, 
+          "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. Invalid request error message: START>>>" + response.err.cause + "<<<END.");
+        }
+        return {success:false , response: response.err}
+      }
   }
   else {
     return {success:false, response: {problem:"Token in use"} };
@@ -503,7 +550,7 @@ async function updateQueryDatabase(table,id,sql,token)
 }
 
 /**
-* Prapare INSERT query on the database
+* Prepare INSERT query on the database
 * @param {String} table - Table in which to insert an entry
 * @param {JSON} object -  JSON, which is being entered
 * @return {String} SQL query
@@ -527,10 +574,10 @@ function prepareInsertSQL(table,object)
 }
 
 /**
-* Prapare UPDATE query on the database
+* Prepare UPDATE query on the database
 * @param {String} table - Table in which to insert an entry
 * @param {JSON} object -  JSON, which is being entered
-* @param {String} idProperty - property, that the entry can be idenfied with
+* @param {String} idProperty - property, that the entry can be identified with
 * @return {String} SQL query
 **/
 function prepareUpdateSQL(table, object, idProperty)
@@ -555,14 +602,15 @@ function prepareUpdateSQL(table, object, idProperty)
 }
 
 /**
-* Prapare UPDATE query on the database
+* Prepare UPDATE query on the database
 * @param {String} table - Table in which to insert an entry
-* @param {String} idProperty - property, that the entry can be idenfied with
+* @param {String} idProperty - property, that the entry can be identified with
 * @param {String} id - value of idProperty
 * @return {String} SQL query
 **/
 function prepareDeleteSQL(table, idProperty, id)
 {
+  // TODO: add logging in delete
   const sql = `DELETE FROM ${table} WHERE ${idProperty}='${id}' LIMIT 1`;
   return sql;
 }

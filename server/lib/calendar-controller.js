@@ -8,7 +8,7 @@ const Holidays = require('date-holidays');
 const hd = new Holidays('GB');
 
 function isPastDate(date){
-    let today = new Date();
+    const today = new Date();
     date = new Date(date);
     if (date.getFullYear() < today.getFullYear()){
         return true;
@@ -25,16 +25,16 @@ function isPastDate(date){
  * @returns {Date} relative monday date
  */
 function getMondayOfWeek(date){
-    let toReturn = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const toReturn = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     toReturn.setDate(toReturn.getDate() - toReturn.getDay() + 1);
     return toReturn;
 }
 
 function getCurrentWeek(){
-    let monday = new Date();
+    const monday = new Date();
     monday.setHours(0, 0, 0, 0);
     monday.setDate(monday.getDate() - monday.getDay() + 1);
-    let restOfWeek = getNextDates("1-D:4", monday);
+    const restOfWeek = getNextDates("1-D:4", monday);
     console.log("controller:");
     console.log([monday].concat(restOfWeek));
     return [monday].concat(restOfWeek);
@@ -46,11 +46,11 @@ function getCurrentWeek(){
  * @returns {List[Date]} The week after from monday to friday
  */
 function getNextWeek(week){
-    let monday = week[0];
-    let tuesday = week[1];
-    let wednesday = week[2];
-    let thursday = week[3];
-    let friday = week[4];
+    const monday = week[0];
+    const tuesday = week[1];
+    const wednesday = week[2];
+    const thursday = week[3];
+    const friday = week[4];
     monday.setDate(monday.getDate() + 7);
     tuesday.setDate(tuesday.getDate() + 7);
     wednesday.setDate(wednesday.getDate() + 7);
@@ -65,11 +65,11 @@ function getNextWeek(week){
  * @returns {List[Date]} The week before from monday to friday
  */
 function getPreviousWeek(week){
-    let monday = week[0];
-    let tuesday = week[1];
-    let wednesday = week[2];
-    let thursday = week[3];
-    let friday = week[4];
+    const monday = week[0];
+    const tuesday = week[1];
+    const wednesday = week[2];
+    const thursday = week[3];
+    const friday = week[4];
     monday.setDate(monday.getDate() - 7);
     tuesday.setDate(tuesday.getDate() - 7);
     wednesday.setDate(wednesday.getDate() - 7);
