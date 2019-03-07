@@ -135,10 +135,10 @@ describe("Update queries tests", function(){
       beforeEach(()=>{
           spy = sinon.spy(queryController.changeTestStatus);
       })
-      it("Fail, as sombody is editing (STUBBED)", async function(){
+      it("Fail, as somebody is editing (STUBBED)", async function(){
         const dbController = {
           requestEditing: async function() {
-            return {status: "ERR", response:{}}
+            return {status: "ERR", err:{ type: "Invalid request.", cause: "stubbed error" }}
           }
         }
         queryController.__set__("databaseController",dbController);
@@ -149,7 +149,7 @@ describe("Update queries tests", function(){
       it("Reject random update (STUBBED)", async function(){
         const dbController = {
           requestEditing: async function() {
-            return {status: "Ok", response:{ token:"30000" }}
+            return {status: "OK", response:{ token:"30000" }}
           }
         }
         queryController.__set__("databaseController",dbController);
@@ -179,13 +179,13 @@ describe("Update queries tests", function(){
             return {status: "OK", response:{token:"2000"}}
           },
           updateQuery: async function() {
-            return {status: "ERR", err:"Error here"}
+            return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
           },
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"completed"});
         response.success.should.equal(false);
-        response.response.should.equal("Error here");
+        response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
       })
       it("Accept late update (STUBBED)", async function(){
@@ -209,13 +209,13 @@ describe("Update queries tests", function(){
             return {status: "OK", response:{token:"2000"}}
           },
           updateQuery: async function() {
-            return {status: "ERR", err:"Error here"}
+            return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
           },
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"late"});
         response.success.should.equal(false);
-        response.response.should.equal("Error here");
+        response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
       })
     })
@@ -248,7 +248,7 @@ describe("Update queries tests", function(){
             return {status:"OK", response:{ rows:[{username:"admin",iterations:1000,salt:"30000"}]}}
           },
           requestEditing: async function() {
-            return {status:"ERR", response:"NO TOKEN"}
+            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
           },
           updateQuery: async function() {
             return {status: "OK", response:{affectedRows:1}}
@@ -265,7 +265,7 @@ describe("Update queries tests", function(){
             return {status:"OK", response:{ rows:[]}}
           },
           requestEditing: async function() {
-            return {status:"ERR", response:"NO TOKEN"}
+            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
           },
           updateQuery: async function() {
             return {status: "OK", response:{affectedRows:1}}
@@ -297,7 +297,7 @@ describe("Update queries tests", function(){
       {
         const dbController = {
           selectQuery: async function() {
-            return {status:"ERR", response:"ERROR"}
+            return {status:"ERR", err: { type: "SQL error", sqlMessage: "stubbed error"}}
           },
           requestEditing: async function() {
             return {status: "OK", response:{token:"2000"}}
@@ -307,7 +307,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy("admin","373723172173732");
+        const response = await spy({username:"admin",hashed_password:"373723172173732"});
         response.success.should.equal(false);
       })
     })
@@ -459,7 +459,7 @@ function setFaultyInsert()
 {
   const dbController = {
     insertQuery: async function() {
-      return {status:"ERR"}
+      return {status:"ERR", err: { type: "SQL error", sqlMessage: "stubbed SQL Message"}}
     }
   }
   queryController.__set__("databaseController",dbController);
@@ -469,7 +469,7 @@ function setPositiveInsert()
 {
   const dbController = {
     insertQuery: async function() {
-      return {status:"OK"}
+      return {status:"OK", response: { insertId: "test_insert_id"}}
     }
   }
   queryController.__set__("databaseController",dbController);
