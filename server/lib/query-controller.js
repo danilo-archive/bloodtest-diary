@@ -638,6 +638,10 @@ function prepareDeleteSQL(table, idProperty, id)
 }
 
 module.exports = {
+    getPatient,
+    getTest,
+    getHospital,
+    getCarer,
     getOverdueTestsExtended,
     getCarer,
     getPatient,
