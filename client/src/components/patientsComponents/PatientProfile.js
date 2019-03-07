@@ -8,8 +8,6 @@ import TestSection from "./profileSections/TestSection";
 
 
 const Container = styled.div`
-  width: 80%;
-  height: 50%;
 `;
 
 const ButtonContainer = styled.div`
@@ -28,7 +26,7 @@ const CloseButton = styled.button`
   margin-left: 35%;
   
   min-height: 40px;
-  min-width: 91px;
+  min-width: 100px;
   
   :hover {
     background: #e7e7e7;
@@ -49,7 +47,7 @@ const SaveButton = styled.button`
   margin-right: 35%;
   
   min-height: 40px;
-  min-width: 91px;
+  min-width: 100px;
   
   :hover {
     background-color: #f44336;

@@ -1,7 +1,13 @@
 import React from "react";
+import styled from 'styled-components';
+
 import "./patientsTable.css";
 import PatientRow from "./patientRow";
 import FilterCell from "./filterCell";
+
+const Scrollable = styled.div`
+   
+`;
 
 class PatientsTable extends React.Component {
 
@@ -50,38 +56,38 @@ class PatientsTable extends React.Component {
         //TODO : change class names
         return (
             <table className="table-fill">
-                <thead>
-                    <tr>
-                        <th className={"text-left"}>Patient number</th>
-                        <th className={"text-left"}>Patient name</th>
-                        <th className={"text-left"}>Patient surname</th>
-                        <th className={"text-left"}>Patient email</th>
-                        <th className={"text-left"}>Patient phone</th>
+                <thead className={"table-head"}>
+                    <tr className={"table-row"}>
+                        <th>Patient number</th>
+                        <th>Patient name</th>
+                        <th>Patient surname</th>
+                        <th>Patient email</th>
+                        <th>Patient phone</th>
                     </tr>
-                </thead>
-                <tbody className={"table-hover"}>
                     <tr>
                         <FilterCell
                             onChange={value => this.number_filter(value)}
-                            placeholder={"Search for patient numbers ..."}
+                            placeholder={"Search numbers ..."}
                         />
                         <FilterCell
                             onChange={value => this.name_filter(value)}
-                            placeholder={"Search for patient names ..."}
+                            placeholder={"Search names ..."}
                         />
                         <FilterCell
                             onChange={value => this.surname_filter(value)}
-                            placeholder={"Search for patients surnames ..."}
+                            placeholder={"Search surnames ..."}
                         />
                         <FilterCell
                             onChange={value => this.email_filter(value)}
-                            placeholder={"Search for patients emails ..."}
+                            placeholder={"Search emails ..."}
                         />
                         <FilterCell
                             onChange={value => this.phone_filter(value)}
-                            placeholder={"Search for patients phones ..."}
+                            placeholder={"Search phones ..."}
                         />
                     </tr>
+                </thead>
+                <thead className={"table-hover"}>
                     {this.allPatients.map(patient => (
                         <PatientRow
                             patient_no = {patient.patient_no}
@@ -91,7 +97,7 @@ class PatientsTable extends React.Component {
                             patient_phone = {patient.patient_phone}
                         />
                     ))}
-                </tbody>
+                </thead>
             </table>
         );
     }

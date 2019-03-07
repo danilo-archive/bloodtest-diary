@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const Cell = styled.td`
+const Cell = styled.th`
   padding: 10px;
   
   :hover{

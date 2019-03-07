@@ -1,11 +1,56 @@
 import React, { Component } from 'react';
+import styled from 'styled-components'
 
 import Navbar from "./homeComponents/navbar";
-import './patients.css';
-import PatientsTable from "./patientsComponents/patientsTable";
+import PatientsTable from "./patientsComponents/PatientsTable";
 import {getServerConnect} from "../serverConnection.js";
-import PatientProfile from "./patientsComponents/patientProfile";
+import PatientProfile from "./patientsComponents/PatientProfile";
 
+
+const Container = styled.div`
+  border: blue 0 solid;
+    height: calc(100vh - 65px);
+    width: auto;
+    position: relative;
+    top: 30px;
+    margin: 1% 1% 1% 1%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+
+`;
+
+const NavbarContainer = styled.div`
+    border: #839595 3px solid;
+    border-radius: 10px;
+    margin-left: 0.5%;
+    margin-bottom: 9px;
+
+    max-height: 225px;
+    min-height: 200px;
+    width: auto;
+
+    flex-grow: 1;
+    flex-shrink: 1;
+
+    overflow: scroll;
+`;
+
+const TableContainer = styled.div`
+    color: #ffffff;
+    border: green 0 solid;
+    height: auto;
+    width: auto;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch ;
+
+    flex-grow: 1;
+    flex-shrink: 1;
+`;
 
 class Patients extends Component {
 
@@ -39,19 +84,19 @@ class Patients extends Component {
     render() {
         if (this.state.allPatientsReady) {
             return (
-                <div className={"patients"}>
-                    <div className={"navbar"}>
+                <Container>
+                    <NavbarContainer>
                         <Navbar
                             onHomeClick={this.onHomeClick}
                         />
-                    </div>
-                    <PatientProfile/>
-                    {/*<div className={"patientsTable"}>
+                    </NavbarContainer>
+                    {/*<PatientProfile/>*/}
+                    <TableContainer>
                         <PatientsTable
                             allPatients={this.state.allPatients}
                         />
-                    </div>*/}
-                </div>
+                    </TableContainer>
+                </Container>
             );
         } else {
             return ("");
