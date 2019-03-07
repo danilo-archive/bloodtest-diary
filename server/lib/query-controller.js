@@ -4,8 +4,8 @@ const calendarController = require("./calendar-controller.js");
 const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
+const dateformat = require("dateformat");
 
-// TODO: REPLACE ALL "admin" WITH ACTUAL USERNAMES IN ACTION LOGGING!
 
 /**
  * Get the patient given its patient number
