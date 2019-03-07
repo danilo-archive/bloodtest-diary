@@ -25,6 +25,7 @@ class OverduePatients extends React.Component {
 
 
   render() {
+    console.log(this.props.anytimeAppointments);
     return (
       <>
         <Container>
@@ -42,6 +43,7 @@ class OverduePatients extends React.Component {
                       return (
                           <AppointmentSection
                               type = {group.class}
+                              section={"overdue"}
                               color = {"#ffe266"}
                               appointments = {group.tests}
                           />
