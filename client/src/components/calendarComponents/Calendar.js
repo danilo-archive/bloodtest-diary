@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Calendar.css';
-import './CalendarFunctions.js';
+//import './CalendarFunctions.js';
 import DayCell from './DayCell.js';
 import CalendarHeader from './CalendarHeader.js';
 
