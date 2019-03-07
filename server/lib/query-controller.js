@@ -8,6 +8,34 @@ const dateformat = require('dateformat');
 // TODO: REPLACE ALL "admin" WITH ACTUAL USERNAMES IN ACTION LOGGING!
 
 /**
+ * Get the patient given its patient number
+ * @param {string} patient_no the patient number
+ */
+async function getPatient(patient_no) {
+  const sql = `SELECT * FROM Patient WHERE patient_no = '${patient_no}';`
+  return await selectQueryDatabase(sql);
+}
+
+/**
+ * Get the carer given its carer id
+ * @param {string} carerID the carer id
+ */
+async function getCarer(carerID) {
+  const sql = `SELECT * FROM Carer WHERE carer_id = '${carerID}';`
+  return await selectQueryDatabase(sql);
+}
+
+/**
+ * Get the hospital given its hospital id
+ * @param {string} hospital_id the hospital id
+ */
+async function getHospital(hospital_id) {
+  const sql = `SELECT * FROM Hospital WHERE hospital_id = '${hospital_id}';`
+  return await selectQueryDatabase(sql);
+}
+
+
+/**
 * Get all the patients from the database
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
@@ -96,10 +124,6 @@ async function getAllTestsOnDate(date)
   return await selectQueryDatabase(sql)
 }
 
-async function getTestInfo(test_no){
-    const sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_no='${test_no}'`;
-    return await selectQueryDatabase(sql);
-}
 
 /**
 * Get all the overdue tests from the database
@@ -410,7 +434,7 @@ async function scheduleNextTest(testId,newInfo={})
   const test = response.response[0];
   // TODO: needs to be more than 1. if there is only one occurrence it does not need to be repeated.
   // also frequency needs to be defined (not null)
-  if(test.frequency !== null && test.occurrences > 1){ 
+  if(test.frequency !== null && test.occurrences > 1){
     const newTest = {
       patient_no: (!newInfo.patient_no) ? test.patient_no : newInfo.patient_no,
       frequency:(!newInfo.frequency) ? test.frequency : newInfo.frequency,
@@ -436,16 +460,14 @@ function checkMultipleQueriesStatus(queries)
     if(query.status==="OK"){
       data.push(query.response.rows)
     }
-    else
-    {
+    else {
       error = true;
     }
   })
-  if(error)
-  {
-    return {success:false, response:"One query failed"};
+  if (error) {
+    return { success: false, response: "One query failed" };
   }
-  return {success:true, response:data};
+  return { success: true, response: data };
 }
 
 /**
@@ -460,8 +482,8 @@ async function selectQueryDatabase(sql)
       const data = queryResponse.response.rows;
       return {success:true, response:data}
     }
-    else{
-      return {success:false, response:queryResponse.err}
+    else {
+      return { success: false, response: queryResponse.err }
     }
   });
   return response;
@@ -483,11 +505,11 @@ async function insertQueryDatabase(sql, tableName, id = undefined)
       return {success: true, insertId: id};
   }else {
       if (response.err.type === "SQL Error") {
-        logger.logInsert("admin", tableName, "-1", 
+        logger.logInsert("admin", tableName, "-1",
         "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. SQL Error message: START>>>" + response.err.sqlMessage + "<<<END.");
       }
       else {
-        logger.logInsert("admin", tableName, "-1", 
+        logger.logInsert("admin", tableName, "-1",
         "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. Invalid request error message: START>>>" + response.err.cause + "<<<END.");
       }
       return {success: false};
@@ -509,8 +531,8 @@ async function requestEditing(table, id)
     logger.logOther("admin", table, id, "Request for editing was approved.");
     return data.response.token;
   }else {
-    
-      logger.logOther("admin", table, id, 
+
+      logger.logOther("admin", table, id,
         "Request for editing was rejected with message: START>>>" + data.err.cause + "<<<END.");
         return undefined;
   }
@@ -534,18 +556,18 @@ async function updateQueryDatabase(table,id,sql,token)
       }
       else{
         if (response.err.type === "SQL Error") {
-          logger.logUpdate("admin", table, id, 
+          logger.logUpdate("admin", table, id,
           "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. SQL Error message: START>>>" + response.err.sqlMessage + "<<<END.");
         }
         else {
-          logger.logUpdate("admin", table, id, 
+          logger.logUpdate("admin", table, id,
           "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. Invalid request error message: START>>>" + response.err.cause + "<<<END.");
         }
         return {success:false , response: response.err}
       }
   }
   else {
-    return {success:false, response: {problem:"Token in use"} };
+    return {success:false, response: {problem:"Token in use/No token defined"} };
   }
 }
 
@@ -617,11 +639,13 @@ function prepareDeleteSQL(table, idProperty, id)
 
 module.exports = {
     getOverdueTestsExtended,
+    getCarer,
+    getPatient,
+    getHospital,
     getOverdueGroups,
     getUser,
     getAllPatients,
     getAllTests,
-    getTestInfo,
     getTestsOfPatient,
     getAllTestsOnDate,
     getOverdueTests,
@@ -634,4 +658,8 @@ module.exports = {
     updatePassword,
     changeTestStatus,
     editTest,
+    editPatient,
+    editCarer,
+    editHospital,
+    getSortedOverdueWeeks,
 };
