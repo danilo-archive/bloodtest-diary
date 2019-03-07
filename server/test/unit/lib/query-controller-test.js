@@ -123,10 +123,9 @@ describe("Select queries tests", function(){
       }
       queryController.__set__("databaseController",dbController);
       const response = await spy();
-      console.log(response)
       spy.calledOnce.should.equal(true);
       response.success.should.equal(false);
-      response.error.should.equal("stubbed error");
+      response.response.error.should.equal("stubbed error");
     });
   })
 });
