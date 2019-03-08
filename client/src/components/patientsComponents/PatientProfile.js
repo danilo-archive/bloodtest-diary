@@ -5,6 +5,7 @@ import PatientSection from "./profileSections/PatientSection";
 import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import TestSection from "./profileSections/TestSection";
+import {getServerConnect} from "../../serverConnection";
 
 
 const Container = styled.div`
@@ -69,34 +70,26 @@ class PatientProfile extends Component {
       this.state = {
         patientId: props.patientId,
         editToken: props.editToken,
-        patientName: undefined,
-        patientSurname: undefined,
-        patientEmail: undefined,
-        patientPhone: undefined,
-        carerId: undefined,
-        carerRelationship: undefined,
-        carerName: undefined,
-        carerSurname: undefined,
-        carerEmail: undefined,
-        carerPhone: undefined,
-        hospitalId: undefined,
-        hospitalName: undefined,
-        hospitalEmail: undefined,
-        hospitalPhone: undefined,
-        testDue: undefined,
-        testNotes: undefined
-      }
-    }
+        patientInfo: undefined,
+        ready: false
+      };
+      this.serverConnect = getServerConnect();
 
+      console.log(props.patientId);
+      this.loadPatient();
+    }
+/*
+
+*/
     loadPatient() {
-        this.socketConnection.getFullPatientInfo(this.state.patientId, info => {
+        this.serverConnect.getFullPatientInfo(this.state.patientId, response => {
+           const info = response[0];
            this.setState({
-               info: info,
-               patientName: info.patient_name,
-               patientSurname: info.patient_surname,
-               patientEmail: info.patient_email,
-               patientPhone: info.patient_phone,
-               carerId: info.carer_id,
+               patientName : info.patient_name,
+               patientSurname : info.patient_surname,
+               patientEmail : info.patient_email,
+               patientPhone : info.patient_phone,
+               carerId : info.carer_id,
                carerRelationship: info.relationship,
                carerName: info.carer_name,
                carerSurname: info.carer_surname,
@@ -106,6 +99,7 @@ class PatientProfile extends Component {
                hospitalName: info.hospital_name,
                hospitalEmail: info.hospital_email,
                hospitalPhone: info.hospital_phone,
+               ready: true
                //TODO : store patients tests
            });
         });
@@ -113,38 +107,42 @@ class PatientProfile extends Component {
 
 
     render() {
-        return (
-            <Container>
-                <PatientSection
-                  patientId={this.state.patientId}
-                  patientName={this.state.patientName}
-                  patientSurname={this.state.patientSurname}
-                  patientEmail={this.state.patientEmail}
-                  patientPhone={this.state.patientPhone}
-                />
-                <CarerSection
-                    carerId={this.state.carerId}
-                    carerRelationship={this.state.carerRelationship}
-                    carerName={this.state.carerName}
-                    carerSurname={this.state.carerSurname}
-                    carerEmail={this.state.carerEmail}
-                    carerPhone={this.state.carerPhone}
-                />
-                <HospitalSection
-                    hospitalId={this.state.hospitalId}
-                    hospitalName={this.state.hospitalName}
-                    hospitalEmail={this.state.hospitalEmail}
-                    hospitalPhone={this.state.hospitalPhone}
-                />
-                <TestSection tests={[{due_date:"2019-02-02", notes: "Some notes"}]}/>
+        if (this.state.ready) {
+            return (
+                <Container>
+                    <PatientSection
+                        patientId={this.state.patientId}
+                        patientName={this.state.patientName}
+                        patientSurname={this.state.patientSurname}
+                        patientEmail={this.state.patientEmail}
+                        patientPhone={this.state.patientPhone}
+                    />
+                    <CarerSection
+                        carerId={this.state.carerId}
+                        carerRelationship={this.state.carerRelationship}
+                        carerName={this.state.carerName}
+                        carerSurname={this.state.carerSurname}
+                        carerEmail={this.state.carerEmail}
+                        carerPhone={this.state.carerPhone}
+                    />
+                    <HospitalSection
+                        hospitalId={this.state.hospitalId}
+                        hospitalName={this.state.hospitalName}
+                        hospitalEmail={this.state.hospitalEmail}
+                        hospitalPhone={this.state.hospitalPhone}
+                    />
+                    <TestSection tests={[{due_date: "2019-02-02", notes: "Some notes"}]}/>
 
-                <ButtonContainer>
-                    <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
-                    <SaveButton>Save changes</SaveButton>
-                </ButtonContainer>
+                    <ButtonContainer>
+                        <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
+                        <SaveButton>Save changes</SaveButton>
+                    </ButtonContainer>
 
-            </Container>
-        );
+                </Container>
+            );
+        }else {
+            return "";
+        }
     }
 }
 
