@@ -2,44 +2,52 @@ import React from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
-  display: flex;
-  align-items: center;
+ margin: 1%;
+ text-align: center;
 `;
 
-const Field = styled.div`
-  position: relative;
-  padding-left: 1%;
-  width: 30%;
-  min-width: 10%;
-  margin: 0 2.5%;
-  height: 100%;
-  color: inherit;
-  font-family: "Rajdhani", sans-serif;
-  font-size: 200%;
-  overflow: scroll;
-  display:flex;
-  align-items:center;;
+const Field = styled.label`
+  font-weight: 200;
 `;
 
 const Value = styled.input.attrs({ type: "text" , spellCheck: "false"})`
-  font-size: 125%;
-  width: 63%;
-  height: 10%;
+  padding: 12px 20px;
+  margin: 2px 0 8px;
+  display: block;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
   font-family: "Rajdhani", sans-serif;
-  background: inherit;
-  outline: none;
+  :disabled {
+    background: white;
+  }
 `;
 
 
 export default class InfoCell extends React.Component {
     render() {
-        return (
-            <Container >
-                <Field>{this.props.field}</Field>
-                <Value
-                    defaultValue={this.props.value}
-                />
-            </Container>
-        );
+        if (this.props.disabled === "true") {
+            return (
+                <Container>
+                    <Field for={this.props.id}>{this.props.field}</Field>
+                    <Value
+                        defaultValue={this.props.value}
+                        id={this.props.id}
+                        disabled
+                    />
+                </Container>
+            );
+        } else {
+            return (
+                <Container>
+                    <Field for={this.props.id}>{this.props.field}</Field>
+                    <Value
+                        defaultValue={this.props.value}
+                        id={this.props.id}
+                    />
+                </Container>
+            );
+        }
     }
 }

@@ -1,45 +1,43 @@
 import React from "react";
 import styled from "styled-components";
+
 import InfoCell from "./profileCells/InfoCell";
 import InputCell from "./profileCells/InputCell";
-
-const Container = styled.div`
-  margin: 3%;
-  padding: 1%;
-  border: #839595 3px solid;
-  border-radius: 10px;
-`;
-
+import SectionContainer from "./SectionContainer"
 
 export default class PatientSection extends React.Component {
     render() {
-        return (
-            <Container>
-                <InfoCell
-                    field={"Patient ID"}
+        const content = (
+            <>
+                <InputCell
+                    field={"ID"}
                     value={"some value"}
+                    id={"patient_id"}
+                    disabled={"true"}
                 />
-
                 <InputCell
                     field={"Name"}
                     value={"some value"}
                 />
-
                 <InputCell
                     field={"Surname"}
                     value={"some value"}
                 />
-
                 <InputCell
                     field={"Email"}
                     value={"some value"}
                 />
-
                 <InputCell
                     field={"Phone"}
                     value={"some value"}
                 />
-            </Container>
+        </>
+        );
+        return (
+            <SectionContainer
+                title={"Patient info"}
+                content={content}
+            />
         );
     }
 }

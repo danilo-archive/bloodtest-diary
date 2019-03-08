@@ -8,6 +8,10 @@ import TestSection from "./profileSections/TestSection";
 
 
 const Container = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  background: #f5f5f5;
 `;
 
 const ButtonContainer = styled.div`
@@ -28,8 +32,9 @@ const CloseButton = styled.button`
   min-height: 40px;
   min-width: 100px;
   
+  
   :hover {
-    background: #e7e7e7;
+    background: #c8c8c8;
     color: black;
   }
 `;
@@ -37,6 +42,7 @@ const CloseButton = styled.button`
 const SaveButton = styled.button`
   border: none;
   background-color: #f44336;
+  color: white;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -50,7 +56,7 @@ const SaveButton = styled.button`
   min-width: 100px;
   
   :hover {
-    background-color: #f44336;
+    background-color: #dc2836;
     color: white;
   }
 `;
