@@ -61,7 +61,7 @@ export default class CarerSection extends React.Component {
         );
         return (
             <SectionContainer
-                title={this.props}
+                title={"Carer info"}
                 content={content}
             />
         );
