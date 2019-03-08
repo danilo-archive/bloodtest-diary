@@ -1,10 +1,11 @@
-import React from "react";
+import React, {Component} from "react";
 import styled from "styled-components";
 
 import PatientSection from "./profileSections/PatientSection";
 import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import TestSection from "./profileSections/TestSection";
+import Home from "../home";
 
 
 const Container = styled.div`
@@ -61,15 +62,59 @@ const SaveButton = styled.button`
   }
 `;
 
+/*
+   {
+      patient_name: "newname",
+      patient_sunrma
+   }
+ */
 
-
-export default class PatientProfile extends React.Component {
+class PatientProfile extends Component {
 
     constructor(props){
       super(props);
       this.state = {
-        patientId: props.patientId
+        patientId: props.patientId,
+        patientName: undefined,
+        patientSurname: undefined,
+        patientEmail: undefined,
+        patientPhone: undefined,
+        carerId: undefined,
+        carerRelationship: undefined,
+        carerName: undefined,
+        carerSurname: undefined,
+        carerEmail: undefined,
+        carerPhone: undefined,
+        hospitalId: undefined,
+        hospitalName: undefined,
+        hospitalEmail: undefined,
+        hospitalPhone: undefined,
+        testDue: undefined,
+        testNotes: undefined
       }
+    }
+
+    loadPatient() {
+        this.socketConnection.getPatientInfo(this.state.patientId, info => {
+           this.setState({
+               info: info,
+               patientName: info.patient_name,
+               patientSurname: info.patient_surname,
+               patientEmail: info.patient_email,
+               patientPhone: info.patient_phone,
+               carerId: info.carer_id,
+               carerRelationship: info.relationship,
+               carerName: info.carer_name,
+               carerSurname: info.carer_surname,
+               carerEmail: info.carer_email,
+               carerPhone: info.carer_phone,
+               hospitalId: info.hospital_id,
+               hospitalName: info.hospital_name,
+               hospitalEmail: info.hospital_email,
+               hospitalPhone: info.hospital_phone,
+               //TODO : store patients tests
+           });
+        });
     }
 
 
@@ -78,9 +123,25 @@ export default class PatientProfile extends React.Component {
             <Container>
                 <PatientSection
                   patientId={this.state.patientId}
+                  patientName={this.state.patientName}
+                  patientSurname={this.state.patientSurname}
+                  patientEmail={this.state.patientEmail}
+                  patientPhone={this.state.patientPhone}
                 />
-                <CarerSection/>
-                <HospitalSection/>
+                <CarerSection
+                    carerId={this.state.carerId}
+                    carerRelationship={this.state.carerRelationship}
+                    carerName={this.state.carerName}
+                    carerSurname={this.state.carerSurname}
+                    carerEmail={this.state.carerEmail}
+                    carerPhone={this.state.carerPhone}
+                />
+                <HospitalSection
+                    hospitalId={this.state.hospitalId}
+                    hospitalName={this.state.hospitalName}
+                    hospitalEmail={this.state.hospitalEmail}
+                    hospitalPhone={this.state.hospitalPhone}
+                />
                 <TestSection tests={[{due_date:"2019-02-02", notes: "Some notes"}]}/>
 
                 <ButtonContainer>
@@ -92,3 +153,5 @@ export default class PatientProfile extends React.Component {
         );
     }
 }
+
+export default PatientProfile;

@@ -17,19 +17,23 @@ export default class PatientSection extends React.Component {
                 />
                 <InputCell
                     field={"Name"}
-                    value={"some value"}
+                    id={"patient_name"}
+                    value={this.props.patientName}
                 />
                 <InputCell
                     field={"Surname"}
-                    value={"some value"}
+                    id={"patient_surname"}
+                    value={this.props.patientSurname}
                 />
                 <InputCell
                     field={"Email"}
-                    value={"some value"}
+                    id={"patient_email"}
+                    value={this.props.patientEmail}
                 />
                 <InputCell
                     field={"Phone"}
-                    value={"some value"}
+                    id={"patient_phone"}
+                    value={this.props.patientPhone}
                 />
         </>
         );

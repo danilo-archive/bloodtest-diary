@@ -23,45 +23,45 @@ export default class CarerSection extends React.Component {
             <>
                 <InputCell
                     field={"Carer ID"}
-                    value={"some value"}
-                    id={"hospital_id"}
+                    value={this.props.carerId}
+                    id={"carer_id"}
                     disabled={"true"}
                 />
 
                 <InputCell
                     field={"Relationship"}
-                    value={"some value"}
-                    id={"hospital_id"}
+                    value={this.props.carerRelationship}
+                    id={"carer_relationship"}
                 />
 
                 <InputCell
                     field={"Name"}
-                    value={"some value"}
-                    id={"hospital_id"}
+                    value={this.props.carerName}
+                    id={"carer_name"}
                 />
 
                 <InputCell
                     field={"Surname"}
-                    value={"some value"}
-                    id={"hospital_id"}
+                    value={this.props.carerSurname}
+                    id={"carer_surname"}
                 />
 
                 <InputCell
                     field={"Email"}
-                    value={"some value"}
-                    id={"hospital_id"}
+                    value={this.props.carerEmail}
+                    id={"carer_email"}
                 />
 
                 <InputCell
                     field={"Phone"}
-                    value={"some value"}
-                    id={"hospital_id"}
+                    value={this.props.carerPhone}
+                    id={"carer_phone"}
                 />
             </>
         );
         return (
             <SectionContainer
-                title={"Carer info"}
+                title={this.props}
                 content={content}
             />
         );
