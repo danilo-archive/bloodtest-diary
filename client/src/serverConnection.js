@@ -108,6 +108,13 @@ class ServerConnect {
         });
     }
 
+    getFullPatientInfo(patientId, callback){
+        this.socket.emit("getFullPatientInfo", patientId);
+        this.socket.on("getFullPatientInfoResponse", res => {
+            callback(res);
+        });
+    }
+
     /**
      * Function to be called when all tests have to be retrieved.
      * @param callback The callback function to be called on response

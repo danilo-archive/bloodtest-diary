@@ -15,6 +15,16 @@ async function getPatient(patient_no) {
 }
 
 /**
+ * Get the info of the patient together with the info of eventual carers and hospitals
+ * @param {string} patient_no the patient number
+ */
+// TODO to be tested
+async function getFullPatientInfo(patient_no){
+  const sql = `SELECT * FROM Patient NATURAL JOIN Hospital NATURAL JOIN Carer WHERE patient_no='${patient_no};`
+  return await selectQueryDatabase(sql);
+}
+
+/**
  * Get the carer given its carer id
  * @param {string} carerID the carer id
  */
@@ -645,6 +655,7 @@ module.exports = {
     getOverdueGroups,
     getUser,
     getAllPatients,
+    getFullPatientInfo,
     getAllTests,
     getTestsOfPatient,
     getAllTestsOnDate,

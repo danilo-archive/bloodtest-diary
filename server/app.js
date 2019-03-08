@@ -72,6 +72,11 @@ io.on('connection',function(socket)
         socket.emit("getAllPatientsResponse", response.response);
     });
 
+    socket.on("getFullPatientInfo", async (patientId) => {
+        const response = await queryController.getFullPatientInfo(patientId);
+        socket.emit("getFullPatientInfoResponse", response);
+    });
+
     socket.on('getAllTests', async () => {
         const response = await queryController.getAllTests();
         socket.emit("getAllTestsResponse", response);
@@ -120,7 +125,6 @@ io.on('connection',function(socket)
 
     socket.on("requestPatientEditToken", async (patientId) => {
         const token = await queryController.requestEditing("Patient", patientId);
-        console.log(token);
         socket.emit("requestPatientEditTokenResponse", token);
     });
 
