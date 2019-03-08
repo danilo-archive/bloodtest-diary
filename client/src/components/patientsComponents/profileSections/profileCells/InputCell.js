@@ -25,7 +25,7 @@ const Value = styled.input.attrs({ type: "text" , spellCheck: "false"})`
 `;
 
 
-export default class InfoCell extends React.Component {
+export default class InputCell extends React.Component {
     render() {
         if (this.props.disabled === "true") {
             return (
