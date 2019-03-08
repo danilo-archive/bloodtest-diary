@@ -13,10 +13,8 @@ const routing = (
 
   <Router>
       <div className={"routes"}>
-          <Route path="/" component={Header} />
-
-
-          <Route exact path="/" component={Login} />
+      <Route path="/" component={Header} />
+      <Route exact path="/" component={Login} />
       <Route path="/home" component={Home} />
       <Route path={"/Patients"} component={Patients} />
     </div>
