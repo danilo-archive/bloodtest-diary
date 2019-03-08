@@ -184,18 +184,6 @@ class CalendarTable extends Component {
   
   render() {
     return (
-<<<<<<< HEAD
-      <Table id={"daysTable"} cellPadding={0} cellSpacing={0}>
-        <thead>
-          <CalendarHeader
-            currentDate={this.state.date}
-            prevMonth={this.prevMonth}
-            nextMonth={this.nextMonth}
-          />
-          <tr>
-            {days.map(day => {
-              return <Th key={day}>{day}</Th>;
-=======
       <table id={'daysTable'} cellPadding={0} cellSpacing={0}>
         <thead>
           <CalendarHeader currentDate={this.state.date} 
@@ -208,7 +196,6 @@ class CalendarTable extends Component {
                   {day}
                 </th>
               );
->>>>>>> 6e76bac140c4099464bd4a70999f55622726ff62
             })}
           </tr>
         </thead>
@@ -230,32 +217,12 @@ class CalendarTable extends Component {
                       </td>
                     );
                   }
-<<<<<<< HEAD
-                  return (
-                    <Td
-                      key={tdIndex}
-                      className={`${
-                        dayBelongsToCurrentMonth ? "in" : "out"
-                      } day`}
-                    >
-                      {
-                        <DayCell
-                          selectDay={this.selectDay}
-                          dayOfMonth={day}
-                          isFromThisMonth={dayBelongsToCurrentMonth}
-                        />
-                      }
-                    </Td>
-                  );
-                })}
-=======
                 )}
->>>>>>> 6e76bac140c4099464bd4a70999f55622726ff62
               </tr>
             );
           })}
         </tbody>
-      </Table>
+      </table>
     );
   }
 }

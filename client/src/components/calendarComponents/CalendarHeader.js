@@ -51,29 +51,6 @@ function getMonthAndYear(date){
 const arrColSpan = 1;
 const monthColSpan = 5;
 
-<<<<<<< HEAD
-class CalendarHeader extends React.Component{
-    constructor(props){
-        super(props);
-        let currentDate = this.props.currentDate;
-        this.state = {date: currentDate};
-        this.nextMonth = () => props.nextMonth();
-        this.prevMonth = () => props.prevMonth();
-    }
-    render(){
-        return(
-            <tr>
-                <Td colSpan={arrColspan} className={'arrow'} onClick={this.prevMonth}>
-                    <Button>&lt;</Button>
-                </Td>
-                <Td colSpan={monthColspan} className={'date'}>{getMonthAndYear(this.state.date)}</Td>
-                <Td colSpan={arrColspan} className={'arrow'} onClick={this.nextMonth}>
-                    <Button>&gt;</Button>
-                </Td>
-            </tr>
-        )
-    }
-=======
 const CalendarHeader = props => {
     return(
         <tr>
@@ -86,7 +63,6 @@ const CalendarHeader = props => {
             </td>
         </tr>
     )
->>>>>>> 6e76bac140c4099464bd4a70999f55622726ff62
 }
 
 export default CalendarHeader;

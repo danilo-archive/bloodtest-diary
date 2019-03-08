@@ -50,18 +50,13 @@ const DayCell = props => {
       let selectedDay = props.selectedDay;
       let selected = isSelected(isFromThisMonth, selectedDay, date, day);
       return(
-<<<<<<< HEAD
-        <Label style={{color: (!isFromThisMonth) ? '#0b989d' : 'white'}}>
-          <Button className={'notSelected'}
-=======
         <label style={{color: (!isFromThisMonth) ? '#0b989d' : 'white'}}>
           <button className={(selected) ? 'selected' : 'notSelected'}
->>>>>>> 6e76bac140c4099464bd4a70999f55622726ff62
                   id={`${day}${isFromThisMonth}`}
                   onClick={() => props.selectDay(day, isFromThisMonth)} >
             {day}
-          </Button>
-        </Label>
+          </button>
+        </label>
       );
   }
 
