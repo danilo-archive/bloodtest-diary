@@ -5,7 +5,6 @@ import PatientSection from "./profileSections/PatientSection";
 import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import TestSection from "./profileSections/TestSection";
-import Home from "../home";
 
 
 const Container = styled.div`
@@ -62,12 +61,6 @@ const SaveButton = styled.button`
   }
 `;
 
-/*
-   {
-      patient_name: "newname",
-      patient_sunrma
-   }
- */
 
 class PatientProfile extends Component {
 
@@ -75,6 +68,7 @@ class PatientProfile extends Component {
       super(props);
       this.state = {
         patientId: props.patientId,
+        editToken: props.editToken,
         patientName: undefined,
         patientSurname: undefined,
         patientEmail: undefined,
@@ -95,7 +89,7 @@ class PatientProfile extends Component {
     }
 
     loadPatient() {
-        this.socketConnection.getPatientInfo(this.state.patientId, info => {
+        this.socketConnection.getFullPatientInfo(this.state.patientId, info => {
            this.setState({
                info: info,
                patientName: info.patient_name,

@@ -118,6 +118,12 @@ io.on('connection',function(socket)
         //
     });
 
+    socket.on("requestPatientEditToken", async (patientId) => {
+        const token = await queryController.requestEditing("Patient", patientId);
+        console.log(token);
+        socket.emit("requestPatientEditTokenResponse", token);
+    });
+
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 

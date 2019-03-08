@@ -662,4 +662,5 @@ module.exports = {
     editCarer,
     editHospital,
     getSortedOverdueWeeks,
+    requestEditing
 };
