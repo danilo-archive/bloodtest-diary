@@ -24,7 +24,7 @@ const TableBody = styled.tbody`
 const TableHead = styled.th`
     width: 16.66%;  //TODO : change this to number of 100/columns
     padding: 10px;
-    word-break: break-all;
+    //word-break: break-all;
     color: white;
     border-collapse: collapse;
     background: #0b989d;
