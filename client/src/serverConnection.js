@@ -138,7 +138,7 @@ class ServerConnect {
     getTestsOfPatient(patientId, callback){
         this.socket.emit('getTestsOfPatient', patientId);
         this.socket.on('getTestsOfPatientResponse', res => {
-            callback(res);
+            callback(res.info);
         });
     }
 
@@ -195,6 +195,7 @@ class ServerConnect {
     requestPatientEditing(patientId, callback){
         this.socket.emit("requestPatientEditToken", patientId);
         this.socket.on("requestPatientEditTokenResponse", token => {
+            console.log({token});
             callback(token);
         });
     }

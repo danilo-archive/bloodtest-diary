@@ -20,7 +20,7 @@ async function getPatient(patient_no) {
  */
 // TODO to be tested
 async function getFullPatientInfo(patient_no){
-  const sql = `SELECT * FROM Patient NATURAL JOIN Hospital NATURAL JOIN Carer WHERE patient_no='${patient_no};`
+  const sql = `SELECT * FROM Patient LEFT OUTER JOIN Hospital ON Patient.hospital_id=Hospital.hospital_id LEFT OUTER JOIN Carer ON Patient.carer_id=Carer.carer_id WHERE Patient.patient_no = '${patient_no}';`
   return await selectQueryDatabase(sql);
 }
 
