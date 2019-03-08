@@ -9,6 +9,7 @@ import OngoingWeekly from "./homeComponents/ongoingWeekly";
 import AddTest from "./homeComponents/addTest/AddTestView";
 import {getNextDates, getMondayOfWeek, getCurrentWeek, getPreviousWeek, getNextWeek} from "../lib/calendar-controller";
 import {getServerConnect} from "../serverConnection.js";
+import {group, getNumberOfTestsInGroup} from "../lib/overdue-controller.js";
 import './home.css';
 
 class Home extends Component {
@@ -64,11 +65,14 @@ class Home extends Component {
       this.serverConnect.setOnTestStatusChange((id, status) => {
         // check if it's overdue
         for (var i = 0; i < this.state.overdueTests.length; ++i) {
-          var test = this.state.overdueTests[i];
-          if (test.test_id === id) {
-            let newOverdueTests = [...this.state.overdueTests];
-            newOverdueTests[i].completed_status = status;
-            this.setState({overdueTests: newOverdueTests});
+          let group = this.state.overdueTests[i];
+          for (var j = 0; j < group.tests.length ; ++j){
+              var test = group.tests[j];
+              if (test.test_id === id) {
+                let newOverdueTests = [...this.state.overdueTests];
+                newOverdueTests[i].tests[j].completed_status = status;
+                this.setState({overdueTests: newOverdueTests});
+              }
           }
         }
         // check if it's ongoing
@@ -142,7 +146,7 @@ class Home extends Component {
           <div className={"dashboard"}>
             <div className={"overduePatients"}>
               <OverduePatients
-                notificationNumber={this.state.overdueTests.length}
+                notificationNumber={getNumberOfTestsInGroup(this.state.overdueTests)}
                 anytimeAppointments={this.state.overdueTests}
               />
             </div>
