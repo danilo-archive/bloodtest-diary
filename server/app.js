@@ -100,8 +100,9 @@ io.on('connection',function(socket)
     });
 
     socket.on('getOverdueTests', async () => {
-        const response = await queryController.getOverdueGroups();
-        socket.emit('getOverdueTestsResponse', response);
+        //const response = await queryController.getOverdueGroups();
+        const response = await queryController.getSortedOverdueWeeks();
+        socket.emit('getOverdueTestsResponse', response.response);
     });
 
     socket.on('requestTestEditing', async (testId) => {

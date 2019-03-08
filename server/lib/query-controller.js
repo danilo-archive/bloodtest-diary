@@ -4,7 +4,10 @@ const calendarController = require("./calendar-controller.js");
 const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
+<<<<<<< HEAD
+=======
 
+>>>>>>> a22480e8c514c586828ad6782835cacc6c18417a
 
 
 /**
@@ -202,7 +205,7 @@ async function getOverdueGroups()
           groups[4].tests = groups[4].tests.concat(sortedTests[i]);
           i++;
       }
-      return groups;
+      return {success: true, response: groups};
 }
 
 /**
@@ -376,7 +379,8 @@ async function changeTestStatus(test)
 **/
 async function getTestWithinWeek(date)
 {
-  const response = await Promise.all(getTestsDuringTheWeek(date))
+  let dateString = dateformat(date, "yyyy-mm-dd");
+  const response = await Promise.all(getTestsDuringTheWeek(dateString))
                               .then(days => {return checkMultipleQueriesStatus(days)})
                               .then(data => {return data})
   return response;
