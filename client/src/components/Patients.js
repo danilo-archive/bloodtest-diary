@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import Navbar from "./homeComponents/navbar";
 import PatientsTable from "./patientsComponents/tableComponents/PatientsTable";
-import AttributeSelector from "./patientsComponents/AttributeSelector";
+//import AttributeSelector from "./patientsComponents/AttributeSelector";
 
 import {getServerConnect} from "../serverConnection.js";
 import PatientProfile from "./patientsComponents/PatientProfile";
