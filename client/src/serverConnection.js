@@ -185,6 +185,13 @@ class ServerConnect {
         });
     }
 
+    requestPatientEditing(patientId, callback){
+        this.socket.emit("requestPatientEditToken", patientId);
+        this.socket.on("requestPatientEditTokenResponse", token => {
+            callback(token);
+        });
+    }
+
     /**
     * Thim method emits a request to add a test into the database
     * @param patientId The number of the patient that has to take the test.

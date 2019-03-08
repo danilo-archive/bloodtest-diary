@@ -93,11 +93,19 @@ class Patients extends React.Component {
     }
 
     openModal(id){
-        this.setState({selectedId: id, openModal: true});
+        this.serverConnect.requestPatientEditing(id, token => {
+            if (token){
+                this.setState({selectedId: id, openModal: true, editToken: token});
+            }else{
+                // TODO open error dialoge "someone is editing this patient"
+            }
+        });
+        
     }
 
     onCloseModal(){
-        this.setState({selectedId: undefined, openModal: false});
+        // TODO get rid of the torken
+        this.setState({selectedId: undefined, openModal: false, editToken: undefined});
     }
 
     //TODO : rename all components to capital case
@@ -126,6 +134,7 @@ class Patients extends React.Component {
                     <PatientProfile
                         patientId={this.state.selectedId}
                         closeModal={this.onCloseModal}
+                        editToken={this.state.editToken}
                     />
                     </Modal>
 

@@ -68,7 +68,8 @@ export default class PatientProfile extends React.Component {
     constructor(props){
       super(props);
       this.state = {
-        patientId: props.patientId
+        patientId: props.patientId,
+        editToken: props.editToken
       }
     }
 
