@@ -64,16 +64,27 @@ const SaveButton = styled.button`
 
 
 export default class PatientProfile extends React.Component {
+
+    constructor(props){
+      super(props);
+      this.state = {
+        patientId: props.patientId
+      }
+    }
+
+
     render() {
         return (
             <Container>
-                <PatientSection/>
+                <PatientSection
+                  patientId={this.state.patientId}
+                />
                 <CarerSection/>
                 <HospitalSection/>
                 <TestSection tests={[{due_date:"2019-02-02", notes: "Some notes"}]}/>
 
                 <ButtonContainer>
-                    <CloseButton>Close</CloseButton>
+                    <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                     <SaveButton>Save changes</SaveButton>
                 </ButtonContainer>
 

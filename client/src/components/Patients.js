@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import Modal from 'react-responsive-modal';
 
 import Navbar from "./homeComponents/navbar";
 import PatientsTable from "./patientsComponents/tableComponents/PatientsTable";
@@ -53,8 +54,12 @@ const TableContainer = styled.div`
     flex-grow: 1;
     flex-shrink: 1;
 `;
+const modalStyles = {
+    padding: 0
+  };
 
-class Patients extends Component {
+
+class Patients extends React.Component {
 
     constructor(props){
         super(props);
@@ -63,9 +68,14 @@ class Patients extends Component {
 
         this.state = {
             allPatientsReady: false,
-            allPatients: {}
+            allPatients: {},
+            openModal: false,
+            selectedId: undefined
         };
         this.initAllPatients();
+
+        this.openModal = this.openModal.bind(this);
+        this.onCloseModal = this.onCloseModal.bind(this);
     }
 
     initAllPatients() {
@@ -78,8 +88,16 @@ class Patients extends Component {
     };
 
 
-        onHomeClick(event) {
+    onHomeClick(event) {
         this.props.history.push("home")
+    }
+
+    openModal(id){
+        this.setState({selectedId: id, openModal: true});
+    }
+
+    onCloseModal(){
+        this.setState({selectedId: undefined, openModal: false});
     }
 
     //TODO : rename all components to capital case
@@ -92,12 +110,24 @@ class Patients extends Component {
                             onHomeClick={this.onHomeClick}
                         />
                     </NavbarContainer>
-                    <PatientProfile/>
-                    {/*<TableContainer>
+                    {<TableContainer>
                         <PatientsTable
                             allPatients={this.state.allPatients}
+                            openModal = {this.openModal}
                         />
-                    </TableContainer>*/}
+                    </TableContainer>}
+                    <Modal
+                        open={this.state.openModal}
+                        onClose={this.onCloseModal}
+                        showCloseIcon={false}
+                        style={modalStyles}
+                        center
+                        >
+                    <PatientProfile
+                        patientId={this.state.selectedId}
+                        closeModal={this.onCloseModal}
+                    />
+                    </Modal>
 
                 </Container>
             );

@@ -11,7 +11,7 @@ export default class PatientSection extends React.Component {
             <>
                 <InputCell
                     field={"ID"}
-                    value={"some value"}
+                    value={this.props.patientId}
                     id={"patient_id"}
                     disabled={"true"}
                 />

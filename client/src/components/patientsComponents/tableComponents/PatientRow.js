@@ -26,15 +26,28 @@ const TableRow = styled.tr`
     :nth-child(even) {background-color: #f2f2f2;}
 `;
 
-export default props => {
-    return (
-        <TableRow>
-            <TableData>{props.patient_no}</TableData>
-            <TableData>{props.patient_name}</TableData>
-            <TableData>{props.patient_surname}</TableData>
-            <TableData>{props.patient_email}</TableData>
-            <TableData>{props.patient_phone}</TableData>
-            <TableData><Button color="info">Edit patient</Button>{' '}</TableData>
-        </TableRow>
-    );
+export default class PatientRow extends React.Component{
+
+    constructor(props){
+        super(props);
+
+        this.onEditClick = this.onEditClick.bind(this);
+    }
+
+    onEditClick(event){
+        this.props.openModal(this.props.patient_no);
+    }
+
+    render(){
+        return (
+            <TableRow>
+                <TableData>{this.props.patient_no}</TableData>
+                <TableData>{this.props.patient_name}</TableData>
+                <TableData>{this.props.patient_surname}</TableData>
+                <TableData>{this.props.patient_email}</TableData>
+                <TableData>{this.props.patient_phone}</TableData>
+                <TableData><Button onClick={this.onEditClick} color="info">Edit patient</Button>{' '}</TableData>
+            </TableRow>
+        );
+    }
 };

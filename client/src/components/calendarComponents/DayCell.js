@@ -26,29 +26,38 @@ const Label = styled.label`
     color: inherit;
 `;
 
-class DayCell extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {selected: false};
-    this.day = this.props.dayOfMonth;
-    this.isFromThisMonth = this.props.isFromThisMonth;
-    this.selectDay = () => props.selectDay(this.day);
-  }
-  
-  render(){
-      let day = this.day;
-      let isFromThisMonth = this.isFromThisMonth;
-      return(
-        <Label style={{color: (!isFromThisMonth) ? '#0b989d' : 'white'}}>
-          <Button className={'notSelected'}
-                  id={`${day}${isFromThisMonth}`}
-                  onClick={this.selectDay} >
-            {day}
-          </Button>
-        </Label>
-      );
-  }
+function isSelected(isFromThisMonth, selectedDay, date, day){
+  let selectedDate = new Date(selectedDay);
+  return selectedDate.getDate() === day &&
+          //current month
+          ((isFromThisMonth 
+          && date.getMonth() === selectedDate.getMonth()
+          && date.getFullYear() === selectedDate.getFullYear())
+          ||
+          //previous month
+          (!isFromThisMonth
+          && date.getMonth()-1 === (selectedDate.getMonth()))
+          ||
+          //next month
+          (!isFromThisMonth
+          && date.getMonth()+1 === (selectedDate.getMonth())));
 }
 
+const DayCell = props => {
+      let day = props.dayOfMonth;
+      let date = props.date;
+      let isFromThisMonth = props.isFromThisMonth;
+      let selectedDay = props.selectedDay;
+      let selected = isSelected(isFromThisMonth, selectedDay, date, day);
+      return(
+        <label style={{color: (!isFromThisMonth) ? '#0b989d' : 'white'}}>
+          <button className={(selected) ? 'selected' : 'notSelected'}
+                  id={`${day}${isFromThisMonth}`}
+                  onClick={() => props.selectDay(day, isFromThisMonth)} >
+            {day}
+          </button>
+        </label>
+      );
+  }
 
 export default DayCell;

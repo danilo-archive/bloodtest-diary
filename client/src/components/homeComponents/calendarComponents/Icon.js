@@ -10,7 +10,7 @@ const combinations = {
 const Icon = styled.i`
   transition: opacity ease-in 250ms;
   opacity: 1;
-
+  margin-left: 7px;
   &:hover {
     opacity: 0.3;
   }

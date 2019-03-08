@@ -130,6 +130,7 @@ class PatientsTable extends React.Component {
                         patient_surname = {patient.patient_surname}
                         patient_email = {patient.patient_email}
                         patient_phone = {patient.patient_phone}
+                        openModal = {this.props.openModal}
                     />
                 ))}
                 </TableBody>
