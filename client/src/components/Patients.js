@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import styled from 'styled-components'
 
 import Navbar from "./homeComponents/navbar";
-import PatientsTable from "./patientsComponents/PatientsTable";
+import PatientsTable from "./patientsComponents/tableComponents/PatientsTable";
+import AttributeSelector from "./patientsComponents/AttributeSelector";
+
 import {getServerConnect} from "../serverConnection.js";
 import PatientProfile from "./patientsComponents/PatientProfile";
 
@@ -90,12 +92,13 @@ class Patients extends Component {
                             onHomeClick={this.onHomeClick}
                         />
                     </NavbarContainer>
-                    {/*<PatientProfile/>*/}
-                    <TableContainer>
+                    <PatientProfile/>
+                    {/*<TableContainer>
                         <PatientsTable
                             allPatients={this.state.allPatients}
                         />
-                    </TableContainer>
+                    </TableContainer>*/}
+
                 </Container>
             );
         } else {
