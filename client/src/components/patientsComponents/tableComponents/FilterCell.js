@@ -15,6 +15,7 @@ const TableHead = styled.th`
 
 const Input = styled.input.attrs({ type: "text" })`
   width: 100%;
+  font-weight: 100;
   background-color: inherit;
   ::-webkit-input-placeholder {
     font-size: 80%;
