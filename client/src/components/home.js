@@ -63,42 +63,20 @@ class Home extends Component {
 
     initOnTestStatusChange() {
       this.serverConnect.setOnTestStatusChange((id, status) => {
-        // check if it's overdue
-        for (var i = 0; i < this.state.overdueTests.length; ++i) {
-          let group = this.state.overdueTests[i];
-          for (var j = 0; j < group.tests.length ; ++j){
-              var test = group.tests[j];
-              if (test.test_id === id) {
-                let newOverdueTests = [...this.state.overdueTests];
-                newOverdueTests[i].tests[j].completed_status = status;
-                this.setState({overdueTests: newOverdueTests});
-              }
-          }
-        }
-        // check if it's ongoing
-        for (var i = 0; i < this.state.ongoingTests.length; ++i) {
-          var test = this.state.ongoingTests[i];
-          if (test.test_id === id) {
-            let newOngoingTests = [...this.state.ongoingTests];
-            newOngoingTests[i].completed_status = status;
-            this.setState({ongoingTests: newOngoingTests});
-            return;
-          }
-        }
-        //check if it's in the current calendar
-        for (var i = 0; i < this.state.calendar.length; ++i) {
-          var day = this.state.calendar[i];
-          for (var j = 0; j < day.length; ++j) {
-            var test = day[j];
-            if (test.test_id === id) {
-              let newCalendar = [...this.state.calendar];
-              newCalendar[i][j].completed_status = status;
-              this.setState({calendar: newCalendar});
-              return;
-            }
-          }
-        }
+        this.modifyTest(id, test => {
+            test.completed_status = status;
+            return test;
+        });
       });
+    }
+
+    initOnTestEdit(){
+        this.serverConnect.setOnTestEdit((id, newTest) => {
+            this.modifyTest(id, test => {
+                test = newTest;
+                return newTest;
+            });
+        });
     }
 
     initOverduePanel() {
@@ -112,15 +90,59 @@ class Home extends Component {
 
     updateDashboard(newWeek=undefined) {
       let monday = newWeek ? newWeek[0] : this.state.weekDays[0];
+      newWeek = newWeek ? newWeek : this.state.weekDays;
       this.serverConnect.getTestsInWeek(monday, res => {
-        this.setState( prevState => {return {
+        this.setState({
               ongoingTests: res[5],
               calendar: res.slice(0, 5),
               dashboardReady: true,
-              weekDays: newWeek ? newWeek : prevState.weekDays
-          }});
+              weekDays: newWeek
+          });
         });
     }
+
+    modifyTest(id, modificationFunction){
+        for (var i = 0; i < this.state.overdueTests.length; ++i) {
+          let group = this.state.overdueTests[i];
+          for (var j = 0; j < group.tests.length ; ++j){
+              var test = group.tests[j];
+              if (test.test_id === id) {
+                let newOverdueTests = [...this.state.overdueTests];
+                let testToModify = newOverdueTests[i].tests[j]
+                let modifiedTest = modificationFunction(testToModify);
+                //newOverdueTests[i].tests[j].completed_status = status;
+                this.setState({overdueTests: newOverdueTests});
+              }
+          }
+        }
+        // check if it's ongoing
+        for (var i = 0; i < this.state.ongoingTests.length; ++i) {
+          var test = this.state.ongoingTests[i];
+          if (test.test_id === id) {
+            let newOngoingTests = [...this.state.ongoingTests];
+            let testToModify = newOngoingTests[i];
+            let modifiedTest = modificationFunction(testToModify);
+            //newOngoingTests[i].completed_status = status;
+            this.setState({ongoingTests: newOngoingTests});
+            return;
+          }
+        }
+        //check if it's in the current calendar
+        for (var i = 0; i < this.state.calendar.length; ++i) {
+          var day = this.state.calendar[i];
+          for (var j = 0; j < day.length; ++j) {
+            var test = day[j];
+            if (test.test_id === id) {
+              let newCalendar = [...this.state.calendar];
+              let testToModify = newCalendar[i][j];
+              let modifiedTest = modificationFunction(testToModify);
+              //newCalendar[i][j].completed_status = status;
+              this.setState({calendar: newCalendar});
+              return;
+            }
+          }
+        }
+      }
 
     handleNext(event) {
       let nextWeek = getNextWeek([...this.state.weekDays]);
