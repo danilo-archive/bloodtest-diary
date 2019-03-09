@@ -41,6 +41,7 @@ class OverduePatients extends React.Component {
                   if(group.tests.length !== 0){
                       return (
                           <AppointmentSection
+                              key={group.class}
                               type = {group.class}
                               appointments = {group.tests}
                               editTest={this.props.editTest}
