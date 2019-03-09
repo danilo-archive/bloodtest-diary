@@ -11,6 +11,8 @@ const queryController = rewire("../../../lib/query-controller");
 const logger = require('./../../../lib/action-logger');
 logger.disableConsoleOutput(); // for a cleaner output
 
+const testActionUsername = "admin"; // action username that is used throughout the tests.
+
 describe("Select queries tests", function(){
   context("Get All patients", function(){
     test(queryController.getAllPatients);
@@ -212,7 +214,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"late"});
+        const response = await spy({testId:"2000",newStatus:"late"}, testActionUsername);
         response.success.should.equal(false);
         spy.calledOnce.should.equal(true);
       })
@@ -223,7 +225,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"ERROR"});
+        const response = await spy({testId:"2000",newStatus:"ERROR"}, testActionUsername);
         response.success.should.equal(false);
         response.response.should.equal("NO SUCH UPDATE");
         spy.calledOnce.should.equal(true);
@@ -242,7 +244,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"completed"});
+        const response = await spy({testId:"2000",newStatus:"completed"}, testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
@@ -261,7 +263,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"completed"});
+        const response = await spy({testId:"2000",newStatus:"completed"}, testActionUsername);
         response.success.should.equal(false);
         response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
@@ -276,7 +278,7 @@ describe("Update queries tests", function(){
           },
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"late"});
+        const response = await spy({testId:"2000",newStatus:"late"}, testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
@@ -291,7 +293,7 @@ describe("Update queries tests", function(){
           },
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"late"});
+        const response = await spy({testId:"2000",newStatus:"late"}, testActionUsername);
         response.success.should.equal(false);
         response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
@@ -310,7 +312,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"inReview"});
+        const response = await spy({testId:"2000",newStatus:"inReview"}, testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
@@ -325,7 +327,7 @@ describe("Update queries tests", function(){
           },
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"inReview"});
+        const response = await spy({testId:"2000",newStatus:"inReview"}, testActionUsername);
         response.success.should.equal(false);
         response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
@@ -350,7 +352,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({username:"admin",hashed_password:"373723172173732"});
+        const response = await spy({username:"admin",hashed_password:"373723172173732"}, testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
@@ -367,7 +369,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({username:"admin",hashed_password:"373723172173732"});
+        const response = await spy({username:"admin",hashed_password:"373723172173732"}, testActionUsername);
         response.success.should.equal(false);
         response.response.problem.should.equal("Token in use/No token defined");
       })
@@ -384,7 +386,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({username:"admin",hashed_password:"373723172173732"});
+        const response = await spy({username:"admin",hashed_password:"373723172173732"}, testActionUsername);
         response.success.should.equal(false);
         response.response.should.equal("No user found");
       })
@@ -401,7 +403,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({username:"admin",hashed_password:"373723172173732"});
+        const response = await spy({username:"admin",hashed_password:"373723172173732"}, testActionUsername);
         response.success.should.equal(false);
         response.response.should.equal("Error here");
       })
@@ -419,7 +421,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({username:"admin",hashed_password:"373723172173732"});
+        const response = await spy({username:"admin",hashed_password:"373723172173732"}, testActionUsername);
         response.success.should.equal(false);
       })
     })
@@ -430,19 +432,19 @@ describe("Update queries tests", function(){
       })
       it("Accept patient edit (STUBBED)", async function(){
         setAcceptUpdateQueryDatabae();
-        const response = await spy({patient_no:"400",patient_name:"Mark"},"400");
+        const response = await spy({patient_no:"400",patient_name:"Mark"},"400", testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
       it("Reject patient edit (STUBBED)", async function(){
         setRejectUpdateQueryDatabase();
-        const response = await spy({patient_no:"400",patient_name:"Mark"},"400");
+        const response = await spy({patient_no:"400",patient_name:"Mark"},"400", testActionUsername);
         response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
       })
       it("Reject patient edit - No token passed (STUBBED)", async function(){
         setRejectUpdateQueryDatabase();
-        const response = await spy({patient_no:"400",patient_name:"Mark"});
+        const response = await spy({patient_no:"400",patient_name:"Mark"}, undefined, testActionUsername);
         response.response.problem.should.equal("Token in use/No token defined");
         spy.calledOnce.should.equal(true);
       })
@@ -454,19 +456,19 @@ describe("Update queries tests", function(){
       })
       it("Accept patient edit (STUBBED)", async function(){
         setAcceptUpdateQueryDatabae();
-        const response = await spy({carer_id:"400",carer_email:"Mark@gmail.com"},"400");
+        const response = await spy({carer_id:"400",carer_email:"Mark@gmail.com"},"400", testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
       it("Reject patient edit (STUBBED)", async function(){
         setRejectUpdateQueryDatabase();
-        const response = await spy({carer_id:"400",carer_email:"Mark@gmail.com"},"400");
+        const response = await spy({carer_id:"400",carer_email:"Mark@gmail.com"},"400", testActionUsername);
         response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
       })
       it("Reject patient edit - No token passed (STUBBED)", async function(){
         setRejectUpdateQueryDatabase();
-        const response = await spy({carer_id:"400",carer_email:"Mark@gmail.com"});
+        const response = await spy({carer_id:"400",carer_email:"Mark@gmail.com"}, undefined, testActionUsername);
         response.response.problem.should.equal("Token in use/No token defined");
         spy.calledOnce.should.equal(true);
       })
@@ -478,19 +480,19 @@ describe("Update queries tests", function(){
       })
       it("Accept patient edit (STUBBED)", async function(){
         setAcceptUpdateQueryDatabae();
-        const response = await spy({hospital_id:"400",hospital_email:"KCL@gmail.com"},"400");
+        const response = await spy({hospital_id:"400",hospital_email:"KCL@gmail.com"},"400", testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
       it("Reject patient edit (STUBBED)", async function(){
         setRejectUpdateQueryDatabase();
-        const response = await spy({hospital_id:"400",hospital_email:"KCL@gmail.com"},"400");
+        const response = await spy({hospital_id:"400",hospital_email:"KCL@gmail.com"},"400", testActionUsername);
         response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
       })
       it("Reject patient edit - No token passed (STUBBED)", async function(){
         setRejectUpdateQueryDatabase();
-        const response = await spy({hospital_id:"400",hospital_email:"KCL@gmail.com"});
+        const response = await spy({hospital_id:"400",hospital_email:"KCL@gmail.com"}, undefined, testActionUsername);
         response.response.problem.should.equal("Token in use/No token defined");
         spy.calledOnce.should.equal(true);
       })
@@ -515,7 +517,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400");
+        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
@@ -534,7 +536,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",patient_no:"300",completed_status:"in review", occurrences:"3", frequency:"5-W",notes:"Test", due_date:"2020-01-01"},"400");
+        const response = await spy("400",{test_id:"400",patient_no:"300",completed_status:"in review", occurrences:"3", frequency:"5-W",notes:"Test", due_date:"2020-01-01"},"400", testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
@@ -549,25 +551,25 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400");
+        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
       it("Reject test edit - in review (STUBBED)", async function(){
         setRejectUpdateQueryDatabase();
-        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400");
+        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testActionUsername);
         response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
       })
       it("Accept test edit - late (STUBBED)", async function(){
         setAcceptUpdateQueryDatabae();
-        const response = await spy("400",{test_id:"400",completed_status:"no"},"400");
+        const response = await spy("400",{test_id:"400",completed_status:"no"},"400", testActionUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
       it("Reject test edit - late (STUBBED)", async function(){
         setRejectUpdateQueryDatabase();
-        const response = await spy("400",{test_id:"400",completed_status:"no"},"400");
+        const response = await spy("400",{test_id:"400",completed_status:"no"},"400", testActionUsername);
         response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
       })
@@ -663,14 +665,14 @@ describe("Other functionality", function(){
 
 async function stubbedErrorInsertTest(spy,data){
   setFaultyInsert();
-  const response = await spy(data);
+  const response = await spy(data, testActionUsername);
   spy.calledOnce.should.equal(true);
   response.success.should.equal(false);
 }
 
 async function stubbedPositiveInsertTest(spy,data){
   setPositiveInsert();
-  const response = await spy(data);
+  const response = await spy(data, testActionUsername);
   spy.calledWith(data).should.equal(true);
   spy.calledOnce.should.equal(true);
   response.success.should.equal(true);
