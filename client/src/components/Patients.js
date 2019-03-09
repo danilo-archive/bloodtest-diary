@@ -65,10 +65,12 @@ class Patients extends React.Component {
         super(props);
         this.onHomeClick = this.onHomeClick.bind(this);
         this.serverConnect = getServerConnect();
+        this.serverConnect.joinPatientsPage();
 
         this.state = {
             allPatientsReady: false,
             allPatients: {},
+            shownPatients: {},
             openModal: false,
             selectedId: undefined
         };
@@ -82,9 +84,35 @@ class Patients extends React.Component {
         this.serverConnect.getAllPatients(res => {
             this.setState({
                 allPatients: res,
+                shownPatients: res,
                 allPatientsReady: true
             });
         });
+    };
+
+    number_filter = value => {
+        let filteredPatients = this.state.allPatients.filter( patient => patient.patient_no.includes(value));
+        this.setState({shownPatients: filteredPatients});
+    };
+
+    name_filter = value => {
+        let filteredPatients = this.state.allPatients.filter( patient => patient.patient_name.includes(value));
+        this.setState({shownPatients: filteredPatients});
+    };
+
+    surname_filter = value => {
+        let filteredPatients = this.state.allPatients.filter( patient => patient.patient_surname.includes(value));
+        this.setState({shownPatients: filteredPatients});
+    };
+
+    email_filter = value => {
+        let filteredPatients = this.state.allPatients.filter( patient => patient.patient_email.includes(value));
+        this.setState({shownPatients: filteredPatients});
+    };
+
+    phone_filter = value => {
+        let filteredPatients = this.state.allPatients.filter( patient => patient.patient_phone.includes(value));
+        this.setState({shownPatients: filteredPatients});
     };
 
 
@@ -94,17 +122,19 @@ class Patients extends React.Component {
 
     openModal(id){
         this.serverConnect.requestPatientEditing(id, token => {
+            console.log(`id in openModal: ${id}`);
             if (token){
                 this.setState({selectedId: id, openModal: true, editToken: token});
             }else{
                 // TODO open error dialoge "someone is editing this patient"
             }
         });
-        
+
     }
 
     onCloseModal(){
         // TODO get rid of the torken
+        console.log("closing modal");
         this.setState({selectedId: undefined, openModal: false, editToken: undefined});
     }
 
@@ -120,7 +150,12 @@ class Patients extends React.Component {
                     </NavbarContainer>
                     {<TableContainer>
                         <PatientsTable
-                            allPatients={this.state.allPatients}
+                            shownPatients={this.state.shownPatients}
+                            numberFilter={this.number_filter}
+                            nameFilter = {this.name_filter}
+                            surnameFilter = {this.surname_filter}
+                            emailFilter = {this.email_filter}
+                            phoneFilter = {this.phone_filter}
                             openModal = {this.openModal}
                         />
                     </TableContainer>}

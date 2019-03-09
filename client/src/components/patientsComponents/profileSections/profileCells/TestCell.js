@@ -38,10 +38,10 @@ const DeleteButton = styled.div`
 export default class TestCell extends React.Component {
     render() {
         return (
-          <>  
+          <>
             <Container >
-                <Field fontSize={"150%"}>{this.props.due}</Field>
-                <Field fontSize={"150%"}>{this.props.notes}</Field>
+                <Field key={"due"} fontSize={"150%"}>{this.props.due}</Field>
+                <Field key={"notes"} fontSize={"150%"}>{this.props.notes}</Field>
                 <DeleteButton />
             </Container>
           </>

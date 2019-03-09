@@ -4,7 +4,7 @@ import styled from "styled-components";
 import {Button} from 'react-bootstrap';
 
 const TableData = styled.td`
-    width: 16.66%; 
+    width: 16.66%;
     padding: 7px;
     word-break: break-all;
     color: black;
@@ -19,7 +19,7 @@ const TableData = styled.td`
 `;
 
 const TableRow = styled.tr`
-    display: table; 
+    display: table;
     width: 100%;
     box-sizing: border-box;
     :hover {background-color: #f5f5f5;}
@@ -31,10 +31,11 @@ export default class PatientRow extends React.Component{
     constructor(props){
         super(props);
 
-        this.onEditClick = this.onEditClick.bind(this);
+        //this.onEditClick = this.onEditClick.bind(this);
     }
 
-    onEditClick(event){
+    onEditClick = event => {
+        console.log(`id in row: ${this.props.patient_no}`);
         this.props.openModal(this.props.patient_no);
     }
 

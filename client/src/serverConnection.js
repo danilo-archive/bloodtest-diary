@@ -59,6 +59,11 @@ class ServerConnect {
         this.currentRoom = "login_page";
     }
 
+    joinPatientsPage(){
+        this.socket.emit("join", this.currentRoom, "patients_page");
+        this.currentRoom = "patients_page";
+    }
+
     /**
     * Sets the callback to call when a new test is added.
     * @callback callback "On test added" callback
@@ -194,8 +199,9 @@ class ServerConnect {
 
     requestPatientEditing(patientId, callback){
         this.socket.emit("requestPatientEditToken", patientId);
+        console.log("emitted requestPatientToken")
         this.socket.on("requestPatientEditTokenResponse", token => {
-            console.log({token});
+            console.log("received token");
             callback(token);
         });
     }

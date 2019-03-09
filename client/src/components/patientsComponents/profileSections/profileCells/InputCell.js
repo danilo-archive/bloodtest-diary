@@ -46,7 +46,7 @@ class InputCell extends React.Component {
         } else {
             return (
                 <Container>
-                    <Field for={this.props.id}>{this.props.field}</Field>
+                    <Field htmlFor={this.props.id}>{this.props.field}</Field>
                     <Value
                         defaultValue={this.props.value}
                         id={this.props.id}
