@@ -62,7 +62,7 @@ export default class EditTestView extends React.Component {
     const { test, patient } = this.state;
     const params = {
       patient_no: patient.id,
-      dueDate: test.date.dueDate,
+      due_date: test.date.dueDate,
       frequency: test.date.frequency,
       occurrences: test.date.occurrences,
       completed_status:
