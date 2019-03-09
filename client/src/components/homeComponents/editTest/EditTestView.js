@@ -61,6 +61,7 @@ export default class EditTestView extends React.Component {
   saveTest = () => {
     const { test, patient } = this.state;
     const params = {
+      test_id: test.id,
       patient_no: patient.id,
       due_date: test.date.dueDate,
       frequency: test.date.frequency,
@@ -68,12 +69,13 @@ export default class EditTestView extends React.Component {
       completed_status:
         test.status === "completed"
           ? "yes"
-          : test.status === "in review"
+          : (test.status === "in review"
           ? "in review"
-          : "no",
+          : "no"),
       notes: test.notes
     };
-
+    console.log(this.token);
+    console.log(params);
     this.serverConnect.editTest(this.state.test.id, params, this.token);
   };
   render() {
