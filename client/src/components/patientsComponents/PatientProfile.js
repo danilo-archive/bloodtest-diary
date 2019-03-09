@@ -78,9 +78,7 @@ class PatientProfile extends Component {
       console.log(props.patientId);
       this.loadPatient();
     }
-/*
 
-*/
     loadPatient() {
         this.serverConnect.getFullPatientInfo(this.state.patientId, response => {
            const info = response[0];
@@ -99,12 +97,14 @@ class PatientProfile extends Component {
                hospitalName: info.hospital_name,
                hospitalEmail: info.hospital_email,
                hospitalPhone: info.hospital_phone,
+
+               hasCarer: info.carer_id ? false : true,
+               localHospital: info.hospital_id ? false : true,
                ready: true
                //TODO : store patients tests
            });
         });
     }
-
 
     render() {
         if (this.state.ready) {
@@ -124,12 +124,16 @@ class PatientProfile extends Component {
                         carerSurname={this.state.carerSurname}
                         carerEmail={this.state.carerEmail}
                         carerPhone={this.state.carerPhone}
+                        hasCarer={this.state.hasCarer}
                     />
                     <HospitalSection
                         hospitalId={this.state.hospitalId}
                         hospitalName={this.state.hospitalName}
                         hospitalEmail={this.state.hospitalEmail}
                         hospitalPhone={this.state.hospitalPhone}
+                        localHospital={this.state.localHospital}
+                        //TODO : maybe find different way of doing this
+                        onHospitalClick={() => this.setState({localHospital: !this.state.localHospital})}
                     />
                     <TestSection tests={[{due_date: "2019-02-02", notes: "Some notes"}]}/>
 

@@ -10,11 +10,11 @@ export default class PatientSection extends React.Component {
         const content = (
             <>
                 <InputCell
-                    field={"ID"}
-                    value={this.props.patientId}
+                    field={"Patient id"}
                     id={"patient_id"}
-                    disabled={"true"}
+                    value={this.props.patientId}
                 />
+
                 <InputCell
                     field={"Name"}
                     id={"patient_name"}

@@ -17,33 +17,43 @@ const Container = styled.div`
   background: white;
 `;
 
-export default class HospitalSection extends React.Component {
+class HospitalSection extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+    }
+
     render() {
         const content = (
             <>
                 <InputCell
-                    field={"Hospital ID"}
-                    value={this.props.hospitalId}
-                    id={"hospital_id"}
-                    disabled={"true"}
-                />
-
-                <InputCell
                     field={"Name"}
                     value={this.props.hospitalName}
                     id={"hospital_name"}
+                    disabled={this.props.localHospital}
                 />
 
                 <InputCell
                     field={"Email"}
                     value={this.props.hospitalEmail}
                     id={"hospital_email"}
+                    disabled={this.props.localHospital}
                 />
 
                 <InputCell
                     field={"Phone"}
                     value={this.props.hospitalPhone}
                     id={"hospital_phone"}
+                    disabled={this.props.localHospital}
+                />
+
+                <InputCell
+                    field={"Is this patient in local hospital ?"}
+                    value={this.props.localHospital}
+                    id={"is_local"}
+                    type={"checkbox"}
+                    onChange={this.props.onHospitalClick}
                 />
             </>
         );
@@ -55,3 +65,6 @@ export default class HospitalSection extends React.Component {
         );
     }
 }
+
+export default HospitalSection;
+
