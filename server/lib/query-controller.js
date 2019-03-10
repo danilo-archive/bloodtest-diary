@@ -48,6 +48,11 @@ async function getAllTestsOnDate(date)
   return await selectQueryDatabase(sql)
 }
 
+async function getTestInfo(test_id){
+    let sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_id=${test_id}`;
+    return await selectQueryDatabase(sql);
+}
+
 /**
 * Get all the overdue tests from the database
 * @return {JSON} result of the query
@@ -100,11 +105,16 @@ async function getOverdueGroups()
       return groups;
 }
 
+async function requestTestEditToken(testId){
+    var data = await databaseController.requestEditing("Test", testId).then( data => {return data;});
+    return data.response.token;
+}
+
 async function addTest(patient_no, date, notes, frequency, occurrences=1){
     date = utils.formatDate(new Date(date));
-    let values = ``;
+    frequency = frequency ? frequency : "NULL";
     console.log({date});
-    let sql =`INSERT INTO Test(patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes) VALUES('${patient_no}', ${date}, 'weekly', ${occurrences}, 'no', NULL, '${notes}');`;
+    let sql =`INSERT INTO Test(patient_no, due_date, frequency, occurrences, completed_status, completed_date, notes) VALUES('${patient_no}', ${date}, '${frequency}', ${occurrences}, 'no', NULL, '${notes}');`;
     console.log(sql);
     let response = await databaseController.insertQuery(sql);
     console.log(response);
@@ -113,6 +123,18 @@ async function addTest(patient_no, date, notes, frequency, occurrences=1){
     }else {
         return {success: false};
     }
+}
+
+/**
+*  Edit test query
+* @param testId The id of the test to be updated
+* @param {JSON} newInfo All the information of the test (new and old)
+* @param token The token that grants edit priviledges
+*/
+async function editTest(testId, newInfo, token){
+    // TODO write query
+    var sql = prepareUpdateSQL("Test",newInfo,"test_id");
+    return await updateQueryDatabase("Test",testId,sql,token);
 }
 
 /**
@@ -131,7 +153,9 @@ async function changeTestStatus(testId, newStatus)
   {
     switch(newStatus)
     {
+        // TODO fix bug that completed might reset the completed date
       case "completed": {status = "yes"; date=`CURDATE()`; break;}
+      case "inReview" : {status = "in review"; date `CURDAte()`; break;}
       case "late": {status = "no"; date=`NULL`; break;}
       default: return {success:false, response: data.response}
     }
@@ -230,6 +254,56 @@ async function selectQueryDatabase(sql)
   return response;
 }
 
+async function requestEditing(table, id)
+{
+  var data = await databaseController.requestEditing(table,id).then( data => {return data;});
+  //var token = data.response.token
+  if (data.status === 'OK') {
+    return data.response.token;
+  }
+  return undefined;
+}
+
+async function updateQueryDatabase(table,id,sql,token)
+{
+  if(token)
+  {
+    let response = await databaseController.updateQuery(sql, table, id, token)
+    if(response.status==="OK"){
+      return {success:true , response: response.response}
+    }
+    else{
+      return {success:false , response: response.err}
+    }
+  }
+  else {
+    return {success:false, response: {problem:"Token in use"} };
+  }
+}
+
+/**
+*
+**/
+function prepareUpdateSQL(table, object, idProperty)
+{
+  var sql = `Update ${table} SET `;
+  var properties = Object.keys(object);
+  var values = Object.values(object);
+  var pos;
+  for(var i=0; i<properties.length; i++)
+  {
+    if(properties[i]!= idProperty){
+      sql += `${properties[i]} = '${values[i]}', `;
+    }
+    else{
+      pos = i;
+    }
+  }
+  //delete ", " from sql query
+  sql = sql.substr(0,sql.length-2);
+  sql += ` WHERE ${idProperty} = '${values[pos]}';`
+  return sql;
+}
 
 module.exports = {
     getOverdueTestsExtended,
@@ -237,10 +311,13 @@ module.exports = {
     getUser,
     getAllPatients,
     getAllTests,
+    getTestInfo,
     getTestsOfPatient,
     getAllTestsOnDate,
     getOverdueTests,
     addTest,
     changeTestStatus,
     getTestWithinWeek,
+    editTest,
+    requestEditing
 };

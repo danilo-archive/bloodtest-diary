@@ -24,8 +24,14 @@ class ServerConnect {
             this.socket.emit("join", "", this.currentRoom, true);
         });
 
+        this.socket.on("disconnect", () => {
+            console.log("Server lost...");
+            console.log("Trying reconnecting");
+        });
+
         this.onTestAdded = undefined;
         this.onTestStatusChange = undefined;
+        this.onTestEdit = undefined;
 
         this.socket.on("testAdded", newTest => {
             this.onTestAdded(newTest);
@@ -70,6 +76,10 @@ class ServerConnect {
         this.onTestStatusChange = callback;
     }
 
+    setOnTestEdit(callback){
+        this.onTestEdit = callback;
+    }
+
     /**
      * Function to be called when user needs to be authenticated
      * @param {username: username, password: password} credentials
@@ -79,7 +89,7 @@ class ServerConnect {
     login(credentials, callback){
         console.log("trying to log in");
         this.socket.emit('authenticate', credentials);
-        this.socket.on('authenticationResponse', res => {
+        this.socket.once('authenticationResponse', res => {
             callback(res);
         });
     }
@@ -93,7 +103,7 @@ class ServerConnect {
      */
     getAllPatients(callback){
         this.socket.emit('getAllPatients');
-        this.socket.on("getAllPatientsResponse", res => {
+        this.socket.once("getAllPatientsResponse", res => {
             callback(res);
         });
     }
@@ -106,7 +116,7 @@ class ServerConnect {
      */
     getAllTests(callback){
         this.socket.emit('getAllTests');
-        this.socket.on('getAllTestsResponse', res => {
+        this.socket.once('getAllTestsResponse', res => {
             callback(res);
         });
     }
@@ -120,7 +130,7 @@ class ServerConnect {
      */
     getTestsOfPatient(patientId, callback){
         this.socket.emit('getTestsOfPatient', patientId);
-        this.socket.on('getTestsOfPatientResponse', res => {
+        this.socket.once('getTestsOfPatientResponse', res => {
             callback(res);
         });
     }
@@ -134,7 +144,7 @@ class ServerConnect {
      */
     getTestsOnDate(date, callback){
         this.socket.emit('getAllTestsOnDate', date);
-        this.socket.on('getAllTestsOnDateResponse', res => {
+        this.socket.once('getAllTestsOnDateResponse', res => {
             callback(res);
         });
     }
@@ -147,7 +157,7 @@ class ServerConnect {
      */
     getOverdueTests(callback){
         this.socket.emit('getOverdueTests');
-        this.socket.on('getOverdueTestsResponse', res => {
+        this.socket.once('getOverdueTestsResponse', res => {
             callback(res);
         });
     }
@@ -163,9 +173,43 @@ class ServerConnect {
     getTestsInWeek(date, callback, anydayTestsOnly=false){
         let dateString = formatDate(date);
         this.socket.emit('getTestsInWeek', dateString, anydayTestsOnly);
-        this.socket.on('getTestsInWeekResponse', res => {
+        this.socket.once('getTestsInWeekResponse', res => {
             console.log(res.response);
             callback(res.response);
+        });
+    }
+
+    getMockTest(testId, callback){
+        let duedate = new Date(2019, 3, 4);
+        let mockedTest = {
+            patient_name: "John Doe",
+            patient_no: "P123890",
+            test_id: 123,
+            due_date: "2019-3-3",
+            frequency: "2-W",
+            occurrences: 3,
+            completed_status: "no",
+            notes: "This guys is basically just an idiot",
+            completedDate: null,
+            hospitalId: 3
+
+        }
+        setTimeout( () => {
+            callback(mockedTest);
+        }, 3000);
+    }
+
+    getTestInfo(testId, callback){
+        this.socket.emit("getTestInfo", testId);
+        this.socket.once("getTestInfoResponse", res => {
+            callback(res.response[0]);
+        });
+    }
+
+    requestTestEditing(testId, callback){
+        this.socket.emit("requestTestEditToken", testId);
+        this.socket.once("requestTestEditTokenResponse", token => {
+            callback(token);
         });
     }
 
@@ -176,8 +220,8 @@ class ServerConnect {
     * @param notes Additional info about the test
     * @param frequency The frequency of the test
     */
-    addTest(patientId, date, notes, frequency=""){
-        this.socket.emit("addTest", patientId, date, notes, frequency);
+    addTest(patientId, date, notes, frequency="", occurrences=1){
+        this.socket.emit("addTest", patientId, date, notes, frequency, occurrences);
     }
 
     /**
@@ -187,6 +231,22 @@ class ServerConnect {
     */
     changeTestStatus(testId, newStatus){
         this.socket.emit('testStatusChange', testId, newStatus);
+    }
+
+    /**
+    * Thim method emits a request to edit a test into the database.
+    * Response can be either success or failure.
+    * @param testId The id of the test to be changed.
+    * @param {JSON} newData All the information about the test
+    * @param token The token that grants editing priviledges.
+    * @callback callback Protocol to be called on response
+    */
+    editTest(testId, newData, token, callback){
+        console.log({newData});
+        this.socket.emit("editTest", testId, newData, token);
+        this.socket.once("editTestReponse", response => {
+            callback(response)
+        });
     }
 }
 

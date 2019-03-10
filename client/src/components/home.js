@@ -9,6 +9,7 @@ import WeeklyCalendar from "./homeComponents/weeklyCalendar";
 import OngoingWeekly from "./homeComponents/ongoingWeekly";
 import arrow from "../images/arrow.png";
 import AddTest from "./homeComponents/addTest/AddTestView";
+import EditTest from "./homeComponents/editTest/EditTestView";
 import {getNextDates, getMondayOfWeek, getCurrentWeek, getPreviousWeek, getNextWeek} from "../lib/calendar-controller";
 import {getServerConnect} from "../serverConnection.js";
 import {group, getNumberOfTestsInGroup} from "../lib/overdue-controller.js";
@@ -28,7 +29,10 @@ class Home extends Component {
         overdueTests: {},
         ongoingTests: {},
         calendar: {},
-        openModal: false
+        openAddTestModal: false,
+        openEditTestModal: false,
+        editTestId: undefined,
+        editToken: undefined
       };
 
     }
@@ -41,8 +45,8 @@ class Home extends Component {
         this.handleNext = this.handleNext.bind(this);
         this.handlePrevious = this.handlePrevious.bind(this);
 
-        this.onOpenModal = this.onOpenModal.bind(this);
-        this.onCloseModal = this.onCloseModal.bind(this);
+        this.onAddTestOpenModal = this.onAddTestOpenModal.bind(this);
+        this.onAddTestCloseModal = this.onAddTestCloseModal.bind(this);
     }
 
 
@@ -59,42 +63,20 @@ class Home extends Component {
 
     initOnTestStatusChange() {
       this.serverConnect.setOnTestStatusChange((id, status) => {
-        // check if it's overdue
-        for (var i = 0; i < this.state.overdueTests.length; ++i) {
-          let group = this.state.overdueTests[i];
-          for (var j = 0; j < group.tests.length ; ++j){
-              var test = group.tests[j];
-              if (test.test_id === id) {
-                let newOverdueTests = [...this.state.overdueTests];
-                newOverdueTests[i].tests[j].completed_status = status;
-                this.setState({overdueTests: newOverdueTests});
-              }
-          }
-        }
-        // check if it's ongoing
-        for (var i = 0; i < this.state.ongoingTests.length; ++i) {
-          var test = this.state.ongoingTests[i];
-          if (test.test_id === id) {
-            let newOngoingTests = [...this.state.ongoingTests];
-            newOngoingTests[i].completed_status = status;
-            this.setState({ongoingTests: newOngoingTests});
-            return;
-          }
-        }
-        //check if it's in the current calendar
-        for (var i = 0; i < this.state.calendar.length; ++i) {
-          var day = this.state.calendar[i];
-          for (var j = 0; j < day.length; ++j) {
-            var test = day[j];
-            if (test.test_id === id) {
-              let newCalendar = [...this.state.calendar];
-              newCalendar[i][j].completed_status = status;
-              this.setState({calendar: newCalendar});
-              return;
-            }
-          }
-        }
+        this.modifyTest(id, test => {
+            test.completed_status = status;
+            return test;
+        });
       });
+    }
+
+    initOnTestEdit(){
+        this.serverConnect.setOnTestEdit((id, newTest) => {
+            this.modifyTest(id, test => {
+                test = newTest;
+                return newTest;
+            });
+        });
     }
 
     initOverduePanel() {
@@ -108,15 +90,59 @@ class Home extends Component {
 
     updateDashboard(newWeek=undefined) {
       let monday = newWeek ? newWeek[0] : this.state.weekDays[0];
+      newWeek = newWeek ? newWeek : this.state.weekDays;
       this.serverConnect.getTestsInWeek(monday, res => {
-        this.setState( prevState => {return {
+        this.setState({
               ongoingTests: res[5],
               calendar: res.slice(0, 5),
               dashboardReady: true,
-              weekDays: newWeek ? newWeek : prevState.weekDays
-          }});
+              weekDays: newWeek
+          });
         });
     }
+
+    modifyTest(id, modificationFunction){
+        for (var i = 0; i < this.state.overdueTests.length; ++i) {
+          let group = this.state.overdueTests[i];
+          for (var j = 0; j < group.tests.length ; ++j){
+              var test = group.tests[j];
+              if (test.test_id === id) {
+                let newOverdueTests = [...this.state.overdueTests];
+                let testToModify = newOverdueTests[i].tests[j]
+                let modifiedTest = modificationFunction(testToModify);
+                newOverdueTests[i].tests[j] = modifiedTest;
+                this.setState({overdueTests: newOverdueTests});
+              }
+          }
+        }
+        // check if it's ongoing
+        for (var i = 0; i < this.state.ongoingTests.length; ++i) {
+          var test = this.state.ongoingTests[i];
+          if (test.test_id === id) {
+            let newOngoingTests = [...this.state.ongoingTests];
+            let testToModify = newOngoingTests[i];
+            let modifiedTest = modificationFunction(testToModify);
+            newOngoingTests[i] = modifiedTest;
+            this.setState({ongoingTests: newOngoingTests});
+            return;
+          }
+        }
+        //check if it's in the current calendar
+        for (var i = 0; i < this.state.calendar.length; ++i) {
+          var day = this.state.calendar[i];
+          for (var j = 0; j < day.length; ++j) {
+            var test = day[j];
+            if (test.test_id === id) {
+              let newCalendar = [...this.state.calendar];
+              let testToModify = newCalendar[i][j];
+              let modifiedTest = modificationFunction(testToModify);
+              newCalendar[i][j] = modifiedTest;
+              this.setState({calendar: newCalendar});
+              return;
+            }
+          }
+        }
+      }
 
     handleNext(event) {
       let nextWeek = getNextWeek([...this.state.weekDays]);
@@ -128,12 +154,25 @@ class Home extends Component {
       this.updateDashboard(previousWeek);
     }
 
-    onOpenModal = selectedDate => {
-      this.setState({ openModal: true, selectedDate });
+    onAddTestOpenModal = selectedDate => {
+      this.setState({ openAddTestModal: true, selectedDate });
     };
 
-    onCloseModal = () => {
-      this.setState({ openModal: false, selectedDate: undefined });
+    onAddTestCloseModal = () => {
+      this.setState({ openAddTestModal: false, selectedDate: undefined });
+    };
+
+    onEditTestOpenModal = testId => {
+        this.serverConnect.requestTestEditing(testId, token => {
+          if (token != undefined){
+            this.setState({openEditTestModal: true, editTestId: testId, editToken: token});
+          }
+        });
+    };
+
+    onEditTestCloseModal = () => {
+        // TODO remove token if not used
+        this.setState({openEditTestModal: false, editTestId: undefined, editToken: undefined});
     };
 
     render() {
@@ -144,6 +183,7 @@ class Home extends Component {
               <OverduePatients
                 notificationNumber={getNumberOfTestsInGroup(this.state.overdueTests)}
                 anytimeAppointments={this.state.overdueTests}
+                editTest={this.onEditTestOpenModal}
               />
             </div>
             <div className={"rightSideDash"}>
@@ -155,7 +195,8 @@ class Home extends Component {
                   <WeeklyCalendar
                     calendar={this.state.calendar}
                     weekDays={this.state.weekDays}
-                    openModal={this.onOpenModal}
+                    openModal={this.onAddTestOpenModal}
+                    editTest={this.onEditTestOpenModal}
                   />
                 </div>
                 <div className={"ongoingWeekly"}>
@@ -163,20 +204,34 @@ class Home extends Component {
                     currentMonday={this.currentMonday}
                     notificationNumber={this.state.ongoingTests.length}
                     anytimeAppointments={this.state.ongoingTests}
+                    editTest={this.onEditTestOpenModal}
                   />
                 </div>
               </div>
             </div>
             <Modal
-              open={this.state.openModal}
-              onClose={this.onCloseModal}
+              open={this.state.openAddTestModal}
+              onClose={this.onAddTestCloseModal}
               showCloseIcon={false}
               style={modalStyles}
               center
             >
               <AddTest
                 selectedDate={this.state.selectedDate}
-                closeModal={this.onCloseModal}
+                closeModal={this.onAddTestCloseModal}
+              />
+            </Modal>
+            <Modal
+                open={this.state.openEditTestModal}
+                onClose={this.onEditTestCloseModal}
+                showCloseIcon={false}
+                style={modalStyles}
+                center
+            >
+              <EditTest
+                 testId = {this.state.editTestId}
+                 closeModal={this.onEditTestCloseModal}
+                 token={this.state.editToken}
               />
             </Modal>
           </div>

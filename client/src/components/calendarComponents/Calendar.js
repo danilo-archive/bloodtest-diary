@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import './Calendar.css';
-import {getCalendar} from '../../lib/calendar-functions.js';
-import DayCell from './DayCell.js';
-import CalendarHeader from './CalendarHeader.js';
+import React, { Component } from "react";
+import "./Calendar.css";
+import { getCalendar } from "../../lib/calendar-functions.js";
+import DayCell from "./DayCell.js";
+import CalendarHeader from "./CalendarHeader.js";
 
 const HALF_MONTH = 15;
 const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -38,7 +38,7 @@ class CalendarTable extends Component {
       this.setState({
         date: newDate,
         calendar: getCalendar(newDate)
-      })
+      });
     };
     this.selectDay = (day, isFromThisMonth) => {
       const date = this.state.date;
@@ -59,26 +59,36 @@ class CalendarTable extends Component {
       if (month === 13) {
         year++;
         month = 1;
-      }else if(month === 0){
+      } else if (month === 0) {
         year--;
-        month = 12;        
+        month = 12;
       }
       this.setState({ selected: `${year}-${month}-${day}` });
+      if (this.props.onDaySelected) {
+        this.props.onDaySelected(`${year}-${month}-${day}`);
+      }
     };
     this.returnDate = () => {
       return this.state.selected;
-    }
+    };
   }
 
   render() {
     return (
-      <table className={'calendar'} cellPadding={0} cellSpacing={0}>
+      <table 
+        style={this.props.style}
+        className={'calendar'} 
+        cellPadding={0} 
+        cellSpacing={0}
+      >
         <thead>
-          <CalendarHeader currentDate={this.state.date}
-                          prevMonth={this.prevMonth}
-                          nextMonth={this.nextMonth} />
+          <CalendarHeader 
+            currentDate={this.state.date}
+            prevMonth={this.prevMonth}
+            nextMonth={this.nextMonth} 
+          />
           <tr>
-            {weekDays.map((day) => {
+            {weekDays.map(day => {
               return (
                 <th key={day} className={'day-of-the-week'}>
                   {day}
@@ -97,15 +107,16 @@ class CalendarTable extends Component {
                   }
                   return (
                     <td key={tdIndex}>
-                      {<DayCell selectDay={this.selectDay}
-                                selectedDay={this.state.selected}
-                                date={this.state.date}
-                                dayOfMonth={day}
-                                isFromThisMonth={dayBelongsToCurrentMonth} />}
+                      {<DayCell 
+                          selectDay={this.selectDay}
+                          selectedDay={this.state.selected}
+                          date={this.state.date}
+                          dayOfMonth={day}
+                          isFromThisMonth={dayBelongsToCurrentMonth} 
+                        />}
                     </td>
                   );
-                }
-                )}
+                })}
               </tr>
             );
           })}

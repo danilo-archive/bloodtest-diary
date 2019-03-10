@@ -104,11 +104,26 @@ io.on('connection',function(socket)
         socket.emit('getOverdueTestsResponse', response);
     });
 
+    socket.on('requestTestEditing', async (testId) => {
+
+    })
+
+    socket.on('getTestInfo', async (testId) => {
+        let response = await queryController.getTestInfo(testId);
+        console.log({response});
+        socket.emit("getTestInfoResponse", response);
+    });
+
+    socket.on("requestTestEditToken", async (testId) => {
+        let response = await queryController.requestEditing("Test", testId);
+        socket.emit("requestTestEditTokenResponse", response);
+    });
+
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 
-    socket.on("addTest", async (patientId, date, notes, frequency) => {
-        let response = await queryController.addTest(patientId, date, notes, frequency);
+    socket.on("addTest", async (patientId, date, notes, frequency, occurrences) => {
+        let response = await queryController.addTest(patientId, date, notes, frequency, occurrences);
         if (response.success){
             socket.emit("testAdded", response.response);
             socket.in("main_page").emit("testAdded", response.response)
@@ -123,6 +138,17 @@ io.on('connection',function(socket)
         console.log(response);
         socket.emit('testStatusChange', testId, newStatus);
         io.in("main_page").emit('testStatusChange', testId, newStatus);
+    });
+
+    socket.on("editTest", async (testId, newInfo, token) => {
+        let response = await queryController.editTest(testId, newInfo, token);
+        console.log({response});
+        if (response.success){
+            socket.emit("testAdded", response.response);
+            socket.in("main_page").emit("testAdded", response.response);
+        } else {
+            // emit failure to the socket
+        }
     });
 });
 

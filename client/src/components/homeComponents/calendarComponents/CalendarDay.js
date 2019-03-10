@@ -36,12 +36,6 @@ const monthNames = [
 class CalendarDay extends React.Component {
   constructor(props) {
     super(props);
-    /* this.state = {
-        notificationNumber: props.notificationNumber,
-        date: props.date,
-        dayName: props.dayName,
-        appointments: props.anytimeAppointments
-    };*/
   }
 
   render() {
@@ -66,6 +60,7 @@ class CalendarDay extends React.Component {
             <AppointmentSection
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
+              editTest={this.props.editTest}
             />
             <div style={{width:"100%",height:"30%"}}/>
           </ScrollBox>
