@@ -128,6 +128,11 @@ io.on('connection',function(socket)
         socket.emit("requestPatientEditTokenResponse", token);
     });
 
+    socket.on("discardEditing", async (table, id, token) => {
+        const response = await queryController.returnToken(tablem id, token);
+        socket.emit("discardEditingResponse", response);
+    });
+
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 
@@ -160,7 +165,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("editPatient", async (patientId, newInfo, token) => {
-        const respnse = await queryController.editPatientExtended(newInfo, token);
+        console.log(token);
+        const response = await queryController.editPatientExtended(newInfo, token);
         console.log(response);
         if (response.success){
             socket.emit("editPatientResponse", {success: true});
