@@ -46,7 +46,7 @@ export default class EditTestView extends React.Component {
           id: res.test_id,
           date: {
             dueDate: res.due_date,
-            frequency: res.frequency,
+            frequency: res.frequency ? res.frequency : "",
             occurrences: res.occurrences
           },
           status: res.completed_status,
