@@ -129,7 +129,7 @@ io.on('connection',function(socket)
     });
 
     socket.on("discardEditing", async (table, id, token) => {
-        const response = await queryController.returnToken(tablem id, token);
+        const response = await queryController.returnToken(table, id, token);
         socket.emit("discardEditingResponse", response);
     });
 
