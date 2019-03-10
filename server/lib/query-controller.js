@@ -651,6 +651,7 @@ module.exports = {
     getUser,
     getAllPatients,
     getAllTests,
+    getTestInfo,
     getTestsOfPatient,
     getAllTestsOnDate,
     getOverdueTests,
