@@ -11,7 +11,7 @@ const DayCell = props => {
       return(
         <button id={`${day}${isFromThisMonth}`}
                 className={`${(isFromThisMonth) ? 'current' : 'not-current'}
-                            ${(selected) ? 'selected' : 'not-selected'} 
+                            ${(selected) ? 'selected' : 'not-selected'}
                             day-number`}
                 onClick={() => props.selectDay(day, isFromThisMonth)} >
           {day}
@@ -20,4 +20,3 @@ const DayCell = props => {
   }
 
 export default DayCell;
-

@@ -8,7 +8,7 @@
  */
 
 import openSocket from 'socket.io-client';
-import {formatDate} from './lib/utils.js';
+//import formatDate from 'dateformat';
 
 const host = "http://localhost";
 const port = 3265;
@@ -171,8 +171,7 @@ class ServerConnect {
      * TODO eventually change name of the callback.
      */
     getTestsInWeek(date, callback, anydayTestsOnly=false){
-        let dateString = formatDate(date);
-        this.socket.emit('getTestsInWeek', dateString, anydayTestsOnly);
+        this.socket.emit('getTestsInWeek', date, anydayTestsOnly);
         this.socket.once('getTestsInWeekResponse', res => {
             console.log(res.response);
             callback(res.response);
@@ -220,7 +219,7 @@ class ServerConnect {
     * @param notes Additional info about the test
     * @param frequency The frequency of the test
     */
-    addTest(patientId, date, notes, frequency="", occurrences=1){
+    addTest(patientId, date, notes, frequency, occurrences){
         this.socket.emit("addTest", patientId, date, notes, frequency, occurrences);
     }
 

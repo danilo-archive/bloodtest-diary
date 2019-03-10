@@ -10,7 +10,7 @@ const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 let dayBelongsToCurrentMonth = false;
 
 class CalendarTable extends Component {
-  constructor(props) {
+  constructor(props){
     super(props);
     const currentDate = new Date();
     this.state = {
@@ -70,22 +70,22 @@ class CalendarTable extends Component {
     };
     this.returnDate = () => {
       return this.state.selected;
-    };
+    }
   }
 
   render() {
     return (
-      <table 
+      <table
         style={this.props.style}
-        className={'calendar'} 
-        cellPadding={0} 
+        className={'calendar'}
+        cellPadding={0}
         cellSpacing={0}
       >
         <thead>
-          <CalendarHeader 
+          <CalendarHeader
             currentDate={this.state.date}
             prevMonth={this.prevMonth}
-            nextMonth={this.nextMonth} 
+            nextMonth={this.nextMonth}
           />
           <tr>
             {weekDays.map(day => {
@@ -107,12 +107,12 @@ class CalendarTable extends Component {
                   }
                   return (
                     <td key={tdIndex}>
-                      {<DayCell 
+                      {<DayCell
                           selectDay={this.selectDay}
                           selectedDay={this.state.selected}
                           date={this.state.date}
                           dayOfMonth={day}
-                          isFromThisMonth={dayBelongsToCurrentMonth} 
+                          isFromThisMonth={dayBelongsToCurrentMonth}
                         />}
                     </td>
                   );

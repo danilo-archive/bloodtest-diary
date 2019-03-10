@@ -7,6 +7,77 @@
 const Holidays = require('date-holidays');
 const hd = new Holidays('GB');
 
+function isPastDate(date){
+    const today = new Date();
+    date = new Date(date);
+    if (date.getFullYear() < today.getFullYear()){
+        return true;
+    }
+    if (date.getMonth() < today.getMonth()){
+        return true;
+    }
+    return date.getDate() < today.getDate();
+}
+
+/**
+ * Gets the date object of the monday of the relative week
+ * @param {Date} date any day of any week
+ * @returns {Date} relative monday date
+ */
+function getMondayOfWeek(date){
+    const toReturn = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    toReturn.setDate(toReturn.getDate() - toReturn.getDay() + 1);
+    return toReturn;
+}
+
+function getCurrentWeek(){
+    const monday = new Date();
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(monday.getDate() - monday.getDay() + 1);
+    const restOfWeek = getNextDates("1-D:4", monday);
+    console.log("controller:");
+    console.log([monday].concat(restOfWeek));
+    return [monday].concat(restOfWeek);
+}
+
+/**
+ * Gets the dates of the next week.
+ * @param {List[Date]} week list with 5 dates from monday to friday
+ * @returns {List[Date]} The week after from monday to friday
+ */
+function getNextWeek(week){
+    const monday = week[0];
+    const tuesday = week[1];
+    const wednesday = week[2];
+    const thursday = week[3];
+    const friday = week[4];
+    monday.setDate(monday.getDate() + 7);
+    tuesday.setDate(tuesday.getDate() + 7);
+    wednesday.setDate(wednesday.getDate() + 7);
+    thursday.setDate(thursday.getDate() + 7);
+    friday.setDate(friday.getDate() + 7);
+    return [monday, tuesday, wednesday, thursday, friday];
+}
+
+/**
+ * Gets the dates of the previous week.
+ * @param {List[Date]} week list with 5 dates from monday to friday
+ * @returns {List[Date]} The week before from monday to friday
+ */
+function getPreviousWeek(week){
+    const monday = week[0];
+    const tuesday = week[1];
+    const wednesday = week[2];
+    const thursday = week[3];
+    const friday = week[4];
+    monday.setDate(monday.getDate() - 7);
+    tuesday.setDate(tuesday.getDate() - 7);
+    wednesday.setDate(wednesday.getDate() - 7);
+    thursday.setDate(thursday.getDate() - 7);
+    friday.setDate(friday.getDate() - 7);
+    return [monday, tuesday, wednesday, thursday, friday];
+}
+
 /**
  * Get all the next dates based on the frequency notation.
  * It does NOT return the original date
@@ -37,7 +108,7 @@ function getNextDates(frequency, startingDate) {
  * @example <caption>Example usage of getNextDate with X-D notation.</caption>
  * // returns Date object of value 2018-01-04T00:00:00.000Z
  * getNextDate('3-D', new Date(2018, 0 , 1));
- * 
+ *
  * @param {string} frequency the frequency in the given format
  * @param {date} startingDate the starting date from which to calculate the next date
  */
@@ -55,7 +126,7 @@ function getNextDate(frequency, startingDate) {
     }
     const f_format = frequency.split('-')[1]; // the 'Y' in '2-Y'
     let date = null;
-    let year = startingDate.getFullYear();    
+    let year = startingDate.getFullYear();
     const month = startingDate.getMonth();
     let day = startingDate.getDate()
 
@@ -117,7 +188,7 @@ function isHoliday(date) {
 
 /**
  * Check if given string is an integer
- * @param {string} str 
+ * @param {string} str
  * @returns {boolean} true if string is an integer
  */
 function stringIsInteger(str) {
@@ -127,5 +198,11 @@ function stringIsInteger(str) {
 
 module.exports = {
     isHoliday,
-    getNextDates
+    isPastDate,
+    getNextWeek,
+    getCurrentWeek,
+    getPreviousWeek,
+    getMondayOfWeek,
+    getNextDates,
+    getNextDate
 }

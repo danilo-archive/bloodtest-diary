@@ -2,11 +2,11 @@
 
 ## Requirements
 
-For development, you will only need Node.js and npm installed on your environment.
+For development, you will only need [Node.js](http://nodejs.org/) and [npm](https://npmjs.org/) installed on your environment.
 
 ### Node and npm
 
-[Node](http://nodejs.org/) is really easy to install & now include [NPM](https://npmjs.org/).
+[Node](http://nodejs.org/) is really easy to install & now include [npm](https://npmjs.org/).
 You should be able to run the following command after the installation procedure
 below.
 ```
@@ -44,22 +44,6 @@ Also, be sure to have `git` available in your PATH, `npm` might need it.
 
 <hr>
 
-## Install
-client:
-```
-    $ git clone https://github.kcl.ac.uk/k1764125/BloodTestDiary.git
-    $ cd BloodTestDiary/client
-    $ npm install
-```
-
-server:
-```
-    $ git clone https://github.kcl.ac.uk/k1764125/BloodTestDiary.git
-    $ cd BloodTestDiary/server
-    $ npm install
-```
-<hr>
-
 ### How to use code quality and testing tools
 
 #### ESLint:
@@ -68,21 +52,26 @@ server:
 To check ```path/to/app.js```:
 
     $ npm run -s eslint path/to/app.js
+It is advised to install editor extensions which will allow to check for errors automatically.
+VSCode: [vscode-eslint](https://github.com/Microsoft/vscode-eslint)
+Atom: [linter-eslint](https://atom.io/packages/linter-eslint)
+#### Mocha, Chai, and Instanbul
 
-
-#### Mocha & Chai
-
-To run tests in ```path/```:<br>
-- make sure the tests are in ```path/test/```
-- then run
+To recursively run tests in ```server/```:<br>
 ```
-    $ cd path
+    $ cd server
     $ npm test
+```
+To recursively run tests in ```client/```<br>
+```
+    $ cd client
+    $ npm test -- --recursive
 ```
 
 <hr>
 
 ### Configure app
+#### Server connection
 The configuration file is ```client/config/app_config.json```
 
 ```port``` : the port on which the local app runs<br>
@@ -98,22 +87,38 @@ The configuration file is ```client/config/app_config.json```
 ```
 <hr>
 
+#### Email sender
+The configuration file is ```server/config/email_config.json```
+```
+{
+    "transporter": {
+        "host": "smtp.mail.yahoo.com",
+        "port": 465,
+        "service": "yahoo",
+        "secure": false,
+        "auth": {
+            "user": "danilodelbusso@yahoo.com",
+            "pass": "jJ825&j9yBRA"
+        },
+        "logger": true
+    }
+}
+```
+
+for info on usage and possible additional settings, go to [nodemailer.com](https://nodemailer.com/smtp/)
 ## Languages & tools
 
-### HTML
-
-### JavaScript
 - [NodeJS](https://nodejs.org) is used for the back-end.
 - [React](http://facebook.github.io/react) is used for UI
 - [Electron](https://electronjs.org/) is used for deploying the desktop app
 - [ESLint](https://eslint.org/) is used for linting support
 - [Mocha](https://mochajs.org/) is used for testing
 - [Chai](https://www.chaijs.com/) is used for assertions
-
-### CSS
-
-### MYSQL
-
+- [Instanbul](https://istanbul.js.org/) is used for test branch coverage checks
+- [nodemailer](https://nodemailer.com/) is used for sending emails
+- [mysql](https://www.npmjs.com/package/mysql) for managing and creating a relational database
+- [mocha-sinon](https://www.npmjs.com/package/mocha-sinon) used for integration between mocha and sinon, allowing for automatic cleanup of spies
+- [proxyquire](https://www.npmjs.com/package/proxyquire) used to proxy nodejs's require in order to make overriding dependencies
 <hr>
 
 ## Authors

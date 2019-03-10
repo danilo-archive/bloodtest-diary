@@ -12,11 +12,21 @@ const AppointmentSection = styled.div`
   width: inherit;
 `;
 
+function formatOverdueTitle(header){
+  let tokens = header.split(" ");
+  if (tokens.length > 5){
+    return `Week Beg ${tokens[3]}-${tokens[2]}-${tokens[1]}`
+  } else {
+    return header;
+  }
+}
+
 export default props => {
+  const header = formatOverdueTitle(props.type);
   return (
     <AppointmentSection>
       <VerticalLine />
-      <AppointmentSectionHeader>{props.type}</AppointmentSectionHeader>
+      <AppointmentSectionHeader color={props.color}>{header}</AppointmentSectionHeader>
       {props.appointments.map(appointment => (
         <AppointmentBox
           id = {appointment.test_id}

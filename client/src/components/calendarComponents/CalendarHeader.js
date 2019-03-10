@@ -14,15 +14,16 @@ const monthNames = ["January",
                     "November",
                     "December"
 ];
-const arrowColSpan = 1; 
-const monthColSpan = 5; 
+const arrowColSpan = 1;
+const monthColSpan = 5;
 
 /**
  * Return the full name of the month from the received date
- * @param {Date} date: date 
+ * @param {Date} date: date
  * @return {string} The name of date's month
  */
 function getMonthName(date){
+    console.log(monthNames[date.getMonth()])
     return monthNames[date.getMonth()];
 }
 
