@@ -158,6 +158,17 @@ io.on('connection',function(socket)
             // emit failure to the socket
         }
     });
+
+    socket.on("editPatient", async (patientId, newInfo, token) => {
+        const respnse = await queryController.editPatientExtended(newInfo, token);
+        console.log(response);
+        if (response.success){
+            socket.emit("editPatientResponse", {success: true});
+        } else {
+            socket.emit("editPatientResponse", response);
+        }
+        io.in("patients_page").emit("patientEdited");
+    });
 });
 
 

@@ -237,6 +237,13 @@ class ServerConnect {
             callback(response)
         });
     }
+
+    editPatient(patientId, newData, token, callback){
+        this.socket.emit("editPatient", newData, token);
+        this.socket.once("editPatientResponse", res => {
+            callback(res);
+        });
+    }
 }
 
 
