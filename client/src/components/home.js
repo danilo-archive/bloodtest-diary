@@ -191,7 +191,7 @@ class Home extends Component {
                 <Navbar onPrev={this.handlePrevious} onNext={this.handleNext} />
               </div>
               <div className={"bottomSideDash"}>
-                <div className={"calendar"}>
+                <div className={"homecalendar"}>
                   <WeeklyCalendar
                     calendar={this.state.calendar}
                     weekDays={this.state.weekDays}
