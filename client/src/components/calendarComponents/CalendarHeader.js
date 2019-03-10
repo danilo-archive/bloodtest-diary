@@ -39,13 +39,15 @@ function getMonthAndYear(date){
 
 const CalendarHeader = props => {
     return(
-        <tr>
-            <td colSpan={arrowColSpan} className={'arrow'} onClick={() => props.prevMonth()}>
-                <button>&lt;</button>
+        <tr className={'header'}>
+            <td colSpan={arrowColSpan}>
+                <button className={'arrow'}
+                        onClick={() => props.prevMonth()}>&lt;</button>
             </td>
-            <td colSpan={monthColSpan} className={'date'}>{getMonthAndYear(props.currentDate)}</td>
-            <td colSpan={arrowColSpan} className={'arrow'} onClick={() => props.nextMonth()}>
-                <button>&gt;</button>
+            <td colSpan={monthColSpan}>{getMonthAndYear(props.currentDate)}</td>
+            <td colSpan={arrowColSpan}>
+                <button className={'arrow'}
+                        onClick={() => props.nextMonth()}>&gt;</button>
             </td>
         </tr>
     )

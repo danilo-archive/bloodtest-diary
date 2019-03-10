@@ -1,25 +1,21 @@
-td, td:hover {
+.arrow {
+    font-size: 100%;
+    padding: 0;
+    border: none;
+    margin: 0;
     color: white;
     background-color: #0b989d;
 }
 
-td button:hover {
+.arrow:hover {
+    width: 100%;
     color: #0b989d;
     background-color: white;
+    border-radius: 10px
 }
 
-button {
-    background-color: transparent;
-    color: white;
+.header {
+  text-align: center;
+  color: white;
+  font-size: 120%;
 }
-
-.arrow, .arrow:hover {
-    font-size: 120%;
-    background-color: transparent;
-}
-
-.date {
-    font-size: 120%;
-}
-
-

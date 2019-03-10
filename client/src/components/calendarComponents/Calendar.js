@@ -75,21 +75,25 @@ class CalendarTable extends Component {
 
   render() {
     return (
-      <table
+      <table 
         style={this.props.style}
-        id={"daysTable"}
-        cellPadding={0}
+        className={'calendar'} 
+        cellPadding={0} 
         cellSpacing={0}
       >
         <thead>
-          <CalendarHeader
+          <CalendarHeader 
             currentDate={this.state.date}
             prevMonth={this.prevMonth}
-            nextMonth={this.nextMonth}
+            nextMonth={this.nextMonth} 
           />
           <tr>
             {weekDays.map(day => {
-              return <th key={day}>{day}</th>;
+              return (
+                <th key={day} className={'day-of-the-week'}>
+                  {day}
+                </th>
+              );
             })}
           </tr>
         </thead>
@@ -102,21 +106,14 @@ class CalendarTable extends Component {
                     dayBelongsToCurrentMonth = !dayBelongsToCurrentMonth;
                   }
                   return (
-                    <td
-                      key={tdIndex}
-                      className={`${
-                        dayBelongsToCurrentMonth ? "in" : "out"
-                      } day`}
-                    >
-                      {
-                        <DayCell
+                    <td key={tdIndex}>
+                      {<DayCell 
                           selectDay={this.selectDay}
                           selectedDay={this.state.selected}
                           date={this.state.date}
                           dayOfMonth={day}
-                          isFromThisMonth={dayBelongsToCurrentMonth}
-                        />
-                      }
+                          isFromThisMonth={dayBelongsToCurrentMonth} 
+                        />}
                     </td>
                   );
                 })}
