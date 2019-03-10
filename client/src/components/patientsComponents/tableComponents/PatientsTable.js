@@ -36,7 +36,7 @@ const TableHead = styled.th`
 `;
 
 const TableRow = styled.tr`
-    display: table; 
+    display: table;
     width: 100%;
     box-sizing: border-box;
 `;
@@ -45,43 +45,64 @@ class PatientsTable extends React.Component {
 
     constructor(props){
         super(props);
-
-        this.allPatients = this.props.allPatients;
+        this.state = {
+            patients: props.allPatients,
+        }
     }
 
     number_filter = value => {
-        this.allPatients = this.props.allPatients.filter(
-         patient => patient.patient_no.includes(value)
-        );
-        this.forceUpdate()
+        if (value == "") { this.setState({patients: this.props.allPatients})}
+        else{
+            this.setState({
+              patients: this.props.allPatients.filter(
+                patient => patient.patient_no.includes(value)
+              )
+            });
+        }
     };
 
     name_filter = value => {
-        this.allPatients = this.props.allPatients.filter(
-            patient => patient.patient_name.includes(value)
-        );
-        this.forceUpdate()
+        if (value == "") { this.setState({patients: this.props.allPatients})}
+        else{
+            this.setState({
+              patients: this.props.allPatients.filter(
+                patient => patient.patient_name ? patient.patient_name.includes(value) : false
+              )
+            });
+        }
     };
 
     surname_filter = value => {
-        this.allPatients = this.props.allPatients.filter(
-            patient => patient.patient_surname.includes(value)
-        );
-        this.forceUpdate()
+        if (value == "") { this.setState({patients: this.props.allPatients})}
+        else{
+            this.setState({
+              patients: this.props.allPatients.filter(
+                patient => patient.patient_surname ? patient.patient_surname.includes(value) : false
+              )
+            });
+        }
     };
 
     email_filter = value => {
-        this.allPatients = this.props.allPatients.filter(
-            patient => patient.patient_email.includes(value)
-        );
-        this.forceUpdate()
+        if (value == "") { this.setState({patients: this.props.allPatients})}
+        else{
+            this.setState({
+              patients: this.props.allPatients.filter(
+                patient => patient.patient_email ? patient.patient_email.includes(value) : false
+              )
+            });
+        }
     };
 
     phone_filter = value => {
-        this.allPatients = this.props.allPatients.filter(
-            patient => patient.patient_phone.includes(value)
-        );
-        this.forceUpdate()
+        if (value == "") { this.setState({patients: this.props.allPatients})}
+        else{
+            this.setState({
+              patients: this.props.allPatients.filter(
+                patient => patient.patient_phone ? patient.patient_phone.includes(value) : false
+              )
+            });
+        }
     };
 
     render() {
@@ -123,8 +144,9 @@ class PatientsTable extends React.Component {
                 </TableRow>
                 </TableHeader>
                 <TableBody>
-                {this.allPatients.map(patient => (
+                {this.state.patients.map(patient => (
                     <PatientRow
+                        key={patient.patient_no}
                         patient_no = {patient.patient_no}
                         patient_name = {patient.patient_name}
                         patient_surname = {patient.patient_surname}

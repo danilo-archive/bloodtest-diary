@@ -65,6 +65,7 @@ class Patients extends React.Component {
         super(props);
         this.onHomeClick = this.onHomeClick.bind(this);
         this.serverConnect = getServerConnect();
+        this.serverConnect.joinPatientsPage();
 
         this.state = {
             allPatientsReady: false,
@@ -72,16 +73,24 @@ class Patients extends React.Component {
             openModal: false,
             selectedId: undefined
         };
+        this.initOnPatientEditedCallback();
         this.initAllPatients();
 
         this.openModal = this.openModal.bind(this);
         this.onCloseModal = this.onCloseModal.bind(this);
     }
 
+    initOnPatientEditedCallback(){
+        this.serverConnect.setOnPatientEdited((patientId, newInfo) => {
+            this.initAllPatients();
+        });
+    }
+
     initAllPatients() {
         this.serverConnect.getAllPatients(res => {
             this.setState({
                 allPatients: res,
+                shownPatients: res,
                 allPatientsReady: true
             });
         });
@@ -94,17 +103,19 @@ class Patients extends React.Component {
 
     openModal(id){
         this.serverConnect.requestPatientEditing(id, token => {
+            console.log(`id in openModal: ${id}`);
             if (token){
                 this.setState({selectedId: id, openModal: true, editToken: token});
             }else{
                 // TODO open error dialoge "someone is editing this patient"
             }
         });
-        
+
     }
 
     onCloseModal(){
         // TODO get rid of the torken
+        console.log("closing modal");
         this.setState({selectedId: undefined, openModal: false, editToken: undefined});
     }
 
@@ -120,7 +131,7 @@ class Patients extends React.Component {
                     </NavbarContainer>
                     {<TableContainer>
                         <PatientsTable
-                            allPatients={this.state.allPatients}
+                            allPatients={this.state.shownPatients}
                             openModal = {this.openModal}
                         />
                     </TableContainer>}

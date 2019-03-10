@@ -73,8 +73,6 @@ io.on('connection',function(socket)
 
     socket.on("getFullPatientInfo", async (patientId) => {
         const response = await queryController.getFullPatientInfo(patientId);
-        console.log(response);
-        console.log(patientId)
         socket.emit("getFullPatientInfoResponse", response.response);
     });
 
@@ -126,6 +124,7 @@ io.on('connection',function(socket)
 
     socket.on("requestPatientEditToken", async (patientId) => {
         const token = await queryController.requestEditing("Patient", patientId);
+        console.log("firing");
         socket.emit("requestPatientEditTokenResponse", token);
     });
 
@@ -158,6 +157,17 @@ io.on('connection',function(socket)
         } else {
             // emit failure to the socket
         }
+    });
+
+    socket.on("editPatient", async (patientId, newInfo, token) => {
+        const respnse = await queryController.editPatientExtended(newInfo, token);
+        console.log(response);
+        if (response.success){
+            socket.emit("editPatientResponse", {success: true});
+        } else {
+            socket.emit("editPatientResponse", response);
+        }
+        io.in("patients_page").emit("patientEdited", patientId, newInfo);
     });
 });
 

@@ -32,6 +32,7 @@ class ServerConnect {
         this.onTestAdded = undefined;
         this.onTestStatusChange = undefined;
         this.onTestEdit = undefined;
+        this.onPatientEdit = undefined;
 
         this.socket.on("testAdded", newTest => {
             this.onTestAdded(newTest);
@@ -40,6 +41,11 @@ class ServerConnect {
         this.socket.on("testStatusChange", (id, status) => {
             console.log("here");
             this.onTestStatusChange(id, status);
+        });
+
+        // TODO get ad hoc record and change it
+        this.socket.on("patientEdited", (patientId, newInfo) => {
+            this.onPatientEdit(patientId, newInfo);
         });
     }
 
@@ -57,6 +63,11 @@ class ServerConnect {
     joinLoginPage(){
         this.socket.emit("join", this.currentRoom, "login_page");
         this.currentRoom = "login_page";
+    }
+
+    joinPatientsPage(){
+        this.socket.emit("join", this.currentRoom, "patients_page");
+        this.currentRoom = "patients_page";
     }
 
     /**
@@ -80,6 +91,10 @@ class ServerConnect {
         this.onTestEdit = callback;
     }
 
+    setOnPatientEdited(callback){
+        this.onPatientEdit = callback;
+    }
+
     /**
      * Function to be called when user needs to be authenticated
      * @param {username: username, password: password} credentials
@@ -89,7 +104,7 @@ class ServerConnect {
     login(credentials, callback){
         console.log("trying to log in");
         this.socket.emit('authenticate', credentials);
-        this.socket.on('authenticationResponse', res => {
+        this.socket.once('authenticationResponse', res => {
             callback(res);
         });
     }
@@ -103,14 +118,14 @@ class ServerConnect {
      */
     getAllPatients(callback){
         this.socket.emit('getAllPatients');
-        this.socket.on("getAllPatientsResponse", res => {
+        this.socket.once("getAllPatientsResponse", res => {
             callback(res);
         });
     }
 
     getFullPatientInfo(patientId, callback){
         this.socket.emit("getFullPatientInfo", patientId);
-        this.socket.on("getFullPatientInfoResponse", res => {
+        this.socket.once("getFullPatientInfoResponse", res => {
             callback(res);
         });
     }
@@ -123,7 +138,7 @@ class ServerConnect {
      */
     getAllTests(callback){
         this.socket.emit('getAllTests');
-        this.socket.on('getAllTestsResponse', res => {
+        this.socket.once('getAllTestsResponse', res => {
             callback(res);
         });
     }
@@ -137,7 +152,7 @@ class ServerConnect {
      */
     getTestsOfPatient(patientId, callback){
         this.socket.emit('getTestsOfPatient', patientId);
-        this.socket.on('getTestsOfPatientResponse', res => {
+        this.socket.once('getTestsOfPatientResponse', res => {
             callback(res.info);
         });
     }
@@ -151,7 +166,7 @@ class ServerConnect {
      */
     getTestsOnDate(date, callback){
         this.socket.emit('getAllTestsOnDate', date);
-        this.socket.on('getAllTestsOnDateResponse', res => {
+        this.socket.once('getAllTestsOnDateResponse', res => {
             callback(res);
         });
     }
@@ -164,7 +179,7 @@ class ServerConnect {
      */
     getOverdueTests(callback){
         this.socket.emit('getOverdueTests');
-        this.socket.on('getOverdueTestsResponse', res => {
+        this.socket.once('getOverdueTestsResponse', res => {
             callback(res);
         });
     }
@@ -179,23 +194,21 @@ class ServerConnect {
      */
     getTestsInWeek(date, callback, anydayTestsOnly=false){
         this.socket.emit('getTestsInWeek', date, anydayTestsOnly);
-        this.socket.on('getTestsInWeekResponse', res => {
-            console.log(res.response);
+        this.socket.once('getTestsInWeekResponse', res => {
             callback(res.response);
         });
     }
 
     requestTestEditing(testId, callback){
         this.socket.emit("requestTestEditToken", testId);
-        this.socket.on("requestTestEditTokenResponse", token => {
+        this.socket.once("requestTestEditTokenResponse", token => {
             callback(token);
         });
     }
 
     requestPatientEditing(patientId, callback){
         this.socket.emit("requestPatientEditToken", patientId);
-        this.socket.on("requestPatientEditTokenResponse", token => {
-            console.log({token});
+        this.socket.once("requestPatientEditTokenResponse", token => {
             callback(token);
         });
     }
@@ -230,8 +243,15 @@ class ServerConnect {
     */
     editTest(testId, newData, token, callback){
         this.socket.emit("editTest", newData, token);
-        this.socket.on("editTestReponse", response => {
+        this.socket.once("editTestReponse", response => {
             callback(response)
+        });
+    }
+
+    editPatient(patientId, newData, token, callback){
+        this.socket.emit("editPatient", newData, token);
+        this.socket.once("editPatientResponse", res => {
+            callback(res);
         });
     }
 }

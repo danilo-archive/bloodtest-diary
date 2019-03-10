@@ -29,11 +29,11 @@ const CloseButton = styled.button`
   width: 10%;
   border-radius: 10px;
   margin-left: 35%;
-  
+
   min-height: 40px;
   min-width: 100px;
-  
-  
+
+
   :hover {
     background: #c8c8c8;
     color: black;
@@ -49,13 +49,13 @@ const SaveButton = styled.button`
   display: inline-block;
   width: 10%;
   border-radius: 10px;
-  
+
   float: right;
   margin-right: 35%;
-  
+
   min-height: 40px;
   min-width: 100px;
-  
+
   :hover {
     background-color: #dc2836;
     color: white;
@@ -74,8 +74,7 @@ class PatientProfile extends Component {
         ready: false
       };
       this.serverConnect = getServerConnect();
-
-      console.log(props.patientId);
+     
       this.loadPatient();
     }
 
@@ -104,6 +103,49 @@ class PatientProfile extends Component {
                //TODO : store patients tests
            });
         });
+    }
+
+    onSaveClick = () => {
+        let carerInfo = undefined;
+        let hospitalInfo = undefined;
+        if (this.state.hasCarer){
+            if (this.state.carerEmail == "" || this.state.carerEmail == undefined){
+                // TODO add UI alert
+                alert("Carer's email is compulsory");
+                return;
+            }
+            carerInfo = {
+                carerId: this.state.carerId,
+                carerRelationship: this.state.carerRelationship,
+                carerName: this.state.carerName,
+                carerSurname: this.state.carerSurname,
+                carerEmail: this.state.carerEmail,
+                carerPhone: this.state.carerPhone
+            }
+        }else{
+            carerInfo = {
+                carerId: undefined
+            }
+        }
+        if (!this.state.localHospital){
+            if (this.state.hospitalEmail == "" || this.state.hospitalEmail == undefined){
+                alert("Hospital's email is compulsory");
+                return;
+            }
+            hospitalInfo = {
+                hospitalId: this.state.hospitalId,
+                hospitalName: this.state.hospitalName,
+                hospitalEmail: this.state.hospitalEmail,
+                hospitalPhone: this.state.hospitalPhone
+            }
+        }else{
+            hospitalInfo = {
+                hospitalId: undefined
+            }
+        }
+
+        const {patientId, editToken, patientName, patientSurname, patientEmail, patientPhone} = this.state;
+        console.log({carerInfo, hospitalInfo, patientId, editToken, patientName, patientName, patientEmail, patientPhone});
     }
 
     render() {
@@ -140,7 +182,7 @@ class PatientProfile extends Component {
 
                     <ButtonContainer>
                         <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
-                        <SaveButton>Save changes</SaveButton>
+                        <SaveButton onClick={this.onSaveClick}>Save changes</SaveButton>
                     </ButtonContainer>
 
                 </Container>

@@ -52,6 +52,7 @@ export default class PatientSection extends React.Component {
                     </Horizontal>
                     {this.props.tests.map(test => (
                         <TestCell
+                            key={test.test_no}
                             due = {test.due_date}
                             notes={test.notes}
                         />
