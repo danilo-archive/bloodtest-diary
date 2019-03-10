@@ -86,7 +86,7 @@ CREATE TABLE User (
 -- ================================
 
 CREATE TABLE TokenControl (
-    token VARCHAR(50),
+    token VARCHAR(100),
     table_name ENUM("Carer", "Hospital", "Patient", "Test", "User") NOT NULL,
     table_key VARCHAR(50) NOT NULL,
     expiration DATETIME NOT NULL,
