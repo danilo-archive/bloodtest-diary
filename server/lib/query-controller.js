@@ -280,6 +280,101 @@ async function editPatient(newInfo, token){
     return await updateQueryDatabase("Patient",newInfo.patient_no,sql,token);
 }
 
+async function editPatientExtended(newInfo,token)
+{
+  const patientResponse = await getPatient(newInfo.patient_no);
+  if(!patientResponse.success){
+    return patientResponse;
+  }
+  const patient = patientResponse.response[0];
+
+  //Seperate into carer hospital and patient info
+  const updateProperties = Object.keys(newInfo);
+  const carer = {};
+  const hospital = {};
+  const patientNewInfo={};
+  let querySuccess = true;
+  for(let i=0; i<updateProperties.length; i++)
+  {
+    if(updateProperties[i].startsWith('carer') || updateProperties[i] == 'relationship')
+    {
+      carer[updateProperties[i]] = newInfo[updateProperties[i]];
+    }
+    if(updateProperties[i].startsWith('hospital'))
+    {
+      hospital[updateProperties[i]] = newInfo[updateProperties[i]];
+    }
+    if(updateProperties[i].startsWith('patient') || updateProperties[i] == 'additional_info')
+    {
+      patientNewInfo[updateProperties[i]] = newInfo[updateProperties[i]];
+    }
+  }
+
+  let carerQueryResponse = {};
+  if(Object.keys(carer)!=0 && token)
+  {
+    //Carer added with patient update
+    if(patient.carer_id==null){
+      carerQueryResponse = await addCarer(carer)
+      if(carerQueryResponse.success!=true){
+        querySuccess = false;
+      }
+      patientNewInfo['carer_id'] = carerQueryResponse.insertId;
+    }
+    //Database has info on this carer
+    else{
+      const carerToken = await requestEditing("Carer",patient.carer_id);
+      carer["carer_id"] = patient.carer_id;
+      carerQueryResponse = await editCarer(carer,carerToken);
+      if(carerQueryResponse.success!=true){
+        querySuccess = false;
+      }
+    }
+  }
+
+  let  hospitalQueryResponse = {}
+  if(Object.keys(hospital)!=0 && token)
+  {
+    //Hospital added with update
+    if(patient.hospital_id==null){
+      hospitalQueryResponse = await addHospital(hospital)
+      if(hospitalQueryResponse.success!=true){
+        querySuccess = false;
+      }
+      patientNewInfo['hospital_id'] = hospitalQueryResponse.insertId;
+    }
+    //Database has info on the hospital
+    else{
+      const hospitalToken = await requestEditing("Hospital",patient.hospital_id);
+      hospital["hospital_id"] = patient.hospital_id;
+      hospitalQueryResponse = await editHospital(hospital,hospitalToken);
+      if(hospitalQueryResponse.success!=true){
+        querySuccess = false;
+      }
+    }
+  }
+
+  let patientUpdateResponse = {};
+  //Has ID - not interested about it
+  if(Object.keys(patientNewInfo)>1)
+  {
+    patientUpdateResponse = await editPatient(patientNewInfo,token);
+    if(patientUpdateResponse.success!=true){
+      querySuccess = false;
+    }
+  }
+  else{
+    patientUpdateResponse = await returnToken("Patient", patientNewInfo.patient_no, token);
+    if(patientUpdateResponse.success!=true){
+      querySuccess = false;
+    }
+  }
+  return {success: querySuccess, response: {
+    patientQuery: patientUpdateResponse,
+    hospitalQuery: hospitalQueryResponse,
+    carerQuery: carerQueryResponse
+  }}
+}
 /**
 * Edit hospital query
 * @param {JSON} newInfo All the information of the hospital to update
@@ -646,6 +741,10 @@ function prepareDeleteSQL(table, idProperty, id)
   return sql;
 }
 
+async function returnToken(table, id, token)
+{
+  return await databaseController.cancelEditing(table, id, token)
+}
 module.exports = {
     getPatient,
     getTest,
