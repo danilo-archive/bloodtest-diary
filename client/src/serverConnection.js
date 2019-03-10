@@ -212,6 +212,12 @@ class ServerConnect {
             callback(token);
         });
     }
+    discardEditing(table, id, token, callback){
+        this.socket.emit("discardEditing", table, id, token);
+        this.once("discardEditingResponse", res => {
+            callback(res);
+        });
+    }
 
     /**
     * Thim method emits a request to add a test into the database
@@ -249,7 +255,7 @@ class ServerConnect {
     }
 
     editPatient(patientId, newData, token, callback){
-        this.socket.emit("editPatient", newData, token);
+        this.socket.emit("editPatient", patientId, newData, token);
         this.socket.once("editPatientResponse", res => {
             callback(res);
         });

@@ -295,23 +295,23 @@ async function editPatientExtended(newInfo,token)
   const patientNewInfo={};
   let querySuccess = true;
   for(let i=0; i<updateProperties.length; i++)
-  {
-    if(updateProperties[i].startsWith('carer') || updateProperties[i] == 'relationship')
-    {
-      carer[updateProperties[i]] = newInfo[updateProperties[i]];
-    }
-    if(updateProperties[i].startsWith('hospital'))
-    {
-      hospital[updateProperties[i]] = newInfo[updateProperties[i]];
-    }
-    if(updateProperties[i].startsWith('patient') || updateProperties[i] == 'additional_info')
-    {
-      patientNewInfo[updateProperties[i]] = newInfo[updateProperties[i]];
-    }
-  }
+   {
+     if((updateProperties[i].startsWith('carer') || updateProperties[i] == 'relationship') && newInfo[updateProperties[i]])
+     {
+       carer[updateProperties[i]] = newInfo[updateProperties[i]];
+     }
+     if((updateProperties[i].startsWith('hospital')) && newInfo[updateProperties[i]])
+     {
+       hospital[updateProperties[i]] = newInfo[updateProperties[i]];
+     }
+     if((updateProperties[i].startsWith('patient') || updateProperties[i] == 'additional_info') && newInfo[updateProperties[i]])
+     {
+       patientNewInfo[updateProperties[i]] = newInfo[updateProperties[i]];
+     }
+   }
 
   let carerQueryResponse = {};
-  if(Object.keys(carer)!=0 && token)
+  if(Object.keys(carer).length!=0 && token)
   {
     //Carer added with patient update
     if(patient.carer_id==null){
@@ -333,7 +333,7 @@ async function editPatientExtended(newInfo,token)
   }
 
   let  hospitalQueryResponse = {}
-  if(Object.keys(hospital)!=0 && token)
+  if(Object.keys(hospital).length!=0 && token)
   {
     //Hospital added with update
     if(patient.hospital_id==null){
@@ -356,7 +356,7 @@ async function editPatientExtended(newInfo,token)
 
   let patientUpdateResponse = {};
   //Has ID - not interested about it
-  if(Object.keys(patientNewInfo)>1)
+  if(Object.keys(patientNewInfo).length>1)
   {
     patientUpdateResponse = await editPatient(patientNewInfo,token);
     if(patientUpdateResponse.success!=true){
@@ -769,8 +769,10 @@ module.exports = {
     changeTestStatus,
     editTest,
     editPatient,
+    editPatientExtended,
     editCarer,
     editHospital,
     getSortedOverdueWeeks,
-    requestEditing
+    requestEditing,
+    returnToken
 };
