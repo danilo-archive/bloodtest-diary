@@ -74,7 +74,7 @@ class PatientProfile extends Component {
         ready: false
       };
       this.serverConnect = getServerConnect();
-     
+
       this.loadPatient();
     }
 
@@ -108,7 +108,7 @@ class PatientProfile extends Component {
     onSaveClick = () => {
         let carerInfo = undefined;
         let hospitalInfo = undefined;
-        if (this.state.noCarer){
+        if (!this.state.noCarer){
             if (this.state.carerEmail === "" || this.state.carerEmail === undefined){
                 // TODO add UI alert
                 alert("Carer's email is compulsory");
@@ -145,7 +145,16 @@ class PatientProfile extends Component {
         }
 
         const {patientId, editToken, patientName, patientSurname, patientEmail, patientPhone} = this.state;
-        console.log({carerInfo, hospitalInfo, patientId, editToken, patientName, patientSurname, patientEmail, patientPhone});
+        let newInfo = {
+            patient_no: patientId, patient_name: patientName, patient_surname: patientSurname, patient_email: patientEmail, patient_phone: patientPhone,
+            hospital_id: hospitalInfo.hospitalId, hospital_name: hospitalInfo.hospitalName, hospital_email: hospitalInfo.hospitalEmail, hospital_phone: hospitalInfo.hospitalPhone,
+            carer_id: carerInfo.carerId, carer_name: carerInfo.carerName, carer_surname: carerInfo.carerSurname, carer_email: carerInfo.carerEmail, carer_phone: carerInfo.carerPhone,
+            relationship: carerInfo.carerRelationship
+        };
+        console.log({newInfo});
+        this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
+            alert(`-- success = ${res.success}`);
+        });
     };
 
 
