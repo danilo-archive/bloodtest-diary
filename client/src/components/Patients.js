@@ -18,9 +18,9 @@ const Container = styled.div`
     top: 30px;
     margin: 1% 1% 1% 1%;
 
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
 
 `;
 
@@ -43,8 +43,8 @@ const NavbarContainer = styled.div`
 const TableContainer = styled.div`
     color: #ffffff;
     border: green 0 solid;
-    height: auto;
-    width: auto;
+    height: 80%;
+    width: 100%;
 
     display: flex;
     flex-direction: row;
