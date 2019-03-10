@@ -10,7 +10,7 @@ const Field = styled.label`
   font-weight: 200;
 `;
 
-const Value = styled.input.attrs({ spellCheck: "false" })`
+const Input = styled.input.attrs({ spellCheck: "false"})`
   padding: 12px 20px;
   margin: 2px 0 8px;
   display: block;
@@ -27,15 +27,20 @@ class InputCell extends React.Component {
         super(props);
     }
 
+    test() {
+        console.log("i changed value");
+    }
+
     render() {
+        //TODO : improve this
         if (this.props.disabled === true) {
             return (
                 <Container>
                     <Field for={this.props.id}>{this.props.field}</Field>
-                    <Value
+                    <Input
                         defaultValue={this.props.value}
                         id={this.props.id}
-                        disabled={"false"}
+                        disabled
                         type={"text"}
                     />
                 </Container>
@@ -44,7 +49,7 @@ class InputCell extends React.Component {
             return (
                 <Container>
                     <Field htmlFor={this.props.id}>{this.props.field}</Field>
-                    <Value
+                    <Input
                         defaultValue={this.props.value}
                         id={this.props.id}
                         type={this.props.type}
@@ -57,10 +62,11 @@ class InputCell extends React.Component {
             return (
                 <Container>
                     <Field for={this.props.id}>{this.props.field}</Field>
-                    <Value
+                    <Input
                         defaultValue={this.props.value}
                         id={this.props.id}
                         type={"text"}
+                        onChanged={event => this.props.onChange}
                     />
                 </Container>
             );
