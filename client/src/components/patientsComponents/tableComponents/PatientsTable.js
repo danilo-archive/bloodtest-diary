@@ -51,43 +51,58 @@ class PatientsTable extends React.Component {
     }
 
     number_filter = value => {
-        this.setState({
-          patients: this.props.allPatients.filter(
-            patient => patient.patient_no.includes(value)
-          )
-        });
+        if (value == "") { this.setState({patients: this.props.allPatients})}
+        else{
+            this.setState({
+              patients: this.props.allPatients.filter(
+                patient => patient.patient_no.includes(value)
+              )
+            });
+        }
     };
 
     name_filter = value => {
-        this.setState({
-          patients: this.props.allPatients.filter(
-            patient => patient.patient_name.includes(value)
-          )
-        });
+        if (value == "") { this.setState({patients: this.props.allPatients})}
+        else{
+            this.setState({
+              patients: this.props.allPatients.filter(
+                patient => patient.patient_name ? patient.patient_name.includes(value) : false
+              )
+            });
+        }
     };
 
     surname_filter = value => {
-        this.setState({
-          patients: this.props.allPatients.filter(
-            patient => patient.patient_surname.includes(value)
-          )
-        });
+        if (value == "") { this.setState({patients: this.props.allPatients})}
+        else{
+            this.setState({
+              patients: this.props.allPatients.filter(
+                patient => patient.patient_surname ? patient.patient_surname.includes(value) : false
+              )
+            });
+        }
     };
 
     email_filter = value => {
-        this.setState({
-          patients: this.props.allPatients.filter(
-            patient => patient.patient_email.includes(value)
-          )
-        });
+        if (value == "") { this.setState({patients: this.props.allPatients})}
+        else{
+            this.setState({
+              patients: this.props.allPatients.filter(
+                patient => patient.patient_email ? patient.patient_email.includes(value) : false
+              )
+            });
+        }
     };
 
     phone_filter = value => {
-        this.setState({
-          patients: this.props.allPatients.filter(
-            patient => patient.patient_phone.includes(value)
-          )
-        });
+        if (value == "") { this.setState({patients: this.props.allPatients})}
+        else{
+            this.setState({
+              patients: this.props.allPatients.filter(
+                patient => patient.patient_phone ? patient.patient_phone.includes(value) : false
+              )
+            });
+        }
     };
 
     render() {
