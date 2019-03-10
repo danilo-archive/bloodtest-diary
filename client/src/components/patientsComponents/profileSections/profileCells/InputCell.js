@@ -10,7 +10,7 @@ const Field = styled.label`
   font-weight: 200;
 `;
 
-const Value = styled.input.attrs({ spellCheck: "false"})`
+const Value = styled.input.attrs({ spellCheck: "false" })`
   padding: 12px 20px;
   margin: 2px 0 8px;
   display: block;
@@ -25,8 +25,6 @@ class InputCell extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.type = (this.props.type === "checkbox") ? "checkbox" : "text";
     }
 
     render() {
@@ -37,9 +35,21 @@ class InputCell extends React.Component {
                     <Value
                         defaultValue={this.props.value}
                         id={this.props.id}
-                        disabled
-                        checked
-                        type={this.type}
+                        disabled={"false"}
+                        type={"text"}
+                    />
+                </Container>
+            );
+        } else if (this.props.type === "checkbox"){
+            return (
+                <Container>
+                    <Field for={this.props.id}>{this.props.field}</Field>
+                    <Value
+                        defaultValue={this.props.value}
+                        id={this.props.id}
+                        type={this.props.type}
+                        defaultChecked
+                        onChange={this.props.onChange}
                     />
                 </Container>
             );
@@ -50,8 +60,7 @@ class InputCell extends React.Component {
                     <Value
                         defaultValue={this.props.value}
                         id={this.props.id}
-                        type={this.type}
-                        onChange={this.props.onChange}
+                        type={"text"}
                     />
                 </Container>
             );

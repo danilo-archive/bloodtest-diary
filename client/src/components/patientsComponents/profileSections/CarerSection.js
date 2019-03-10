@@ -43,7 +43,7 @@ export default class CarerSection extends React.Component {
                     value={this.props.hasCarer}
                     id={"has_carer"}
                     type={"checkbox"}
-                    onChange={!this.props.hasCarer}
+                    onChange={this.props.onCarerClick}
                 />
             </>
         );

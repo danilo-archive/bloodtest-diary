@@ -98,7 +98,7 @@ class PatientProfile extends Component {
                hospitalEmail: info.hospital_email,
                hospitalPhone: info.hospital_phone,
 
-               hasCarer: info.carer_id ? false : true,
+               hasCarer: info.carer_id ? true : false,
                localHospital: info.hospital_id ? false : true,
                ready: true
                //TODO : store patients tests
@@ -125,6 +125,7 @@ class PatientProfile extends Component {
                         carerEmail={this.state.carerEmail}
                         carerPhone={this.state.carerPhone}
                         hasCarer={this.state.hasCarer}
+                        onCarerClick={() => this.setState({hasCarer: !this.state.hasCarer})}
                     />
                     <HospitalSection
                         hospitalId={this.state.hospitalId}
