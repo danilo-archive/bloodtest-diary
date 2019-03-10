@@ -56,6 +56,7 @@ export default class AddTestView extends React.Component {
         let { timeUnit, timeAmount } = this.state.frequency;
         timeAmount = timeUnit === "Months" ? timeAmount * 4 : timeAmount;
         timeUnit = timeUnit === "Months" ? "W" : timeUnit;
+        timeUnit = timeUnit.charAt(0);
         frequency = `${timeAmount}-${timeUnit}`;
       }
       this.serverConnect.addTest(

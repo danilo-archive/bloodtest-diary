@@ -91,7 +91,11 @@ export default class AppointmentBox extends React.Component {
           type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
         />
         <AppointmentInfo name={this.props.name} />
-        <IconSet onStatusClick={this.props.tentative ? () => {} : this.onStatusClick} />
+        <IconSet
+            onStatusClick={this.props.tentative ? () => {} : this.onStatusClick}
+            editTest={this.props.editTest}
+            testId={this.props.id}
+        />
       </Container>
     );
   }

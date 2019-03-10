@@ -4,10 +4,6 @@ const calendarController = require("./calendar-controller.js");
 const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
-<<<<<<< HEAD
-=======
-
->>>>>>> a22480e8c514c586828ad6782835cacc6c18417a
 
 
 /**
@@ -127,6 +123,10 @@ async function getAllTestsOnDate(date)
   return await selectQueryDatabase(sql)
 }
 
+async function getTestInfo(test_id){
+    let sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_id=${test_id}`;
+    return await selectQueryDatabase(sql);
+}
 
 /**
 * Get all the overdue tests from the database
@@ -651,6 +651,7 @@ module.exports = {
     getUser,
     getAllPatients,
     getAllTests,
+    getTestInfo,
     getTestsOfPatient,
     getAllTestsOnDate,
     getOverdueTests,
@@ -663,8 +664,10 @@ module.exports = {
     updatePassword,
     changeTestStatus,
     editTest,
+    requestEditing,
     editPatient,
     editCarer,
     editHospital,
     getSortedOverdueWeeks,
+
 };
