@@ -21,6 +21,8 @@ const authenticator = require("./lib/authenticator.js");
 http.listen(port);
 
 // to broadcast in room => io.in("room").emit("change", json);
+const tempActionUsername = "admin"; // temporary until the system is completed
+
 
 io.on('connection',function(socket)
 {
@@ -62,22 +64,57 @@ io.on('connection',function(socket)
         console.log(`Authentication request from ${socket.id}`);
         const user = await queryController.getUser(credentials.username);
         const res = authenticator.canLogin(credentials,user.response);
+        let accessToken = undefined;
+        if (res) {
+            accessToken = await authenticator.registerNewUsername(credentials.username);
+        }
+        console.log("access token: " + accessToken); // TODO: return to user
         console.log(`Authentication ${res ? "successful" : "unsuccessful"}`);
         socket.emit('authenticationResponse', res);
     });
 
-    socket.on('getAllPatients', async () => {
+    socket.on('getAllPatients', async (accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
         const response = await queryController.getAllPatients();
         console.log({response});
         socket.emit("getAllPatientsResponse", response.response);
     });
 
-    socket.on('getAllTests', async () => {
+    socket.on('getAllTests', async (accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
         const response = await queryController.getAllTests();
         socket.emit("getAllTestsResponse", response);
     });
 
-    socket.on('getTestsOfPatient', async (patientId) => {
+    socket.on('getTestsOfPatient', async (patientId, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
         const response = await queryController.getTestsOfPatient(patientId);
         socket.emit('getTestsOfPatientResponse', response);
     });
@@ -85,7 +122,17 @@ io.on('connection',function(socket)
     /**
     *@param {String} date of type "yyyy-mm-dd"
     **/
-    socket.on('getAllTestsOnDate', async (date) => {
+    socket.on('getAllTestsOnDate', async (date, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
         const response = await queryController.getAllTestsOnDate(date);
         socket.emit('getAllTestsOnDateResponse',response);
     });
@@ -94,36 +141,96 @@ io.on('connection',function(socket)
     *@param {String} date of type "yyyy-mm-dd"
     *@param {Boolean} anydayTestsOnly - if unscheduled test to return
     **/
-    socket.on('getTestsInWeek',async (date) => {
+    socket.on('getTestsInWeek',async (date, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
         const response = await queryController.getTestWithinWeek(date);
         socket.emit('getTestsInWeekResponse', response);
     });
 
-    socket.on('getOverdueTests', async () => {
+    socket.on('getOverdueTests', async (accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
         //const response = await queryController.getOverdueGroups();
         const response = await queryController.getSortedOverdueWeeks();
         socket.emit('getOverdueTestsResponse', response.response);
     });
 
-    socket.on('requestTestEditing', async (testId) => {
+    socket.on('requestTestEditing', async (testId, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
 
     })
 
-    socket.on('getTestInfo', async (testId) => {
+    socket.on('getTestInfo', async (testId, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
         const response = await queryController.getTestInfo(testId);
         socket.emit("getTestInfoResponse", response);
     });
 
-    socket.on("requestTestEditToken", async (testId) => {
-        //
+    socket.on("requestTestEditToken", async (testId, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
+
     });
 
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 
-    socket.on("addTest", async (patientId, date, notes, frequency, occurrences) => {
+    socket.on("addTest", async (patientId, date, notes, frequency, occurrences, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
         const test = {patient_no:patientId, due_date:date, notes:notes, frequency:frequency, occurrences:occurrences}
-        const response = await queryController.addTest(test);
+        const response = await queryController.addTest(test, tempActionUsername);
         if (response.success){
             socket.emit("testAdded", response.response);
             socket.in("main_page").emit("testAdded", response.response)
@@ -132,16 +239,36 @@ io.on('connection',function(socket)
         }
     });
 
-    socket.on('testStatusChange', async (testId, newStatus) => {
+    socket.on('testStatusChange', async (testId, newStatus, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
         const test = {testId: testId, newStatus: newStatus}
-        const response = await queryController.changeTestStatus(test);
+        const response = await queryController.changeTestStatus(test, tempActionUsername);
         // TODO check if change status was successful !
         socket.emit('testStatusChange', testId, newStatus);
         io.in("main_page").emit('testStatusChange', testId, newStatus);
     });
 
-    socket.on("editTest", async (testId, newInfo, token) => {
-        const response = await queryController.editTest(testId, newInfo, token);
+    socket.on("editTest", async (testId, newInfo, token, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
+        const response = await queryController.editTest(testId, newInfo, token, tempActionUsername);
         if (response.success){
             // broadcast new test
         } else {
@@ -149,7 +276,6 @@ io.on('connection',function(socket)
         }
     });
 });
-
 
 /**
 * TODO: Get user data from the database provided the username
