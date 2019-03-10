@@ -97,7 +97,7 @@ class PatientProfile extends Component {
                hospitalEmail: info.hospital_email,
                hospitalPhone: info.hospital_phone,
 
-               hasCarer: info.carer_id ? true : false,
+               hasCarer: info.carer_id ? false : true,
                localHospital: info.hospital_id ? false : true,
                ready: true
                //TODO : store patients tests

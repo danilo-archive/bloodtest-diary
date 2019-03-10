@@ -48,7 +48,7 @@ class InputCell extends React.Component {
                         defaultValue={this.props.value}
                         id={this.props.id}
                         type={this.props.type}
-                        defaultChecked
+                        defaultChecked={this.props.value}
                         onChange={this.props.onChange}
                     />
                 </Container>
