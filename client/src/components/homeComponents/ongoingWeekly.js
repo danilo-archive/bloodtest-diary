@@ -37,6 +37,7 @@ class OngoingWeekly extends React.Component {
             <AppointmentSection
               type="Appointments"
               appointments={this.props.anytimeAppointments}
+              editTest={this.props.editTest}
             />
             <div style={{width:"100%",height:"10%"}}/>
             </ScrollBox>

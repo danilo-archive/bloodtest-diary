@@ -10,13 +10,14 @@ const hd = new Holidays('GB');
 function isPastDate(date){
     let today = new Date();
     date = new Date(date);
-    if (date.getFullYear() < today.getFullYear()){
+    /*if (date.getFullYear() < today.getFullYear()){
         return true;
     }
     if (date.getMonth() < today.getMonth()){
         return true;
     }
-    return date.getDate() < today.getDate();
+    return date.getDate() < today.getDate();*/
+    return date < today;
 }
 
 /**

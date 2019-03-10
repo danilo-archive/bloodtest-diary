@@ -197,7 +197,8 @@ io.on('connection',function(socket)
             console.log("== Invalid access token."); // TODO: return to user
         }
 
-        const response = await queryController.getTestInfo(testId);
+        let response = await queryController.getTestInfo(testId);
+        console.log({response});
         socket.emit("getTestInfoResponse", response);
     });
 
@@ -212,6 +213,8 @@ io.on('connection',function(socket)
             console.log("== Invalid access token."); // TODO: return to user
         }
 
+        let response = await queryController.requestEditing("Test", testId, tempActionUsername);
+        socket.emit("requestTestEditTokenResponse", response);
 
     });
 
@@ -269,8 +272,11 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.editTest(testId, newInfo, token, tempActionUsername);
+        console.log({response});
+
         if (response.success){
-            // broadcast new test
+            socket.emit("testAdded", response.response);
+            socket.in("main_page").emit("testAdded", response.response);
         } else {
             // emit failure to the socket
         }

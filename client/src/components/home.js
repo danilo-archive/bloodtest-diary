@@ -9,6 +9,7 @@ import WeeklyCalendar from "./homeComponents/weeklyCalendar";
 import OngoingWeekly from "./homeComponents/ongoingWeekly";
 import arrow from "../images/arrow.png";
 import AddTest from "./homeComponents/addTest/AddTestView";
+import EditTest from "./homeComponents/editTest/EditTestView";
 import {getNextDates, getMondayOfWeek, getCurrentWeek, getPreviousWeek, getNextWeek} from "../lib/calendar-controller";
 import {getServerConnect} from "../serverConnection.js";
 import {group, getNumberOfTestsInGroup} from "../lib/overdue-controller.js";
@@ -28,7 +29,10 @@ class Home extends Component {
         overdueTests: {},
         ongoingTests: {},
         calendar: {},
-        openModal: false
+        openAddTestModal: false,
+        openEditTestModal: false,
+        editTestId: undefined,
+        editToken: undefined
       };
 
     }
@@ -41,8 +45,8 @@ class Home extends Component {
         this.handleNext = this.handleNext.bind(this);
         this.handlePrevious = this.handlePrevious.bind(this);
 
-        this.onOpenModal = this.onOpenModal.bind(this);
-        this.onCloseModal = this.onCloseModal.bind(this);
+        this.onAddTestOpenModal = this.onAddTestOpenModal.bind(this);
+        this.onAddTestCloseModal = this.onAddTestCloseModal.bind(this);
     }
 
 
@@ -106,7 +110,7 @@ class Home extends Component {
                 let newOverdueTests = [...this.state.overdueTests];
                 let testToModify = newOverdueTests[i].tests[j]
                 let modifiedTest = modificationFunction(testToModify);
-                //newOverdueTests[i].tests[j].completed_status = status;
+                newOverdueTests[i].tests[j] = modifiedTest;
                 this.setState({overdueTests: newOverdueTests});
               }
           }
@@ -118,7 +122,7 @@ class Home extends Component {
             let newOngoingTests = [...this.state.ongoingTests];
             let testToModify = newOngoingTests[i];
             let modifiedTest = modificationFunction(testToModify);
-            //newOngoingTests[i].completed_status = status;
+            newOngoingTests[i] = modifiedTest;
             this.setState({ongoingTests: newOngoingTests});
             return;
           }
@@ -132,7 +136,7 @@ class Home extends Component {
               let newCalendar = [...this.state.calendar];
               let testToModify = newCalendar[i][j];
               let modifiedTest = modificationFunction(testToModify);
-              //newCalendar[i][j].completed_status = status;
+              newCalendar[i][j] = modifiedTest;
               this.setState({calendar: newCalendar});
               return;
             }
@@ -150,12 +154,25 @@ class Home extends Component {
       this.updateDashboard(previousWeek);
     }
 
-    onOpenModal = selectedDate => {
-      this.setState({ openModal: true, selectedDate });
+    onAddTestOpenModal = selectedDate => {
+      this.setState({ openAddTestModal: true, selectedDate });
     };
 
-    onCloseModal = () => {
-      this.setState({ openModal: false, selectedDate: undefined });
+    onAddTestCloseModal = () => {
+      this.setState({ openAddTestModal: false, selectedDate: undefined });
+    };
+
+    onEditTestOpenModal = testId => {
+        this.serverConnect.requestTestEditing(testId, token => {
+          if (token != undefined){
+            this.setState({openEditTestModal: true, editTestId: testId, editToken: token});
+          }
+        });
+    };
+
+    onEditTestCloseModal = () => {
+        // TODO remove token if not used
+        this.setState({openEditTestModal: false, editTestId: undefined, editToken: undefined});
     };
 
     render() {
@@ -166,6 +183,7 @@ class Home extends Component {
               <OverduePatients
                 notificationNumber={getNumberOfTestsInGroup(this.state.overdueTests)}
                 anytimeAppointments={this.state.overdueTests}
+                editTest={this.onEditTestOpenModal}
               />
             </div>
             <div className={"rightSideDash"}>
@@ -173,11 +191,12 @@ class Home extends Component {
                 <Navbar onPrev={this.handlePrevious} onNext={this.handleNext} />
               </div>
               <div className={"bottomSideDash"}>
-                <div className={"calendar"}>
+                <div className={"homecalendar"}>
                   <WeeklyCalendar
                     calendar={this.state.calendar}
                     weekDays={this.state.weekDays}
-                    openModal={this.onOpenModal}
+                    openModal={this.onAddTestOpenModal}
+                    editTest={this.onEditTestOpenModal}
                   />
                 </div>
                 <div className={"ongoingWeekly"}>
@@ -185,20 +204,34 @@ class Home extends Component {
                     currentMonday={this.currentMonday}
                     notificationNumber={this.state.ongoingTests.length}
                     anytimeAppointments={this.state.ongoingTests}
+                    editTest={this.onEditTestOpenModal}
                   />
                 </div>
               </div>
             </div>
             <Modal
-              open={this.state.openModal}
-              onClose={this.onCloseModal}
+              open={this.state.openAddTestModal}
+              onClose={this.onAddTestCloseModal}
               showCloseIcon={false}
               style={modalStyles}
               center
             >
               <AddTest
                 selectedDate={this.state.selectedDate}
-                closeModal={this.onCloseModal}
+                closeModal={this.onAddTestCloseModal}
+              />
+            </Modal>
+            <Modal
+                open={this.state.openEditTestModal}
+                onClose={this.onEditTestCloseModal}
+                showCloseIcon={false}
+                style={modalStyles}
+                center
+            >
+              <EditTest
+                 testId = {this.state.editTestId}
+                 closeModal={this.onEditTestCloseModal}
+                 token={this.state.editToken}
               />
             </Modal>
           </div>
