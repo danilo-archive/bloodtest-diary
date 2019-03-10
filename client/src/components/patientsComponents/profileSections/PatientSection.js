@@ -9,11 +9,10 @@ export default class PatientSection extends React.Component {
 
     onInputChange() {
         const patientName = document.getElementById("patient_name");
-        const patientSurname = document.getElementById("patient_name");
-        const patientEmail = document.getElementById("patient_name");
-        const patientPhone = document.getElementById("patient_name");
+        const patientSurname = document.getElementById("patient_surname");
+        const patientEmail = document.getElementById("patient_email");
+        const patientPhone = document.getElementById("patient_phone");
         console.log("new patient phone = " + patientPhone);
-
 
         this.props.onChange({patientName, patientSurname, patientEmail, patientPhone});
     }
@@ -24,6 +23,7 @@ export default class PatientSection extends React.Component {
                 <InputCell
                     field={"Patient id"}
                     id={"patient_id"}
+                    disabled
                     value={this.props.patientId}
                     onChange={this.onInputChange}
                 />
