@@ -30,7 +30,7 @@ const CloseButton = styled.button`
   border-radius: 10px;
   margin-left: 35%;
 
-  min-height: 40px;
+  height: 44px;
   min-width: 100px;
 
 
@@ -53,7 +53,7 @@ const SaveButton = styled.button`
   float: right;
   margin-right: 35%;
 
-  min-height: 40px;
+  height: 44px;
   min-width: 100px;
 
   :hover {
@@ -178,6 +178,15 @@ class PatientProfile extends Component {
                         carerPhone={this.state.carerPhone}
                         noCarer={this.state.noCarer}
                         onCarerClick={() => this.setState({noCarer: !this.state.noCarer})}
+                        onChange={carer => {
+                            this.setState({
+                                carerRelationship: carer.carerRelationship,
+                                carerName: carer.carerName,
+                                carerSurname: carer.carerSurname,
+                                carerEmail: carer.carerEmail,
+                                carerPhone: carer.carerPhone
+                            })
+                        }}
                     />
                     <HospitalSection
                         hospitalId={this.state.hospitalId}
@@ -187,6 +196,13 @@ class PatientProfile extends Component {
                         localHospital={this.state.localHospital}
                         //TODO : maybe find different way of doing this
                         onHospitalClick={() => this.setState({localHospital: !this.state.localHospital})}
+                        onChange={hospital => {
+                            this.setState({
+                                hospitalName: hospital.hospitalName,
+                                hospitalEmail: hospital.hospitalEmail,
+                                hospitalPhone: hospital.hospitalPhone
+                            })
+                        }}
                     />
                     <TestSection tests={[{due_date: "2019-02-02", notes: "Some notes"}]}/>
 

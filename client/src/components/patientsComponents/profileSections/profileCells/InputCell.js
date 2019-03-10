@@ -66,7 +66,7 @@ class InputCell extends React.Component {
                         defaultValue={this.props.value}
                         id={this.props.id}
                         type={"text"}
-                        onChanged={event => this.props.onChange}
+                        onChange={event => this.props.onChange()}
                     />
                 </Container>
             );

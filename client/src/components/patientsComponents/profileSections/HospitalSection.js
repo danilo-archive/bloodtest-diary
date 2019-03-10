@@ -22,6 +22,15 @@ class HospitalSection extends React.Component {
     constructor(props) {
         super(props);
 
+        this.onInputChange = this.onInputChange.bind(this);
+    }
+
+    onInputChange() {
+        const hospitalName = document.getElementById("hospital_name").value;
+        const hospitalEmail = document.getElementById("hospital_email").value;
+        const hospitalPhone = document.getElementById("hospital_phone").value;
+
+        this.props.onChange({hospitalName, hospitalEmail, hospitalPhone});
     }
 
     render() {
@@ -32,6 +41,7 @@ class HospitalSection extends React.Component {
                     value={this.props.hospitalName}
                     id={"hospital_name"}
                     disabled={this.props.localHospital}
+                    onChange={this.onInputChange}
                 />
 
                 <InputCell
@@ -39,6 +49,7 @@ class HospitalSection extends React.Component {
                     value={this.props.hospitalEmail}
                     id={"hospital_email"}
                     disabled={this.props.localHospital}
+                    onChange={this.onInputChange}
                 />
 
                 <InputCell
@@ -46,6 +57,7 @@ class HospitalSection extends React.Component {
                     value={this.props.hospitalPhone}
                     id={"hospital_phone"}
                     disabled={this.props.localHospital}
+                    onChange={this.onInputChange}
                 />
 
                 <InputCell

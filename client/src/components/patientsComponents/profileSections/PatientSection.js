@@ -7,12 +7,17 @@ import SectionContainer from "./SectionContainer"
 
 export default class PatientSection extends React.Component {
 
+    constructor(props) {
+        super(props);
+
+        this.onInputChange = this.onInputChange.bind(this);
+    }
+
     onInputChange() {
-        const patientName = document.getElementById("patient_name");
-        const patientSurname = document.getElementById("patient_surname");
-        const patientEmail = document.getElementById("patient_email");
-        const patientPhone = document.getElementById("patient_phone");
-        console.log("new patient phone = " + patientPhone);
+        const patientName = document.getElementById("patient_name").value;
+        const patientSurname = document.getElementById("patient_surname").value;
+        const patientEmail = document.getElementById("patient_email").value;
+        const patientPhone = document.getElementById("patient_phone").value;
 
         this.props.onChange({patientName, patientSurname, patientEmail, patientPhone});
     }
