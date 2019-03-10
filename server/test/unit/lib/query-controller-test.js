@@ -603,11 +603,7 @@ describe("Other functionality", function(){
       }
       queryController.__set__("databaseController",dbController);
       let response = await spy();
-<<<<<<< HEAD
-      response = response.response;
-=======
       response = response.response; // TODO: is this okay?
->>>>>>> 875c3cda68f5e8e04d749cbc5ce51556af0b0b21
       response[0].class.should.equal('Year+');
       response[0].tests.length.should.equal(2);
       response[0].tests[0].test_id.should.equal(10);
@@ -644,11 +640,7 @@ describe("Other functionality", function(){
       }
       queryController.__set__("databaseController",dbController);
       let response = await spy();
-<<<<<<< HEAD
-      response = response.response;
-=======
       response = response.response; // TODO: is this okay?
->>>>>>> 875c3cda68f5e8e04d749cbc5ce51556af0b0b21
       response[0].class.should.equal('Year+');
       response[0].tests.length.should.equal(0);
 
