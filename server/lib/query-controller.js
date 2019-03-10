@@ -5,7 +5,6 @@ const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
 
-
 /**
  * Get the patient given its patient number
  * @param {string} patient_no the patient number
@@ -202,7 +201,7 @@ async function getOverdueGroups()
           groups[4].tests = groups[4].tests.concat(sortedTests[i]);
           i++;
       }
-      return groups;
+      return {success: true, response: groups};
 }
 
 /**
@@ -386,7 +385,8 @@ async function changeTestStatus(test, actionUsername)
 **/
 async function getTestWithinWeek(date)
 {
-  const response = await Promise.all(getTestsDuringTheWeek(date))
+  let dateString = dateformat(date, "yyyy-mm-dd");
+  const response = await Promise.all(getTestsDuringTheWeek(dateString))
                               .then(days => {return checkMultipleQueriesStatus(days)})
                               .then(data => {return data})
   return response;

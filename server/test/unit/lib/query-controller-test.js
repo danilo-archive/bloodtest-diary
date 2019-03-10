@@ -602,7 +602,8 @@ describe("Other functionality", function(){
         }
       }
       queryController.__set__("databaseController",dbController);
-      const response = await spy();
+      let response = await spy();
+      response = response.response;
       response[0].class.should.equal('Year+');
       response[0].tests.length.should.equal(2);
       response[0].tests[0].test_id.should.equal(10);
@@ -638,7 +639,8 @@ describe("Other functionality", function(){
         }
       }
       queryController.__set__("databaseController",dbController);
-      const response = await spy();
+      let response = await spy();
+      response = response.response;
       response[0].class.should.equal('Year+');
       response[0].tests.length.should.equal(0);
 
