@@ -45,26 +45,49 @@ class PatientsTable extends React.Component {
 
     constructor(props){
         super(props);
+        this.state = {
+            patients: props.allPatients,
+        }
     }
 
     number_filter = value => {
-        this.props.numberFilter(value);
+        this.setState({
+          patients: this.props.allPatients.filter(
+            patient => patient.patient_no.includes(value)
+          )
+        });
     };
 
     name_filter = value => {
-        this.props.nameFilter(value);
+        this.setState({
+          patients: this.props.allPatients.filter(
+            patient => patient.patient_name.includes(value)
+          )
+        });
     };
 
     surname_filter = value => {
-        this.props.surnameFilter(value);
+        this.setState({
+          patients: this.props.allPatients.filter(
+            patient => patient.patient_surname.includes(value)
+          )
+        });
     };
 
     email_filter = value => {
-        this.props.emailFilter(value);
+        this.setState({
+          patients: this.props.allPatients.filter(
+            patient => patient.patient_email.includes(value)
+          )
+        });
     };
 
     phone_filter = value => {
-        this.props.phoneFilter(value);
+        this.setState({
+          patients: this.props.allPatients.filter(
+            patient => patient.patient_phone.includes(value)
+          )
+        });
     };
 
     render() {
@@ -106,7 +129,7 @@ class PatientsTable extends React.Component {
                 </TableRow>
                 </TableHeader>
                 <TableBody>
-                {this.props.shownPatients.map(patient => (
+                {this.state.patients.map(patient => (
                     <PatientRow
                         key={patient.patient_no}
                         patient_no = {patient.patient_no}

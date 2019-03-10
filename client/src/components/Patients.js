@@ -70,7 +70,6 @@ class Patients extends React.Component {
         this.state = {
             allPatientsReady: false,
             allPatients: {},
-            shownPatients: {},
             openModal: false,
             selectedId: undefined
         };
@@ -88,31 +87,6 @@ class Patients extends React.Component {
                 allPatientsReady: true
             });
         });
-    };
-
-    number_filter = value => {
-        let filteredPatients = this.state.allPatients.filter( patient => patient.patient_no.includes(value));
-        this.setState({shownPatients: filteredPatients});
-    };
-
-    name_filter = value => {
-        let filteredPatients = this.state.allPatients.filter( patient => patient.patient_name.includes(value));
-        this.setState({shownPatients: filteredPatients});
-    };
-
-    surname_filter = value => {
-        let filteredPatients = this.state.allPatients.filter( patient => patient.patient_surname.includes(value));
-        this.setState({shownPatients: filteredPatients});
-    };
-
-    email_filter = value => {
-        let filteredPatients = this.state.allPatients.filter( patient => patient.patient_email.includes(value));
-        this.setState({shownPatients: filteredPatients});
-    };
-
-    phone_filter = value => {
-        let filteredPatients = this.state.allPatients.filter( patient => patient.patient_phone.includes(value));
-        this.setState({shownPatients: filteredPatients});
     };
 
 
@@ -150,12 +124,7 @@ class Patients extends React.Component {
                     </NavbarContainer>
                     {<TableContainer>
                         <PatientsTable
-                            shownPatients={this.state.shownPatients}
-                            numberFilter={this.number_filter}
-                            nameFilter = {this.name_filter}
-                            surnameFilter = {this.surname_filter}
-                            emailFilter = {this.email_filter}
-                            phoneFilter = {this.phone_filter}
+                            allPatients={this.state.shownPatients}
                             openModal = {this.openModal}
                         />
                     </TableContainer>}
