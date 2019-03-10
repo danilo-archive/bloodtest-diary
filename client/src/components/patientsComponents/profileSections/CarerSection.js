@@ -12,40 +12,40 @@ export default class CarerSection extends React.Component {
                     field={"Relationship"}
                     value={this.props.carerRelationship}
                     id={"carer_relationship"}
-                    disabled={this.props.hasCarer}
+                    disabled={this.props.noCarer}
                 />
 
                 <InputCell
                     field={"Name"}
                     value={this.props.carerName}
                     id={"carer_name"}
-                    disabled={this.props.hasCarer}
+                    disabled={this.props.noCarer}
                 />
 
                 <InputCell
                     field={"Surname"}
                     value={this.props.carerSurname}
                     id={"carer_surname"}
-                    disabled={this.props.hasCarer}
+                    disabled={this.props.noCarer}
                 />
 
                 <InputCell
                     field={"Email"}
                     value={this.props.carerEmail}
                     id={"carer_email"}
-                    disabled={this.props.hasCarer}
+                    disabled={this.props.noCarer}
                 />
 
                 <InputCell
                     field={"Phone"}
                     value={this.props.carerPhone}
                     id={"carer_phone"}
-                    disabled={this.props.hasCarer}
+                    disabled={this.props.noCarer}
                 />
 
                 <InputCell
                     field={"Is this patient without carer ?"}
-                    value={this.props.hasCarer}
+                    value={this.props.noCarer}
                     id={"has_carer"}
                     type={"checkbox"}
                     onChange={this.props.onCarerClick}

@@ -97,7 +97,7 @@ class PatientProfile extends Component {
                hospitalEmail: info.hospital_email,
                hospitalPhone: info.hospital_phone,
 
-               hasCarer: info.carer_id ? false : true,
+               noCarer: info.carer_id ? false : true,
                localHospital: info.hospital_id ? false : true,
                ready: true
                //TODO : store patients tests
@@ -108,8 +108,8 @@ class PatientProfile extends Component {
     onSaveClick = () => {
         let carerInfo = undefined;
         let hospitalInfo = undefined;
-        if (this.state.hasCarer){
-            if (this.state.carerEmail == "" || this.state.carerEmail == undefined){
+        if (this.state.noCarer){
+            if (this.state.carerEmail === "" || this.state.carerEmail === undefined){
                 // TODO add UI alert
                 alert("Carer's email is compulsory");
                 return;
@@ -128,7 +128,7 @@ class PatientProfile extends Component {
             }
         }
         if (!this.state.localHospital){
-            if (this.state.hospitalEmail == "" || this.state.hospitalEmail == undefined){
+            if (this.state.hospitalEmail === "" || this.state.hospitalEmail === undefined){
                 alert("Hospital's email is compulsory");
                 return;
             }
@@ -145,8 +145,10 @@ class PatientProfile extends Component {
         }
 
         const {patientId, editToken, patientName, patientSurname, patientEmail, patientPhone} = this.state;
-        console.log({carerInfo, hospitalInfo, patientId, editToken, patientName, patientName, patientEmail, patientPhone});
-    }
+        console.log({carerInfo, hospitalInfo, patientId, editToken, patientName, patientSurname, patientEmail, patientPhone});
+    };
+
+
 
     render() {
         if (this.state.ready) {
@@ -158,6 +160,14 @@ class PatientProfile extends Component {
                         patientSurname={this.state.patientSurname}
                         patientEmail={this.state.patientEmail}
                         patientPhone={this.state.patientPhone}
+                        onChange={patient => {
+                            this.setState({
+                                patientName: patient.patientName,
+                                patientSurname: patient.patientSurname,
+                                patientEmail: patient.patientEmail,
+                                patientPhone: patient.patientPhone
+                            })
+                        }}
                     />
                     <CarerSection
                         carerId={this.state.carerId}
@@ -166,8 +176,8 @@ class PatientProfile extends Component {
                         carerSurname={this.state.carerSurname}
                         carerEmail={this.state.carerEmail}
                         carerPhone={this.state.carerPhone}
-                        hasCarer={this.state.hasCarer}
-                        onCarerClick={() => this.setState({hasCarer: !this.state.hasCarer})}
+                        noCarer={this.state.noCarer}
+                        onCarerClick={() => this.setState({noCarer: !this.state.noCarer})}
                     />
                     <HospitalSection
                         hospitalId={this.state.hospitalId}
