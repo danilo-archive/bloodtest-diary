@@ -74,8 +74,7 @@ class PatientProfile extends Component {
         ready: false
       };
       this.serverConnect = getServerConnect();
-
-      console.log(props.patientId);
+     
       this.loadPatient();
     }
 

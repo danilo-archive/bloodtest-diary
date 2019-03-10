@@ -73,10 +73,17 @@ class Patients extends React.Component {
             openModal: false,
             selectedId: undefined
         };
+        this.initOnPatientEditedCallback();
         this.initAllPatients();
 
         this.openModal = this.openModal.bind(this);
         this.onCloseModal = this.onCloseModal.bind(this);
+    }
+
+    initOnPatientEditedCallback(){
+        this.serverConnect.setOnPatientEdited((patientId, newInfo) => {
+            this.initAllPatients();
+        });
     }
 
     initAllPatients() {

@@ -32,6 +32,7 @@ class ServerConnect {
         this.onTestAdded = undefined;
         this.onTestStatusChange = undefined;
         this.onTestEdit = undefined;
+        this.onPatientEdit = undefined;
 
         this.socket.on("testAdded", newTest => {
             this.onTestAdded(newTest);
@@ -40,6 +41,11 @@ class ServerConnect {
         this.socket.on("testStatusChange", (id, status) => {
             console.log("here");
             this.onTestStatusChange(id, status);
+        });
+
+        // TODO get ad hoc record and change it
+        this.socket.on("patientEdited", (patientId, newInfo) => {
+            this.onPatientEdit(patientId, newInfo);
         });
     }
 
@@ -83,6 +89,10 @@ class ServerConnect {
 
     setOnTestEdit(callback){
         this.onTestEdit = callback;
+    }
+
+    setOnPatientEdited(callback){
+        this.onPatientEdit = callback;
     }
 
     /**

@@ -167,7 +167,7 @@ io.on('connection',function(socket)
         } else {
             socket.emit("editPatientResponse", response);
         }
-        io.in("patients_page").emit("patientEdited");
+        io.in("patients_page").emit("patientEdited", patientId, newInfo);
     });
 });
 
