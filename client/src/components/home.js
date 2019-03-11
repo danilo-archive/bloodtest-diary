@@ -181,8 +181,10 @@ class Home extends Component {
     };
 
     onEditTestCloseModal = () => {
-        // TODO remove token if not used
-        this.setState({openEditTestModal: false, editTestId: undefined, editToken: undefined});
+        const {editTestId, editToken} = this.state;
+        this.serverConnect.discardTestEditing(editTestId, editToken, res => {
+            this.setState({openEditTestModal: false, editTestId: undefined, editToken: undefined});
+        })
     };
 
     // ----------------- ADDED TEST METHODS --------------------------
@@ -194,7 +196,7 @@ class Home extends Component {
     handleDrop = (section, testId) => {
 
     }
-// 
+//
     render() {
       if (this.state.dashboardReady && this.state.overdueReady) {
         return (
