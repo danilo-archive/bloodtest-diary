@@ -18,7 +18,13 @@ export default class AddTestView extends React.Component {
     selectedID: "",
     selectedDate: this.props.selectedDate,
     observations: "",
-    allPatients: ""
+    allPatients: "",
+    frequency: {
+      timeAmount: null,
+      timeUnits: ["Days", "Weeks", "Months", "Years"],
+      timeUnit: "Days",
+      occurrences: 1
+    }
   };
   constructor(props) {
     super(props);
@@ -45,11 +51,33 @@ export default class AddTestView extends React.Component {
   };
   onDoneClick = () => {
     if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
-      this.serverConnect.addTest(this.state.selectedID, this.state.selectedDate, this.state.observations);
+      let frequency = undefined;
+      if (this.state.frequency.timeAmount) {
+        let { timeUnit, timeAmount } = this.state.frequency;
+        timeAmount = timeUnit === "Months" ? timeAmount * 4 : timeAmount;
+        timeUnit = timeUnit === "Months" ? "W" : timeUnit;
+        timeUnit = timeUnit.charAt(0);
+        frequency = `${timeAmount}-${timeUnit}`;
+      }
+      this.serverConnect.addTest(
+        this.state.selectedID,
+        this.state.selectedDate,
+        this.state.observations,
+        frequency,
+        this.state.frequency.occurrences
+      );
       alert(
         `Patient ID: ${this.state.selectedID} \nObservations: ${
           this.state.observations
-        }\nScheduled Date: ${this.state.selectedDate}`
+        }\nScheduled Date: ${this.state.selectedDate}\nFrequency: ${
+          this.state.frequency.timeAmount === "0"
+            ? `Do not repeat`
+            : `Repeat every ${
+                this.state.frequency.timeAmount
+              } ${this.state.frequency.timeUnit.toLowerCase()} ${
+                this.state.frequency.occurrences
+              } times`
+        }`
       );
       this.setState({ open: false });
       this.props.closeModal();
@@ -58,34 +86,57 @@ export default class AddTestView extends React.Component {
     }
   };
   render() {
+    console.log(this.state);
     return (
       <>
-          <div
-            style={{
-              width: "35rem",
-              height: "30rem",
-              background: "rgba(244, 244, 244,0.7)"
-            }}
-          >
-            <TitleTab onClose={this.props.closeModal} main={true}>
-              Add Appointments
-            </TitleTab>
-            <DataContainer>
-              <PatientSelect
-                patients={this.state.allPatients}
-                onDoneClick={this.onDoneClick}
-                onSelectClick={id => this.setState({ selectedID: id })}
-              />
+        <div
+          style={{
+            width: "35rem",
+            height: "30rem",
+            background: "rgba(244, 244, 244,0.7)"
+          }}
+        >
+          <TitleTab onClose={this.props.closeModal} main={true}>
+            Add Appointments
+          </TitleTab>
+          <DataContainer>
+            <PatientSelect
+              patients={this.state.allPatients}
+              onDoneClick={this.onDoneClick}
+              onSelectClick={id => this.setState({ selectedID: id })}
+            />
 
-              <DateSelectorSection
-                selectedDate={this.state.selectedDate}
-                onDateSelect={day => this.onDateSelect(day)}
-                onObservationsChange={observations =>
-                  this.setState({ observations })
-                }
-              />
-            </DataContainer>
-          </div>
+            <DateSelectorSection
+              timeAmount={this.state.frequency.timeAmount}
+              timeUnit={this.state.frequency.timeUnit}
+              unitOptions={this.state.frequency.timeUnits}
+              onTimeAmountChange={timeAmount => {
+                timeAmount = parseInt(timeAmount);
+                this.setState({
+                  frequency: { ...this.state.frequency, timeAmount }
+                });
+              }}
+              onUnitChange={timeUnit =>
+                this.setState({
+                  frequency: { ...this.state.frequency, timeUnit }
+                })
+              }
+              selectedDate={this.state.selectedDate}
+              onDateSelect={day => this.onDateSelect(day)}
+              onObservationsChange={observations =>
+                this.setState({ observations })
+              }
+              onOccurrenceChange={value =>
+                this.setState({
+                  frequency: {
+                    ...this.state.frequency,
+                    occurrences: value ? parseInt(value) + 1 : 1
+                  }
+                })
+              }
+            />
+          </DataContainer>
+        </div>
       </>
     );
   }

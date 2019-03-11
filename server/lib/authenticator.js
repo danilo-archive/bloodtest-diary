@@ -1,6 +1,11 @@
 
 const crypto = require("crypto");
-module.exports = {canLogin:canLogin};
+module.exports = {
+  canLogin,
+  produceIterations,
+  produceSalt,
+  produceHash,
+};
 
 
 /**
@@ -24,7 +29,7 @@ function canLogin(user, userInDatabase)
   if(user.username===userInDatabase[0].username)
   {
     var hash = crypto.pbkdf2Sync(user.password,userInDatabase[0].salt,userInDatabase[0].iterations,64,'sha256').toString('hex');
-    if(hash==userInDatabase[0].password)
+    if(hash==userInDatabase[0].hashed_password)
     {
       return true;
     }
@@ -37,4 +42,22 @@ function canLogin(user, userInDatabase)
   {
     return false;
   }
+}
+
+function produceIterations()
+{
+  var min=1000;
+  var max=2000;
+  var random=Math.floor(Math.random() * (+max - +min)) + +min;
+  return random;
+}
+
+function produceSalt()
+{
+  return crypto.randomBytes(16).toString('hex');
+}
+
+function produceHash(password, iterations, salt)
+{
+  return crypto.pbkdf2Sync(password,salt,iterations,64,'sha256').toString('hex');
 }

@@ -133,19 +133,19 @@ body {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
-.calendar {
-  border: #839595 0px solid;
+.homecalendar {
+    border: #839595 0px solid;
 
-  background-color: white;
+    background-color: white;
 
-  padding: 0.5%;
+    padding: 0.5%;
 
-  width: 200px;
-  overflow: hidden;
-  flex-grow: 10;
-  flex-shrink: 1;
+    width: 200px;
+    overflow: hidden;
+    flex-grow: 10;
+    flex-shrink: 1;
 
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .ongoingWeekly {

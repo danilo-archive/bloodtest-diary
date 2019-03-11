@@ -4,7 +4,8 @@ import StatusCircle from "./StatusCircle";
 import AppointmentInfo from "./AppointmentInfo";
 import IconSet from "./IconSet";
 import TimePill from "./TimePill";
-import { getServerConnect } from "../../../serverConnection.js";
+import {getServerConnect} from "../../../serverConnection.js";
+import {isPastDate} from "../../../lib/calendar-controller.js";
 const Container = styled.div`
   display: block;
   position: relative;
@@ -80,45 +81,48 @@ const Container = styled.div`
 `;
 
 const mapping = {
-  yes: "completed",
-  no: "late",
-  "in review": "pending"
-};
+    "yes":"completed",
+    "no": "pending",
+    "in review": "inReview"
+}
 
 export default class AppointmentBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      id: this.props.id,
-      status: this.props.type,
-      name: this.props.name,
-      tentative: this.props.tentative | false,
-     };
     this.serverConnect = getServerConnect();
   }
 
-  formatStatus(status) {
-    if (status === "completed" || status === "pending" || status === "late") {
-      return status;
-    } else {
-      return mapping[status];
-    }
+
+  formatStatus(status, date){
+      if (status === "no" && isPastDate(date)){
+          return "late";
+      }
+      if (status === "completed" || status === "inReview" || status === "late"){
+         return status;
+     } else {
+         return mapping[status];
+     }
+
   }
 
   onStatusClick = status => {
-    this.serverConnect.changeTestStatus(this.state.id, status);
+    this.serverConnect.changeTestStatus(this.props.id, status);
   };
 
   render() {
-    const { status, name, tentative } = this.state;
     return (
-      <Container tentative={tentative}>
-        {tentative ? <TimePill status={status}>Tentative</TimePill> : ``}
-          <StatusCircle
-            type={tentative ? "tentative" : this.formatStatus(this.props.type)}
-          />
-          <AppointmentInfo name={name} />
-          <IconSet onStatusClick={tentative ? () => {} : this.onStatusClick} />
+      <Container tentative={this.props.tentative}>
+        {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
+
+        <StatusCircle
+          type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
+        />
+        <AppointmentInfo name={this.props.name} />
+        <IconSet
+            onStatusClick={this.props.tentative ? () => {} : this.onStatusClick}
+            editTest={this.props.editTest}
+            testId={this.props.id}
+        />
       </Container>
     );
   }

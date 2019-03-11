@@ -3,7 +3,8 @@ import styled from "styled-components";
 const combinations = {
   completed: "#5BC714",
   late: "#D10505",
-  pending: "#FFD907"
+  pending: "#FFD907",
+  inReview: "#4286f4"
 };
 
 export default styled.div`

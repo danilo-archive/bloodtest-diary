@@ -67,11 +67,10 @@
         }
     }
 
-<i>N.B. The query that is passed into this function should only update one entry. This rule is not enforced in this function but should be enforced by the caller, otherwise unwanted data (entries that are currently being edited) might also be updated.<br>
-<b>This will be extended later to allow for multiple line edits.</b></i>
+<i>N.B. The query that is passed into this function should only update one entry. This rule is not enforced in this function but should be enforced by the caller, otherwise unwanted data (entries that are currently being edited) might also be updated.<br></i>
 
 
-### REQUEST TOKEN response:
+### REQUEST TOKEN, REFRESH TOKEN response:
     { status: "OK",
         response: {
             token: token_sequence,
@@ -79,5 +78,10 @@
         }
     }
 
-<i>N.B. Currently you can only request editing for one entry.<br>
-<b>This will be extended later to allow for multiple line edits.</b></i>
+<i>N.B. Currently you can only request editing for one entry.<br></i>
+
+
+### CANCEL EDITING response:
+    { status: "OK",
+        response: "Editing successfully cancelled."
+    }

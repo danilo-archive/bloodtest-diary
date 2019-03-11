@@ -13,11 +13,11 @@ const Heading = styled.h3`
   height: 35px;
   overflow: hidden;
   z-index: 5;
-  background-color: white;
+  background-color: ${props => props.color || `white`};
 `;
 
 export default props => {
   return (
-      <Heading>{props.children}</Heading>
+      <Heading color={props.color}>{props.children}</Heading>
   );
 };

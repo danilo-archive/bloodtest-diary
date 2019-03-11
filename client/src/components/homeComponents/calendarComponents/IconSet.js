@@ -13,7 +13,7 @@ export default props => {
         marginRight: "7px",
       }}
     >
-      <Icon icon="edit" />
+      <Icon icon="edit" onClick={props.editTest} testId={props.testId} />
       <Icon icon="check" onClick={props.onStatusClick} />
     </div>
   );
