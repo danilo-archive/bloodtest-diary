@@ -85,8 +85,22 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.getAllPatients();
-        console.log({response});
         socket.emit("getAllPatientsResponse", response.response);
+    });
+
+    socket.on("getFullPatientInfo", async (patientId, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
+        const response = await queryController.getFullPatientInfo(patientId);
+        socket.emit("getFullPatientInfoResponse", response.response);
     });
 
     socket.on('getAllTests', async (accessToken) => {
@@ -218,6 +232,17 @@ io.on('connection',function(socket)
 
     });
 
+    socket.on("requestPatientEditToken", async (patientId) => {
+        const token = await queryController.requestEditing("Patient", patientId);
+        console.log("firing");
+        socket.emit("requestPatientEditTokenResponse", token);
+    });
+
+    socket.on("discardEditing", async (table, id, token) => {
+        const response = await queryController.returnToken(table, id, token);
+        socket.emit("discardEditingResponse", response);
+    });
+
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 
@@ -280,6 +305,18 @@ io.on('connection',function(socket)
         } else {
             // emit failure to the socket
         }
+    });
+
+    socket.on("editPatient", async (patientId, newInfo, token) => {
+        console.log(token);
+        const response = await queryController.editPatientExtended(newInfo, token);
+        console.log(response);
+        if (response.success){
+            socket.emit("editPatientResponse", {success: true});
+        } else {
+            socket.emit("editPatientResponse", response);
+        }
+        io.in("patients_page").emit("patientEdited", patientId, newInfo);
     });
 });
 

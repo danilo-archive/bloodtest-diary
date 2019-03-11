@@ -1,5 +1,25 @@
 import React from 'react';
 import './CalendarHeader.css';
+import styled from "styled-components";
+
+const Td = styled.td`
+    color: white;
+    background-color: #0b989d;
+    :hover {
+      color: white;
+      background-color: #0b989d;
+    }
+`;
+
+const Button = styled.button`
+    background-color: transparent;
+    color: white;
+    
+    :hover {
+    color: #0b989d;
+    background-color: white;
+}
+`;
 
 const monthNames = ["January",
                     "February",

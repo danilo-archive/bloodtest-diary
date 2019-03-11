@@ -31,7 +31,7 @@ body {
 }
 
 .dashboard {
-  border: blue 0px solid;
+  border: blue 0 solid;
   height: calc(100vh - 65px);
   width: auto;
   position: relative;
@@ -40,12 +40,12 @@ body {
 
   display: flex;
   flex-direction: row;
-  justify-content: ;
+  //justify-content: ;
   align-items: flex-end;
 }
 
 .rightSideDash {
-  border: red 0px solid;
+  border: red 0 solid;
   height: 100%;
   width: auto;
 
@@ -59,7 +59,7 @@ body {
 }
 
 .bottomSideDash {
-  border: green  0px solid;
+  border: green 0 solid;
   height: auto;
   width: auto;
 
@@ -95,7 +95,7 @@ body {
   padding: 4px;
   margin-right: 0.5%;
 
-  background-color: ;
+  //background-color: ;
 
   min-width: 150px;
   max-width: 325px;
@@ -126,7 +126,7 @@ body {
   padding: 4px;
   margin-left: 0.5%;
 
-  background-color: ;
+  //background-color: ;
 
   overflow: hidden;
 

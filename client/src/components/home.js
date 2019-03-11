@@ -2,12 +2,10 @@ import React, { Component } from 'react';
 import styled from "styled-components";
 import Modal from 'react-responsive-modal';
 
-import Header from './header.js';
 import Navbar from "./homeComponents/navbar";
 import OverduePatients from "./homeComponents/overduePatients";
 import WeeklyCalendar from "./homeComponents/weeklyCalendar";
 import OngoingWeekly from "./homeComponents/ongoingWeekly";
-import arrow from "../images/arrow.png";
 import AddTest from "./homeComponents/addTest/AddTestView";
 import EditTest from "./homeComponents/editTest/EditTestView";
 import {getNextDates, getMondayOfWeek, getCurrentWeek, getPreviousWeek, getNextWeek} from "../lib/calendar-controller";
@@ -21,6 +19,7 @@ class Home extends Component {
       super(props);
       this.serverConnect = getServerConnect();
       this.serverConnect.joinMainPage();
+
 
       this.state = {
         dashboardReady: false,
@@ -37,6 +36,10 @@ class Home extends Component {
 
     }
 
+    onPatientsClick(event) {
+        this.props.history.push("patients")
+    }
+
     componentDidMount = () => {
         this.initOverduePanel();
         this.updateDashboard();
@@ -44,6 +47,7 @@ class Home extends Component {
 
         this.handleNext = this.handleNext.bind(this);
         this.handlePrevious = this.handlePrevious.bind(this);
+        this.onPatientsClick = this.onPatientsClick.bind(this);
 
         this.onAddTestOpenModal = this.onAddTestOpenModal.bind(this);
         this.onAddTestCloseModal = this.onAddTestCloseModal.bind(this);
@@ -188,7 +192,11 @@ class Home extends Component {
             </div>
             <div className={"rightSideDash"}>
               <div className={"navbar"}>
-                <Navbar onPrev={this.handlePrevious} onNext={this.handleNext} />
+                <Navbar
+                    onPrev={this.handlePrevious}
+                    onNext={this.handleNext}
+                    onPatientsClick={this.onPatientsClick}
+                />
               </div>
               <div className={"bottomSideDash"}>
                 <div className={"homecalendar"}>
