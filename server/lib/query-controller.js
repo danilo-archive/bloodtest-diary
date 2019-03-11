@@ -753,7 +753,7 @@ function prepareUpdateSQL(table, object, idProperty)
 }
 
 /**
-* Prepare UPDATE query on the database
+* Prepare DELETE query on the database
 * @param {String} table - Table in which to insert an entry
 * @param {String} idProperty - property, that the entry can be identified with
 * @param {String} id - value of idProperty
