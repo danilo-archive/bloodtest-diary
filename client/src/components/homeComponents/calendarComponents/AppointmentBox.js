@@ -6,7 +6,12 @@ import IconSet from "./IconSet";
 import TimePill from "./TimePill";
 import {getServerConnect} from "../../../serverConnection.js";
 import {isPastDate} from "../../../lib/calendar-controller.js";
+import { DragSource } from "react-dnd";
+import { getEmptyImage } from "react-dnd-html5-backend";
+
+const serverConnect = getServerConnect();
 const Container = styled.div`
+  opacity: ${props => props.isDragging ? 0 : 1}
   display: block;
   position: relative;
   background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
@@ -86,10 +91,49 @@ const mapping = {
     "in review": "inReview"
 }
 
-export default class AppointmentBox extends React.Component {
+const spec = {
+  beginDrag(props){
+    return {
+      type: 'appointment',
+      test_id: props.id,
+      completed_status: props.type,
+      patient_name: props.name,
+      dueDate: props.dueDate
+    };
+  },
+  endDrag(props, monitor, component){
+    if (monitor.didDrop()){
+      const newDate = monitor.getDropResult().newDate;
+      if (newDate){
+        serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate);
+      }
+    }
+  },
+  canDrag(props, monitor){
+    return (props.section !== "overdue");
+  }
+}
+
+function collect(connect, monitor){
+  return {
+    connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
+    isDragging: monitor.isDragging()
+
+  }
+}
+
+class AppointmentBox extends React.Component {
   constructor(props) {
     super(props);
     this.serverConnect = getServerConnect();
+  }
+
+  componentDidMount(){
+    const {connectDragPreview} = this.props;
+    if (connectDragPreview){
+      connectDragPreview(getEmptyImage(), {captureDraggingState: true});
+    }
   }
 
 
@@ -110,20 +154,25 @@ export default class AppointmentBox extends React.Component {
   };
 
   render() {
-    return (
-      <Container tentative={this.props.tentative}>
-        {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
+    const {isDragging, connectDragSource} = this.props;
+    return connectDragSource(
+      <div>
+        <Container isDragging={isDragging} tentative={this.props.tentative}>
+          {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
 
-        <StatusCircle
-          type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
-        />
-        <AppointmentInfo name={this.props.name} />
-        <IconSet
-            onStatusClick={this.props.tentative ? () => {} : this.onStatusClick}
-            editTest={this.props.editTest}
-            testId={this.props.id}
-        />
-      </Container>
+          <StatusCircle
+            type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
+          />
+          <AppointmentInfo name={this.props.name} />
+          <IconSet
+              onStatusClick={this.props.tentative ? () => {} : this.onStatusClick}
+              editTest={this.props.editTest}
+              testId={this.props.id}
+          />
+        </Container>
+      </div>
     );
   }
 }
+
+export default DragSource("appointment", spec, collect)(AppointmentBox);

@@ -16,6 +16,9 @@ import EditTest from "./homeComponents/editTest/EditTestView";
 import {getNextDates, getMondayOfWeek, getCurrentWeek, getPreviousWeek, getNextWeek} from "../lib/calendar-controller";
 import {getServerConnect} from "../serverConnection.js";
 import {group, getNumberOfTestsInGroup} from "../lib/overdue-controller.js";
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContext } from 'react-dnd'
+import CustomDragLayer from "./homeComponents/CustomDragLayer.js";
 import './home.css';
 
 class Home extends Component {
@@ -178,12 +181,23 @@ class Home extends Component {
         this.setState({openEditTestModal: false, editTestId: undefined, editToken: undefined});
     };
 
+    // ----------------- ADDED TEST METHODS --------------------------
+
+    moveTest(from, to, test){
+
+    }
+
+    handleDrop = (section, testId) => {
+
+    }
+// 
     render() {
       if (this.state.dashboardReady && this.state.overdueReady) {
         return (
 
         <div className={"home"}>
           <div className={"dashboard"}>
+            <CustomDragLayer snapToGrid={true} />
             <div className={"overduePatients"}>
               <OverduePatients
                 notificationNumber={getNumberOfTestsInGroup(this.state.overdueTests)}
@@ -208,6 +222,7 @@ class Home extends Component {
                 <div className={"ongoingWeekly"}>
                   <OngoingWeekly
                     currentMonday={this.currentMonday}
+                    date={this.state.weekDays[5]}
                     notificationNumber={this.state.ongoingTests.length}
                     anytimeAppointments={this.state.ongoingTests}
                     editTest={this.onEditTestOpenModal}
@@ -262,4 +277,5 @@ class Home extends Component {
     padding: 0
   };
 
-export default Home;
+  export default DragDropContext(HTML5Backend)(Home);
+//export default Home;

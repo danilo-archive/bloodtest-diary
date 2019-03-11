@@ -16,6 +16,8 @@
     "mock-fs": "^4.8.0",
     "npm": "^6.8.0",
     "react": "^16.8.1",
+    "react-dnd": "^7.0.2",
+    "react-dnd-html5-backend": "^7.0.2",
     "react-dom": "^16.8.1",
     "react-fittext": "^1.0.0",
     "react-responsive-modal": "^3.6.0",

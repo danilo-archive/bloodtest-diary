@@ -5,6 +5,7 @@ import WeekDaySection from "./WeekDaySection";
 import MonthDaySection from "./MonthDaySection";
 import ScrollBox from "./ScrollBox";
 import AppointmentSection from "./AppointmentSection";
+import { DropTarget } from "react-dnd";
 
 const CalendarContainer = styled.div`
   margin: 3px;
@@ -34,14 +35,35 @@ const monthNames = [
   "Dec"
 ];
 
+function collect(connect, monitor){
+  console.log(monitor.isOver());
+  return {
+    connectDropTarget: connect.dropTarget(),
+    hovered: monitor.isOver(),
+    hightlighted: monitor.canDrop(),
+    item: monitor.getItem()
+  }
+}
+
+const spec = {
+  drop: function(props, monitor, component){
+    return {newDate: props.date}
+  },
+  hover: function(props, monitor, component){
+  }
+}
+
+
 class CalendarDay extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render() {
-    return (
-      <>
+    const { connectDropTarget, hovered, item} = this.props;
+    const backgroundColor = hovered ? "#dbfffc" : "white";
+    return connectDropTarget(
+      <div style={{height: "inherit"}}>
         <CalendarContainer>
           <WeekDaySection
             notificationNumber={
@@ -57,18 +79,21 @@ class CalendarDay extends React.Component {
             monthName={monthNames[this.props.date.getMonth()]}
             openModal={date => this.props.openModal(date)}
           />
-          <ScrollBox>
+          <ScrollBox style={{background: backgroundColor}}>
             <AppointmentSection
+              background = {backgroundColor}
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
+              sectionDate={this.props.date}
               editTest={this.props.editTest}
             />
             <div style={{width:"100%",height:"130px"}}/>
           </ScrollBox>
         </CalendarContainer>
-      </>
+      </div>
     );
   }
 }
 
-export default CalendarDay;
+export default DropTarget("appointment", spec, collect)(CalendarDay);
+// 
