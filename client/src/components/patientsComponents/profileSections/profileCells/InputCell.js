@@ -21,6 +21,7 @@ const Input = styled.input.attrs({ spellCheck: "false"})`
   font-family: "Rajdhani", sans-serif;
 `;
 
+
 class InputCell extends React.Component {
 
     constructor(props) {
@@ -47,7 +48,9 @@ class InputCell extends React.Component {
             );
         } else if (this.props.type === "checkbox"){
             return (
-                <Container>
+                <Container
+                    style={{width: `100%`}}
+                >
                     <Field htmlFor={this.props.id}>{this.props.field}</Field>
                     <Input
                         defaultValue={this.props.value}

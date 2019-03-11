@@ -54,10 +54,10 @@ const TableContainer = styled.div`
     flex-grow: 1;
     flex-shrink: 1;
 `;
-const modalStyles = {
-    padding: 0
-  };
 
+const modalStyles = {
+    padding: `0`
+};
 
 class Patients extends React.Component {
 
