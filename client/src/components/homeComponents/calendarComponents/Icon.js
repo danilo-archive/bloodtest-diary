@@ -21,7 +21,13 @@ export default props => {
     <Icon
       className={`fa fa-${props.icon}`}
       style={{ color: combinations[props.icon].color, fontSize: "150%" }}
-      onClick={() => props.onClick(combinations[props.icon].status)}
+      onClick={() => {
+          if (props.icon === "check"){
+              props.onClick(combinations[props.icon].status);
+          } else {
+              props.onClick(props.testId);
+          }
+      }}
     />
   );
 };

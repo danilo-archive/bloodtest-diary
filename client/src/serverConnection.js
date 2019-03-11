@@ -199,6 +199,33 @@ class ServerConnect {
         });
     }
 
+    getMockTest(testId, callback){
+        let duedate = new Date(2019, 3, 4);
+        let mockedTest = {
+            patient_name: "John Doe",
+            patient_no: "P123890",
+            test_id: 123,
+            due_date: "2019-3-3",
+            frequency: "2-W",
+            occurrences: 3,
+            completed_status: "no",
+            notes: "This guys is basically just an idiot",
+            completedDate: null,
+            hospitalId: 3
+
+        }
+        setTimeout( () => {
+            callback(mockedTest);
+        }, 3000);
+    }
+
+    getTestInfo(testId, callback){
+        this.socket.emit("getTestInfo", testId);
+        this.socket.once("getTestInfoResponse", res => {
+            callback(res.response[0]);
+        });
+    }
+
     requestTestEditing(testId, callback){
         this.socket.emit("requestTestEditToken", testId);
         this.socket.once("requestTestEditTokenResponse", token => {
@@ -248,7 +275,8 @@ class ServerConnect {
     * @callback callback Protocol to be called on response
     */
     editTest(testId, newData, token, callback){
-        this.socket.emit("editTest", newData, token);
+        console.log({newData});
+        this.socket.emit("editTest", testId, newData, token);
         this.socket.once("editTestReponse", response => {
             callback(response)
         });
