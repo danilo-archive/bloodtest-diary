@@ -9,6 +9,7 @@ const dateformat = require('dateformat');
 /**
  * Get the patient given its patient number
  * @param {string} patient_no the patient number
+ * @return {JSON} - {success:Boolean response:Array or Error}
  */
 async function getPatient(patient_no) {
   const sql = `SELECT * FROM Patient WHERE patient_no = '${patient_no}';`
@@ -18,6 +19,7 @@ async function getPatient(patient_no) {
 /**
  * Get the info of the patient together with the info of eventual carers and hospitals
  * @param {string} patient_no the patient number
+ * @return {JSON} - {success:Boolean response:Array or Error}
  */
 // TODO to be tested
 async function getFullPatientInfo(patient_no){
@@ -28,6 +30,7 @@ async function getFullPatientInfo(patient_no){
 /**
  * Get the carer given its carer id
  * @param {string} carerID the carer id
+ * @return {JSON} - {success:Boolean response:Array or Error}
  */
 async function getCarer(carerID) {
   const sql = `SELECT * FROM Carer WHERE carer_id = '${carerID}';`
@@ -37,6 +40,7 @@ async function getCarer(carerID) {
 /**
  * Get the hospital given its hospital id
  * @param {string} hospital_id the hospital id
+ * @return {JSON} - {success:Boolean response:Array or Error}
  */
 async function getHospital(hospital_id) {
   const sql = `SELECT * FROM Hospital WHERE hospital_id = '${hospital_id}';`
@@ -133,6 +137,11 @@ async function getAllTestsOnDate(date)
   return await selectQueryDatabase(sql)
 }
 
+/**
+* Get test info with patient info from the database
+* @param {String} test_id - id of test
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
+**/
 async function getTestInfo(test_id){
     let sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_id=${test_id}`;
     return await selectQueryDatabase(sql);
@@ -205,7 +214,6 @@ async function addTest(json)
 * @param token The token that grants edit privileges
 */
 async function editTest(testId, newInfo,token){
-    // TODO: first check if it can edit. If edit successful then schedule a new one.
     let scheduleNew = false;
     if(newInfo.completed_status == "yes" || newInfo.completed_status == "in review")
     {
@@ -235,6 +243,12 @@ async function editPatient(newInfo, token){
     return await updateQueryDatabase("Patient",newInfo.patient_no,sql,token);
 }
 
+/**
+* Edit patient with hospital and carer query
+* @param {JSON} newInfo All the information of the patient/hospital/carer to update
+* @param token The token that grants edit privileges
+* @return {JSON} query result {success:Boolean response:{Response of each query as {success:Boolean response:Array/Error/String} or {} }}
+*/
 async function editPatientExtended(newInfo,token)
 {
   const patientResponse = await getPatient(newInfo.patient_no);
@@ -453,6 +467,11 @@ async function getTestWithinWeek(date)
   return response;
 }
 
+/**
+* Delete Carer entry from database
+*@param {String} carerid - id of a carer to be deleted
+*@return {JSON} result of the query - {success:Boolean response:"Entry deleted"/Error}
+**/
 async function deleteCarer(carerid)
 {
   const sql = prepareDeleteSQL("Carer","carer_id",carerid);
@@ -460,12 +479,18 @@ async function deleteCarer(carerid)
   return await deleteQueryDatabase("Carer",carerid,sql);
 }
 
+/**
+* Delete hospital entry from database
+*@param {String} hospitalid - id of a hospital to be deleted
+*@return {JSON} result of the query - {success:Boolean response:"Entry deleted"/Error}
+**/
 async function deleteHospital(hospitalid)
 {
   const sql = prepareDeleteSQL("Hospital","hospital_id",hospitalid);
   console.log(sql);
   return await deleteQueryDatabase("Hospital",hospitalid,sql);
 }
+
 //=====================================
 //  HELPER FUNCTIONS BELOW:
 //=====================================
@@ -497,7 +522,7 @@ function getTestsDuringTheWeek(date)
 /**
 * Get next due date of a test in "YYYY-MM-DD" format; relative to today
 * @param frequency {String} - frequency of the test as stored in database
-* @returns {String} - next due date in "YYYY-MM-DD" format
+* @return {String} - next due date in "YYYY-MM-DD" format
 **/
 function getNextDueDate(frequency, completed_date)
 {
@@ -510,7 +535,7 @@ function getNextDueDate(frequency, completed_date)
 * New information have priority over stored in database (new info > database info)
 * @param testId {String} - id of a string from which to take the info
 * @param newInfo {JSON} - (optional) new info to add into database with new test
-* @returns {JSON} - result of query {success:true/false reply:(optional;when no new entry inserted due to finished range of tests)}
+* @return {JSON} - result of query {success:true/false reply:(optional;when no new entry inserted due to finished range of tests)}
 **/
 async function scheduleNextTest(testId,newInfo={})
 {
@@ -526,6 +551,7 @@ async function scheduleNextTest(testId,newInfo={})
       occurrences: (!newInfo.occurrences) ? (test.occurrences-1) : (newInfo.occurrences), // TODO: newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
       notes: (!newInfo.notes) ? test.notes : newInfo.notes
     }
+    console.log(newTest);
     return await addTest(newTest);
   }
   return {success: true, reply: "No new tests"};
@@ -627,6 +653,7 @@ async function requestEditing(table, id)
 * @param {String} table - Table to edit
 * @param {String} id - id to edit
 * @param {String} sql - SQL query
+* @param {String} token - token to access entry
 * @return {JSON} result of the query - {success:Boolean response:Array/Error}
 **/
 async function updateQueryDatabase(table,id,sql,token)
@@ -655,6 +682,13 @@ async function updateQueryDatabase(table,id,sql,token)
   }
 }
 
+/**
+* Run DELETE query on the database
+* @param {String} table - Table to edit
+* @param {String} id - id to edit
+* @param {String} sql - SQL query
+* @return {JSON} result of the query - {success:Boolean response:"Entry deleted"/Error}
+**/
 async function deleteQueryDatabase(table,id,sql)
 {
     const response = await databaseController.deleteQuery(sql,table,id)
@@ -732,11 +766,20 @@ function prepareDeleteSQL(table, idProperty, id)
   return sql;
 }
 
+/**
+* Cancel editing on an entry
+* @param {String} table - Table of an entry
+* @param {String} id - id value of an entry
+* @param {String} token - token to return
+* @return {String} SQL query
+**/
 async function returnToken(table, id, token)
 {
   return await databaseController.cancelEditing(table, id, token)
 }
+
 module.exports = {
+  //SELECTS
     getPatient,
     getTest,
     getHospital,
@@ -749,20 +792,23 @@ module.exports = {
     getTestsOfPatient,
     getAllTestsOnDate,
     getTestWithinWeek,
+    getSortedOverdueWeeks,
+  //INSERTS
     addTest,
     addUser,
     addPatient,
     addHospital,
     addCarer,
+  //UPDATES
     updatePassword,
     changeTestStatus,
     changeTestDueDate,
     editTest,
-    requestEditing,
     editPatient,
     editPatientExtended,
     editCarer,
     editHospital,
-    getSortedOverdueWeeks,
+  //TOKEN CONTROL
+    requestEditing,
     returnToken
 };
