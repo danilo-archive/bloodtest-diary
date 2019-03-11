@@ -7,6 +7,8 @@ import FrequencySelector from "./FrequencySelector";
 import StatusSetter from "./StatusSetter";
 import { getServerConnect } from "../../../serverConnection.js";
 import Button from "./Button";
+import dateformat from "dateformat";
+
 const DataContainer = styled.div`
   position: relative;
   width: 45rem;
@@ -45,12 +47,12 @@ export default class EditTestView extends React.Component {
         test: {
           id: res.test_id,
           date: {
-            dueDate: res.due_date,
+            dueDate: dateformat(new Date(res.due_date), "d mmm yyyy"),
             frequency: res.frequency ? res.frequency : "",
             occurrences: res.occurrences
           },
-          status: res.completed_status,
-          notes: res.notes
+          status: res.completed_status === "yes"? "completed": res.completed_status === "no"?"pending":"in review",
+          notes: (res.notes) ? res.notes : ""
         },
         showCalendar: false,
         ready: true
@@ -63,15 +65,15 @@ export default class EditTestView extends React.Component {
     const params = {
       test_id: test.id,
       patient_no: patient.id,
-      due_date: test.date.dueDate,
+      due_date: dateformat(new Date(test.date.dueDate), "yyyy-mm-dd"),
       frequency: test.date.frequency,
       occurrences: test.date.occurrences,
       completed_status:
         test.status === "completed"
           ? "yes"
-          : (test.status === "in review"
+          : test.status === "in review"
           ? "in review"
-          : "no"),
+          : "no",
       notes: test.notes
     };
     console.log(this.token);
@@ -89,7 +91,9 @@ export default class EditTestView extends React.Component {
             position: "relative"
           }}
         >
-          <TitleTab main={true}>Edit Appointment</TitleTab>
+          <TitleTab onClose={this.props.closeModal} main={true}>
+            Edit Appointment
+          </TitleTab>
           <div style={{ padding: "1rem 1rem" }}>
             <InfoBox
               label={"Full Name"}
@@ -182,10 +186,10 @@ export default class EditTestView extends React.Component {
             />
             <hr />
             <StatusSetter
-              currentStatus={this.state.status}
+              currentStatus={this.state.test.status}
               onStatusCheck={(status, checked) => {
                 if (checked) {
-                  this.setState({ status });
+                  this.setState({ test: { ...this.state.test, status } });
                 }
               }}
             />
