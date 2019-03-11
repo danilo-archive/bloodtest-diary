@@ -45,7 +45,7 @@ export default class EditTestView extends React.Component {
         test: {
           id: res.test_id,
           date: {
-            dueDate: res.due_date,
+            dueDate: res.due_date.toISOString().slice(0, 10),
             frequency: res.frequency ? res.frequency : "",
             occurrences: res.occurrences
           },
@@ -69,9 +69,9 @@ export default class EditTestView extends React.Component {
       completed_status:
         test.status === "completed"
           ? "yes"
-          : (test.status === "in review"
+          : test.status === "in review"
           ? "in review"
-          : "no"),
+          : "no",
       notes: test.notes
     };
     console.log(this.token);
