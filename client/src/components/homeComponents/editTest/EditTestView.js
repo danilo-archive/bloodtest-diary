@@ -182,10 +182,10 @@ export default class EditTestView extends React.Component {
             />
             <hr />
             <StatusSetter
-              currentStatus={this.state.status}
+              currentStatus={this.state.test.status}
               onStatusCheck={(status, checked) => {
                 if (checked) {
-                  this.setState({ status });
+                  this.setState({ test: { ...this.state.test, status } });
                 }
               }}
             />
