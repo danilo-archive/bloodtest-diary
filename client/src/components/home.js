@@ -188,12 +188,15 @@ class Home extends Component {
   };
 
   onEditTestCloseModal = () => {
-    // TODO remove token if not used
-    this.setState({
-      openEditTestModal: false,
-      editTestId: undefined,
-      editToken: undefined
+    const {editToken, editTestId} = this.state;
+    this.serverConnect.discardTestEditing(editTestId, editToken, res => {
+        this.setState({
+          openEditTestModal: false,
+          editTestId: undefined,
+          editToken: undefined
+        });
     });
+
   };
 
   // ----------------- ADDED TEST METHODS --------------------------
