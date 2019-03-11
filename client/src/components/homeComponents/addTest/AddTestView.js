@@ -5,7 +5,7 @@ import TitleTab from "./TitleTab";
 import PatientSelect from "./PatientSelect";
 import DateSelectorSection from "./DateSelectorSection";
 import { getServerConnect } from "../../../serverConnection.js";
-
+import dateformat from "dateformat";
 const DataContainer = styled.div`
   position: relative;
   width: 100%;
@@ -16,7 +16,7 @@ export default class AddTestView extends React.Component {
   state = {
     open: true,
     selectedID: "",
-    selectedDate: this.props.selectedDate,
+    selectedDate: dateformat(new Date(this.props.selectedDate), "d mmm yyyy"),
     observations: "",
     allPatients: "",
     frequency: {

@@ -50,9 +50,6 @@ export default class DateSelectorSection extends React.Component {
     this.setState({ timeUnit });
     this.props.onUnitChange(timeUnit);
   };
-  onDayClicked = day => {
-    this.setState({ showCalendar: false });
-  };
 
   onDateSelect = selectedDate => {
     this.setState({ showCalendar: false, selectedDate });
@@ -71,7 +68,7 @@ export default class DateSelectorSection extends React.Component {
             readOnly
           />
           {this.state.showCalendar ? (
-            <CalendarTable onDateSelect={day => this.onDateSelect(day)} />
+            <CalendarTable onDaySelected={day => this.onDateSelect(day)} />
           ) : (
             <></>
           )}
