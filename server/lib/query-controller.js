@@ -5,6 +5,7 @@ const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
 
+
 /**
  * Get the patient given its patient number
  * @param {string} patient_no the patient number
@@ -132,6 +133,10 @@ async function getAllTestsOnDate(date)
   return await selectQueryDatabase(sql)
 }
 
+async function getTestInfo(test_id){
+    let sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_id=${test_id}`;
+    return await selectQueryDatabase(sql);
+}
 
 /**
 * Get all the overdue tests from the database
@@ -779,6 +784,7 @@ module.exports = {
     getAllPatients,
     getFullPatientInfo,
     getAllTests,
+    getTestInfo,
     getTestsOfPatient,
     getAllTestsOnDate,
     getOverdueTests,
@@ -791,6 +797,7 @@ module.exports = {
     updatePassword,
     changeTestStatus,
     editTest,
+    requestEditing,
     editPatient,
     editPatientExtended,
     editCarer,

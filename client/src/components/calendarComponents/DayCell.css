@@ -1,4 +1,40 @@
+.day-number {
+    width: 100%;
+    height: 100%;
+    background-color: #0b989d;
+    font-size: 100%;
+    color: white;
+    text-align: center;
+    border: none;
+    padding: 0;
+}
+
+.day-number:hover {
+    color: #0b989d;
+    background-color: white;
+}
+
+.current{
+    font-size: 100%;
+    font-weight: bold;
+}
+
+.not-current {
+    font-size: 75%;
+}
 
 .selected {
+    background-color: #133952;
+}
+
+.selected:hover {
+    background-color: aqua;
+}
+
+.not-selected {
+    background-color: inherit;
+}
+
+.not-selected:hover {
     background-color: #133952;
 }

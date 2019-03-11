@@ -1,29 +1,29 @@
-
-.day,
-.day:hover {
-  background-color: transparent;
+.day-of-the-week {
+  padding: 15px;
+  color: #0b989d;
+  background-color: white;
+  line-height: 0;
 }
 
-td button {
-  font-weight: inherit;
+.calendar {
+  position: absolute;
+  width: 300px;
+  height: auto;
+  left: 50%;
+  background-color: #0b989d;
+  margin: 0;
+  padding-bottom: 1%;
+  padding-top: 1%;
+  padding-right: 1%;
+  padding-left: 1%;
+  table-layout: fixed;
+  border-radius: 20px;
+  white-space: nowrap;
+  opacity: 0.9;
+  box-shadow: 10px 10px 50px;
+  z-index: 1;
 }
 
-.out {
-  font-weight: italic;
-  font-size: 90%;
+.calendar td {
+  padding: 10px;
 }
-
-.in {
-  font-size: 110%;
-  font-weight: bold;
-}
-
-/* button.notSelected {
-    background-color: #0b989d;
-    color: white;
-}
-
-button.selected {
-    background-color: #133952;
-    color: #0b989d;
-} */

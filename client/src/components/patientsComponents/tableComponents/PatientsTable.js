@@ -6,8 +6,7 @@ import FilterCell from "./FilterCell.js";
 
 const Table = styled.table`
   width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #ddd;
+  height: 100%;
 `;
 
 const TableHeader = styled.thead`
@@ -17,7 +16,7 @@ const TableHeader = styled.thead`
 
 const TableBody = styled.tbody`
     display: block;
-    max-height: 400px; //change this to increase height of table
+    max-height: 80%; //change this to increase height of table
     overflow-y: scroll;
 `;
 
