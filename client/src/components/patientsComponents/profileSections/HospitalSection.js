@@ -61,7 +61,7 @@ class HospitalSection extends React.Component {
                 />
 
                 <InputCell
-                    field={"Is this patient in local hospital ?"}
+                    field={"This hospital"}
                     value={this.props.localHospital}
                     id={"is_local"}
                     type={"checkbox"}
@@ -79,4 +79,3 @@ class HospitalSection extends React.Component {
 }
 
 export default HospitalSection;
-

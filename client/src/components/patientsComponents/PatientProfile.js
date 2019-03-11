@@ -109,7 +109,7 @@ class PatientProfile extends Component {
         let carerInfo = undefined;
         let hospitalInfo = undefined;
         if (!this.state.noCarer){
-            if (this.state.carerEmail === "" || this.state.carerEmail === undefined){
+            if (this.state.carerEmail === "" || this.state.carerEmail == undefined){
                 // TODO add UI alert
                 alert("Carer's email is compulsory");
                 return;
@@ -128,7 +128,7 @@ class PatientProfile extends Component {
             }
         }
         if (!this.state.localHospital){
-            if (this.state.hospitalEmail === "" || this.state.hospitalEmail === undefined){
+            if (this.state.hospitalEmail === "" || this.state.hospitalEmail == undefined){
                 alert("Hospital's email is compulsory");
                 return;
             }

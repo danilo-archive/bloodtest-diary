@@ -66,7 +66,7 @@ export default class CarerSection extends React.Component {
                 />
 
                 <InputCell
-                    field={"Is this patient without carer ?"}
+                    field={"No carer"}
                     value={this.props.noCarer}
                     id={"has_carer"}
                     type={"checkbox"}
