@@ -49,12 +49,6 @@ io.on('connection',function(socket)
         }
     });
 
-    // TODO remove
-    socket.on("testChange", (id, status) => {
-        console.log("arrived");
-        socket.emit("testStatusChange", id, status);
-    });
-
     /**
     * Login endpoint.
     * @param {username:username, password:password} credentials Hashed json of credentials
@@ -63,13 +57,19 @@ io.on('connection',function(socket)
     socket.on('authenticate', async (credentials) => {
         console.log(`Authentication request from ${socket.id}`);
         const user = await queryController.getUser(credentials.username);
-        const res = authenticator.canLogin(credentials,user.response);
+        let res = authenticator.canLogin(credentials,user.response);
         let accessToken = undefined;
         if (res) {
             accessToken = await authenticator.registerNewUsername(credentials.username);
         }
         console.log("access token: " + accessToken); // TODO: return to user
         console.log(`Authentication ${res ? "successful" : "unsuccessful"}`);
+        if (res) {
+            res = {success:true, accessToken: accessToken};
+        }
+        else {
+            res = {success:false};
+        }
         socket.emit('authenticationResponse', res);
     });
 

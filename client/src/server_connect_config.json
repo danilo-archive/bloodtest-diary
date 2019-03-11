@@ -1,4 +1,5 @@
 {
     "ip":"http://localhost",
-    "port":3265
+    "port":3265,
+    "token": ""
 }
