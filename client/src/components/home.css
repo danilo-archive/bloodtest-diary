@@ -61,7 +61,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: stretch;
+
 
   flex-grow: 5;
   flex-shrink: 1;
@@ -75,7 +75,7 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: stretch;
+
 
   flex-grow: 1;
   flex-shrink: 1;
@@ -91,12 +91,12 @@ body {
   margin-bottom: 1%;
 
   padding-top: 10px;
-  padding-bottom: 0.5%;
-  padding-left: 0.5%;
-  padding-right: 0.5%;
+  padding-bottom: 10px;
+  padding-left: 1%;
+  padding-right: 1%;
 
-  min-height: 200px;
-  max-height: 200px;
+  min-height: 150px;
+  max-height: 150px;
 
   flex-grow: 1;
   flex-shrink: 2;
@@ -120,7 +120,8 @@ body {
 
   background-color: white;
 
-  min-width: 200px;
+  min-width: 15rem;
+  width: 20vw;
   max-width: 340px;
 
   overflow: hidden;
@@ -141,7 +142,7 @@ body {
 
   width: 200px;
   overflow: hidden;
-  flex-grow: 5;
+  flex-grow: 10;
   flex-shrink: 1;
 
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
@@ -161,7 +162,8 @@ body {
 
   height: auto;
 
-  min-width: 200px;
+  min-width: 15rem;
+  width: 18vw;
   max-width: 340px;
 
   flex-grow: 1;

@@ -12,8 +12,6 @@ const Container = styled.div`
 
   margin-top: 3.5%;
   margin-bottom: 3.5%;
-  margin-left: ${props => (props.isCalendar ? `2.5%` : `0`)};
-  margin-right: ${props => (props.isCalendar ? `2.5%` : `0`)};
 
   padding-top: 5px;
   padding-bottom: 5px;

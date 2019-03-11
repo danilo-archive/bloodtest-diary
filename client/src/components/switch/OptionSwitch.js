@@ -13,7 +13,7 @@ const Option = styled(Label)`
   position: relative;
   transform: translate(0, 0);
 
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: black;
   margin: 0 0.5rem;
 `;

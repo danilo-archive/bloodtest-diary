@@ -16,7 +16,7 @@ const CalendarContainer = styled.div`
   padding: 0;
   position: relative;
   border: solid 1px rgb(131,149,149, 0.2);
-  min-width: 17rem;
+  min-width: 15rem;
   overflow : hidden;
 `;
 const monthNames = [

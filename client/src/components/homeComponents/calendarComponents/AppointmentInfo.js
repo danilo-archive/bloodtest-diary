@@ -12,11 +12,12 @@ const NameDiv = styled.div`
   flex-shrink: 1;
   overflow: hidden;
   margin-left: 1%;
+  text-align: left;
 
   &:hover {
     overflow: auto;
   }
-  
+
 `;
 export default props => {
   return <NameDiv>{props.name}</NameDiv>;

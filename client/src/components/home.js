@@ -162,9 +162,7 @@ class Home extends Component {
                       openModal={this.onOpenModal}
                     />
                   </div>
-                  <div className={"divider"}>
-                    <VerticalLine/>
-                  </div>
+                  <div className={"divider"}></div>
                   <div className={"ongoingWeekly"}>
                     <OngoingWeekly
                       currentMonday={this.currentMonday}
@@ -192,6 +190,10 @@ class Home extends Component {
       } else {
         return (
           <div style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%,-50%)",
           }}>
           <LoadingAnimation/>
         </div>

@@ -48,7 +48,7 @@ class Header extends Component {
                    <div className="button" id="settings-button">
                        <img className={"icon"} src={settings} alt={"Settings Button"}/>
                    </div>
-                   <div class="dropdown-content">
+                   <div className="dropdown-content">
                     <a href="#">Settings 1</a>
                     <a href="#">Settings 2</a>
                     <a href="#">Settings 3</a>

@@ -4,7 +4,7 @@ const BrowserWindow = electron.BrowserWindow;
 
 const isDev = require('electron-is-dev');
 
-const maxWindowWidth = 1200;
+const maxWindowWidth = 1400;
 const maxWindowHeight = 800;
 
 const maxSplashwWidth = 400;

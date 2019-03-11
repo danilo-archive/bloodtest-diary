@@ -16,13 +16,13 @@ export default props => {
   return (
     <AppointmentSection>
       <AppointmentSectionHeader>{props.type}</AppointmentSectionHeader>
+      <VerticalLine/>
       {props.appointments.map(appointment => (
         <AppointmentBox
           id = {appointment.test_id}
           type={appointment.completed_status}
           name={`${appointment.patient_name} ${appointment.patient_surname}`}
           time={appointment.time}
-          isCalendar={"asdasdsad"}
         />
       ))}
     </AppointmentSection>
