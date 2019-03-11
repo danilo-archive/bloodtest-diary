@@ -672,9 +672,6 @@ describe("Other functionality", function(){
       response[4].tests.length.should.equal(0);
     })
   })
-  context("Select Query Database", function(){
-
-  })
 })
 
 
