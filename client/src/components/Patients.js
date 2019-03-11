@@ -141,7 +141,7 @@ class Patients extends React.Component {
     };
 
     surname_filter = value => {
-        if (value == "") { this.setState({shownPatients: this.props.allPatients})}
+        if (value == "") { this.setState({shownPatients: this.state.allPatients})}
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
