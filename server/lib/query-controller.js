@@ -293,7 +293,7 @@ async function editPatientExtended(newInfo,token)
   const carer = {};
   const hospital = {};
   const patientNewInfo={};
-  let querySuccess = true;
+  let querySuccess = false;
   for(let i=0; i<updateProperties.length; i++)
    {
      if((updateProperties[i].startsWith('carer') || updateProperties[i] == 'relationship') && newInfo[updateProperties[i]])
@@ -309,16 +309,15 @@ async function editPatientExtended(newInfo,token)
        patientNewInfo[updateProperties[i]] = newInfo[updateProperties[i]];
      }
    }
-
+  console.log("CARER HERE:")
+  console.log(carer);
+  console.log(hospital);
   let carerQueryResponse = {};
-  if(Object.keys(carer).length!=0 && token)
+  if(Object.keys(carer).length>0 && token)
   {
     //Carer added with patient update
     if(patient.carer_id==null){
       carerQueryResponse = await addCarer(carer)
-      if(carerQueryResponse.success!=true){
-        querySuccess = false;
-      }
       patientNewInfo['carer_id'] = carerQueryResponse.insertId;
     }
     //Database has info on this carer
@@ -326,21 +325,20 @@ async function editPatientExtended(newInfo,token)
       const carerToken = await requestEditing("Carer",patient.carer_id);
       carer["carer_id"] = patient.carer_id;
       carerQueryResponse = await editCarer(carer,carerToken);
-      if(carerQueryResponse.success!=true){
-        querySuccess = false;
-      }
     }
+  }
+  else if(Object.keys(carer).length == 0 && token && patient.carer_id)
+  {
+    carerQueryResponse = await deleteCarer(patient.carer_id);
+    console.log(`RESPONSE: ${carerQueryResponse.response}`)
   }
 
   let  hospitalQueryResponse = {}
-  if(Object.keys(hospital).length!=0 && token)
+  if(Object.keys(hospital).length>0 && token)
   {
     //Hospital added with update
     if(patient.hospital_id==null){
       hospitalQueryResponse = await addHospital(hospital)
-      if(hospitalQueryResponse.success!=true){
-        querySuccess = false;
-      }
       patientNewInfo['hospital_id'] = hospitalQueryResponse.insertId;
     }
     //Database has info on the hospital
@@ -348,10 +346,12 @@ async function editPatientExtended(newInfo,token)
       const hospitalToken = await requestEditing("Hospital",patient.hospital_id);
       hospital["hospital_id"] = patient.hospital_id;
       hospitalQueryResponse = await editHospital(hospital,hospitalToken);
-      if(hospitalQueryResponse.success!=true){
-        querySuccess = false;
-      }
     }
+  }
+  else if(Object.keys(hospital).length == 0 && token && patient.hospital_id)
+  {
+    hospitalQueryResponse = await deleteHospital(patient.hospital_id);
+    console.log(`RESPONSE: ${hospitalQueryResponse.response}`)
   }
 
   let patientUpdateResponse = {};
@@ -359,16 +359,15 @@ async function editPatientExtended(newInfo,token)
   if(Object.keys(patientNewInfo).length>1)
   {
     patientUpdateResponse = await editPatient(patientNewInfo,token);
-    if(patientUpdateResponse.success!=true){
-      querySuccess = false;
-    }
   }
   else{
     patientUpdateResponse = await returnToken("Patient", patientNewInfo.patient_no, token);
-    if(patientUpdateResponse.success!=true){
-      querySuccess = false;
-    }
   }
+
+  if((patientUpdateResponse.success==true || Object.keys(patientUpdateResponse)==0 ) && (hospitalQueryResponse.success==true || Object.keys(hospitalQueryResponse)==0) && (carerQueryResponse.success==true || Object.keys(carerQueryResponse)==0 )){
+    querySuccess = true;
+  }
+
   return {success: querySuccess, response: {
     patientQuery: patientUpdateResponse,
     hospitalQuery: hospitalQueryResponse,
@@ -486,6 +485,19 @@ async function getTestWithinWeek(date)
   return response;
 }
 
+async function deleteCarer(carerid)
+{
+  const sql = prepareDeleteSQL("Carer","carer_id",carerid);
+  console.log(sql);
+  return await deleteQueryDatabase("Carer",carerid,sql);
+}
+
+async function deleteHospital(hospitalid)
+{
+  const sql = prepareDeleteSQL("Hospital","hospital_id",hospitalid);
+  console.log(sql);
+  return await deleteQueryDatabase("Hospital",hospitalid,sql);
+}
 //=====================================
 //  HELPER FUNCTIONS BELOW:
 //=====================================
@@ -675,6 +687,17 @@ async function updateQueryDatabase(table,id,sql,token)
   }
 }
 
+async function deleteQueryDatabase(table,id,sql)
+{
+    const response = await databaseController.deleteQuery(sql,table,id)
+    if(response.status === "OK"){
+      return {success:true, response: "Entry deleted"}
+    }
+    else{
+      return {success:false , response: response.err}
+    }
+}
+
 /**
 * Prepare INSERT query on the database
 * @param {String} table - Table in which to insert an entry
@@ -737,7 +760,7 @@ function prepareUpdateSQL(table, object, idProperty)
 function prepareDeleteSQL(table, idProperty, id)
 {
   // TODO: add logging in delete
-  const sql = `DELETE FROM ${table} WHERE ${idProperty}='${id}' LIMIT 1`;
+  const sql = `DELETE FROM ${table} WHERE ${idProperty}='${id}' LIMIT 1;`;
   return sql;
 }
 
