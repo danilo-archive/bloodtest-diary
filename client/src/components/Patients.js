@@ -116,7 +116,7 @@ class Patients extends React.Component {
     onCloseModal(){
         // TODO get rid of the torken
         console.log("closing modal");
-        this.serverConnect.discardEditing("Patient", this.state.selectedId, this.state.editToken, res => {
+        this.serverConnect.discardPatientEditing(this.state.selectedId, this.state.editToken, res => {
             this.setState({selectedId: undefined, openModal: false, editToken: undefined});
         });
 

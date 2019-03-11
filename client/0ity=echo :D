@@ -1,0 +1,4 @@
+alias atom='open -a Atom'
+alias code='open -a Visual\ Studio\ Code'
+alias safari='open -a Safari'
+alias xcode='open -a Xcode'
