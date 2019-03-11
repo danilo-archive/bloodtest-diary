@@ -1,6 +1,6 @@
 :root {
   --htmlFontSize: 100%;
-  --bodyBackgroundColor: #f4f9fd;
+  --bodyBackgroundColor: rgb(244,249,253);
   --bodyColor: #000000;
   --bodyFontFamily: 'Open Sans';
   --bodyFontFamilyFallback: sans-serif;
@@ -8,6 +8,8 @@
   --bodyFontWeight: 400;
   --bodyLineHeight: 1.5;
 }
+
+f4f9fd
 
 html {
   box-sizing: border-box;
@@ -23,16 +25,24 @@ body {
   font-weight: var(--bodyFontWeight);
   height: auto;
   line-height: var(--bodyLineHeight);
+  overflow: hidden;
 }
 
 
 .home {
   display: flow-root;
+  height: 100vh;
+
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
 }
 
 .dashboard {
-  border: blue 0 solid;
-  height: calc(100vh - 65px);
+  border: blue 0px solid;
+  height: calc(100vh - 75px);
   width: auto;
   position: relative;
   top: 30px;
@@ -40,7 +50,6 @@ body {
 
   display: flex;
   flex-direction: row;
-  //justify-content: ;
   align-items: flex-end;
 }
 
@@ -52,7 +61,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: stretch;
+
 
   flex-grow: 5;
   flex-shrink: 1;
@@ -66,78 +75,105 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: stretch ;
+
 
   flex-grow: 1;
   flex-shrink: 1;
+
 }
 
 
 .navbar {
-  border: #839595 3px solid;
-  border-radius: 10px;
-  margin-left: 0.5%;
-  margin-bottom: 9px;
+  border: #839595 0px solid;
 
-  max-height: 225px;
-  min-height: 200px;
-  width: auto;
+  background-color: white;
+
+  margin-bottom: 1%;
+
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 1%;
+  padding-right: 1%;
+
+  min-height: 150px;
+  max-height: 150px;
 
   flex-grow: 1;
-  flex-shrink: 1;
+  flex-shrink: 2;
 
-  overflow: scroll;
+  overflow: hidden;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+
 }
 
 .overduePatients {
-  border: #839595 3px solid;
-  border-radius: 10px;
-  padding: 4px;
-  margin-right: 0.5%;
+  border: #839595 0px solid;
 
-  //background-color: ;
+  margin-right: 1%;
 
-  min-width: 150px;
-  max-width: 325px;
+  padding-top: 10px;
+  padding-bottom: 0.5%;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
+
+
+  background-color: white;
+
+  min-width: 15rem;
+  width: 20vw;
+  max-width: 340px;
 
   overflow: hidden;
 
   flex-grow: 1;
-  flex-shrink: 20;
+  flex-shrink: 2;
   align-self: stretch;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .homecalendar {
-  border: #839595 3px solid;
-  border-radius: 10px;
-  padding: 4px;
-  margin-right: 0.5%;
-  margin-left: 0.5%;
+    border: #839595 0px solid;
 
-  width: 200px;
-  overflow: hidden;
-  flex-grow: 5;
-  flex-shrink: 1;
+    background-color: white;
+
+    padding: 0.5%;
+
+    width: 200px;
+    overflow: hidden;
+    flex-grow: 10;
+    flex-shrink: 1;
+
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .ongoingWeekly {
-  border: #839595 3px solid;
-  border-radius: 10px;
-  padding: 4px;
-  margin-left: 0.5%;
+  border: #839595 0px solid;
 
-  //background-color: ;
+  background-color: white;
+
+
+  padding: 0.5%;
+
 
   overflow: hidden;
 
   height: auto;
-  width: auto;
 
-  min-width: 150px;
-  max-width: 325px;
+  min-width: 15rem;
+  width: 18vw;
+  max-width: 340px;
 
   flex-grow: 1;
-  flex-shrink: 1;
+  flex-shrink: 2;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.divider {
+  padding: 0.5%;
+  height: auto;
 }
 
 

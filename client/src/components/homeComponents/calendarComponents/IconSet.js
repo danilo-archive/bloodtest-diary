@@ -6,11 +6,11 @@ export default props => {
   return (
     <div
       style={{
-        display: "flex",
-        alignItems: "center",
-        margin: "0",
-        position: "absolute",
-        right: "1%"
+        width: "auto",
+        display: "inline-block",
+        whiteSpace: "nowrap",
+        marginLeft: "7px",
+        marginRight: "7px",
       }}
     >
       <Icon icon="edit" onClick={props.editTest} testId={props.testId} />

@@ -1,16 +1,18 @@
 import styled from "styled-components";
 import React from "react";
-import HorizontalLine from "./HorizontalLine";
 
 const Heading = styled.h3`
-  padding: 1%;
-  margin: 2.5%;
+  padding: 0;
+  margin-top: 2.5%;
+  margin-bottom: 0%;
   color: #646464;
-  border-radius: 5px;
+  border-radius: 2px;
+  border-bottom: solid 1px rgb(100, 100, 100, 0.5);
   font-family: "Rajdhani", sans-serif;
   font-size: 150%;
+  height: 35px;
   overflow: hidden;
-  zIndex: 5;
+  z-index: 5;
   background-color: ${props => props.color || `white`};
 `;
 

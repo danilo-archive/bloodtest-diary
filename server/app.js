@@ -327,6 +327,24 @@ io.on('connection',function(socket)
         }
     });
 
+    socket.on("changeTestDueDate", async (testId, newDate, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
+        const response = await queryController.changeTestDueDate(testId, newDate);
+        if (response.success){
+            socket.emit("testAdded", response.response);
+            io.in("main_page").emit("testAdded", response.response);
+        }
+    });
+
     socket.on("editPatient", async (patientId, newInfo, token, accessToken) => {
         if (!accessToken) {
             // REQUIRE TOKEN.
@@ -347,13 +365,6 @@ io.on('connection',function(socket)
             socket.emit("editPatientResponse", response);
         }
         io.in("patients_page").emit("patientEdited", patientId, newInfo);
+
     });
 });
-
-/**
-* TODO: Get user data from the database provided the username
-*
-function getUserInDatabase(username)
-{
-  return [{id:"1", username:"admin", password:"f0edc3ac2daf24876a782e9864e9596970a8b8717178e705cd70726b92dbfc58c8e8fb27f7082239969496d989ff65d0bb2fcc3bd91c3a0251fa221ca2cd88a5",iterations: 1268 ,salt:"d50dbbbe33c2d3c545051917b6a60ccd577a1a3f1a96dfac95199e7b0de32841"}];
-}*/
