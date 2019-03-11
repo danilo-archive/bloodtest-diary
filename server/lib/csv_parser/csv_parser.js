@@ -63,7 +63,7 @@ function arrayToString(array, separator = ",", before = "'", after = "'"){
 
 /**
  * Take the name of the database table and fields, plus some
- * entries and covert 
+ * entries and covert them all into an insertion query.
  * @param {string} tableName: the name of the database table
  * @param {string} fields: the name of the database columns
  * @param {string[]} values: a collection of database entries as strings
@@ -78,6 +78,10 @@ function generateInsertionQuery(tableName, fields, values){
     console.log(query);
 }
 
+/**
+ * Take the path of a csv and 
+ * @param {string} csvFilePath: the path of the csv file 
+ */
 function convert(csvFilePath){
     csv()
     .fromFile(csvFilePath)
