@@ -1,10 +1,12 @@
-const csvFilePath = './patients.csv';
 const csv = require('csvtojson');
 
 /**
- * Take a JSON object and return the keys of such object as an array
+ * Take a csv as JSON and return the title of the table and
+ * the records names. In order to work, the title has to be the 
+ * very first column in the csv.
  * @param {JSON} object: the JSON to collect the names from
- * @return {JSON}: the names as an array
+ * @return {JSON}: table name and record names as, respectively,
+ *  tableName and recordNames
  */
 function getJSONKeys(object){
     const recordNames = [];
@@ -36,16 +38,47 @@ function getJSONValues(object, keys){
     return values;
 }
 
-function generateInsertionQuery(tableName, records, values){
-    let query = `INSERT INTO ${tableName} ${records} VALUES`;
-    for(const entry of values){
-        query += ` ${entry},`;
+/**
+ * Take an array and convert it into a string. Put the 'before' and 
+ * 'after' characters around each element and separate them using the
+ * 'separator' character. By default, separator is a comma ",", whereas
+ * 'before' and 'after' are both a single quote "'".
+ * 
+ * @param {Object[]} array: array to be converted into a string
+ * @param {string} separator: the character between each element.
+ *  By default is a comma
+ * @param {string} before: the character preceding each element.
+ *  By default a single quote
+ * @param {string} after: the character next each element. By default
+ *  a single quote
+ */
+function arrayToString(array, separator = ",", before = "'", after = "'"){
+    let stringToReturn = "";
+    for(const element of array){
+        stringToReturn += (before + element + after + separator);
+    }
+    stringToReturn = `${stringToReturn.slice(0,-1)}`;
+    return stringToReturn;
+}
+
+/**
+ * Take the name of the database table and fields, plus some
+ * entries and covert 
+ * @param {string} tableName: the name of the database table
+ * @param {string} fields: the name of the database columns
+ * @param {string[]} values: a collection of database entries as strings
+ *  respecting the order dictated by 'records'
+ */
+function generateInsertionQuery(tableName, fields, values){
+    let query = `INSERT INTO ${tableName} (${fields}) VALUES`;
+    for(const value of values){
+        query += ` (${value}),`;
     }
     query = `${query.slice(0,-1)};`;
     console.log(query);
 }
 
-function convert(){
+function convert(csvFilePath){
     csv()
     .fromFile(csvFilePath)
     .then((data)=>{
@@ -57,13 +90,16 @@ function convert(){
             const entry = data[i];
             entries.push(getJSONValues(entry, recordNames));
         }
-        console.log(tableName);
-        console.log(recordNames);
-        console.log(entries);
+        const recordNamesAsString = arrayToString(recordNames);
+        const entriesAsString = [];
+        for(const entry of entries){
+            entriesAsString.push(arrayToString(entry,",","'","'"));
+        }
+        generateInsertionQuery(tableName, recordNamesAsString, entriesAsString);
     });
 }
  
-convert();
+convert('./patients.csv');
 
 // Async / await usage
 //const jsonArray = await csv().fromFile(csvFilePath);
