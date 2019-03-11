@@ -118,7 +118,7 @@ async function getTest(test_id)
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getTestsOfPatient(patientId){
-  const sql = `Select * From Test Where patient_no = ${patientId}`;
+  const sql = `Select * From Test Where patient_no = ${patientId};`;
   return await selectQueryDatabase(sql)
 }
 
@@ -138,25 +138,6 @@ async function getTestInfo(test_id){
     return await selectQueryDatabase(sql);
 }
 
-/**
-* Get all the overdue tests from the database
-* @return {JSON} result of the query - {success:true/false response:Array/Error}
-**/
-async function getOverdueTests()
-{
-  const sql = `Select * From Test Join Patient On Patient.patient_no=Test.patient_no Where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
-  return await selectQueryDatabase(sql);
-}
-
-/**
-* Get all the overdue tests from the database plus additional info about time difference
-* @return {JSON} result of the query - {success:true/false response:Array/Error}
-**/
-async function getOverdueTestsExtended()
-{
-  const sql = `Select *, DATEDIFF(CURDATE(),due_date) AS difference From Test NATURAL JOIN Patient where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
-  return await selectQueryDatabase(sql);
-}
 
 /**
 * Get all the overdue tests from the database plus additional info about time difference
@@ -182,40 +163,6 @@ async function getSortedOverdueWeeks()
       classedTests=classedTests.concat({class:keys[i], tests:groupedTests[keys[i]]});
   }
   return {success: true , response: classedTests};
-}
-
-/**
-* Get all the overdue tests from the database separated within groups
-* @return {Array of JSON} result of the query - [{class:String test:Array}]
-**/
-async function getOverdueGroups()
-{
-      const tests = await getOverdueTestsExtended();
-      const sortedTests = tests.success ? tests.response : [];
-      const groups = [{class: "Year+", tests: []}, {class: "6+ months", tests: []},{class: "1-6 months", tests: []},
-                    {class: "2-4 weeks", tests: []}, {class: "Less than 2 weeks", tests: []}];
-      let i = 0;
-      while (i < sortedTests.length && (Math.floor(sortedTests[i].difference - 365)) >= 0){
-          groups[0].tests = groups[0].tests.concat(sortedTests[i]);
-          i++;
-      }
-      while (i < sortedTests.length && (Math.floor(sortedTests[i].difference - 365/2)) >= 0){
-          groups[1].tests = groups[1].tests.concat(sortedTests[i]);
-          i++;
-      }
-      while (i < sortedTests.length && (Math.floor(sortedTests[i].difference - 30)) >= 0){
-          groups[2].tests = groups[2].tests.concat(sortedTests[i]);
-          i++;
-      }
-      while (i < sortedTests.length && (Math.floor(sortedTests[i].difference - 14)) >= 0){
-          groups[3].tests = groups[3].tests.concat(sortedTests[i]);
-          i++;
-      }
-      while (i < sortedTests.length){
-          groups[4].tests = groups[4].tests.concat(sortedTests[i]);
-          i++;
-      }
-      return {success: true, response: groups};
 }
 
 /**
@@ -269,7 +216,10 @@ async function editTest(testId, newInfo,token){
     const res = await updateQueryDatabase("Test",testId,sql,token);
 
     if (res.success && scheduleNew) {
-      await scheduleNextTest(testId,newInfo);
+       const insertedResponse = await scheduleNextTest(testId,newInfo);
+       if(insertedResponse.insertId){
+         res["insertId"] = insertedResponse.insertId;
+       }
     }
     return res;
 }
@@ -379,6 +329,7 @@ async function editPatientExtended(newInfo,token)
     carerQuery: carerQueryResponse
   }}
 }
+
 /**
 * Edit hospital query
 * @param {JSON} newInfo All the information of the hospital to update
@@ -404,11 +355,11 @@ async function editCarer(newInfo, token){
 
 // TODO testing method to remove
 async function changeTestDueDate(testId, newDate){
-    var data = await databaseController.requestEditing("Test", testId).then( data => {return data;});
-    var token = data.response.token;
+    const data = await databaseController.requestEditing("Test", testId).then( data => {return data;});
+    const token = data.response.token;
     newDate = dateformat(newDate, "yyyymmdd");
     if (token != undefined){
-      let sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
+      const sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
       return {success:true , response: await databaseController.updateQuery(sql, "Test", testId, token).then(result => {return result.response})}
     }
     return {success:false, response: data.response}
@@ -495,7 +446,7 @@ async function changeTestStatus(test)
 **/
 async function getTestWithinWeek(date)
 {
-  let dateString = dateformat(date, "yyyy-mm-dd");
+  const dateString = dateformat(date, "yyyy-mm-dd");
   const response = await Promise.all(getTestsDuringTheWeek(dateString))
                               .then(days => {return checkMultipleQueriesStatus(days)})
                               .then(data => {return data})
@@ -790,8 +741,6 @@ module.exports = {
     getTest,
     getHospital,
     getCarer,
-    getOverdueTestsExtended,
-    getOverdueGroups,
     getUser,
     getAllPatients,
     getFullPatientInfo,
@@ -799,7 +748,6 @@ module.exports = {
     getTestInfo,
     getTestsOfPatient,
     getAllTestsOnDate,
-    getOverdueTests,
     getTestWithinWeek,
     addTest,
     addUser,
@@ -809,7 +757,6 @@ module.exports = {
     updatePassword,
     changeTestStatus,
     changeTestDueDate,
-    getTestWithinWeek,
     editTest,
     requestEditing,
     editPatient,
@@ -817,6 +764,5 @@ module.exports = {
     editCarer,
     editHospital,
     getSortedOverdueWeeks,
-    requestEditing,
     returnToken
 };
