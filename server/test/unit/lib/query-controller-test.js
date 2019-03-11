@@ -8,8 +8,23 @@ chai.use(sinonChai);
 
 const queryController = rewire("../../../lib/query-controller");
 
-const logger = require('./../../../lib/action-logger');
-logger.disableConsoleOutput(); // for a cleaner output
+//Tests for query controller do NOT depend on action-logger
+//We can safely assume the function do not disturb execution of the program
+const logger = {
+  logInsert:function() {
+    return 4;
+  },
+  logUpdate:function() {
+    return 3;
+  },
+  logDelete:function() {
+    return 2;
+  },
+  logOther:function() {
+    return 1;
+  }
+};
+queryController.__set__("logger",logger);
 
 const testActionUsername = "admin"; // action username that is used throughout the tests.
 
@@ -656,6 +671,9 @@ describe("Other functionality", function(){
       response[4].class.should.equal('Less than 2 weeks');
       response[4].tests.length.should.equal(0);
     })
+  })
+  context("Select Query Database", function(){
+
   })
 })
 
