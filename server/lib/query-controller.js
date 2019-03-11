@@ -143,7 +143,7 @@ async function getAllTestsOnDate(date)
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getTestInfo(test_id){
-    let sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_id=${test_id}`;
+    const sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_id=${test_id}`;
     return await selectQueryDatabase(sql);
 }
 
@@ -318,17 +318,9 @@ async function editPatientExtended(newInfo,token)
     hospitalQueryResponse = await deleteHospital(patient.hospital_id);
   }
 
-  let patientUpdateResponse = {};
-  //Has ID - not interested about it
-  if(Object.keys(patientNewInfo).length>1)
-  {
-    patientUpdateResponse = await editPatient(patientNewInfo,token);
-  }
-  else{
-    patientUpdateResponse = await returnToken("Patient", patientNewInfo.patient_no, token);
-  }
+  const patientUpdateResponse = await editPatient(patientNewInfo,token);
 
-  if((patientUpdateResponse.success==true || Object.keys(patientUpdateResponse)==0 ) && (hospitalQueryResponse.success==true || Object.keys(hospitalQueryResponse)==0) && (carerQueryResponse.success==true || Object.keys(carerQueryResponse)==0 )){
+  if(patientUpdateResponse.success==true && hospitalQueryResponse.success==true  && carerQueryResponse.success==true){
     querySuccess = true;
   }
 
@@ -364,14 +356,13 @@ async function editCarer(newInfo, token){
 
 // TODO testing method to remove
 async function changeTestDueDate(testId, newDate){
-    const data = await databaseController.requestEditing("Test", testId).then( data => {return data;});
-    const token = data.response.token;
+    const token = await requestEditing("Test",testId);
     newDate = dateformat(newDate, "yyyymmdd");
-    if (token != undefined){
+    if (token){
       const sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
       return {success:true , response: await databaseController.updateQuery(sql, "Test", testId, token).then(result => {return result.response})}
     }
-    return {success:false, response: data.response}
+    return {success:false, response: "Token in use"}
 }
 
 /**
@@ -763,11 +754,18 @@ function prepareDeleteSQL(table, idProperty, id)
 * @param {String} table - Table of an entry
 * @param {String} id - id value of an entry
 * @param {String} token - token to return
-* @return {String} SQL query
+* @return {JSON} result - {success:Boolean response:"Token cancelled"/Error}
 **/
 async function returnToken(table, id, token)
 {
-  return await databaseController.cancelEditing(table, id, token)
+  const response = await databaseController.cancelEditing(table, id, token);
+  if(response.status==="OK"){
+    return {success:true, response:"Token cancelled"}
+  }
+  else{
+    return {success:false, response: response.err}
+  }
+
 }
 
 module.exports = {
@@ -800,6 +798,9 @@ module.exports = {
     editPatientExtended,
     editCarer,
     editHospital,
+  //DELETE
+    deleteHospital,
+    deleteCarer,
   //TOKEN CONTROL
     requestEditing,
     returnToken
