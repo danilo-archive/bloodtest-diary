@@ -278,9 +278,6 @@ async function editPatientExtended(newInfo,token)
        patientNewInfo[updateProperties[i]] = newInfo[updateProperties[i]];
      }
    }
-  console.log("CARER HERE:")
-  console.log(carer);
-  console.log(hospital);
   let carerQueryResponse = {};
   if(Object.keys(carer).length>0 && token)
   {
@@ -299,7 +296,6 @@ async function editPatientExtended(newInfo,token)
   else if(Object.keys(carer).length == 0 && token && patient.carer_id)
   {
     carerQueryResponse = await deleteCarer(patient.carer_id);
-    console.log(`RESPONSE: ${carerQueryResponse.response}`)
   }
 
   let  hospitalQueryResponse = {}
@@ -320,7 +316,6 @@ async function editPatientExtended(newInfo,token)
   else if(Object.keys(hospital).length == 0 && token && patient.hospital_id)
   {
     hospitalQueryResponse = await deleteHospital(patient.hospital_id);
-    console.log(`RESPONSE: ${hospitalQueryResponse.response}`)
   }
 
   let patientUpdateResponse = {};
@@ -475,7 +470,6 @@ async function getTestWithinWeek(date)
 async function deleteCarer(carerid)
 {
   const sql = prepareDeleteSQL("Carer","carer_id",carerid);
-  console.log(sql);
   return await deleteQueryDatabase("Carer",carerid,sql);
 }
 
@@ -487,7 +481,6 @@ async function deleteCarer(carerid)
 async function deleteHospital(hospitalid)
 {
   const sql = prepareDeleteSQL("Hospital","hospital_id",hospitalid);
-  console.log(sql);
   return await deleteQueryDatabase("Hospital",hospitalid,sql);
 }
 
@@ -551,7 +544,6 @@ async function scheduleNextTest(testId,newInfo={})
       occurrences: (!newInfo.occurrences) ? (test.occurrences-1) : (newInfo.occurrences), // TODO: newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
       notes: (!newInfo.notes) ? test.notes : newInfo.notes
     }
-    console.log(newTest);
     return await addTest(newTest);
   }
   return {success: true, reply: "No new tests"};
