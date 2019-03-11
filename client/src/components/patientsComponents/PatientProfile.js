@@ -154,6 +154,7 @@ class PatientProfile extends Component {
         console.log({newInfo});
         this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
             alert(`-- success = ${res.success}`);
+            this.props.closeModal();
         });
     };
 

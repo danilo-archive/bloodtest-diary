@@ -214,7 +214,7 @@ class ServerConnect {
     }
     discardEditing(table, id, token, callback){
         this.socket.emit("discardEditing", table, id, token);
-        this.once("discardEditingResponse", res => {
+        this.socket.once("discardEditingResponse", res => {
             callback(res);
         });
     }
