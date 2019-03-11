@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 
-import {Button} from 'react-bootstrap';
 
 const TableData = styled.td`
     width: 16.66%;
@@ -26,6 +25,18 @@ const TableRow = styled.tr`
     :nth-child(even) {background-color: #f2f2f2;}
 `;
 
+const Button = styled.button`
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  background-color: #008CBA;
+  word-break: break-word;
+`;
+
 export default class PatientRow extends React.Component{
 
     constructor(props){
@@ -37,7 +48,7 @@ export default class PatientRow extends React.Component{
     onEditClick = event => {
         console.log(`id in row: ${this.props.patient_no}`);
         this.props.openModal(this.props.patient_no);
-    }
+    };
 
     render(){
         return (
@@ -47,7 +58,7 @@ export default class PatientRow extends React.Component{
                 <TableData>{this.props.patient_surname}</TableData>
                 <TableData>{this.props.patient_email}</TableData>
                 <TableData>{this.props.patient_phone}</TableData>
-                <TableData><Button onClick={this.onEditClick} color="info">Edit patient</Button>{' '}</TableData>
+                <TableData><Button onClick={this.onEditClick}>Edit patient</Button></TableData>
             </TableRow>
         );
     }
