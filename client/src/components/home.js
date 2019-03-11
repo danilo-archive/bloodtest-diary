@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import Modal from "./Modal";
-
+import { ModalProvider } from "styled-react-modal";
+import "./Modal.css";
 import Navbar from "./homeComponents/navbar";
 import OverduePatients from "./homeComponents/overduePatients";
 import WeeklyCalendar from "./homeComponents/weeklyCalendar";
@@ -204,74 +205,79 @@ class Home extends Component {
   render() {
     if (this.state.dashboardReady && this.state.overdueReady) {
       return (
-        <div className={"home"}>
-          <div className={"dashboard"}>
-            <CustomDragLayer snapToGrid={true} />
-            <div className={"overduePatients"}>
-              <OverduePatients
-                notificationNumber={getNumberOfTestsInGroup(
-                  this.state.overdueTests
-                )}
-                anytimeAppointments={this.state.overdueTests}
-                editTest={this.onEditTestOpenModal}
-              />
-            </div>
-            <div className={"rightSideDash"}>
-              <div className={"navbar"}>
-                <Navbar
-                  onPrev={this.handlePrevious}
-                  onNext={this.handleNext}
-                  onPatientsClick={this.onPatientsClick}
+        <ModalProvider>
+          <div className={"home"}>
+            <div className={"dashboard"}>
+              <CustomDragLayer snapToGrid={true} />
+              <div className={"overduePatients"}>
+                <OverduePatients
+                  notificationNumber={getNumberOfTestsInGroup(
+                    this.state.overdueTests
+                  )}
+                  anytimeAppointments={this.state.overdueTests}
+                  editTest={this.onEditTestOpenModal}
                 />
               </div>
-              <div className={"bottomSideDash"}>
-                <div className={"homecalendar"}>
-                  <WeeklyCalendar
-                    calendar={this.state.calendar}
-                    weekDays={this.state.weekDays}
-                    openModal={this.onAddTestOpenModal}
-                    editTest={this.onEditTestOpenModal}
+              <div className={"rightSideDash"}>
+                <div className={"navbar"}>
+                  <Navbar
+                    onPrev={this.handlePrevious}
+                    onNext={this.handleNext}
+                    onPatientsClick={this.onPatientsClick}
                   />
                 </div>
-                <div className={"divider"} />
-                <div className={"ongoingWeekly"}>
-                  <OngoingWeekly
-                    currentMonday={this.currentMonday}
-                    date={this.state.weekDays[5]}
-                    notificationNumber={this.state.ongoingTests.length}
-                    anytimeAppointments={this.state.ongoingTests}
-                    editTest={this.onEditTestOpenModal}
-                  />
+                <div className={"bottomSideDash"}>
+                  <div className={"homecalendar"}>
+                    <WeeklyCalendar
+                      calendar={this.state.calendar}
+                      weekDays={this.state.weekDays}
+                      openModal={this.onAddTestOpenModal}
+                      editTest={this.onEditTestOpenModal}
+                    />
+                  </div>
+                  <div className={"divider"} />
+                  <div className={"ongoingWeekly"}>
+                    <OngoingWeekly
+                      currentMonday={this.currentMonday}
+                      date={this.state.weekDays[5]}
+                      notificationNumber={this.state.ongoingTests.length}
+                      anytimeAppointments={this.state.ongoingTests}
+                      editTest={this.onEditTestOpenModal}
+                    />
+                  </div>
                 </div>
               </div>
+              <Modal
+                open={this.state.openAddTestModal}
+                onClose={this.onAddTestCloseModal}
+                showCloseIcon={false}
+                styles={modalStyles}
+                center
+              >
+                <AddTest
+                  selectedDate={this.state.selectedDate}
+                  closeModal={this.onAddTestCloseModal}
+                />
+              </Modal>
+              <Modal
+                open={this.state.openEditTestModal}
+                onClose={this.onEditTestCloseModal}
+                showCloseIcon={false}
+                styles={modalStyles}
+                classNames={{
+                  modal: "modal"
+                }}
+                center
+              >
+                <EditTest
+                  testId={this.state.editTestId}
+                  closeModal={this.onEditTestCloseModal}
+                  token={this.state.editToken}
+                />
+              </Modal>
             </div>
-            <Modal
-              open={this.state.openAddTestModal}
-              onClose={this.onAddTestCloseModal}
-              showCloseIcon={false}
-              style={modalStyles}
-              center
-            >
-              <AddTest
-                selectedDate={this.state.selectedDate}
-                closeModal={this.onAddTestCloseModal}
-              />
-            </Modal>
-            <Modal
-              open={this.state.openEditTestModal}
-              onClose={this.onEditTestCloseModal}
-              showCloseIcon={false}
-              style={modalStyles}
-              center
-            >
-              <EditTest
-                testId={this.state.editTestId}
-                closeModal={this.onEditTestCloseModal}
-                token={this.state.editToken}
-              />
-            </Modal>
           </div>
-        </div>
+        </ModalProvider>
       );
     } else {
       return (
@@ -291,7 +297,9 @@ class Home extends Component {
 }
 
 const modalStyles = {
-  padding: 0
+  "& > div": {
+    padding: "0"
+  }
 };
 
 export default DragDropContext(HTML5Backend)(Home);
