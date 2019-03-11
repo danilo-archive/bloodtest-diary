@@ -168,6 +168,14 @@ io.on('connection',function(socket)
         }
     });
 
+    socket.on("changeTestDueDate", async (testId, newDate) => {
+        let response = await queryController.changeTestDueDate(testId, newDate);
+        if (response.success){
+            socket.emit("testAdded", response.response);
+            io.in("main_page").emit("testAdded", response.response);
+        }
+    });
+    
     socket.on("editPatient", async (patientId, newInfo, token) => {
         console.log(token);
         const response = await queryController.editPatientExtended(newInfo, token);
@@ -178,6 +186,7 @@ io.on('connection',function(socket)
             socket.emit("editPatientResponse", response);
         }
         io.in("patients_page").emit("patientEdited", patientId, newInfo);
+
     });
 });
 

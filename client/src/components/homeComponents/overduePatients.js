@@ -52,7 +52,7 @@ class OverduePatients extends React.Component {
                       )
                 }
             })}
-            <div style={{width:"100%",height:"10%"}}/>
+            <div style={{width:"100%",height:"45px"}}/>
           </ScrollBox>
         </Container>
       </>

@@ -29,7 +29,7 @@ export default props => {
     <>
       <Circle
         size={props.size}
-        style={{ top: props.top, left: props.left }}
+        style={{ top: props.top, left: props.left, }}
         onClick={props.onClick}
       >
         <Label
