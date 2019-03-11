@@ -354,7 +354,12 @@ async function editCarer(newInfo, token){
     return await updateQueryDatabase("Carer",newInfo.carer_id,sql,token);
 }
 
-// TODO testing method to remove
+/**
+* Edit test due date - drag & drop method
+* @param {String} testId Id of the test to update
+* @param {Date} newDate  new due date
+* @returns result of the query - {success:Boolean response:Array/Error}
+*/
 async function changeTestDueDate(testId, newDate){
     const token = await requestEditing("Test",testId);
     newDate = dateformat(newDate, "yyyymmdd");
