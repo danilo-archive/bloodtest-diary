@@ -70,23 +70,19 @@ class Patients extends React.Component {
         this.state = {
             allPatientsReady: false,
             allPatients: {},
+            shownPatients: {},
             openModal: false,
             selectedId: undefined
         };
         this.initOnPatientEditedCallback();
         this.initAllPatients();
-
+        this.updateRecords = this.updateRecords.bind(this);
         this.openModal = this.openModal.bind(this);
         this.onCloseModal = this.onCloseModal.bind(this);
     }
 
-    initOnPatientEditedCallback(){
-        this.serverConnect.setOnPatientEdited((patientId, newInfo) => {
-            this.initAllPatients();
-        });
-    }
-
     initAllPatients() {
+        console.log("fire");
         this.serverConnect.getAllPatients(res => {
             this.setState({
                 allPatients: res,
@@ -96,6 +92,86 @@ class Patients extends React.Component {
         });
     };
 
+    initOnPatientEditedCallback(){
+        this.serverConnect.setOnPatientEdited((patientId, newInfo) => {
+            this.updateRecords(patientId, newInfo);
+        });
+    }
+    updateRecords(id, newInfo){
+        for (var i = 0; i < this.state.allPatients.length ; ++i){
+            let patient = this.state.allPatients[i];
+            if (patient.patient_no === id){
+                let newPatients = [...this.state.allPatients];
+                newPatients[i] = newInfo
+                this.setState({allPatients: newPatients});
+                break;
+            }
+        }
+        for (var i = 0; i < this.state.shownPatients.length ; ++i){
+            let patient = this.state.shownPatients[i];
+            if (patient.patient_no === id){
+                let newPatients = [...this.state.shownPatients];
+                newPatients[i] = newInfo
+                this.setState({shownPatients: newPatients});
+                return;
+            }
+        }
+    }
+
+    number_filter = value => {
+        if (value == "") { this.setState({shownPatients: this.state.allPatients})}
+        else{
+            this.setState({
+              shownPatients: this.state.allPatients.filter(
+                patient => patient.patient_no.includes(value)
+              )
+            });
+        }
+    };
+
+    name_filter = value => {
+        if (value == "") { this.setState({shownPatients: this.state.allPatients})}
+        else{
+            this.setState({
+              shownPatients: this.state.allPatients.filter(
+                patient => patient.patient_name ? patient.patient_name.includes(value) : false
+              )
+            });
+        }
+    };
+
+    surname_filter = value => {
+        if (value == "") { this.setState({shownPatients: this.props.allPatients})}
+        else{
+            this.setState({
+              shownPatients: this.state.allPatients.filter(
+                patient => patient.patient_surname ? patient.patient_surname.includes(value) : false
+              )
+            });
+        }
+    };
+
+    email_filter = value => {
+        if (value == "") { this.setState({shownPatients: this.state.allPatients})}
+        else{
+            this.setState({
+              shownPatients: this.state.allPatients.filter(
+                patient => patient.patient_email ? patient.patient_email.includes(value) : false
+              )
+            });
+        }
+    };
+
+    phone_filter = value => {
+        if (value == "") { this.setState({shownPatients: this.state.allPatients})}
+        else{
+            this.setState({
+              shownPatients: this.state.allPatients.filter(
+                patient => patient.patient_phone ? patient.patient_phone.includes(value) : false
+              )
+            });
+        }
+    };
 
     onHomeClick(event) {
         this.props.history.push("home")
@@ -134,8 +210,13 @@ class Patients extends React.Component {
                     </NavbarContainer>
                     {<TableContainer>
                         <PatientsTable
-                            allPatients={this.state.shownPatients}
+                            shownPatients={this.state.shownPatients}
                             openModal = {this.openModal}
+                            filterNumber = {this.number_filter}
+                            filterName = {this.name_filter}
+                            filterSurname = {this.surname_filter}
+                            filterEmail = {this.email_filter}
+                            filterPhone = {this.phone_filter}
                         />
                     </TableContainer>}
                     <Modal
