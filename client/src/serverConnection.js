@@ -270,8 +270,15 @@ class ServerConnect {
             callback(token);
         });
     }
-    discardEditing(table, id, token, callback){
-        this.socket.emit("discardEditing", table, id, token, this.loginToken);
+
+    discardTestEditing(id, token, callback){
+        this.socket.emit("discardEditing", "Test", id, token);
+        this.socket.once("discardEditingResponse", res => {
+            callback(res);
+        });
+    }
+    discardPatientEditing(id, token, callback){
+        this.socket.emit("discardEditing", "Patient", id, token);
         this.socket.once("discardEditingResponse", res => {
             callback(res);
         });
@@ -325,7 +332,7 @@ class ServerConnect {
 }
 
 
-const serverConnect = new ServerConnect();
+let serverConnect = new ServerConnect();
 function getServerConnect(){
     if (typeof serverConnect === undefined){
         serverConnect = new ServerConnect();

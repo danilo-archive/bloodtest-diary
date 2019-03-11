@@ -3,6 +3,7 @@ import "./Calendar.css";
 import { getCalendar } from "../../lib/calendar-functions.js";
 import DayCell from "./DayCell.js";
 import CalendarHeader from "./CalendarHeader.js";
+import dateformat from "dateformat";
 
 const HALF_MONTH = 15;
 const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -63,9 +64,9 @@ class CalendarTable extends Component {
         year--;
         month = 12;
       }
-      this.setState({ selected: `${year}-${month}-${day}` });
+      this.setState({ selected: dateformat(new Date(`${year}-${month}-${day}`), "d mmm yyyy") });
       if (this.props.onDaySelected) {
-        this.props.onDaySelected(`${year}-${month}-${day}`);
+        this.props.onDaySelected(dateformat(new Date(`${year}-${month}-${day}`), "d mmm yyyy"));
       }
     };
     this.returnDate = () => {
