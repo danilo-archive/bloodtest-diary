@@ -8,6 +8,7 @@
   width: 100%;
   background-color: #0b989d;
   color: #f4f9fd;
+  z-index: 1000;
   -webkit-app-region: drag;
   user-select: none;
   -moz-user-select: none;
@@ -20,7 +21,7 @@
   grid-column: 1;
   display: flex;
   align-items: center;
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Rajdhani", sans-serif;
   font-size: 16px;
   margin-left: 8px;
   overflow-x: hidden;
@@ -39,17 +40,14 @@
 #window-controls {
   -webkit-app-region: no-drag;
   display: grid;
-  grid-template-columns: repeat(3, 46px);
+  grid-template-columns: repeat(4, 46px);
   position: absolute;
   top: 0;
   right: 0;
   height: 100%;
-  font-family: "Segoe MDL2 Assets";
-  font-size: 10px;
-  /*this is just temp fix should be changed elsewhere*/
 }
-#window-controls .button {
-  grid-row: 1 / span 1;
+#window-controls .button{
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -67,4 +65,25 @@
 
 #window-controls #close-button:hover {
   background: #e81123;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 101;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
 }

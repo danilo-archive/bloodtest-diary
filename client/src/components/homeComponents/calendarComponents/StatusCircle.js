@@ -8,10 +8,10 @@ const combinations = {
 };
 
 export default styled.div`
-  float: left;
-  margin: 0;
-  height: 25px;
-  width: 25px;
+  min-height: 27px;
+  min-width: 27px;
+  margin-left: 7px;
+  margin-right: 7px;
   background-color: transparent;
   border: solid 4px ${props => combinations[props.type]};
   border-radius: 50%;
@@ -19,7 +19,7 @@ export default styled.div`
   position: relative;
   display: flex;
   justify-content: center;
-  left:2%;
+
 
   &::after {
     content: '${props => props.type}';
@@ -29,7 +29,6 @@ export default styled.div`
     padding-left: 50%;
     padding-right: 50%;
     bottom: 0%;
-
     transform: scale(0);
     transition: all ease-in 100ms;
     background-color: ${props => combinations[props.type]};

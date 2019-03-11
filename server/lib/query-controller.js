@@ -402,6 +402,18 @@ async function editCarer(newInfo, token){
     return await updateQueryDatabase("Carer",newInfo.carer_id,sql,token);
 }
 
+// TODO testing method to remove
+async function changeTestDueDate(testId, newDate){
+    var data = await databaseController.requestEditing("Test", testId).then( data => {return data;});
+    var token = data.response.token;
+    newDate = dateformat(newDate, "yyyymmdd");
+    if (token != undefined){
+      let sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
+      return {success:true , response: await databaseController.updateQuery(sql, "Test", testId, token).then(result => {return result.response})}
+    }
+    return {success:false, response: data.response}
+}
+
 /**
 * Add new patient to the database
 * @param {JSON} - entry to add
@@ -796,6 +808,8 @@ module.exports = {
     addCarer,
     updatePassword,
     changeTestStatus,
+    changeTestDueDate,
+    getTestWithinWeek,
     editTest,
     requestEditing,
     editPatient,
