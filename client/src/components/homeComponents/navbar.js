@@ -18,7 +18,7 @@ const Container = styled.div`
   align-content: flex-end;
 
 
-  .signOut {
+  .signOutButton {
     background-color: #55cdd1;
     color: #eee;
     font-weight: 700;
@@ -33,7 +33,7 @@ const Container = styled.div`
 
   }
 
-  .patients {
+  .patientsButton {
     background-color: #97a9a9;
     color: #eee;
     font-weight: 700;
@@ -48,7 +48,7 @@ const Container = styled.div`
 
   }
 
-  .home {
+  .homeButton {
     background-color: #97a9a9;
     color: #eee;
     font-weight: 700;
@@ -63,17 +63,17 @@ const Container = styled.div`
 
   }
 
-  .signOut:focus,
+  .signOutButton:focus,
   .signOut:hover {
     background-color: #0b989d;
   }
 
-  .patients:focus,
+  .patientsButton:focus,
   .patients:hover {
     background-color: #abbdbd;
   }
 
-  .home:focus,
+  .homeButton:focus,
   .home:hover {
     background-color: #abbdbd;
   }
@@ -97,7 +97,7 @@ const Container = styled.div`
     cursor: pointer;
     transform: rotate(180deg);
   }
-
+  
 `;
 
 class Navbar extends React.Component {
@@ -106,21 +106,23 @@ class Navbar extends React.Component {
       super(props);
       this.onPrev = props.onPrev;
       this.onNext = props.onNext;
+      this.onPatientsClick = props.onPatientsClick;
+      this.onHomeClick = props.onHomeClick;
   }
+
 
   render() {
     return (
       <>
       <Container>
-
           <div className={"controlButtons"}>
-            <button className={"home"}>Home</button>
+            <button className={"homeButton"} onClick={this.onHomeClick}>Home</button>
 
-            <button className={"patients"}>Patients</button>
+            <button className={"patientsButton"} onClick={this.onPatientsClick}>Patients</button>
 
-            <button className={"signOut"}>Sign Out</button>
+            <button className={"signOutButton"}>Sign Out</button>
           </div>
-          <div className={"calanderControls"}>
+          <div className={"calendarControls"}>
             <div className={"scrollButtons"}>
                 <img src={arrow} className={"prevButton"} onClick={this.onPrev} alt={"Previous Date"}/>
                 <img src={arrow} className={"nextButton"} onClick={this.onNext} alt={"Next Date"}/>

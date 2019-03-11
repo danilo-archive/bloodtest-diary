@@ -3,7 +3,7 @@ import React from "react";
 import HorizontalLine from "./HorizontalLine";
 
 const Heading = styled.h3`
-  padding: 0;
+  padding: 1%;
   margin: 2.5%;
   color: #646464;
   border-radius: 5px;
