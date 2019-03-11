@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const tokenGenerator = require('./lib/db_controller/token-generator');
+const tokenGenerator = require('./db_controller/token-generator');
 
 module.exports = {
   canLogin,

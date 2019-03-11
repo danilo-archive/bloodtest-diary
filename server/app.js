@@ -232,14 +232,34 @@ io.on('connection',function(socket)
 
     });
 
-    socket.on("requestPatientEditToken", async (patientId) => {
-        const token = await queryController.requestEditing("Patient", patientId);
+    socket.on("requestPatientEditToken", async (patientId, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
+        const token = await queryController.requestEditing("Patient", patientId, tempActionUsername);
         console.log("firing");
         socket.emit("requestPatientEditTokenResponse", token);
     });
 
-    socket.on("discardEditing", async (table, id, token) => {
-        const response = await queryController.returnToken(table, id, token);
+    socket.on("discardEditing", async (table, id, token, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
+        const response = await queryController.returnToken(table, id, token, accessToken);
         socket.emit("discardEditingResponse", response);
     });
 
@@ -307,9 +327,19 @@ io.on('connection',function(socket)
         }
     });
 
-    socket.on("editPatient", async (patientId, newInfo, token) => {
+    socket.on("editPatient", async (patientId, newInfo, token, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            console.log("== Authorisation required."); // TODO: return to user
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            console.log("== Invalid access token."); // TODO: return to user
+        }
+
         console.log(token);
-        const response = await queryController.editPatientExtended(newInfo, token);
+        const response = await queryController.editPatientExtended(newInfo, token, tempActionUsername);
         console.log(response);
         if (response.success){
             socket.emit("editPatientResponse", {success: true});

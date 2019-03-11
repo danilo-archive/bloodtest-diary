@@ -289,7 +289,7 @@ async function editPatient(newInfo, token, actionUsername){
     return await updateQueryDatabase("Patient",newInfo.patient_no,sql,token, actionUsername);
 }
 
-async function editPatientExtended(newInfo,token)
+async function editPatientExtended(newInfo,token, actionUsername)
 {
   const patientResponse = await getPatient(newInfo.patient_no);
   if(!patientResponse.success){
@@ -326,19 +326,19 @@ async function editPatientExtended(newInfo,token)
   {
     //Carer added with patient update
     if(patient.carer_id==null){
-      carerQueryResponse = await addCarer(carer)
+      carerQueryResponse = await addCarer(carer, actionUsername)
       patientNewInfo['carer_id'] = carerQueryResponse.insertId;
     }
     //Database has info on this carer
     else{
-      const carerToken = await requestEditing("Carer",patient.carer_id);
+      const carerToken = await requestEditing("Carer",patient.carer_id, actionUsername);
       carer["carer_id"] = patient.carer_id;
       carerQueryResponse = await editCarer(carer,carerToken);
     }
   }
   else if(Object.keys(carer).length == 0 && token && patient.carer_id)
   {
-    carerQueryResponse = await deleteCarer(patient.carer_id);
+    carerQueryResponse = await deleteCarer(patient.carer_id, actionUsername);
     console.log(`RESPONSE: ${carerQueryResponse.response}`)
   }
 
@@ -347,19 +347,19 @@ async function editPatientExtended(newInfo,token)
   {
     //Hospital added with update
     if(patient.hospital_id==null){
-      hospitalQueryResponse = await addHospital(hospital)
+      hospitalQueryResponse = await addHospital(hospital, actionUsername)
       patientNewInfo['hospital_id'] = hospitalQueryResponse.insertId;
     }
     //Database has info on the hospital
     else{
-      const hospitalToken = await requestEditing("Hospital",patient.hospital_id);
+      const hospitalToken = await requestEditing("Hospital",patient.hospital_id, actionUsername);
       hospital["hospital_id"] = patient.hospital_id;
-      hospitalQueryResponse = await editHospital(hospital,hospitalToken);
+      hospitalQueryResponse = await editHospital(hospital,hospitalToken, actionUsername);
     }
   }
   else if(Object.keys(hospital).length == 0 && token && patient.hospital_id)
   {
-    hospitalQueryResponse = await deleteHospital(patient.hospital_id);
+    hospitalQueryResponse = await deleteHospital(patient.hospital_id, actionUsername);
     console.log(`RESPONSE: ${hospitalQueryResponse.response}`)
   }
 
@@ -367,10 +367,10 @@ async function editPatientExtended(newInfo,token)
   //Has ID - not interested about it
   if(Object.keys(patientNewInfo).length>1)
   {
-    patientUpdateResponse = await editPatient(patientNewInfo,token);
+    patientUpdateResponse = await editPatient(patientNewInfo,token, actionUsername);
   }
   else{
-    patientUpdateResponse = await returnToken("Patient", patientNewInfo.patient_no, token);
+    patientUpdateResponse = await returnToken("Patient", patientNewInfo.patient_no, token, actionUsername);
   }
 
   if((patientUpdateResponse.success==true || Object.keys(patientUpdateResponse)==0 ) && (hospitalQueryResponse.success==true || Object.keys(hospitalQueryResponse)==0) && (carerQueryResponse.success==true || Object.keys(carerQueryResponse)==0 )){
@@ -500,18 +500,18 @@ async function getTestWithinWeek(date)
   return response;
 }
 
-async function deleteCarer(carerid)
+async function deleteCarer(carerid, actionUsername)
 {
   const sql = prepareDeleteSQL("Carer","carer_id",carerid);
   console.log(sql);
-  return await deleteQueryDatabase("Carer",carerid,sql);
+  return await deleteQueryDatabase("Carer",carerid,sql, actionUsername);
 }
 
-async function deleteHospital(hospitalid)
+async function deleteHospital(hospitalid, actionUsername)
 {
   const sql = prepareDeleteSQL("Hospital","hospital_id",hospitalid);
   console.log(sql);
-  return await deleteQueryDatabase("Hospital",hospitalid,sql);
+  return await deleteQueryDatabase("Hospital",hospitalid,sql, actionUsername);
 }
 //=====================================
 //  HELPER FUNCTIONS BELOW:
@@ -707,13 +707,22 @@ async function updateQueryDatabase(table,id,sql,token, actionUsername)
   }
 }
 
-async function deleteQueryDatabase(table,id,sql)
+async function deleteQueryDatabase(table,id,sql, actionUsername)
 {
     const response = await databaseController.deleteQuery(sql,table,id)
     if(response.status === "OK"){
+      logger.logDelete(actionUsername, table, id, "Successful.");
       return {success:true, response: "Entry deleted"}
     }
     else{
+      if (response.err.type === "SQL Error") {
+        logger.logDelete(actionUsername, table, id,
+        "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. SQL Error message: START>>>" + response.err.sqlMessage + "<<<END.");
+      }
+      else {
+        logger.logDelete(actionUsername, table, id,
+        "Unsuccessfully tried to execute query: START>>>" + sql + "<<<END. Invalid request error message: START>>>" + response.err.cause + "<<<END.");
+      }
       return {success:false , response: response.err}
     }
 }
@@ -784,10 +793,25 @@ function prepareDeleteSQL(table, idProperty, id)
   return sql;
 }
 
-async function returnToken(table, id, token)
+async function returnToken(table, id, token, actionUsername)
 {
-  return await databaseController.cancelEditing(table, id, token)
+  const response =  await databaseController.cancelEditing(table, id, token);
+  if(response.status === "OK"){
+    logger.logOther(actionUsername, table, id, "Successfully released token.");
+  }
+  else{
+    if (response.err.type === "SQL Error") {
+      logger.logOther(actionUsername, table, id,
+      "Unsuccessfully tried to release token: START>>>" + sql + "<<<END. SQL Error message: START>>>" + response.err.sqlMessage + "<<<END.");
+    }
+    else {
+      logger.logOther(actionUsername, table, id,
+      "Unsuccessfully tried to release token: START>>>" + sql + "<<<END. Invalid request error message: START>>>" + response.err.cause + "<<<END.");
+    }
+  }
+  return response;
 }
+
 module.exports = {
     getPatient,
     getTest,
