@@ -42,10 +42,6 @@ class Home extends Component {
 
     }
 
-    onPatientsClick(event) {
-        this.props.history.push("patients")
-    }
-
     componentDidMount = () => {
         this.initOverduePanel();
         this.updateDashboard();
@@ -54,6 +50,7 @@ class Home extends Component {
         this.handleNext = this.handleNext.bind(this);
         this.handlePrevious = this.handlePrevious.bind(this);
         this.onPatientsClick = this.onPatientsClick.bind(this);
+        this.logout = this.logout.bind(this);
 
         this.onAddTestOpenModal = this.onAddTestOpenModal.bind(this);
         this.onAddTestCloseModal = this.onAddTestCloseModal.bind(this);
@@ -154,6 +151,15 @@ class Home extends Component {
         }
       }
 
+    onPatientsClick(event) {
+          this.props.history.push("patients")
+    }
+
+    logout(event){
+        this.serverConnect.deleteLoginToken();
+        this.props.history.replace("");
+    }
+
     handleNext(event) {
       let nextWeek = getNextWeek([...this.state.weekDays]);
       this.updateDashboard(nextWeek);
@@ -194,7 +200,7 @@ class Home extends Component {
     handleDrop = (section, testId) => {
 
     }
-// 
+//
     render() {
       if (this.state.dashboardReady && this.state.overdueReady) {
         return (
@@ -215,6 +221,7 @@ class Home extends Component {
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
+                    onSignoutClick={this.logout}
                 />
               </div>
               <div className={"bottomSideDash"}>

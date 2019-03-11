@@ -62,6 +62,7 @@ class ServerConnect {
     deleteLoginToken(){
         this.loginToken = undefined;
         cookies.set('accessToken', "", { path: '/' });
+        console.log(`New token: ${cookies.get("accessToken")}`);
     }
 
     setLoginToken(token){
