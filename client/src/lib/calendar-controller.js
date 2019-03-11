@@ -9,6 +9,7 @@ const hd = new Holidays('GB');
 
 function isPastDate(date){
     let today = new Date();
+    today.setHours(0, 0, 0, 0);
     date = new Date(date);
     return date < today;
 }

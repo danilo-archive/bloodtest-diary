@@ -54,8 +54,8 @@ CREATE TABLE Patient (
     carer_id INTEGER,
     additional_info TEXT,
     PRIMARY KEY (patient_no),
-    FOREIGN KEY (hospital_id) REFERENCES Hospital(hospital_id),
-    FOREIGN KEY (carer_id) REFERENCES Carer(carer_id)
+    FOREIGN KEY (hospital_id) REFERENCES Hospital(hospital_id) ON DELETE SET NULL,
+    FOREIGN KEY (carer_id) REFERENCES Carer(carer_id) ON DELETE SET NULL
 );
 
 CREATE TABLE Test (

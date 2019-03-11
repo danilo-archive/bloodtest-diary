@@ -16,6 +16,16 @@ async function getPatient(patient_no) {
 }
 
 /**
+ * Get the info of the patient together with the info of eventual carers and hospitals
+ * @param {string} patient_no the patient number
+ */
+// TODO to be tested
+async function getFullPatientInfo(patient_no){
+  const sql = `SELECT * FROM Patient LEFT OUTER JOIN Hospital ON Patient.hospital_id=Hospital.hospital_id LEFT OUTER JOIN Carer ON Patient.carer_id=Carer.carer_id WHERE Patient.patient_no = '${patient_no}';`
+  return await selectQueryDatabase(sql);
+}
+
+/**
  * Get the carer given its carer id
  * @param {string} carerID the carer id
  */
@@ -275,6 +285,100 @@ async function editPatient(newInfo, token){
     return await updateQueryDatabase("Patient",newInfo.patient_no,sql,token);
 }
 
+async function editPatientExtended(newInfo,token)
+{
+  const patientResponse = await getPatient(newInfo.patient_no);
+  if(!patientResponse.success){
+    return patientResponse;
+  }
+  const patient = patientResponse.response[0];
+
+  //Seperate into carer hospital and patient info
+  const updateProperties = Object.keys(newInfo);
+  const carer = {};
+  const hospital = {};
+  const patientNewInfo={};
+  let querySuccess = false;
+  for(let i=0; i<updateProperties.length; i++)
+   {
+     if((updateProperties[i].startsWith('carer') || updateProperties[i] == 'relationship') && newInfo[updateProperties[i]])
+     {
+       carer[updateProperties[i]] = newInfo[updateProperties[i]];
+     }
+     if((updateProperties[i].startsWith('hospital')) && newInfo[updateProperties[i]])
+     {
+       hospital[updateProperties[i]] = newInfo[updateProperties[i]];
+     }
+     if((updateProperties[i].startsWith('patient') || updateProperties[i] == 'additional_info') && newInfo[updateProperties[i]])
+     {
+       patientNewInfo[updateProperties[i]] = newInfo[updateProperties[i]];
+     }
+   }
+  console.log("CARER HERE:")
+  console.log(carer);
+  console.log(hospital);
+  let carerQueryResponse = {};
+  if(Object.keys(carer).length>0 && token)
+  {
+    //Carer added with patient update
+    if(patient.carer_id==null){
+      carerQueryResponse = await addCarer(carer)
+      patientNewInfo['carer_id'] = carerQueryResponse.insertId;
+    }
+    //Database has info on this carer
+    else{
+      const carerToken = await requestEditing("Carer",patient.carer_id);
+      carer["carer_id"] = patient.carer_id;
+      carerQueryResponse = await editCarer(carer,carerToken);
+    }
+  }
+  else if(Object.keys(carer).length == 0 && token && patient.carer_id)
+  {
+    carerQueryResponse = await deleteCarer(patient.carer_id);
+    console.log(`RESPONSE: ${carerQueryResponse.response}`)
+  }
+
+  let  hospitalQueryResponse = {}
+  if(Object.keys(hospital).length>0 && token)
+  {
+    //Hospital added with update
+    if(patient.hospital_id==null){
+      hospitalQueryResponse = await addHospital(hospital)
+      patientNewInfo['hospital_id'] = hospitalQueryResponse.insertId;
+    }
+    //Database has info on the hospital
+    else{
+      const hospitalToken = await requestEditing("Hospital",patient.hospital_id);
+      hospital["hospital_id"] = patient.hospital_id;
+      hospitalQueryResponse = await editHospital(hospital,hospitalToken);
+    }
+  }
+  else if(Object.keys(hospital).length == 0 && token && patient.hospital_id)
+  {
+    hospitalQueryResponse = await deleteHospital(patient.hospital_id);
+    console.log(`RESPONSE: ${hospitalQueryResponse.response}`)
+  }
+
+  let patientUpdateResponse = {};
+  //Has ID - not interested about it
+  if(Object.keys(patientNewInfo).length>1)
+  {
+    patientUpdateResponse = await editPatient(patientNewInfo,token);
+  }
+  else{
+    patientUpdateResponse = await returnToken("Patient", patientNewInfo.patient_no, token);
+  }
+
+  if((patientUpdateResponse.success==true || Object.keys(patientUpdateResponse)==0 ) && (hospitalQueryResponse.success==true || Object.keys(hospitalQueryResponse)==0) && (carerQueryResponse.success==true || Object.keys(carerQueryResponse)==0 )){
+    querySuccess = true;
+  }
+
+  return {success: querySuccess, response: {
+    patientQuery: patientUpdateResponse,
+    hospitalQuery: hospitalQueryResponse,
+    carerQuery: carerQueryResponse
+  }}
+}
 /**
 * Edit hospital query
 * @param {JSON} newInfo All the information of the hospital to update
@@ -398,6 +502,19 @@ async function getTestWithinWeek(date)
   return response;
 }
 
+async function deleteCarer(carerid)
+{
+  const sql = prepareDeleteSQL("Carer","carer_id",carerid);
+  console.log(sql);
+  return await deleteQueryDatabase("Carer",carerid,sql);
+}
+
+async function deleteHospital(hospitalid)
+{
+  const sql = prepareDeleteSQL("Hospital","hospital_id",hospitalid);
+  console.log(sql);
+  return await deleteQueryDatabase("Hospital",hospitalid,sql);
+}
 //=====================================
 //  HELPER FUNCTIONS BELOW:
 //=====================================
@@ -587,6 +704,17 @@ async function updateQueryDatabase(table,id,sql,token)
   }
 }
 
+async function deleteQueryDatabase(table,id,sql)
+{
+    const response = await databaseController.deleteQuery(sql,table,id)
+    if(response.status === "OK"){
+      return {success:true, response: "Entry deleted"}
+    }
+    else{
+      return {success:false , response: response.err}
+    }
+}
+
 /**
 * Prepare INSERT query on the database
 * @param {String} table - Table in which to insert an entry
@@ -649,10 +777,14 @@ function prepareUpdateSQL(table, object, idProperty)
 function prepareDeleteSQL(table, idProperty, id)
 {
   // TODO: add logging in delete
-  const sql = `DELETE FROM ${table} WHERE ${idProperty}='${id}' LIMIT 1`;
+  const sql = `DELETE FROM ${table} WHERE ${idProperty}='${id}' LIMIT 1;`;
   return sql;
 }
 
+async function returnToken(table, id, token)
+{
+  return await databaseController.cancelEditing(table, id, token)
+}
 module.exports = {
     getPatient,
     getTest,
@@ -662,6 +794,7 @@ module.exports = {
     getOverdueGroups,
     getUser,
     getAllPatients,
+    getFullPatientInfo,
     getAllTests,
     getTestInfo,
     getTestsOfPatient,
@@ -680,8 +813,10 @@ module.exports = {
     editTest,
     requestEditing,
     editPatient,
+    editPatientExtended,
     editCarer,
     editHospital,
     getSortedOverdueWeeks,
-
+    requestEditing,
+    returnToken
 };

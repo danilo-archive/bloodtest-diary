@@ -71,6 +71,7 @@ class Navbar extends React.Component {
       this.onSignoutClick = props.onSignoutClick;
   }
 
+
   render() {
     return (
       <Container>

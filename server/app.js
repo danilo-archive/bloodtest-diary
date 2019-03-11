@@ -68,8 +68,12 @@ io.on('connection',function(socket)
 
     socket.on('getAllPatients', async () => {
         const response = await queryController.getAllPatients();
-        console.log({response});
         socket.emit("getAllPatientsResponse", response.response);
+    });
+
+    socket.on("getFullPatientInfo", async (patientId) => {
+        const response = await queryController.getFullPatientInfo(patientId);
+        socket.emit("getFullPatientInfoResponse", response.response);
     });
 
     socket.on('getAllTests', async () => {
@@ -120,6 +124,17 @@ io.on('connection',function(socket)
         socket.emit("requestTestEditTokenResponse", response);
     });
 
+    socket.on("requestPatientEditToken", async (patientId) => {
+        const token = await queryController.requestEditing("Patient", patientId);
+        console.log("firing");
+        socket.emit("requestPatientEditTokenResponse", token);
+    });
+
+    socket.on("discardEditing", async (table, id, token) => {
+        const response = await queryController.returnToken(table, id, token);
+        socket.emit("discardEditingResponse", response);
+    });
+
     // updates of database --------------------------------
     // TODO add endpoints for diary updates
 
@@ -159,6 +174,19 @@ io.on('connection',function(socket)
             socket.emit("testAdded", response.response);
             io.in("main_page").emit("testAdded", response.response);
         }
+    });
+    
+    socket.on("editPatient", async (patientId, newInfo, token) => {
+        console.log(token);
+        const response = await queryController.editPatientExtended(newInfo, token);
+        console.log(response);
+        if (response.success){
+            socket.emit("editPatientResponse", {success: true});
+        } else {
+            socket.emit("editPatientResponse", response);
+        }
+        io.in("patients_page").emit("patientEdited", patientId, newInfo);
+
     });
 });
 

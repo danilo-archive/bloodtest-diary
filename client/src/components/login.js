@@ -8,8 +8,8 @@ import './login.css';
 
 class Login extends Component {
 
-  constructor(){
-      super();
+  constructor(props){
+      super(props);
       this.serverConnect = getServerConnect();
       this.serverConnect.joinLoginPage();
   }

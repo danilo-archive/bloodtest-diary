@@ -54,7 +54,7 @@ body {
 }
 
 .rightSideDash {
-  border: red 0px solid;
+  border: red 0 solid;
   height: 100%;
   width: auto;
 
@@ -68,7 +68,7 @@ body {
 }
 
 .bottomSideDash {
-  border: green  0px solid;
+  border: green 0 solid;
   height: auto;
   width: auto;
 
