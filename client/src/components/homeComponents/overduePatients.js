@@ -45,7 +45,7 @@ class OverduePatients extends React.Component {
                               key={group.class}
                               type = {group.class}
                               section={"overdue"}
-                              color = {"#ffe266"}
+                              color = {"rgb(255,226,102, 0.5)"}
                               appointments = {group.tests}
                               editTest={this.props.editTest}
                           />

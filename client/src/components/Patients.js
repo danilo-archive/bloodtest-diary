@@ -6,6 +6,8 @@ import Navbar from "./homeComponents/navbar";
 import PatientsTable from "./patientsComponents/tableComponents/PatientsTable";
 //import AttributeSelector from "./patientsComponents/AttributeSelector";
 
+import LoadingAnimation from "./loadingScreen/loadingAnimation";
+
 import {getServerConnect} from "../serverConnection.js";
 import PatientProfile from "./patientsComponents/PatientProfile";
 
@@ -155,7 +157,16 @@ class Patients extends React.Component {
                 </Container>
             );
         } else {
-            return ("");
+            return (
+              <div style={{
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%,-50%)",
+              }}>
+              <LoadingAnimation/>
+            </div>
+            );
         }
     }
 }

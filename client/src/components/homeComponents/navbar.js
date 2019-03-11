@@ -15,6 +15,8 @@ const Container = styled.div`
   width: auto;
   height: 100%;
 
+  margin: 3px;
+
   overflow: hidden;
 
   display: flex;
