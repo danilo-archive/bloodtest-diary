@@ -89,7 +89,9 @@ export default class EditTestView extends React.Component {
             position: "relative"
           }}
         >
-          <TitleTab main={true}>Edit Appointment</TitleTab>
+          <TitleTab onClose={this.props.closeModal} main={true}>
+            Edit Appointment
+          </TitleTab>
           <div style={{ padding: "1rem 1rem" }}>
             <InfoBox
               label={"Full Name"}
