@@ -23,7 +23,7 @@ export default class AddTestView extends React.Component {
       timeAmount: null,
       timeUnits: ["Days", "Weeks", "Months", "Years"],
       timeUnit: "Days",
-      occurrences: 1
+      occurrences: 0
     }
   };
   constructor(props) {
@@ -64,7 +64,7 @@ export default class AddTestView extends React.Component {
         dateformat(new Date(this.state.selectedDate), "yyyy-mm-dd"),
         this.state.observations,
         frequency,
-        this.state.frequency.occurrences
+        this.state.frequency.occurrences ? this.state.frequency.occurrences : 0
       );
       alert(
         `Patient ID: ${this.state.selectedID} \nObservations: ${
