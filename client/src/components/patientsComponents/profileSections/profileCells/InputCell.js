@@ -4,6 +4,7 @@ import styled from "styled-components";
 const Container = styled.div`
  margin: 1%;
  text-align: center;
+ width: 30%;
 `;
 
 const Field = styled.label`
