@@ -70,7 +70,7 @@ class Navbar extends React.Component {
   }
 
   onRefreshClick = () => {
-    alert("Refresh Boy")
+    this.props.refresh();
   };
 
   render() {

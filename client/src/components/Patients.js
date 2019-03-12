@@ -76,8 +76,13 @@ class Patients extends React.Component {
         this.initOnPatientEditedCallback();
         this.initAllPatients();
 
+        this.refresh = this.refresh.bind(this);
         this.openModal = this.openModal.bind(this);
         this.onCloseModal = this.onCloseModal.bind(this);
+    }
+
+    refresh(event){
+        this.initAllPatients();
     }
 
     initOnPatientEditedCallback(){
@@ -130,6 +135,7 @@ class Patients extends React.Component {
                     <NavbarContainer>
                         <Navbar
                             onHomeClick={this.onHomeClick}
+                            refresh={this.refresh}
                         />
                     </NavbarContainer>
                     {<TableContainer>
