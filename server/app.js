@@ -21,8 +21,6 @@ const authenticator = require("./lib/authenticator.js");
 http.listen(port);
 
 // to broadcast in room => io.in("room").emit("change", json);
-const tempActionUsername = "admin"; // temporary until the system is completed
-
 
 io.on('connection',function(socket)
 {
@@ -71,6 +69,22 @@ io.on('connection',function(socket)
             res = {success:false};
         }
         socket.emit('authenticationResponse', res);
+    });
+
+    socket.on("logout", async (accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            socket.emit("logoutResponse", { success:false, response: "Authentication required." });
+            return;
+        }
+        const res = await authenticator.logoutUser(accessToken);
+        if (!res) {
+            // INVALID TOKEN.
+            socket.emit("logoutResponse", { success:false, response: "Invalid credentials." });
+            return;
+        }
+
+        socket.emit("logoutResponse", { success:true, response: "User logged out." });
     });
 
     socket.on('getAllPatients', async (accessToken) => {
@@ -231,7 +245,7 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.requestEditing("Test", testId, tempActionUsername);
+        const response = await queryController.requestEditing("Test", testId, username);
         socket.emit("requestTestEditTokenResponse", response);
 
     });
@@ -249,7 +263,7 @@ io.on('connection',function(socket)
             return;
         }
 
-        const token = await queryController.requestEditing("Patient", patientId, tempActionUsername);
+        const token = await queryController.requestEditing("Patient", patientId, username);
         socket.emit("requestPatientEditTokenResponse", token);
     });
 
@@ -266,7 +280,7 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.returnToken(table, id, token, tempActionUsername);
+        const response = await queryController.returnToken(table, id, token, username);
         socket.emit("discardEditingResponse", response);
     });
 
@@ -287,7 +301,7 @@ io.on('connection',function(socket)
         }
 
         const test = {patient_no:patientId, due_date:date, notes:notes, frequency:frequency, occurrences:occurrences}
-        const response = await queryController.addTest(test, tempActionUsername);
+        const response = await queryController.addTest(test, username);
         if (response.success){
             socket.emit("addTestResponse", response.response);
             socket.in("main_page").emit("testAdded", response.response)
@@ -311,7 +325,7 @@ io.on('connection',function(socket)
         }
 
         const test = {testId: testId, newStatus: newStatus}
-        const response = await queryController.changeTestStatus(test, tempActionUsername);
+        const response = await queryController.changeTestStatus(test, username);
         // TODO check if change status was successful !
         socket.emit('testStatusChangeResponse', testId, newStatus);
         io.in("main_page").emit('testStatusChange', testId, newStatus);
@@ -330,7 +344,7 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.editTest(testId, newInfo, token, tempActionUsername);
+        const response = await queryController.editTest(testId, newInfo, token, username);
         console.log({response});
 
         if (response.success){
@@ -354,7 +368,7 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.changeTestDueDate(testId, newDate, tempActionUsername);
+        const response = await queryController.changeTestDueDate(testId, newDate, username);
         if (response.success){
             socket.emit("changeTestDueDateResponse", response.response);
             io.in("main_page").emit("testAdded", response.response);
@@ -375,7 +389,7 @@ io.on('connection',function(socket)
         }
 
         console.log(token);
-        const response = await queryController.editPatientExtended(newInfo, token, tempActionUsername);
+        const response = await queryController.editPatientExtended(newInfo, token, username);
         console.log(response);
         if (response.success){
             socket.emit("editPatientResponse", {success: true});

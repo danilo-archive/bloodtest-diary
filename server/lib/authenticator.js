@@ -7,7 +7,8 @@ module.exports = {
   produceSalt,
   produceHash,
   verifyToken,
-  registerNewUsername
+  registerNewUsername,
+  logoutUser
 };
 
 const accessTokens = {};
@@ -71,7 +72,7 @@ function produceHash(password, iterations, salt)
 /**
  * Verifies user using the accessToken.
  *
- * @param {string} accessToken
+ * @param {string} accessToken Token used for identification.
  * @returns Username of the user or undefined if token is invalid.
  */
 async function verifyToken(accessToken) {
@@ -102,4 +103,20 @@ async function registerNewUsername(username) {
   expires.setDate(expires.getDate() + ACCESS_TOKEN_VALIDITY_DAYS);
   accessTokens[token] = {username: username, expires: expires};
   return token;
+}
+
+/**
+ * Delete access token for this user.
+ *
+ * @param {string} accessToken Token used for identification.
+ * @returns {boolean} True if token successfully deleted, false if invalid token.
+ */
+async function logoutUser(accessToken) {
+  if (await verifyToken(accessToken)) {
+    delete accessTokens[accessToken];
+    return true;
+  }
+  else {
+    return false;
+  }
 }
