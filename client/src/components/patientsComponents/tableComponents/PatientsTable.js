@@ -8,6 +8,7 @@ import {getServerConnect} from "../../../serverConnection.js";
 const Table = styled.table`
   width: 100%;
   height: 100%;
+  border-spacing: 0;
 `;
 
 const TableHeader = styled.thead`
@@ -26,13 +27,8 @@ const TableHead = styled.th`
     padding: 10px;
     //word-break: break-all;
     color: white;
-    border-collapse: collapse;
     background: #0b989d;
-    :first-child {
-      border-left: none;
-    }
-    border-left: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+    text-align: left;
 `;
 
 const TableRow = styled.tr`

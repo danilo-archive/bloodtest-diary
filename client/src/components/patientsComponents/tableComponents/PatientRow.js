@@ -7,14 +7,6 @@ const TableData = styled.td`
     padding: 7px;
     word-break: break-all;
     color: black;
-    border-collapse: collapse;
-    border: 1px solid #ddd;
-    border-bottom: none;
-    border-left: none;
-    :last-child {
-      border-right: none;
-      text-align: center;
-    }
 `;
 
 const TableRow = styled.tr`
@@ -29,12 +21,15 @@ const Button = styled.button`
   border: none;
   color: white;
   padding: 5px 10px;
+  border-radius: 10px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
   background-color: #008CBA;
   word-break: break-word;
+  
+  outline: none;
 `;
 
 export default class PatientRow extends React.Component{
