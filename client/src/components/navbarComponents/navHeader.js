@@ -60,7 +60,7 @@ const RefreshButton = styled.div`
   z-index: 50;
 
   &:hover {
-    transform: scale(1.1,1.1)
+    transform: scale(1.05,1.05)
   }
 
   .refreshIcon {
