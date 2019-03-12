@@ -800,7 +800,9 @@ describe("Update queries tests", function(){
         queryController.__set__("databaseController",dbController);
         let response = await spy("300",date);
         response.success.should.equal(false)
-        response.response.should.equal("Token in use")
+        console.log("=============");
+        console.log(response);
+        response.response.should.equal("Token in use/No token defined")
       })
       it("Accept the change", async function(){
         const dbController = {

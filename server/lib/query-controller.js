@@ -5,6 +5,10 @@ const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
 
+/*===============================*
+          SELECT QUERIES
+ *===============================*/
+
 /**
  * Get the patient given its patient number
  * @param {string} patient_no the patient number
@@ -46,7 +50,6 @@ async function getHospital(hospital_id) {
   return await selectQueryDatabase(sql);
 }
 
-
 /**
 * Get all the patients from the database
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
@@ -55,33 +58,6 @@ async function getAllPatients()
 {
   const sql = "Select * From Patient;";
   return await selectQueryDatabase(sql)
-}
-
-/**
-* Update password of an user
-* @param {JSON} json - user
-* @param {string} actionUsername The user who issued the request.
-* Obligatory properties:
-* @property username {String}
-* @property hashed_password {String}
-* @return {JSON} - {success:Boolean response:Array or Error}
-**/
-async function updatePassword(json, actionUsername)
-{
-  const response = await getUser(json.username);
-  const token = await requestEditing("User",json.username, actionUsername)
-  if (!response.success){
-    return response;
-  }
-  const user = response.response[0];
-  if(user){
-    const hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
-    const sql = `UPDATE User SET hashed_password='${hash}', WHERE username = ${json.username} LIMIT 1;`;
-    return await updateQueryDatabase("User",json.username,sql,token, actionUsername);
-  }
-  else{
-    return {success:false , response:"No user found"}
-  }
 }
 
 /**
@@ -147,7 +123,6 @@ async function getTestInfo(test_id){
     return await selectQueryDatabase(sql);
 }
 
-
 /**
 * Get all the overdue tests from the database plus additional info about time difference
 * @return {JSON} result of the query - {success:true/false response:Array{SortedWeek}/Error}
@@ -175,39 +150,23 @@ async function getSortedOverdueWeeks()
 }
 
 /**
-* Add new user to the database
-* @param {JSON} - user
-* @param {string} actionUsername The user who issued the request.
-* Obligatory properties within JSON
-* @property username {String}
-* @property hashed_password {String}
-* @property email {String}
-* @return {JSON} result of the query - {success:Boolean}
+* Get all tests within the week from the database
+* @param {String} date - any date (from Monday to Friday) within the week to retrieve (format: "YYYY-MM-DD")
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
-async function addUser(json, actionUsername)
+async function getTestWithinWeek(date)
 {
-  const iterations = authenticator.produceIterations();
-  const salt = authenticator.produceSalt();
-  //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
-  const hash = authenticator.produceHash(json.hashed_password,iterations,salt);
-  const sql = `INSERT INTO User VALUES(${json.username},${hash},${salt},${iterations},${json.email});`;
-  return await insertQueryDatabase(sql, "User", actionUsername, json.username);
+  const dateString = dateformat(date, "yyyy-mm-dd");
+  const response = await Promise.all(getTestsDuringTheWeek(dateString))
+                              .then(days => {return checkMultipleQueriesStatus(days)})
+                              .then(data => {return data})
+  return response;
 }
 
-/**
-* Add new test to the database
-* @param {JSON} - entry to add
-* @param {string} actionUsername The user who issued the request.
-* Obligatory properties within JSON
-* @property patient_no
-* @property due_date
-* @return {JSON} result of the query - {success:Boolean}
-**/
-async function addTest(json, actionUsername)
-{
-  const sql = prepareInsertSQL('Test',json);
-  return await insertQueryDatabase(sql, "Test", actionUsername);
-}
+
+/*===============================*
+          UPDATE QUERIES
+ *===============================*/
 
 /**
 * Edit test query
@@ -370,13 +329,114 @@ async function editCarer(newInfo, token, actionUsername){
 async function changeTestDueDate(testId, newDate, actionUsername){
     const token = await requestEditing("Test",testId, actionUsername);
     newDate = dateformat(newDate, "yyyymmdd");
-    if (token){
-      // TODO: fix to suit style
-      const sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
-      return {success:true , response: await databaseController.updateQuery(sql, "Test", testId, token)
-          .then(result => {return result.response})}
+    // TODO: fix to suit style
+    const sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
+    const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
+    if (!res.success) {
+      res.response = res.response.problem;
     }
-    return {success:false, response: "Token in use"}
+    return res;
+}
+
+/**
+* Update password of an user
+* @param {JSON} json - user
+* @param {string} actionUsername The user who issued the request.
+* Obligatory properties:
+* @property username {String}
+* @property hashed_password {String}
+* @return {JSON} - {success:Boolean response:Array or Error}
+**/
+async function updatePassword(json, actionUsername)
+{
+  const response = await getUser(json.username);
+  const token = await requestEditing("User",json.username, actionUsername)
+  if (!response.success){
+    return response;
+  }
+  const user = response.response[0];
+  if(user){
+    const hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
+    const sql = `UPDATE User SET hashed_password='${hash}', WHERE username = ${json.username} LIMIT 1;`;
+    return await updateQueryDatabase("User",json.username,sql,token, actionUsername);
+  }
+  else{
+    return {success:false , response:"No user found"}
+  }
+}
+
+/**
+* Change the status of the test in the database
+* @param {JSON} test
+* @param {string} actionUsername The user who issued the request.
+* @property testId {String} - id of a test to change
+* @property newStatus {enum: "completed"/"late"/"inReview"} - new status of a test
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
+**/
+async function changeTestStatus(test, actionUsername)
+{
+  const token = await requestEditing("Test",test.testId, actionUsername);
+  let status;
+  let date;
+  // TODO: first check if it can edit. If edit successful then schedule a new one.
+  let scheduleNew = false;
+  switch(test.newStatus)
+  {
+    case "completed": {status = "yes"; date=`CURDATE()`;scheduleNew = true; break;}
+    case "late": {status = "no"; date=`NULL`; break;}
+    case "inReview" : {status = "in review"; date=`CURDATE()`; scheduleNew = true; break;}
+    default: return {success:false, response: "NO SUCH UPDATE"}
+  }
+  const sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${test.testId};`;
+  const res = await updateQueryDatabase("Test",test.testId,sql,token, actionUsername);
+
+  if (res.success && scheduleNew) {
+    const insertedResponse = await scheduleNextTest(test.testId, actionUsername);
+    if(insertedResponse.insertId){
+      res["insertId"] = insertedResponse.insertId;
+    }
+  }
+
+  return res;
+}
+
+/*===============================*
+          INSERT QUERIES
+ *===============================*/
+
+/**
+* Add new user to the database
+* @param {JSON} - user
+* @param {string} actionUsername The user who issued the request.
+* Obligatory properties within JSON
+* @property username {String}
+* @property hashed_password {String}
+* @property email {String}
+* @return {JSON} result of the query - {success:Boolean}
+**/
+async function addUser(json, actionUsername)
+{
+  const iterations = authenticator.produceIterations();
+  const salt = authenticator.produceSalt();
+  //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
+  const hash = authenticator.produceHash(json.hashed_password,iterations,salt);
+  const sql = `INSERT INTO User VALUES(${json.username},${hash},${salt},${iterations},${json.email});`;
+  return await insertQueryDatabase(sql, "User", actionUsername, json.username);
+}
+
+/**
+* Add new test to the database
+* @param {JSON} - entry to add
+* @param {string} actionUsername The user who issued the request.
+* Obligatory properties within JSON
+* @property patient_no
+* @property due_date
+* @return {JSON} result of the query - {success:Boolean}
+**/
+async function addTest(json, actionUsername)
+{
+  const sql = prepareInsertSQL('Test',json);
+  return await insertQueryDatabase(sql, "Test", actionUsername);
 }
 
 /**
@@ -425,54 +485,9 @@ async function addCarer(json, actionUsername)
   return await insertQueryDatabase(sql, "Carer", actionUsername);
 }
 
-/**
-* Change the status of the test in the database
-* @param {JSON} test
-* @param {string} actionUsername The user who issued the request.
-* @property testId {String} - id of a test to change
-* @property newStatus {enum: "completed"/"late"/"inReview"} - new status of a test
-* @return {JSON} result of the query - {success:true/false response:Array/Error}
-**/
-async function changeTestStatus(test, actionUsername)
-{
-  const token = await requestEditing("Test",test.testId, actionUsername);
-  let status;
-  let date;
-  // TODO: first check if it can edit. If edit successful then schedule a new one.
-  let scheduleNew = false;
-  switch(test.newStatus)
-  {
-    case "completed": {status = "yes"; date=`CURDATE()`;scheduleNew = true; break;}
-    case "late": {status = "no"; date=`NULL`; break;}
-    case "inReview" : {status = "in review"; date=`CURDATE()`; scheduleNew = true; break;}
-    default: return {success:false, response: "NO SUCH UPDATE"}
-  }
-  const sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${test.testId};`;
-  const res = await updateQueryDatabase("Test",test.testId,sql,token, actionUsername);
-
-  if (res.success && scheduleNew) {
-    const insertedResponse = await scheduleNextTest(test.testId, actionUsername);
-    if(insertedResponse.insertId){
-      res["insertId"] = insertedResponse.insertId;
-    }
-  }
-
-  return res;
-}
-
-/**
-* Get all tests within the week from the database
-* @param {String} date - any date (from Monday to Friday) within the week to retrieve (format: "YYYY-MM-DD")
-* @return {JSON} result of the query - {success:true/false response:Array/Error}
-**/
-async function getTestWithinWeek(date)
-{
-  const dateString = dateformat(date, "yyyy-mm-dd");
-  const response = await Promise.all(getTestsDuringTheWeek(dateString))
-                              .then(days => {return checkMultipleQueriesStatus(days)})
-                              .then(data => {return data})
-  return response;
-}
+/*===============================*
+          DELETE QUERIES
+ *===============================*/
 
 /**
 * Delete Carer entry from database
@@ -498,9 +513,9 @@ async function deleteHospital(hospitalid, actionUsername)
   return await deleteQueryDatabase("Hospital",hospitalid,sql, actionUsername);
 }
 
-//=====================================
-//  HELPER FUNCTIONS BELOW:
-//=====================================
+/*===============================*
+      HELPER FUNCTIONS BELOW:
+ *===============================*/
 
 /**
 * Produce multiple queries on the database to retrieve test within the week
@@ -671,7 +686,7 @@ async function updateQueryDatabase(table,id,sql,token, actionUsername)
       const response = await databaseController.updateQuery(sql, table, id, token);
       if(response.status === "OK"){
         logger.logUpdate(actionUsername, table, id, "Successful.");
-        return {success:true , response: response.response}
+        return {success:true , response: response.response};
       }
       else{
         if (response.err.type === "SQL Error") {
@@ -682,7 +697,7 @@ async function updateQueryDatabase(table,id,sql,token, actionUsername)
           logger.logUpdate(actionUsername, table, id,
           "Unsuccessfully tried to execute query: >>" + sql + "<<. Invalid request error message: >>" + response.err.cause + "<<.");
         }
-        return {success:false , response: response.err}
+        return {success:false , response: response.err};
       }
   }
   else {
