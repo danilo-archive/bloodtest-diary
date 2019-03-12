@@ -524,7 +524,7 @@ describe("Update queries tests", function(){
           },
           selectQuery: async function()
           {
-            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date()}]}}
+            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
           },
           insertQuery: async function()
           {
@@ -543,7 +543,7 @@ describe("Update queries tests", function(){
           },
           selectQuery: async function()
           {
-            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2}]}}
+            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
           },
           insertQuery: async function()
           {
@@ -551,7 +551,7 @@ describe("Update queries tests", function(){
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",patient_no:"300",completed_status:"in review", occurrences:"3", frequency:"5-W",notes:"Test", due_date:"2020-01-01"},"400", testUsername);
+        const response = await spy("400",{test_id:"400",patient_no:"300",completed_status:"in review", occurrences:"3", frequency:"5-W",notes:"Test", due_date:new Date("2020-01-01")},"400", testUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
