@@ -303,16 +303,16 @@ class ServerConnect {
     * @param testId The id of the test to be changed.
     * @param newStatus The new status of the test
     */
-    changeTestStatus(testId, newStatus){
+    changeTestStatus(testId, newStatus, callback){
         this.socket.emit('testStatusChange', testId, newStatus, this.loginToken);
         this.socket.once("testStatusChangeResponse", res => {
-            // TODO
+            callback(res);
         });
     }
-    changeTestDueDate(testId, newDate){
+    changeTestDueDate(testId, newDate, callback){
         this.socket.emit("changeTestDueDate", testId, newDate, this.loginToken);
         this.socket.once("changeTestDueDateResponse", res => {
-            // TODO
+            callback(res);
         });
     }
 

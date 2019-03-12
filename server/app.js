@@ -304,8 +304,7 @@ io.on('connection',function(socket)
         const response = await queryController.addTest(test, username);
         if (response.success){
             socket.emit("addTestResponse", {success: true});
-            socket.emit("testAdded");
-            socket.in("main_page").emit("testAdded")
+            io.in("main_page").emit("testAdded")
         }else{
             socket.emit("addTestResponse", {success: false});
             console.log("error in insert");
@@ -327,9 +326,12 @@ io.on('connection',function(socket)
 
         const test = {testId: testId, newStatus: newStatus}
         const response = await queryController.changeTestStatus(test, username);
-        // TODO check if change status was successful !
-        socket.emit('testStatusChangeResponse', testId, newStatus);
-        io.in("main_page").emit('testStatusChange', testId, newStatus);
+        if (response.success){
+            socket.emit('testStatusChangeResponse', {success: true});
+            io.in("main_page").emit('testStatusChange', testId, newStatus);
+        }else{
+            socket.emit('testStatusChangeResponse', {success: false});
+        }
     });
 
     socket.on("editTest", async (testId, newInfo, token, accessToken) => {
@@ -372,8 +374,10 @@ io.on('connection',function(socket)
 
         const response = await queryController.changeTestDueDate(testId, newDate, username);
         if (response.success){
-            socket.emit("changeTestDueDateResponse", response.response);
+            socket.emit("changeTestDueDateResponse", {success: true});
             io.in("main_page").emit("testAdded", response.response);
+        }else{
+            socket.emit("changeTestDueDateResponse", {success: false});
         }
     });
 
@@ -398,6 +402,7 @@ io.on('connection',function(socket)
         } else {
             socket.emit("editPatientResponse", response);
         }
+        // !important to be here and not in the if statement!
         io.in("patients_page").emit("patientEdited", patientId, newInfo);
 
     });
