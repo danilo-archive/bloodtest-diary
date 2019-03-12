@@ -8,10 +8,16 @@
  * @see module:action-logger
  */
 
-const expect = require("chai").expect;
-const logger = require("../../../lib/action-logger");
+const chai = require("chai")
+const expect = chai.expect;
+const rewire = require('rewire');
+const logger = rewire("../../../lib/action-logger");
+const sinonChai = require('sinon-chai')
 const Database = require("../../../lib/db_controller/Database");
 const databaseConfig = require("../../../config/database");
+const sinon = require('sinon');
+
+chai.use(sinonChai);
 
 before(() => {
     logger.disableConsoleOutput();
@@ -70,7 +76,7 @@ describe("Test action logger:", () => {
         it("Should add a new entry to the database.", async () => { 
             let error = undefined;                  
             let finished = false;
-            logger.logInsert("logger_test", "Patient", "P123", "message", (res) => {
+            logger.logInsert("logger_test", "Patient", "P123", undefined, (res) => {
                 try {
                     expect(res.status).to.equal("OK");
                     expect(res.response.insertId).to.not.equal(0);
@@ -206,6 +212,155 @@ describe("Test action logger:", () => {
             }
             if (error) throw error;
         }); 
+    });
+
+    describe("> Test logging other actions:", () => {
+        it("Should throw an error for invalid arguments.", async () => {
+            let error = undefined;
+            try {
+                await logger.logOther("logger_test", "Patient", "P123"); // message is compulsory
+            }
+            catch(err) {
+                error = err;
+            }
+            expect(error).to.not.be.undefined;
+        });
+
+        it("Should add a new entry to the database.", async () => { 
+            let error = undefined;                  
+            let finished = false;
+            logger.logOther("logger_test", "Patient", "P123", "message", (res) => {
+                try {
+                    expect(res.status).to.equal("OK");
+                    expect(res.response.insertId).to.not.equal(0);
+                }
+                catch(err) {
+                    error = err;
+                }
+                finished = true;
+            });
+            while (!finished) {
+                await sleep(1);
+            }
+            if (error) throw error;
+        }); 
+
+        it("Should reject the log.", async () => { 
+            let error = undefined;                  
+            let finished = false;
+            logger.logOther("invalid_user", "Patient", "P123", "message", (res) => {
+                try {
+                    expect(res.status).to.equal("ERR");
+                    expect(res.err.type).to.equal("SQL Error");
+                }
+                catch(err) {
+                    error = err;
+                }
+                finished = true;
+            });
+            while (!finished) {
+                await sleep(1);
+            }
+            if (error) throw error;
+        }); 
+    });
+
+    describe("> Test console output:", () => {
+        
+        beforeEach(() => {
+            logger.enableConsoleOutput();
+            sinon.spy(console, 'log');
+        });
+
+        afterEach(function() {
+            console.log.restore();
+            logger.disableConsoleOutput();
+        });
+
+        it("Should reject the log (other + invalid username).", async () => { 
+            let error = undefined;                  
+            let finished = false;
+            
+            logger.logOther("invalid_user", "Patient", "P123", "message", (res) => {
+                try {
+                    expect(res.status).to.equal("ERR");
+                    expect(res.err.type).to.equal("SQL Error");
+                    expect(console.log.callCount).to.equal(4);
+                }
+                catch(err) {
+                    error = err;
+                }
+                finished = true;
+            });
+            while (!finished) {
+                await sleep(1);
+            }          
+
+            if (error) throw error;
+        });
+        it("Should accept the log (other + valid username).", async () => { 
+            let error = undefined;                  
+            let finished = false;
+            
+            logger.logOther("logger_test", "Patient", "P123", "message", (res) => {
+                try {
+                    expect(res.status).to.equal("OK");
+                    expect(res.response.insertId).to.not.equal(0);
+                    expect(console.log.callCount).to.equal(1);
+                }
+                catch(err) {
+                    error = err;
+                }
+                finished = true;
+            });
+            while (!finished) {
+                await sleep(1);
+            }          
+
+            if (error) throw error;
+        });
+        it("Should reject the log (insert + invalid username).", async () => { 
+            let error = undefined;                  
+            let finished = false;
+            
+            logger.logInsert("invalid_user", "Patient", "P123", "message", (res) => {
+                try {
+                    expect(res.status).to.equal("ERR");
+                    expect(res.err.type).to.equal("SQL Error");
+                    expect(console.log.callCount).to.equal(4);
+                }
+                catch(err) {
+                    error = err;
+                }
+                finished = true;
+            });
+            while (!finished) {
+                await sleep(1);
+            }          
+
+            if (error) throw error;
+        });
+        it("Should accept the log (insert + valid username).", async () => { 
+            let error = undefined;                  
+            let finished = false;
+            
+            logger.logInsert("logger_test", "Patient", "P123", "message", (res) => {
+                try {
+                    expect(res.status).to.equal("OK");
+                    expect(res.response.insertId).to.not.equal(0);
+                    expect(console.log.callCount).to.equal(1);
+                }
+                catch(err) {
+                    error = err;
+                }
+                finished = true;
+            });
+            while (!finished) {
+                await sleep(1);
+            }          
+
+            if (error) throw error;
+        });
     });
 
 });
