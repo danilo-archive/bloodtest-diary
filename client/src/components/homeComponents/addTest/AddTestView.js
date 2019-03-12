@@ -61,7 +61,7 @@ export default class AddTestView extends React.Component {
       }
       this.serverConnect.addTest(
         this.state.selectedID,
-        this.state.selectedDate,
+        dateformat(new Date(this.state.selectedDate), "yyyy-mm-dd"),
         this.state.observations,
         frequency,
         this.state.frequency.occurrences
