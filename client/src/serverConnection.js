@@ -49,7 +49,6 @@ class ServerConnect {
         });
 
         this.socket.on("testStatusChange", (id, status) => {
-            console.log("here");
             this.onTestStatusChange(id, status);
         });
 
@@ -273,13 +272,13 @@ class ServerConnect {
     }
 
     discardTestEditing(id, token, callback){
-        this.socket.emit("discardEditing", "Test", id, token);
+        this.socket.emit("discardEditing", "Test", id, token, this.loginToken);
         this.socket.once("discardEditingResponse", res => {
             callback(res);
         });
     }
     discardPatientEditing(id, token, callback){
-        this.socket.emit("discardEditing", "Patient", id, token);
+        this.socket.emit("discardEditing", "Patient", id, token, this.loginToken);
         this.socket.once("discardEditingResponse", res => {
             callback(res);
         });
@@ -294,6 +293,9 @@ class ServerConnect {
     */
     addTest(patientId, date, notes, frequency, occurrences){
         this.socket.emit("addTest", patientId, date, notes, frequency, occurrences, this.loginToken);
+        this.socket.once("addTestResponse", res => {
+            // TODO
+        });
     }
 
     /**
@@ -303,9 +305,15 @@ class ServerConnect {
     */
     changeTestStatus(testId, newStatus){
         this.socket.emit('testStatusChange', testId, newStatus, this.loginToken);
+        this.socket.once("testStatusChangeResponse", res => {
+            // TODO
+        });
     }
     changeTestDueDate(testId, newDate){
         this.socket.emit("changeTestDueDate", testId, newDate, this.loginToken);
+        this.socket.once("changeTestDueDateResponse", res => {
+            // TODO
+        });
     }
 
     /**
