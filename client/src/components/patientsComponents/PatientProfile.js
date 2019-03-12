@@ -15,8 +15,37 @@ const Container = styled.div`
   background: #f5f5f5;
 `;
 
+
 const ButtonContainer = styled.div`
-  margin-bottom: 3%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+`;
+
+const DeleteContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+const DeleteButton = styled.button`
+  border: none;
+  background-color: #f44336;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 10px;
+
+  height: 44px;
+  min-width: 100px;
+
+  :hover {
+    background-color: #dc2836;
+    color: white;
+    border-radius: 10px;
+  }
+  outline: none;
 `;
 
 const CloseButton = styled.button`
@@ -25,41 +54,38 @@ const CloseButton = styled.button`
   color: black;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
-  width: 10%;
   border-radius: 10px;
-  margin-left: 35%;
 
   height: 44px;
   min-width: 100px;
-
+  margin: 4%;
 
   :hover {
     background: #c8c8c8;
     color: black;
+    border-radius: 10px;
   }
+  outline: none;
 `;
 
 const SaveButton = styled.button`
   border: none;
-  background-color: #f44336;
+  background-color: #0b999d;
   color: white;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
-  width: 10%;
+  margin: 4%;
   border-radius: 10px;
-
-  float: right;
-  margin-right: 35%;
 
   height: 44px;
   min-width: 100px;
 
   :hover {
-    background-color: #dc2836;
+    background-color: #018589;
     color: white;
+    border-radius: 10px;
   }
+  outline: none;
 `;
 
 
@@ -76,6 +102,10 @@ class PatientProfile extends Component {
       this.serverConnect = getServerConnect();
 
       this.loadPatient();
+    }
+
+    deletePatient() {
+        console.log("some id is deleted")
     }
 
     loadPatient() {
@@ -217,6 +247,9 @@ class PatientProfile extends Component {
                     <TestSection tests={[{due_date: "2019-02-02", notes: "Some notes"}]}/>
 
                     <ButtonContainer>
+                        <DeleteContainer>
+                            <DeleteButton onClick={this.deletePatient}>Delete patient</DeleteButton>
+                        </DeleteContainer>
                         <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                         <SaveButton onClick={this.onSaveClick}>Save changes</SaveButton>
                     </ButtonContainer>

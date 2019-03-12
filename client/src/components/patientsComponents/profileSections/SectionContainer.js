@@ -9,10 +9,10 @@ const Container = styled.div`
   width: 80%;
   font-family: "Rajdhani", sans-serif;
   background: white;
+  max-height: 200px;
 `;
 
 const ContentContainer = styled.div`
-  padding-left: 6%;
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
@@ -20,14 +20,9 @@ const ContentContainer = styled.div`
 `;
 
 const SectionTitle = styled.p`
-  float: left;
-  position: absolute;
+  text-align: center;
   font-size: 150%;
-  margin-left: 2%;
-  //TODO : change this depending on container size
-  @media only screen and (max-width: 600px) {
-    visibility: hidden;
-  }
+  margin: 0;
 `;
 
 export default class SectionContainer extends React.Component {

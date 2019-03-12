@@ -11,8 +11,8 @@ const Field = styled.label`
 `;
 
 const Input = styled.input.attrs({ spellCheck: "false"})`
-  padding: 12px 20px;
-  margin: 2px 0 8px;
+  padding: 1% 4%;
+  margin: 0.5% 0 1%;
   display: block;
   width: 100%;
   border: 1px solid #ccc;
