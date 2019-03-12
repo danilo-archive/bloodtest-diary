@@ -20,15 +20,16 @@ const TableRow = styled.tr`
 const Button = styled.button`
   border: none;
   color: white;
-  padding: 5px 10px;
+  padding: 7px 12px;
   border-radius: 10px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  background-color: #008CBA;
+  font-weight: 200;
+  background-color: #0b989d;
   word-break: break-word;
-  
+  font-family: "Rajdhani",sans-serif;
   outline: none;
 `;
 
