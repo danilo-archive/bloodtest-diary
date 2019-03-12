@@ -73,7 +73,8 @@ class Home extends Component {
 
   initOnTestStatusChange() {
     this.serverConnect.setOnTestStatusChange((id, status) => {
-      this.modifyTest(id, test => {
+      this.updateDashboard();
+      this.modifyOverdueTest(id, test => {
         test.completed_status = status;
         return test;
       });
@@ -82,7 +83,8 @@ class Home extends Component {
 
   initOnTestEdit() {
     this.serverConnect.setOnTestEdit((id, newTest) => {
-      this.modifyTest(id, test => {
+      this.updateDashboard();
+      this.modifyOverdueTest(id, test => {
         test = newTest;
         return newTest;
       });
@@ -109,6 +111,22 @@ class Home extends Component {
         weekDays: newWeek
       });
     });
+  }
+
+  modifyOverdueTest(id, modificationFunction){
+      for (var i = 0; i < this.state.overdueTests.length; ++i) {
+        let group = this.state.overdueTests[i];
+        for (var j = 0; j < group.tests.length; ++j) {
+          var test = group.tests[j];
+          if (test.test_id === id) {
+            let newOverdueTests = [...this.state.overdueTests];
+            let testToModify = newOverdueTests[i].tests[j];
+            let modifiedTest = modificationFunction(testToModify);
+            newOverdueTests[i].tests[j] = modifiedTest;
+            this.setState({ overdueTests: newOverdueTests });
+          }
+        }
+      }
   }
 
   modifyTest(id, modificationFunction) {

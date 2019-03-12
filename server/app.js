@@ -307,7 +307,7 @@ io.on('connection',function(socket)
         console.log({response});
 
         if (response.success){
-            socket.emit("editTestResponse", response.response);
+            socket.emit("testAdded", response.response);
             socket.in("main_page").emit("editTestResponse", response.response);
         } else {
             // TODO: emit failure to the socket
