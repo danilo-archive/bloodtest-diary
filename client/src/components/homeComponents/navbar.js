@@ -8,7 +8,7 @@ import NavHeader from "./../navbarComponents/navHeader.js"
 
 import OptionSwitch from "./../switch/OptionSwitch.js"
 
-import Alert, { openAlert } from "./../Alert0.js"
+import Alert, { openAlert } from "./../Alert.js"
 
 
 const Container = styled.div`

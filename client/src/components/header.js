@@ -10,6 +10,8 @@ import settings from "../images/settings.png"
 import OfflineScreen from "./OfflineScreen.js";
 import {getServerConnect} from "../serverConnection.js";
 
+import Alert from "./Alert.js"
+
 
 const navbarIcons = styled.div`
     .icon {
@@ -69,6 +71,7 @@ class Header extends Component {
       <OfflineScreen
         disabled = {this.state.disabled}
       />
+      <Alert/>
       </>
     );
   }
