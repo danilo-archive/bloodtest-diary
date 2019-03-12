@@ -291,10 +291,10 @@ class ServerConnect {
     * @param notes Additional info about the test
     * @param frequency The frequency of the test
     */
-    addTest(patientId, date, notes, frequency, occurrences){
+    addTest(patientId, date, notes, frequency, occurrences, callback){
         this.socket.emit("addTest", patientId, date, notes, frequency, occurrences, this.loginToken);
         this.socket.once("addTestResponse", res => {
-            // TODO
+            callback(res);
         });
     }
 

@@ -303,10 +303,11 @@ io.on('connection',function(socket)
         const test = {patient_no:patientId, due_date:date, notes:notes, frequency:frequency, occurrences:occurrences}
         const response = await queryController.addTest(test, username);
         if (response.success){
-            socket.emit("addTestResponse", response.response);
-            socket.in("main_page").emit("testAdded", response.response)
+            socket.emit("addTestResponse", {success: true});
+            socket.emit("testAdded");
+            socket.in("main_page").emit("testAdded")
         }else{
-            // TODO: emit response
+            socket.emit("addTestResponse", {success: false});
             console.log("error in insert");
         }
     });
