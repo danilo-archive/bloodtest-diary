@@ -8,6 +8,8 @@ import NavHeader from "./../navbarComponents/navHeader.js"
 
 import OptionSwitch from "./../switch/OptionSwitch.js"
 
+import Alert, { openAlert } from "./../Alert0.js"
+
 
 const Container = styled.div`
   border: red 0px solid;
@@ -83,7 +85,7 @@ class Navbar extends React.Component {
             <SearchBar/>
             <WeekButtons onPrev = {this.onPrev} onNext = {this.onNext}/>
           </CalenderControls>
-          <ControlButtons onPatientsClick = {this.onPatientsClick} onSignoutClick = {this.onSignoutClick}/>
+          <ControlButtons onPatientsClick = {this.onPatientsClick} onSignoutClick = { () => openAlert({ message: 'Your changes have succesfully saved', type: 'success' })}/>
         </BottomSide>
       </Container>
     );
