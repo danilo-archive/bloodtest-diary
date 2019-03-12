@@ -207,7 +207,9 @@ class Home extends Component {
           editTestId: testId,
           editToken: token
         });
-      }
+    }else{
+        alert("Somebody is aready editing this test");
+    }
     });
   };
 
