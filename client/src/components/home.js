@@ -49,12 +49,18 @@ class Home extends Component {
   onPatientsClick(event) {
     this.props.history.push("patients");
   }
+  refresh(event){
+      console.log("refresh");
+      this.updateDashboard();
+      this.initOverduePanel();
+  }
 
   componentDidMount = () => {
     this.initOverduePanel();
     this.updateDashboard();
     this.initCallbacks();
 
+    this.refresh = this.refresh.bind(this);
     this.handleNext = this.handleNext.bind(this);
     this.handlePrevious = this.handlePrevious.bind(this);
     this.onPatientsClick = this.onPatientsClick.bind(this);
@@ -199,12 +205,6 @@ class Home extends Component {
 
   };
 
-  // ----------------- ADDED TEST METHODS --------------------------
-
-  moveTest(from, to, test) {}
-
-  handleDrop = (section, testId) => {};
-  //
   render() {
     if (this.state.dashboardReady && this.state.overdueReady) {
       return (
@@ -227,6 +227,7 @@ class Home extends Component {
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
+                    refresh={this.refresh}
                   />
                 </div>
                 <div className={"bottomSideDash"}>

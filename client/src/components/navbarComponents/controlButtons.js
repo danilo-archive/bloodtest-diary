@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 const Container = styled.div`
 
-  width: 166px;
   min-width: 15rem;
   width: 18vw;
   max-width: 340px;
@@ -24,8 +23,9 @@ const Container = styled.div`
   .patientsButton {
     border: solid 0px #97a9a9;
     background-color: ;
-    width: 166px;
+    width: 100px;
     height: 31px;
+    margin-right: 45px;
     border-radius:  0;
     cursor: pointer;
     outline:none;
@@ -35,8 +35,9 @@ const Container = styled.div`
   .signOutButton {
     border: solid 0px #97a9a9;
     background-color: ;
-    width: 166px;
+    width: 100px;
     height: 31px;
+    margin-right:45px;
     cursor: pointer;
     outline:none;
     align-self: flex-end;
