@@ -186,20 +186,6 @@ io.on('connection',function(socket)
         socket.emit('getOverdueTestsResponse', response.response);
     });
 
-    socket.on('requestTestEditing', async (testId, accessToken) => {
-        if (!accessToken) {
-            // REQUIRE TOKEN.
-            console.log("== Authorisation required."); // TODO: return to user
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            // INVALID TOKEN.
-            console.log("== Invalid access token."); // TODO: return to user
-        }
-
-
-    })
-
     socket.on('getTestInfo', async (testId, accessToken) => {
         if (!accessToken) {
             // REQUIRE TOKEN.
@@ -211,7 +197,7 @@ io.on('connection',function(socket)
             console.log("== Invalid access token."); // TODO: return to user
         }
 
-        let response = await queryController.getTestInfo(testId);
+        const response = await queryController.getTestInfo(testId);
         console.log({response});
         socket.emit("getTestInfoResponse", response);
     });
@@ -227,7 +213,7 @@ io.on('connection',function(socket)
             console.log("== Invalid access token."); // TODO: return to user
         }
 
-        let response = await queryController.requestEditing("Test", testId, tempActionUsername);
+        const response = await queryController.requestEditing("Test", testId, tempActionUsername);
         socket.emit("requestTestEditTokenResponse", response);
 
     });
@@ -259,7 +245,7 @@ io.on('connection',function(socket)
             console.log("== Invalid access token."); // TODO: return to user
         }
 
-        const response = await queryController.returnToken(table, id, token, accessToken);
+        const response = await queryController.returnToken(table, id, token, tempActionUsername);
         socket.emit("discardEditingResponse", response);
     });
 
@@ -283,6 +269,7 @@ io.on('connection',function(socket)
             socket.emit("testAdded", response.response);
             socket.in("main_page").emit("testAdded", response.response)
         }else{
+            // TODO: emit response
             console.log("error in insert");
         }
     });
@@ -323,7 +310,7 @@ io.on('connection',function(socket)
             socket.emit("testAdded", response.response);
             socket.in("main_page").emit("testAdded", response.response);
         } else {
-            // emit failure to the socket
+            // TODO: emit failure to the socket
         }
     });
 
@@ -338,7 +325,7 @@ io.on('connection',function(socket)
             console.log("== Invalid access token."); // TODO: return to user
         }
 
-        const response = await queryController.changeTestDueDate(testId, newDate);
+        const response = await queryController.changeTestDueDate(testId, newDate, tempActionUsername);
         if (response.success){
             socket.emit("testAdded", response.response);
             io.in("main_page").emit("testAdded", response.response);
