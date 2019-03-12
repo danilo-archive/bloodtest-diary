@@ -51,10 +51,13 @@ class Home extends Component {
         this.updateDashboard();
         this.initCallbacks();
 
+
+        this.logout = this.logout.bind(this);
+        this.refresh = this.refresh.bind(this);
         this.handleNext = this.handleNext.bind(this);
         this.handlePrevious = this.handlePrevious.bind(this);
         this.onPatientsClick = this.onPatientsClick.bind(this);
-        this.logout = this.logout.bind(this);
+
 
     this.onAddTestOpenModal = this.onAddTestOpenModal.bind(this);
     this.onAddTestCloseModal = this.onAddTestCloseModal.bind(this);
@@ -172,6 +175,12 @@ class Home extends Component {
     }
   }
 
+ refresh(event){
+      console.log("refresh");
+      this.updateDashboard();
+      this.initOverduePanel();
+  }
+
   onPatientsClick(event) {
     this.props.history.push("patients")
   }
@@ -225,12 +234,6 @@ class Home extends Component {
 
     }
 
-  // ----------------- ADDED TEST METHODS --------------------------
-
-  moveTest(from, to, test) {}
-
-  handleDrop = (section, testId) => {};
-  //
   render() {
     if (this.state.dashboardReady && this.state.overdueReady) {
       return (
@@ -254,10 +257,11 @@ class Home extends Component {
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
-                    onSignoutClick={this.logout}
-                />
-              </div>
-              <div className={"bottomSideDash"}>
+                    onSignoutClick={this.logout} 
+                    refresh={this.refresh}
+                  />
+                </div>
+                <div className={"bottomSideDash"}>
                   <div className={"homecalendar"}>
                     <WeeklyCalendar
                       calendar={this.state.calendar}

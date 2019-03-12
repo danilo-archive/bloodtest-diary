@@ -1,5 +1,6 @@
 const electron = require('electron');
 const app = electron.app;
+const globalShortcut = electron.globalShortcut;
 const BrowserWindow = electron.BrowserWindow;
 
 const isDev = require('electron-is-dev');
@@ -14,6 +15,13 @@ let width = 0;
 let height = 0;
 
 let mainWindow;
+
+app.on('ready', () => {
+  // Register a 'CommandOrControl+X' shortcut listener.
+  const ret = globalShortcut.register('CommandOrControl+R', () => {
+    return;
+  });
+});
 
 function getWindowSize(axis) {
   if (axis === "width") {
