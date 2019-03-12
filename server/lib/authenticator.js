@@ -86,7 +86,7 @@ async function verifyToken(accessToken) {
   }
   const newExpiry = new Date();
   newExpiry.setDate(newExpiry.getDate() + ACCESS_TOKEN_VALIDITY_DAYS);
-  accessTokens[accessToken][expires] = newExpiry;
+  accessTokens[accessToken].expires = newExpiry;
   return accessTokens[accessToken].username;
 }
 
