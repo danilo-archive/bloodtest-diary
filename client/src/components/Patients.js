@@ -78,6 +78,7 @@ class Patients extends React.Component {
 
         this.openModal = this.openModal.bind(this);
         this.onCloseModal = this.onCloseModal.bind(this);
+        this.logout = this.logout.bind(this);
     }
 
     initOnPatientEditedCallback(){
@@ -99,6 +100,11 @@ class Patients extends React.Component {
 
     onHomeClick(event) {
         this.props.history.push("home")
+    }
+
+    logout(event){
+        this.serverConnect.deleteLoginToken();
+        this.props.history.replace("");
     }
 
     openModal(id){
@@ -130,6 +136,7 @@ class Patients extends React.Component {
                     <NavbarContainer>
                         <Navbar
                             onHomeClick={this.onHomeClick}
+                            onSignoutClick={this.logout}
                         />
                     </NavbarContainer>
                     {<TableContainer>

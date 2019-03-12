@@ -13,6 +13,13 @@ const logger = require("../../../lib/action-logger");
 const Database = require("../../../lib/db_controller/Database");
 const databaseConfig = require("../../../config/database");
 
+before(() => {
+    logger.disableConsoleOutput();
+});
+
+after(() => {
+    logger.enableConsoleOutput();
+});
 describe("Test action logger:", () => {
 
     before(() => {
