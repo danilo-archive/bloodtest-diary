@@ -320,8 +320,7 @@ class ServerConnect {
         console.log({newData});
         this.socket.emit("editTest", testId, newData, token, this.loginToken);
         this.socket.once("editTestResponse", response => {
-            // TODO: add callback
-            //callback(response)
+            callback(response);
         });
     }
 
