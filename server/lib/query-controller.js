@@ -329,7 +329,7 @@ async function editCarer(newInfo, token, actionUsername){
 async function changeTestDueDate(testId, newDate, actionUsername){
     const token = await requestEditing("Test",testId, actionUsername);
     newDate = dateformat(newDate, "yyyymmdd");
-    // TODO: fix to suit style
+    
     const sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
     const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
     if (!res.success) {

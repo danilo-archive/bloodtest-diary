@@ -230,9 +230,10 @@ class ServerConnect {
         });
     }
 
+    // TODO: what is this???
     getMockTest(testId, callback){
-        let duedate = new Date(2019, 3, 4);
-        let mockedTest = {
+        const duedate = new Date(2019, 3, 4);
+        const mockedTest = {
             patient_name: "John Doe",
             patient_no: "P123890",
             test_id: 123,
