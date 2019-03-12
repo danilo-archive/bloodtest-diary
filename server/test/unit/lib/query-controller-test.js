@@ -524,7 +524,7 @@ describe("Update queries tests", function(){
           },
           selectQuery: async function()
           {
-            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2}]}}
+            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date()}]}}
           },
           insertQuery: async function()
           {

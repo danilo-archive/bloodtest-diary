@@ -548,8 +548,8 @@ function getTestsDuringTheWeek(date)
 **/
 function getNextDueDate(frequency, completed_date)
 {
-  const dateInZoneFormat = calendarController.getNextDate(frequency,new Date(completed_date));
-  return dateformat(new Date(dateInZoneFormat), "yyyymmdd")
+  const nextDate = calendarController.getNextDueDate(frequency,new Date(completed_date));
+  return dateformat(new Date(nextDate), "yyyymmdd")
 }
 
 /**
