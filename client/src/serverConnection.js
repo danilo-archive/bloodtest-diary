@@ -319,8 +319,9 @@ class ServerConnect {
     editTest(testId, newData, token, callback){
         console.log({newData});
         this.socket.emit("editTest", testId, newData, token, this.loginToken);
-        this.socket.once("editTestReponse", response => {
-            callback(response)
+        this.socket.once("editTestResponse", response => {
+            // TODO: add callback
+            //callback(response)
         });
     }
 

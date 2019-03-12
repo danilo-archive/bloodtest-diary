@@ -186,7 +186,7 @@ async function editTest(testId, newInfo,token, actionUsername){
     const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
 
     if (res.success && scheduleNew) {
-       const insertedResponse = await scheduleNextTest(testId, actionUsername,newInfo);
+       const insertedResponse = await scheduleNextTest(testId, actionUsername);
        if(insertedResponse.insertId){
          res["insertId"] = insertedResponse.insertId;
        }
@@ -225,7 +225,7 @@ async function editPatientExtended(newInfo,token, actionUsername)
   const carer = {};
   const hospital = {};
   const patientNewInfo={};
-  let querySuccess = false;
+  let querySuccess = true;
   for(let i=0; i<updateProperties.length; i++)
    {
      if((updateProperties[i].startsWith('carer') || updateProperties[i] == 'relationship') && newInfo[updateProperties[i]])
@@ -284,8 +284,10 @@ async function editPatientExtended(newInfo,token, actionUsername)
 
   const patientUpdateResponse = await editPatient(patientNewInfo,token, actionUsername);
 
-  if(patientUpdateResponse.success==true && hospitalQueryResponse.success==true  && carerQueryResponse.success==true){
-    querySuccess = true;
+  if((patientUpdateResponse.success===false && typeof patientUpdateResponse.success != 'undefined') ||
+    (hospitalQueryResponse.success===false  && typeof hospitalQueryResponse.success != 'undefined') ||
+    (carerQueryResponse.success===false && typeof carerQueryResponse.success != 'undefined')){
+    querySuccess = false;
   }
 
   return {success: querySuccess, response: {
@@ -563,6 +565,7 @@ function getNextDueDate(frequency, completed_date)
 async function scheduleNextTest(testId, actionUsername, newInfo={})
 {
   const response = await getTest(testId);
+  console.log(JSON.stringify(response))
   const test = response.response[0];
   // occurrences needs to be more than 1. if there is only one occurrence it does not need to be repeated.
   // also frequency needs to be defined (not null)
@@ -574,6 +577,7 @@ async function scheduleNextTest(testId, actionUsername, newInfo={})
       occurrences: (!newInfo.occurrences) ? (test.occurrences-1) : (newInfo.occurrences), // newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
       notes: (!newInfo.notes) ? test.notes : newInfo.notes
     }
+    console.log(newTest)
     return await addTest(newTest, actionUsername);
   }
   return {success: true, reply: "No new tests"};
