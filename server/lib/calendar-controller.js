@@ -20,9 +20,14 @@ const hd = new Holidays('GB');
  * @param {date} startingDate the starting date from which to calculate the next date
  */
 function getNextDueDate(frequency, startingDate) {
-    if (startingDate === undefined || frequency === null || frequency.split('-').length != 2) {
+    if (startingDate === undefined || 
+        frequency === undefined || 
+        frequency === null || 
+        frequency.split('-').length != 2 ||
+        !(startingDate instanceof Date)) {
         return null;
     }
+
     const f_value = parseInt(frequency.split('-')[0]); // the '3' in '3-Y'
     if (isNaN(f_value) || !stringIsInteger(frequency.split('-')[0])) {
         return null;
@@ -62,7 +67,7 @@ function getNextDueDate(frequency, startingDate) {
  * @param {date} date the date to check
  */
 function isHoliday(date) {
-    hd.isHoliday(date);
+    return hd.isHoliday(date);
 }
 
 /**
