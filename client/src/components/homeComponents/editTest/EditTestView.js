@@ -52,7 +52,7 @@ export default class EditTestView extends React.Component {
             occurrences: res.occurrences
           },
           status: res.completed_status === "yes"? "completed": res.completed_status === "no"?"pending":"in review",
-          notes: (res.notes) ? res.notes : ""
+          notes: (res.notes !== "null") ? res.notes : ""
         },
         showCalendar: false,
         ready: true
