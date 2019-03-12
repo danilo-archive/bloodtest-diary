@@ -168,11 +168,6 @@ class Home extends Component {
   this.updateDashboard(nextWeek);
   }
 
-  handleNext(event) {
-    let nextWeek = getNextWeek([...this.state.weekDays]);
-    this.updateDashboard(nextWeek);
-  }
-
   handlePrevious(event) {
     let previousWeek = getPreviousWeek([...this.state.weekDays]);
     this.updateDashboard(previousWeek);
@@ -221,8 +216,9 @@ class Home extends Component {
       return (
         <ModalProvider>
           <div className={"home"}>
+          <CustomDragLayer snapToGrid={true} />
             <div className={"dashboard"}>
-              <CustomDragLayer snapToGrid={true} />
+
               <div className={"overduePatients"}>
                 <OverduePatients
                   notificationNumber={getNumberOfTestsInGroup(

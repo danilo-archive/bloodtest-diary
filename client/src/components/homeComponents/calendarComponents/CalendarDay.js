@@ -96,4 +96,4 @@ class CalendarDay extends React.Component {
 }
 
 export default DropTarget("appointment", spec, collect)(CalendarDay);
-// 
+//

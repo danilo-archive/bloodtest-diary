@@ -46,12 +46,14 @@ function getNextWeek(week){
     let wednesday = week[2];
     let thursday = week[3];
     let friday = week[4];
+    let saturday = week[5];
     monday.setDate(monday.getDate() + 7);
     tuesday.setDate(tuesday.getDate() + 7);
     wednesday.setDate(wednesday.getDate() + 7);
     thursday.setDate(thursday.getDate() + 7);
     friday.setDate(friday.getDate() + 7);
-    return [monday, tuesday, wednesday, thursday, friday];
+    saturday.setDate(saturday.getDate() + 7);
+    return [monday, tuesday, wednesday, thursday, friday, saturday];
 }
 
 /**
