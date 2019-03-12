@@ -348,10 +348,11 @@ io.on('connection',function(socket)
         console.log({response});
 
         if (response.success){
-            socket.emit("editTestResponse", response.response);
-            socket.in("main_page").emit("editTestResponse", response.response);
+            socket.emit("editTestResponse", {success: true});
+            socket.emit("testAdded", response.response);
+            socket.in("main_page").emit("testAdded", response.response);
         } else {
-            // TODO: emit failure to the socket
+            socket.emit("editTestResponse", {success: false});
         }
     });
 

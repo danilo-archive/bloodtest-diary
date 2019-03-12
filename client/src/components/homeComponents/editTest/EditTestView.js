@@ -78,7 +78,14 @@ export default class EditTestView extends React.Component {
     };
     console.log(this.token);
     console.log(params);
-    this.serverConnect.editTest(this.state.test.id, params, this.token);
+    this.serverConnect.editTest(this.state.test.id, params, this.token, res => {
+        if (res.success){
+            this.props.closeModal();
+        }else{
+            alert("Something went wrong");
+            this.props.closeModal();
+        }
+    });
   };
   render() {
     return this.state.ready ? (
