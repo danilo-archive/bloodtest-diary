@@ -141,13 +141,13 @@ io.on('connection',function(socket)
     socket.on('getNextTestsOfPatient', async (patientId, accessToken) => {
         if (!accessToken) {
             // REQUIRE TOKEN.
-            socket.emit("getTestsOfPatientResponse", { success:false, response: "Authentication required." });
+            socket.emit("getNextTestsOfPatientResponse", { success:false, response: "Authentication required." });
             return;
         }
         const username = await authenticator.verifyToken(accessToken);
         if (!username) {
             // INVALID TOKEN.
-            socket.emit("getTestsOfPatientResponse", { success:false, response: "Invalid credentials." });
+            socket.emit("getNextTestsOfPatientResponse", { success:false, response: "Invalid credentials." });
             return;
         }
 
