@@ -71,7 +71,12 @@ export default class EditTestView extends React.Component {
       test_id: test.id,
       patient_no: patient.id,
       due_date: dateformat(new Date(test.date.dueDate), "yyyy-mm-dd"),
-      frequency: test.date.frequency.length === 0 ? null : test.date.frequency,
+      frequency:
+        test.date.frequency.length === 0
+          ? null
+          : test.date.frequency.split("-")[1] === "M"
+          ? `${parseInt(test.date.frequency.split("-")[0]) * 4}-W`
+          : test.date.frequency,
       occurrences: test.date.occurrences,
       completed_status:
         test.status === "completed"
