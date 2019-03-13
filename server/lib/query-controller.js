@@ -190,8 +190,9 @@ async function editTest(testId, newInfo,token, actionUsername){
 
     if (res.success && scheduleNew) {
        const insertedResponse = await scheduleNextTest(testId, actionUsername);
-       if(insertedResponse.insertId){
-         res["insertId"] = insertedResponse.insertId;
+       if(insertedResponse.response){
+         res.response.new_date = insertedResponse.response.new_date;
+         res.response.insertId = insertedResponse.response.insertId;
        }
     }
     return res;
@@ -396,11 +397,13 @@ async function changeTestStatus(test, actionUsername)
 
   if (res.success && scheduleNew) {
     const insertedResponse = await scheduleNextTest(test.testId, actionUsername);
-    if(insertedResponse.insertId){
-      res["insertId"] = insertedResponse.insertId;
+    console.log(insertedResponse)
+    if(insertedResponse.response){
+      res.response.new_date = insertedResponse.response.new_date;
+      res.response.insertId = insertedResponse.response.insertId;
     }
   }
-
+  console.log(res)
   return res;
 }
 
@@ -694,6 +697,7 @@ async function insertQueryDatabase(sql, tableName, actionUsername, id = undefine
 async function requestEditing(table, id, actionUsername)
 {
   const data = await databaseController.requestEditing(table,id).then( data => {return data;});
+  console.log(data)
   // TODO: return token + expiration
   if (data.status == "OK"){
     logger.logOther(actionUsername, table, id, "Request for editing was approved.");
