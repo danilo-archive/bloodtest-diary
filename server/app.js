@@ -421,6 +421,12 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.unscheduleTest(testId, token, username);
+        if (response.success){
+            socket.emit("unscheduleTestResponse", { success:true });
+            io.in("main_page").emit("testAdded");
+        }else{
+            socket.emit("unscheduleTestResponse", {success:false, message: "Something went wrong"});
+        }
 
     });
 
