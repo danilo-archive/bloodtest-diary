@@ -49,7 +49,7 @@ const ButtonContainer = styled.div`
 `;
 
 
-export default class SearchBar extends Component {
+export default class NavHeader extends Component {
     constructor(props){
         super(props);
         this.onHomeClick = props.onHomeClick;

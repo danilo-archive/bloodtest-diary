@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
-import OfflineScreen from "./OfflineScreen.js";
+import ConfirmationAlert from "./alertComponents/confirmationAlert"
+import DialogAlert from "./alertComponents/dialogAlert"
+import OptionAlert from "./alertComponents/optionAlert"
 
 let openAlertFunction;
 
@@ -15,8 +17,10 @@ const Container = styled.div`
 `
 
 const StyledAlert = styled.div`
-  width: 400px;
-  height: 200px;
+  min-width: 290px;
+  width: auto;
+  max-width: 500px;
+  height: 160px;
 
   position: absolute;
   left: 50%;
@@ -29,32 +33,9 @@ const StyledAlert = styled.div`
   background-color: white;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-
-  .confirmationButton {
-    border: solid 0px #97a9a9;
-    background-color: red;
-    width: 166px;
-    height: 31px;
-    border-radius:  0;
-    cursor: pointer;
-    outline:none;
-    align-self: flex-end;
-  }
+  overflow: hidden;
 `;
 
-const DialogAlert = styled.div`
-
-`;
-const ConfirmationAlert = styled.div`
-
-`;
-const OptionAlert = styled.div`
-
-`;
 
 export default class Alert extends Component {
   constructor() {
@@ -72,11 +53,15 @@ export default class Alert extends Component {
     openAlertFunction = this.openAlert;
   }
 
-  openAlert({ message, type }) {
+  openAlert({ message, type, option1Text, option1Callback,  option2Text, option2Callback }) {
     this.setState({
       open:true,
       message: message,
       type: type,
+      option1Text: option1Text,
+      option1Callback: option1Callback,
+      option2Text: option2Text,
+      option2Callback: option2Callback,
     })
   };
 
@@ -85,6 +70,10 @@ export default class Alert extends Component {
       open:false,
       message: '',
       type: '',
+      option1Text: '',
+      option1Callback: '',
+      option2Text: '',
+      option2Callback: '',
     })
   }
 
@@ -92,28 +81,30 @@ export default class Alert extends Component {
       switch(this.state.type) {
         case 'dialogAlert':
           return (
-
-            <DialogAlert>{this.state.message}
-              <div className={"confirmationButton"} onClick={this.closeAlert}>Ok</div>
-            </DialogAlert>
-
+            <DialogAlert
+              message = {this.state.message}
+              closeAlert = {this.closeAlert}
+            />
           );
         case 'confirmationAlert':
-
           return (
-
-            <ConfirmationAlert>{this.state.message}
-              <div className={"confirmationButton"} onClick={this.closeAlert}>Ok</div>
-            </ConfirmationAlert>
-
+            <ConfirmationAlert
+              message = {this.state.message}
+              option1Text = {this.state.option1Text}
+              option1Callback = {this.state.option1Callback}
+              closeAlert = {this.closeAlert}
+            />
           );
         case 'optionAlert':
           return (
-
-            <OptionAlert>{this.state.message}
-              <div className={"confirmationButton"} onClick={this.closeAlert}>Ok</div>
-            </OptionAlert>
-
+            <OptionAlert
+              message = {this.state.message}
+              option1Text = {this.state.option1Text}
+              option1Callback = {this.state.option1Callback}
+              option2Text = {this.state.option2Text}
+              option2Callback = {this.state.option2Callback}
+              closeAlert = {this.closeAlert}
+            />
           );
         default:
           return null;
@@ -136,8 +127,8 @@ export default class Alert extends Component {
   }
 }
 
-export function openAlert({ message, type }) {
-  openAlertFunction({ message, type})
+export function openAlert({ message, type, option1Text, option1Callback,  option2Text, option2Callback }) {
+  openAlertFunction({ message, type, option1Text, option1Callback,  option2Text, option2Callback })
 }
 
 Alert.propTypes = {

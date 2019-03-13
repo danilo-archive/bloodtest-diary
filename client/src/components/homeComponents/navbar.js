@@ -83,7 +83,7 @@ class Navbar extends React.Component {
             <SearchBar/>
             <WeekButtons onPrev = {this.onPrev} onNext = {this.onNext}/>
           </CalenderControls>
-          <ControlButtons onPatientsClick = {this.onPatientsClick} onSignoutClick = { () => openAlert({ message: 'Your changes have succesfully saved', type: 'confirmationAlert' })}/>
+          <ControlButtons onPatientsClick = {this.onPatientsClick} onSignoutClick = { () => openAlert({ message: 'Are you sure?', type: 'optionAlert', option1Text: "Yes", option1Callback: {}, option2Text: "No", option2Callback: {} })}/>
         </BottomSide>
       </Container>
     );

@@ -15,7 +15,7 @@ const Container = styled.div`
   border: solid 0px #97a9a9;
   text-align: center;
   font-family: "Rajdhani", sans-serif;
-  color: #97a9a9;
+  color: #646464;
   font-size: 150%;
 
   align-self: stretch;
@@ -54,7 +54,7 @@ const Container = styled.div`
 `;
 
 
-export default class SearchBar extends Component {
+export default class ControlButtons extends Component {
 
     constructor(props){
         super(props);
