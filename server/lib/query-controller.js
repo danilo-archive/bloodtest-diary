@@ -518,6 +518,32 @@ async function deleteHospital(hospitalid, actionUsername)
   return await deleteQueryDatabase("Hospital",hospitalid,sql, actionUsername);
 }
 
+/**
+* Delete test entry from database
+* @param {String} testid - id of a test to be deleted
+* @param {string} actionUsername The user who issued the request.
+* @return {JSON} result of the query - {success:Boolean response:"Entry deleted"/Error}
+**/
+async function deleteTest(testid, actionUsername){
+  const sql = prepareDeleteSQL("Test","test_id",testid);
+  return await deleteQueryDatabase("Test",testid,sql, actionUsername);
+}
+
+/**
+* Unschedule test
+* @param testid {String} - id of the test to delete
+* @param token {String} - token to realease with the unscheduling
+* @param actionUsername {String} - username that triggered the action
+**/
+async function unscheduleTest(testid,token,actionUsername)
+{
+  const tokenRealeaseResponse = await returnToken("Test", testid, token, actionUsername);
+  if(!tokenRealeaseResponse.success){
+    return tokenRealeaseResponse;
+  }
+  const testDeletionResponse = await deleteTest(testid, actionUsername);
+  return testDeletionResponse;
+}
 /*===============================*
       HELPER FUNCTIONS BELOW:
  *===============================*/
@@ -881,6 +907,8 @@ module.exports = {
   //DELETE
     deleteHospital,
     deleteCarer,
+    unscheduleTest,
+    deleteTest,
   //TOKEN CONTROL
     requestEditing,
     returnToken
