@@ -605,7 +605,7 @@ async function scheduleNextTest(testId, actionUsername, newInfo={})
       notes: (!newInfo.notes) ? test.notes : newInfo.notes
     }
     console.log(newTest)
-    const response = await addTest(newTest);
+    const response = await addTest(newTest, actionUsername);
     if(response.success){
       response.response["new_date"] = newTest.due_date;
     }
