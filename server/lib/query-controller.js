@@ -259,7 +259,6 @@ async function editPatientExtended(newInfo,token, actionUsername)
   else if(Object.keys(carer).length == 0 && token && patient.carer_id)
   {
     carerQueryResponse = await deleteCarer(patient.carer_id, actionUsername);
-    console.log(`RESPONSE: ${carerQueryResponse.response}`)
   }
 
   let  hospitalQueryResponse = {}
@@ -565,7 +564,6 @@ function getNextDueDate(frequency, completed_date)
 async function scheduleNextTest(testId, actionUsername, newInfo={})
 {
   const response = await getTest(testId);
-  console.log(JSON.stringify(response))
   const test = response.response[0];
   // occurrences needs to be more than 1. if there is only one occurrence it does not need to be repeated.
   // also frequency needs to be defined (not null)
@@ -577,7 +575,6 @@ async function scheduleNextTest(testId, actionUsername, newInfo={})
       occurrences: (!newInfo.occurrences) ? (test.occurrences-1) : (newInfo.occurrences), // newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
       notes: (!newInfo.notes) ? test.notes : newInfo.notes
     }
-    console.log(newTest)
     return await addTest(newTest, actionUsername);
   }
   return {success: true, reply: "No new tests"};
