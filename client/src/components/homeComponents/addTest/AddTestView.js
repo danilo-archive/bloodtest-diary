@@ -15,6 +15,7 @@ const DataContainer = styled.div`
 export default class AddTestView extends React.Component {
   state = {
     open: true,
+    showCalendar: false,
     selectedID: "",
     selectedDate: dateformat(new Date(this.props.selectedDate), "d mmm yyyy"),
     observations: "",
@@ -48,7 +49,7 @@ export default class AddTestView extends React.Component {
     this.setState({ open: false });
   };
   onDateSelect = selectedDate => {
-    this.setState({ selectedDate });
+    this.setState({ showCalendar: false, selectedDate });
   };
   onDoneClick = () => {
     if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
@@ -103,6 +104,7 @@ export default class AddTestView extends React.Component {
             />
 
             <DateSelectorSection
+              showCalendar={this.state.showCalendar}
               noRepeat={this.state.frequency.noRepeat}
               occurrences={this.state.frequency.occurrences}
               timeAmount={this.state.frequency.timeAmount}
@@ -125,6 +127,7 @@ export default class AddTestView extends React.Component {
                 })
               }
               selectedDate={this.state.selectedDate}
+              onInputClick={() => this.setState({ showCalendar: true })}
               onDateSelect={day => this.onDateSelect(day)}
               onObservationsChange={observations =>
                 this.setState({ observations })
