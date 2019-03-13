@@ -51,8 +51,13 @@ export default class EditTestView extends React.Component {
             frequency: res.frequency ? res.frequency : "",
             occurrences: res.occurrences
           },
-          status: res.completed_status === "yes"? "completed": res.completed_status === "no"?"pending":"in review",
-          notes: (res.notes !== "null") ? res.notes : ""
+          status:
+            res.completed_status === "yes"
+              ? "completed"
+              : res.completed_status === "no"
+              ? "pending"
+              : "in review",
+          notes: res.notes !== "null" ? res.notes : ""
         },
         showCalendar: false,
         ready: true
@@ -66,7 +71,7 @@ export default class EditTestView extends React.Component {
       test_id: test.id,
       patient_no: patient.id,
       due_date: dateformat(new Date(test.date.dueDate), "yyyy-mm-dd"),
-      frequency: (test.date.frequency.length === 0) ? null : test.date.frequency,
+      frequency: test.date.frequency.length === 0 ? null : test.date.frequency,
       occurrences: test.date.occurrences,
       completed_status:
         test.status === "completed"
@@ -79,12 +84,12 @@ export default class EditTestView extends React.Component {
     console.log(this.token);
     console.log(params);
     this.serverConnect.editTest(this.state.test.id, params, this.token, res => {
-        if (res.success){
-            this.props.closeModal();
-        }else{
-            alert("Something went wrong");
-            this.props.closeModal();
-        }
+      if (res.success) {
+        this.props.closeModal();
+      } else {
+        alert("Something went wrong");
+        this.props.closeModal();
+      }
     });
   };
   render() {

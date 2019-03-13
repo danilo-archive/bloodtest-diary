@@ -19,7 +19,7 @@ export default props => {
       <Label>Repeat every</Label>
       <Input
         type="text"
-        value={props.frequencyTimes}
+        value={props.frequencyTimes === "null" ? "" : props.frequencyTimes}
         onChange={event => props.onFrequencyChange(event.target.value)}
       />
       <select
@@ -35,7 +35,7 @@ export default props => {
       </select>
       <Label style={{ margin: "0 0 0 1rem" }}>For</Label>
       <Input
-        value={props.occurrences}
+        value={props.occurrences === "null" ? "" : props.occurrences}
         type="text"
         onChange={event => props.onOccurrencesChange(event.target.value)}
       />
