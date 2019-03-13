@@ -182,6 +182,9 @@ async function editTest(testId, newInfo,token, actionUsername){
       scheduleNew = true;
       newInfo['completed_date'] = dateformat(new Date(), "yyyymmdd");
     }
+    else{
+      newInfo['completed_date'] = 'NULL';
+    }
     const sql = prepareUpdateSQL("Test",newInfo,"test_id");
     const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
 
@@ -331,7 +334,7 @@ async function editCarer(newInfo, token, actionUsername){
 async function changeTestDueDate(testId, newDate, actionUsername){
     const token = await requestEditing("Test",testId, actionUsername);
     newDate = dateformat(newDate, "yyyymmdd");
-    
+
     const sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
     const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
     if (!res.success) {
@@ -578,11 +581,15 @@ async function scheduleNextTest(testId, actionUsername, newInfo={})
       notes: (!newInfo.notes) ? test.notes : newInfo.notes
     }
     console.log(newTest)
-    return await addTest(newTest, actionUsername);
+    const response = await addTest(newTest);
+    if(response.success){
+      response.response["new_date"] = newTest.due_date;
+    }
+    console.log(response);
+    return response;
   }
   return {success: true, reply: "No new tests"};
 }
-
 /**
 * Run multiple queries on the database
 * @param {Array} queries - array of queries to run
@@ -638,8 +645,8 @@ async function insertQueryDatabase(sql, tableName, actionUsername, id = undefine
   const response = await databaseController.insertQuery(sql);
   if (response.status == "OK"){
       id = (id === undefined) ? response.response.insertId : id;
-      logger.logInsert(actionUsername, tableName, id, "Successful.");
-      return {success: true, insertId: id};
+      //logger.logInsert(actionUsername, tableName, id, "Successful.");
+      return {success: true, response: {insertId: id} };
   }else {
       if (response.err.type === "SQL Error") {
         logger.logInsert(actionUsername, tableName, "-1",
@@ -755,7 +762,12 @@ function prepareInsertSQL(table,object)
   const values = Object.values(object);
   for(let i=0; i<values.length-1; i++)
   {
+    if(values[i]!='NULL'){
       sql += `'${values[i]}',`;
+    }
+    else{
+      sql += `${values[i]},`;
+    }
   }
   sql += `'${values[values.length-1]}');`
   return sql;
@@ -777,7 +789,12 @@ function prepareUpdateSQL(table, object, idProperty)
   for(let i=0; i<properties.length; i++)
   {
     if(properties[i]!= idProperty){
-      sql += `${properties[i]} = '${values[i]}', `;
+      if(values[i]!="NULL"){
+        sql += `${properties[i]} = '${values[i]}', `;
+      }
+      else{
+        sql += `${properties[i]} = NULL, `;
+      }
     }
     else{
       pos = i;
