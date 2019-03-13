@@ -23,7 +23,8 @@ export default class AddTestView extends React.Component {
       timeAmount: null,
       timeUnits: ["Days", "Weeks", "Months", "Years"],
       timeUnit: "Days",
-      occurrences: 0
+      occurrences: 0,
+      noRepeat: false
     }
   };
   constructor(props) {
@@ -60,11 +61,11 @@ export default class AddTestView extends React.Component {
         frequency = `${timeAmount}-${timeUnit}`;
       }
       const { selectedID, selectedDate, observations } = this.state;
-      const occurrences = this.state.frequency.occurrences;
-
+      let { occurrences, noRepeat } = this.state.frequency;
+      occurrences = noRepeat ? 1 : occurrences;
       this.serverConnect.addTest(
         selectedID,
-        selectedDate,
+        dateformat(new Date(selectedDate), "yyyymmdd"),
         observations,
         frequency,
         occurrences,
@@ -82,7 +83,6 @@ export default class AddTestView extends React.Component {
     }
   };
   render() {
-    console.log(this.state);
     return (
       <>
         <div
@@ -103,6 +103,8 @@ export default class AddTestView extends React.Component {
             />
 
             <DateSelectorSection
+              noRepeat={this.state.frequency.noRepeat}
+              occurrences={this.state.frequency.occurrences}
               timeAmount={this.state.frequency.timeAmount}
               timeUnit={this.state.frequency.timeUnit}
               unitOptions={this.state.frequency.timeUnits}
@@ -112,6 +114,11 @@ export default class AddTestView extends React.Component {
                   frequency: { ...this.state.frequency, timeAmount }
                 });
               }}
+              onNoRepeatChange={value =>
+                this.setState({
+                  frequency: { ...this.state.frequency, noRepeat: value }
+                })
+              }
               onUnitChange={timeUnit =>
                 this.setState({
                   frequency: { ...this.state.frequency, timeUnit }

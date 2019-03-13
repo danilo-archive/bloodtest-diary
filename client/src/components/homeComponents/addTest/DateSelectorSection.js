@@ -16,8 +16,8 @@ const Container = styled.div`
 const SecondHalfDiv = styled.div`
   position: absolute;
   width: 100%;
-  height: 90%;
-  top: 45%;
+  height: 74%;
+  top: 55%;
   left: 0;
   background: none;
   z-index: 0;
@@ -73,6 +73,8 @@ export default class DateSelectorSection extends React.Component {
             <></>
           )}
           <FrequencySetter
+            noRepeat={this.props.noRepeat}
+            onNoRepeatChange={this.props.onNoRepeatChange}
             unitOptions={this.props.unitOptions}
             timeAmount={this.state.frequency.timeAmount}
             timeUnit={this.state.frequency.timeUnit}
