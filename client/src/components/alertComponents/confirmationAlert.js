@@ -60,6 +60,7 @@ const Alert = styled.div`
     color: #646464;
 
     width: auto;
+    min-width: 20%;
     height: auto;
     padding: 2px;
     padding-left: 5px;

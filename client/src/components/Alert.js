@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 
 import ConfirmationAlert from "./alertComponents/confirmationAlert"
 import DialogAlert from "./alertComponents/dialogAlert"
@@ -129,9 +128,4 @@ export default class Alert extends Component {
 
 export function openAlert({ message, type, option1Text, option1Callback,  option2Text, option2Callback }) {
   openAlertFunction({ message, type, option1Text, option1Callback,  option2Text, option2Callback })
-}
-
-Alert.propTypes = {
-  message: PropTypes.string,
-  type: PropTypes.oneOf(['dialogAlert', 'confirmationAlert', 'optionAlert'])
 }
