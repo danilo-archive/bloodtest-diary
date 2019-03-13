@@ -81,6 +81,11 @@ const Alert = styled.div`
 
 export default class ConfirmationAlert extends Component {
 
+    onOption1Click = event => {
+        this.props.closeAlert();
+        if(this.props.option1Callback){this.props.option1Callback()}
+    }
+
     render(){
       return (
           <>
@@ -89,7 +94,7 @@ export default class ConfirmationAlert extends Component {
                 <p className="alertMessage">{this.props.message}</p>
               </div>
               <div className="alertButtonContainer">
-                <div className={"confirmationButton"} onClick={()=>{ this.props.closeAlert(); this.props.option1Callback() }}>{this.props.option1Text}</div>
+                <div className={"confirmationButton"} onClick={this.onOption1Click}>{this.props.option1Text}</div>
               </div>
             </Alert>
           </>

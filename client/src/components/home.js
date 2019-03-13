@@ -9,6 +9,7 @@ import OngoingWeekly from "./homeComponents/ongoingWeekly";
 import AddTest from "./homeComponents/addTest/AddTestView";
 import VerticalLine from "./homeComponents/calendarComponents/VerticalLine";
 import LoadingAnimation from "./loadingScreen/loadingAnimation";
+import { openAlert } from "./Alert.js"
 
 import EditTest from "./homeComponents/editTest/EditTestView";
 import {
@@ -220,7 +221,7 @@ class Home extends Component {
           editToken: token
         });
       } else {
-        alert("Somebody is aready editing this test");
+        openAlert("Somebody is aready editing this test", "confirmationAlert", "Ok");
       }
     });
   };

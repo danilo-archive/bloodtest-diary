@@ -64,27 +64,18 @@ class Navbar extends React.Component {
 
   constructor(props){
       super(props);
-      this.onPrev = props.onPrev;
-      this.onNext = props.onNext;
-      this.onPatientsClick = props.onPatientsClick;
-      this.onHomeClick = props.onHomeClick;
-      this.onSignoutClick = props.onSignoutClick;
   }
-
-  onRefreshClick = () => {
-    this.props.refresh();
-  };
 
   render() {
     return (
       <Container>
-        <NavHeader onHomeClick = {this.onHomeClick} onRefreshClick = {this.onRefreshClick}/>
+        <NavHeader onHomeClick = {this.props.onHomeClick} onRefreshClick = {this.props.refresh}/>
         <BottomSide>
           <CalenderControls>
             <SearchBar/>
-            <WeekButtons onPrev = {this.onPrev} onNext = {this.onNext}/>
+            <WeekButtons onPrev = {this.props.onPrev} onNext = {this.props.onNext}/>
           </CalenderControls>
-          <ControlButtons onPatientsClick = {this.onPatientsClick} onSignoutClick = { () => openAlert({ message: 'Are you sure?', type: 'optionAlert', option1Text: "Yes", option1Callback: {}, option2Text: "No", option2Callback: {} })}/>
+          <ControlButtons onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
         </BottomSide>
       </Container>
     );

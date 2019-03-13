@@ -80,6 +80,16 @@ const Alert = styled.div`
 
 export default class OptionAlert extends Component {
 
+    onOption1Click = event => {
+        this.props.closeAlert();
+        if(this.props.option1Callback){this.props.option1Callback()}
+    }
+
+    onOption2Click = event => {
+        this.props.closeAlert();
+        if(this.props.option2Callback){this.props.option2Callback()}
+    }
+
     render(){
       return (
           <>
@@ -88,8 +98,8 @@ export default class OptionAlert extends Component {
                 <p className="alertMessage">{this.props.message}</p>
               </div>
               <div className="alertButtonContainer">
-                <div className={"optionButton"} onClick={()=>{ this.props.closeAlert(); this.props.option2Callback() }}>{this.props.option2Text}</div>
-                <div className={"optionButton"} onClick={()=>{ this.props.closeAlert(); this.props.option1Callback() }}>{this.props.option1Text}</div>
+                <div className={"optionButton"} onClick={this.onOption1Click}>{this.props.option2Text}</div>
+                <div className={"optionButton"} onClick={this.onOption2Click}>{this.props.option1Text}</div>
               </div>
             </Alert>
           </>

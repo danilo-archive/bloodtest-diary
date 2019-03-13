@@ -5,7 +5,7 @@ import ConfirmationAlert from "./alertComponents/confirmationAlert"
 import DialogAlert from "./alertComponents/dialogAlert"
 import OptionAlert from "./alertComponents/optionAlert"
 
-let openAlertFunction;
+var openAlertFunction;
 
 const Container = styled.div`
   position: absolute;
@@ -43,6 +43,10 @@ export default class Alert extends Component {
       open: false,
       message: '',
       type: '',
+      option1Text: '',
+      option1Callback: undefined,
+      option2Text: '',
+      option2Callback: undefined,
     }
     this.closeAlert = this.closeAlert.bind(this);
     this.openAlert = this.openAlert.bind(this);
@@ -70,9 +74,9 @@ export default class Alert extends Component {
       message: '',
       type: '',
       option1Text: '',
-      option1Callback: '',
+      option1Callback: undefined,
       option2Text: '',
-      option2Callback: '',
+      option2Callback: undefined,
     })
   }
 
@@ -126,6 +130,6 @@ export default class Alert extends Component {
   }
 }
 
-export function openAlert({ message, type, option1Text, option1Callback,  option2Text, option2Callback }) {
+export function openAlert(message, type, option1Text, option1Callback,  option2Text, option2Callback) {
   openAlertFunction({ message, type, option1Text, option1Callback,  option2Text, option2Callback })
 }
