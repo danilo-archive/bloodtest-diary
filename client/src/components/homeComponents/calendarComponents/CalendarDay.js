@@ -81,10 +81,8 @@ class CalendarDay extends React.Component {
           />
           <ScrollBox style={{background: backgroundColor}}>
             <AppointmentSection
-              background = {backgroundColor}
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
-              sectionDate={this.props.date}
               editTest={this.props.editTest}
             />
             <div style={{width:"100%",height:"130px"}}/>
@@ -96,4 +94,4 @@ class CalendarDay extends React.Component {
 }
 
 export default DropTarget("appointment", spec, collect)(CalendarDay);
-// 
+//

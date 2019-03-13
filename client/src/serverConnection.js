@@ -49,7 +49,6 @@ class ServerConnect {
         });
 
         this.socket.on("testStatusChange", (id, status) => {
-            console.log("here");
             this.onTestStatusChange(id, status);
         });
 
@@ -273,13 +272,13 @@ class ServerConnect {
     }
 
     discardTestEditing(id, token, callback){
-        this.socket.emit("discardEditing", "Test", id, token);
+        this.socket.emit("discardEditing", "Test", id, token, this.loginToken);
         this.socket.once("discardEditingResponse", res => {
             callback(res);
         });
     }
     discardPatientEditing(id, token, callback){
-        this.socket.emit("discardEditing", "Patient", id, token);
+        this.socket.emit("discardEditing", "Patient", id, token, this.loginToken);
         this.socket.once("discardEditingResponse", res => {
             callback(res);
         });
@@ -292,8 +291,11 @@ class ServerConnect {
     * @param notes Additional info about the test
     * @param frequency The frequency of the test
     */
-    addTest(patientId, date, notes, frequency, occurrences){
+    addTest(patientId, date, notes, frequency, occurrences, callback){
         this.socket.emit("addTest", patientId, date, notes, frequency, occurrences, this.loginToken);
+        this.socket.once("addTestResponse", res => {
+            callback(res);
+        });
     }
 
     /**
@@ -301,11 +303,17 @@ class ServerConnect {
     * @param testId The id of the test to be changed.
     * @param newStatus The new status of the test
     */
-    changeTestStatus(testId, newStatus){
+    changeTestStatus(testId, newStatus, callback){
         this.socket.emit('testStatusChange', testId, newStatus, this.loginToken);
+        this.socket.once("testStatusChangeResponse", res => {
+            callback(res);
+        });
     }
-    changeTestDueDate(testId, newDate){
+    changeTestDueDate(testId, newDate, callback){
         this.socket.emit("changeTestDueDate", testId, newDate, this.loginToken);
+        this.socket.once("changeTestDueDateResponse", res => {
+            callback(res);
+        });
     }
 
     /**
@@ -320,8 +328,7 @@ class ServerConnect {
         console.log({newData});
         this.socket.emit("editTest", testId, newData, token, this.loginToken);
         this.socket.once("editTestResponse", response => {
-            // TODO: add callback
-            //callback(response)
+            callback(response);
         });
     }
 

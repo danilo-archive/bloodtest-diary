@@ -59,28 +59,24 @@ export default class AddTestView extends React.Component {
         timeUnit = timeUnit.charAt(0);
         frequency = `${timeAmount}-${timeUnit}`;
       }
+      const { selectedID, selectedDate, observations } = this.state;
+      const occurrences = this.state.frequency.occurrences;
+
       this.serverConnect.addTest(
-        this.state.selectedID,
-        dateformat(new Date(this.state.selectedDate), "yyyy-mm-dd"),
-        this.state.observations,
+        selectedID,
+        selectedDate,
+        observations,
         frequency,
-        this.state.frequency.occurrences ? this.state.frequency.occurrences : 0
+        occurrences,
+        res => {
+          if (res.success) {
+            this.setState({ open: false });
+            this.props.closeModal();
+          } else {
+            alert("something went wrong, test was not added");
+          }
+        }
       );
-      alert(
-        `Patient ID: ${this.state.selectedID} \nObservations: ${
-          this.state.observations
-        }\nScheduled Date: ${this.state.selectedDate}\nFrequency: ${
-          this.state.frequency.timeAmount === "0"
-            ? `Do not repeat`
-            : `Repeat every ${
-                this.state.frequency.timeAmount
-              } ${this.state.frequency.timeUnit.toLowerCase()} ${
-                this.state.frequency.occurrences
-              } times`
-        }`
-      );
-      this.setState({ open: false });
-      this.props.closeModal();
     } else {
       alert("Please ensure you have selected all the relevant fields");
     }

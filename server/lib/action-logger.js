@@ -84,7 +84,7 @@ function logDelete(username, tableName, entryID, message = undefined, callback =
  *                          as it needs to explain what happened.
  * @param {function} Optional action, called with the result of insertQuery.
  */
-function logOther(username, tableName, entryID, message = undefined, callback = undefined) {
+function logOther(username, tableName, entryID, message, callback = undefined) {
     if (message === undefined) {
         throw new Error("Invalid use of a logger function.");
     }
