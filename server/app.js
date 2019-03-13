@@ -327,7 +327,7 @@ io.on('connection',function(socket)
         const test = {testId: testId, newStatus: newStatus}
         const response = await queryController.changeTestStatus(test, username);
         if (response.success){
-            socket.emit('testStatusChangeResponse', {success: true});
+            socket.emit('testStatusChangeResponse', {success: true, response: response.response});
             io.in("main_page").emit('testStatusChange', testId, newStatus);
         }else{
             socket.emit('testStatusChangeResponse', {success: false});

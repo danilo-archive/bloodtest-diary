@@ -9,6 +9,7 @@ import {isPastDate} from "../../../lib/calendar-controller.js";
 import { DragSource } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import {openAlert} from "../../Alert.js";
+import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
 
 const serverConnect = getServerConnect();
 const Container = styled.div`
@@ -156,7 +157,11 @@ class AppointmentBox extends React.Component {
 
   onStatusClick = status => {
     this.serverConnect.changeTestStatus(this.props.id, status, res => {
-        if (!res.success){
+        if (res.success){
+            if (res.response.insertId != undefined){
+                openAlert(`A new test was automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}`, "confirmationAlert", "Ok");
+            }
+        }else{
             openAlert("Somebody is aready editing this test", "confirmationAlert", "Ok");
         }
     });

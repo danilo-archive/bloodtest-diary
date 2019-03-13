@@ -9,7 +9,7 @@ import { getServerConnect } from "../../../serverConnection.js";
 import Button from "./Button";
 import dateformat from "dateformat";
 import { openAlert } from "./../../Alert.js";
-
+import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
 const DataContainer = styled.div`
   position: relative;
   width: 45rem;
@@ -23,15 +23,6 @@ const SetterValues = [
   { value: "Y", name: "Years" }
 ];
 
-/**
-*@param dateString a date of the form "20190323"
-*/
-function formatDatabaseDate(dateString){
-    let year = dateString.slice(0,4);
-    let month = dateString.slice(4,6);
-    let day = dateString.slice(6,8);
-    return `${year}/${month}/${day}`
-}
 
 const TextArea = styled.textarea`
   width: 40%;

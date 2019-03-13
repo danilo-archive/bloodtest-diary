@@ -15,6 +15,16 @@ function isPastDate(date){
 }
 
 /**
+*@param dateString a date of the form "20190323"
+*/
+function formatDatabaseDate(dateString){
+    let year = dateString.slice(0,4);
+    let month = dateString.slice(4,6);
+    let day = dateString.slice(6,8);
+    return `${year}/${month}/${day}`
+}
+
+/**
  * Gets the date object of the monday of the relative week
  * @param {Date} date any day of any week
  * @returns {Date} relative monday date
@@ -202,5 +212,6 @@ module.exports = {
     getCurrentWeek,
     getPreviousWeek,
     getMondayOfWeek,
-    getNextDates
+    getNextDates,
+    formatDatabaseDate
 }
