@@ -5,7 +5,7 @@ import TitleTab from "./TitleTab";
 import PatientSelect from "./PatientSelect";
 import DateSelectorSection from "./DateSelectorSection";
 import { getServerConnect } from "../../../serverConnection.js";
-
+import dateformat from "dateformat";
 const DataContainer = styled.div`
   position: relative;
   width: 100%;
@@ -15,15 +15,17 @@ const DataContainer = styled.div`
 export default class AddTestView extends React.Component {
   state = {
     open: true,
+    showCalendar: false,
     selectedID: "",
-    selectedDate: this.props.selectedDate,
+    selectedDate: dateformat(new Date(this.props.selectedDate), "d mmm yyyy"),
     observations: "",
     allPatients: "",
     frequency: {
       timeAmount: null,
       timeUnits: ["Days", "Weeks", "Months", "Years"],
       timeUnit: "Days",
-      occurrences: 1
+      occurrences: 1,
+      noRepeat: false
     }
   };
   constructor(props) {
@@ -47,7 +49,7 @@ export default class AddTestView extends React.Component {
     this.setState({ open: false });
   };
   onDateSelect = selectedDate => {
-    this.setState({ selectedDate });
+    this.setState({ showCalendar: false, selectedDate });
   };
   onDoneClick = () => {
     if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
@@ -59,34 +61,29 @@ export default class AddTestView extends React.Component {
         timeUnit = timeUnit.charAt(0);
         frequency = `${timeAmount}-${timeUnit}`;
       }
+      const { selectedID, selectedDate, observations } = this.state;
+      let { occurrences, noRepeat } = this.state.frequency;
+      occurrences = noRepeat ? 1 : occurrences;
       this.serverConnect.addTest(
-        this.state.selectedID,
-        this.state.selectedDate,
-        this.state.observations,
+        selectedID,
+        dateformat(new Date(selectedDate), "yyyymmdd"),
+        observations,
         frequency,
-        this.state.frequency.occurrences
+        occurrences,
+        res => {
+          if (res.success) {
+            this.setState({ open: false });
+            this.props.closeModal();
+          } else {
+            alert("something went wrong, test was not added");
+          }
+        }
       );
-      alert(
-        `Patient ID: ${this.state.selectedID} \nObservations: ${
-          this.state.observations
-        }\nScheduled Date: ${this.state.selectedDate}\nFrequency: ${
-          this.state.frequency.timeAmount === "0"
-            ? `Do not repeat`
-            : `Repeat every ${
-                this.state.frequency.timeAmount
-              } ${this.state.frequency.timeUnit.toLowerCase()} ${
-                this.state.frequency.occurrences
-              } times`
-        }`
-      );
-      this.setState({ open: false });
-      this.props.closeModal();
     } else {
       alert("Please ensure you have selected all the relevant fields");
     }
   };
   render() {
-    console.log(this.state);
     return (
       <>
         <div
@@ -107,6 +104,9 @@ export default class AddTestView extends React.Component {
             />
 
             <DateSelectorSection
+              showCalendar={this.state.showCalendar}
+              noRepeat={this.state.frequency.noRepeat}
+              occurrences={this.state.frequency.occurrences}
               timeAmount={this.state.frequency.timeAmount}
               timeUnit={this.state.frequency.timeUnit}
               unitOptions={this.state.frequency.timeUnits}
@@ -116,12 +116,18 @@ export default class AddTestView extends React.Component {
                   frequency: { ...this.state.frequency, timeAmount }
                 });
               }}
+              onNoRepeatChange={value =>
+                this.setState({
+                  frequency: { ...this.state.frequency, noRepeat: value }
+                })
+              }
               onUnitChange={timeUnit =>
                 this.setState({
                   frequency: { ...this.state.frequency, timeUnit }
                 })
               }
               selectedDate={this.state.selectedDate}
+              onInputClick={() => this.setState({ showCalendar: true })}
               onDateSelect={day => this.onDateSelect(day)}
               onObservationsChange={observations =>
                 this.setState({ observations })
@@ -130,7 +136,7 @@ export default class AddTestView extends React.Component {
                 this.setState({
                   frequency: {
                     ...this.state.frequency,
-                    occurrences: value ? parseInt(value) + 1 : 1
+                    occurrences: value ? parseInt(value) : 1
                   }
                 })
               }

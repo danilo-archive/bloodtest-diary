@@ -1099,9 +1099,6 @@ describe("Test main DB controller behaviour:", () => {
                                 const tokenExpire = new Date(result.response.expires);
                                 const actualExpire = dateFormat(tokenExpire, "yyyymmddHHMM");
                                 expect(actualExpire).to.equal(shouldExpire);
-
-                                const shouldStartWith = dateFormat(new Date(), "yyyymmddHHMM");
-                                expect(result.response.token.startsWith(shouldStartWith)).to.be.true;
                             })
                             .catch((err) => {
                                 error = err;
@@ -1217,9 +1214,6 @@ describe("Test main DB controller behaviour:", () => {
                                 const tokenExpire = new Date(result.response.expires);
                                 const actualExpire = dateFormat(tokenExpire, "yyyymmddHHMM");
                                 expect(actualExpire).to.equal(shouldExpire);
-
-                                const shouldStartWith = dateFormat(new Date(), "yyyymmddHHMM");
-                                expect(result.response.token.startsWith(shouldStartWith)).to.be.true;
                             })
                             .then(() => {
                                 // previous token should be deleted
@@ -1308,9 +1302,6 @@ describe("Test main DB controller behaviour:", () => {
                             const tokenExpire = new Date(result.response.expires);
                             const actualExpire = dateFormat(tokenExpire, "yyyymmddHHMM");
                             expect(actualExpire).to.equal(shouldExpire);
-
-                            const shouldStartWith = dateFormat(new Date(), "yyyymmddHHMM");
-                            expect(result.response.token.startsWith(shouldStartWith)).to.be.true;
                         })
                         .catch((err) => {
                             error = err;

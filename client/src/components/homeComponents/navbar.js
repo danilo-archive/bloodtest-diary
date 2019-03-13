@@ -60,8 +60,6 @@ const CalenderControls = styled.div`
   justify-content: flex-end;
 `;
 
-
-
 class Navbar extends React.Component {
 
   constructor(props){
@@ -73,11 +71,14 @@ class Navbar extends React.Component {
       this.onSignoutClick = props.onSignoutClick;
   }
 
+  onRefreshClick = () => {
+    this.props.refresh();
+  };
 
   render() {
     return (
       <Container>
-        <NavHeader onHomeClick = {this.onHomeClick}/>
+        <NavHeader onHomeClick = {this.onHomeClick} onRefreshClick = {this.onRefreshClick}/>
         <BottomSide>
           <CalenderControls>
             <SearchBar/>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from "styled-components";
 
 import Label from "./../Label";
+import refresh from "../../images/refresh.png"
 
 const Container = styled.div`
   width: auto;
@@ -27,10 +28,11 @@ const Container = styled.div`
 `;
 
 const ButtonContainer = styled.div`
-  width: 167px;
+  width: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-left: auto;
   .homeButton {
     background-color: #0d4e56;
     width: 100px;
@@ -48,11 +50,31 @@ const ButtonContainer = styled.div`
   }
 `;
 
+const RefreshButton = styled.div`
+  max-height: 21px;
+  max-width: 21px;
+  padding: 7px;
+  margin-right: 10px;
+  border-radius: 20%;
+  cursor: pointer;
+  z-index: 50;
+
+  &:hover {
+    transform: scale(1.05,1.05)
+  }
+
+  .refreshIcon {
+  width:100%;
+  height:100%;
+  }
+
+`;
 
 export default class NavHeader extends Component {
     constructor(props){
         super(props);
         this.onHomeClick = props.onHomeClick;
+        this.onRefreshClick = props.onRefreshClick;
     }
 
     render(){
@@ -62,6 +84,9 @@ export default class NavHeader extends Component {
           <ButtonContainer>
             <div className={"homeButton"} onClick={this.onHomeClick}>Home</div>
           </ButtonContainer>
+          <RefreshButton onClick={this.onRefreshClick}>
+             <img className={"refreshIcon"} src={refresh} alt={"Refresh Button"}/>
+          </RefreshButton>
       </Container>
       )
     }

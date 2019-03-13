@@ -52,7 +52,7 @@ const query_controller = require("../query-controller");
 
 /**
 * Send tests reminders to patients.
- * The reminder is in the form of an email, one is sent for each test corresponding 
+ * The reminder is in the form of an email, one is sent for each test corresponding
  * to a testID in the testIDs array
  * @param {array} testIDs the IDs of the tests to be sent
  */
@@ -62,9 +62,9 @@ function sendReminderEmailToPatient(testIDs) {
 
 /**
  * Send tests reminders to hospitals.
- * The reminder is in the form of an email, one is sent for each test corresponding 
+ * The reminder is in the form of an email, one is sent for each test corresponding
  * to a testID in the testIDs array
- * @param {array} testIDs the IDs of the tests to be sent 
+ * @param {array} testIDs the IDs of the tests to be sent
  */
 function sendReminderEmailToHospital(testIDs) {
   sendEmails(testIDs, email_generator.testReminderForHospital, "Reminder for a test");
@@ -72,18 +72,18 @@ function sendReminderEmailToHospital(testIDs) {
 
 /**
  * Send overdue tests reminders to patients.
- * The reminder is in the form of an email, one is sent for each test corresponding 
+ * The reminder is in the form of an email, one is sent for each test corresponding
  * to a testID in the testIDs array
- * @param {array} testIDs the IDs of the tests to be sent 
+ * @param {array} testIDs the IDs of the tests to be sent
  */
 function sendOverdueTestReminderToPatient(testIDs) {
   sendEmails(testIDs, email_generator.overdueTestReminderForPatient, "Reminder for your overdue test")
 }
 /**
  * Send overdue tests reminders to hospitals.
- * The reminder is in the form of an email, one is sent for each test corresponding 
+ * The reminder is in the form of an email, one is sent for each test corresponding
  * to a testID in the testIDs array
- * @param {array} testIDs the IDs of the tests to be sent 
+ * @param {array} testIDs the IDs of the tests to be sent
  */
 function sendOverdueTestReminderToHospital(testIDs) {
   sendEmails(testIDs, email_generator.overdueTestReminderForHospital, "Reminder for an overdue test")
@@ -165,8 +165,8 @@ function sendOneEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
       to:  emailGeneratorFunction(emailInfo).to,
       subject: subjectTitle,
       html: emailGeneratorFunction(emailInfo).html
-    };    
-    
+    };
+
     if (receiverOptions.html != null && emailInfo != null && subjectTitle != null)
       sendEmail(transporter, receiverOptions);
     else
@@ -175,7 +175,7 @@ function sendOneEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
 }
 
 /**
- * Aggregate the information following the format required by the email-generator module documentation and return a valid JSON object with the right formatting 
+ * Aggregate the information following the format required by the email-generator module documentation and return a valid JSON object with the right formatting
  * @param {number} testID the id of the test for which to generate the email
  * @param {array} failed an array which contains the test ids of emails for which the html generation failed
  */
@@ -230,7 +230,7 @@ function processResult(r, failed, testID) {
       throw "The testID doesn't exist"
     }//it will fail if response is undefined
   }
-  catch{
+  catch(err){
     failed.push(testID);
   }
   return result;
@@ -265,4 +265,3 @@ function sleep(ms) {
     setTimeout(resolve, ms);
   });
 }
-
