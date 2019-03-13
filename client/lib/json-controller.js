@@ -36,7 +36,7 @@ function getJSON(path) {
 
 /**
  * Check if the data is a properly formatted JSON file
- * @param {string} data 
+ * @param {string} data
  * @return {JSON} null if the data was not a properly formatted JSON object, the data in JSON if otherwise
  */
 function isJSON(data) {

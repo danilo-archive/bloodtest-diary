@@ -105,7 +105,11 @@ const spec = {
     if (monitor.didDrop()){
       const newDate = monitor.getDropResult().newDate;
       if (newDate){
-        serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate);
+        serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate, res => {
+            if (!res.success){
+                alert("Somebody is already editing this test");
+            }
+        });
       }
     }
   },
@@ -150,7 +154,11 @@ class AppointmentBox extends React.Component {
   }
 
   onStatusClick = status => {
-    this.serverConnect.changeTestStatus(this.props.id, status);
+    this.serverConnect.changeTestStatus(this.props.id, status, res => {
+        if (!res.success){
+            alert("something went wrong, maybe somebody is editing this test");
+        }
+    });
   };
 
   render() {

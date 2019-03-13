@@ -83,9 +83,16 @@ class Patients extends React.Component {
         };
         this.initOnPatientEditedCallback();
         this.initAllPatients();
+
         this.updateRecords = this.updateRecords.bind(this);
+        this.refresh = this.refresh.bind(this);
         this.openModal = this.openModal.bind(this);
         this.onCloseModal = this.onCloseModal.bind(this);
+        this.logout = this.logout.bind(this);
+    }
+
+    refresh(event){
+        this.initAllPatients();
     }
 
     initAllPatients() {
@@ -184,6 +191,11 @@ class Patients extends React.Component {
         this.props.history.push("home")
     }
 
+    logout(event){
+        this.serverConnect.deleteLoginToken();
+        this.props.history.replace("");
+    }
+
     openModal(id){
         this.serverConnect.requestPatientEditing(id, token => {
             console.log(`id in openModal: ${id}`);
@@ -213,6 +225,9 @@ class Patients extends React.Component {
                     <NavbarContainer>
                         <Navbar
                             onHomeClick={this.onHomeClick}
+                            onSignoutClick={this.logout}
+                            refresh={this.refresh}
+
                         />
                     </NavbarContainer>
                     {<TableContainer>

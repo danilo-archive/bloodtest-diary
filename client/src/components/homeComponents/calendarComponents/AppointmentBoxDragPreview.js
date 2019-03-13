@@ -3,6 +3,7 @@ import AppointmentBox from './AppointmentBox.js';
 
 const styles = {
     display: 'inline-block',
+    transform: "rotate(3.5deg)",
 
 }
 

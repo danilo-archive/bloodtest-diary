@@ -46,18 +46,18 @@ class Home extends Component {
     };
   }
 
-  onPatientsClick(event) {
-    this.props.history.push("patients");
-  }
-
   componentDidMount = () => {
-    this.initOverduePanel();
-    this.updateDashboard();
-    this.initCallbacks();
+        this.initOverduePanel();
+        this.updateDashboard();
+        this.initCallbacks();
 
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrevious = this.handlePrevious.bind(this);
-    this.onPatientsClick = this.onPatientsClick.bind(this);
+
+        this.logout = this.logout.bind(this);
+        this.refresh = this.refresh.bind(this);
+        this.handleNext = this.handleNext.bind(this);
+        this.handlePrevious = this.handlePrevious.bind(this);
+        this.onPatientsClick = this.onPatientsClick.bind(this);
+
 
     this.onAddTestOpenModal = this.onAddTestOpenModal.bind(this);
     this.onAddTestCloseModal = this.onAddTestCloseModal.bind(this);
@@ -76,7 +76,8 @@ class Home extends Component {
 
   initOnTestStatusChange() {
     this.serverConnect.setOnTestStatusChange((id, status) => {
-      this.modifyTest(id, test => {
+      this.updateDashboard();
+      this.modifyOverdueTest(id, test => {
         test.completed_status = status;
         return test;
       });
@@ -85,7 +86,8 @@ class Home extends Component {
 
   initOnTestEdit() {
     this.serverConnect.setOnTestEdit((id, newTest) => {
-      this.modifyTest(id, test => {
+      this.updateDashboard();
+      this.modifyOverdueTest(id, test => {
         test = newTest;
         return newTest;
       });
@@ -112,6 +114,22 @@ class Home extends Component {
         weekDays: newWeek
       });
     });
+  }
+
+  modifyOverdueTest(id, modificationFunction){
+      for (var i = 0; i < this.state.overdueTests.length; ++i) {
+        let group = this.state.overdueTests[i];
+        for (var j = 0; j < group.tests.length; ++j) {
+          var test = group.tests[j];
+          if (test.test_id === id) {
+            let newOverdueTests = [...this.state.overdueTests];
+            let testToModify = newOverdueTests[i].tests[j];
+            let modifiedTest = modificationFunction(testToModify);
+            newOverdueTests[i].tests[j] = modifiedTest;
+            this.setState({ overdueTests: newOverdueTests });
+          }
+        }
+      }
   }
 
   modifyTest(id, modificationFunction) {
@@ -157,9 +175,24 @@ class Home extends Component {
     }
   }
 
+ refresh(event){
+      console.log("refresh");
+      this.updateDashboard();
+      this.initOverduePanel();
+  }
+
+  onPatientsClick(event) {
+    this.props.history.push("patients")
+  }
+
+  logout(event){
+    this.serverConnect.deleteLoginToken();
+    this.props.history.replace("");
+  }
+
   handleNext(event) {
-    let nextWeek = getNextWeek([...this.state.weekDays]);
-    this.updateDashboard(nextWeek);
+  let nextWeek = getNextWeek([...this.state.weekDays]);
+  this.updateDashboard(nextWeek);
   }
 
   handlePrevious(event) {
@@ -183,7 +216,9 @@ class Home extends Component {
           editTestId: testId,
           editToken: token
         });
-      }
+    }else{
+        alert("Somebody is aready editing this test");
+    }
     });
   };
 
@@ -197,21 +232,16 @@ class Home extends Component {
         });
     });
 
-  };
+    }
 
-  // ----------------- ADDED TEST METHODS --------------------------
-
-  moveTest(from, to, test) {}
-
-  handleDrop = (section, testId) => {};
-  //
   render() {
     if (this.state.dashboardReady && this.state.overdueReady) {
       return (
         <ModalProvider>
           <div className={"home"}>
+          <CustomDragLayer snapToGrid={true} />
             <div className={"dashboard"}>
-              <CustomDragLayer snapToGrid={true} />
+
               <div className={"overduePatients"}>
                 <OverduePatients
                   notificationNumber={getNumberOfTestsInGroup(
@@ -227,6 +257,8 @@ class Home extends Component {
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
+                    onSignoutClick={this.logout} 
+                    refresh={this.refresh}
                   />
                 </div>
                 <div className={"bottomSideDash"}>
