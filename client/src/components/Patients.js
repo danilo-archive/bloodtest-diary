@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import Modal from 'react-responsive-modal';
-import ModalStyle from "./Modal";
-import { ModalProvider } from "styled-react-modal";
-import "./Modal.css";
+import React, { Component } from "react";
+import styled from "styled-components";
+import Modal from "react-responsive-modal";
 
 import Navbar from "./homeComponents/navbar";
 import PatientsTable from "./patientsComponents/tableComponents/PatientsTable";
+
+import LoadingAnimation from "./loadingScreen/loadingAnimation";
 
 import {getServerConnect} from "../serverConnection.js";
 import PatientProfile from "./patientsComponents/PatientProfile";
@@ -306,7 +305,16 @@ class Patients extends React.Component {
                 </Container>
             );
         } else {
-            return ("");
+            return (
+                <div style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%,-50%)",
+                }}>
+                    <LoadingAnimation/>
+                </div>
+            );
         }
     }
 }

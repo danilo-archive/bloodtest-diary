@@ -16,8 +16,8 @@ const Container = styled.div`
 const SecondHalfDiv = styled.div`
   position: absolute;
   width: 100%;
-  height: 90%;
-  top: 45%;
+  height: 74%;
+  top: 55%;
   left: 0;
   background: none;
   z-index: 0;
@@ -29,71 +29,41 @@ const TextArea = styled.textarea`
   outline: none;
 `;
 
-export default class DateSelectorSection extends React.Component {
-  state = {
-    selectedDate: this.props.selectedDate,
-    showCalendar: false,
-    frequency: {
-      timeAmount: this.props.timeAmount,
-      timmeUnit: this.props.timeUnit
-    }
-  };
-  onInputClick = () => {
-    this.setState({ showCalendar: true }); // [A] + [B] = [A,B]// [...arrayA,...arrayB] = [A,B]
-  };
+export default props => {
+  return (
+    <>
+      <Container>
+        <TitleTab color="#0b999d">Date</TitleTab>
+        <br />
+        <input
+          type="text"
+          onClick={props.onInputClick}
+          value={props.selectedDate}
+          readOnly
+        />
+        {props.showCalendar ? (
+          <CalendarTable onDaySelected={day => props.onDateSelect(day)} />
+        ) : (
+          <></>
+        )}
+        <FrequencySetter
+          noRepeat={props.noRepeat}
+          onNoRepeatChange={props.onNoRepeatChange}
+          unitOptions={props.unitOptions}
+          timeAmount={props.timeAmount}
+          timeUnit={props.timeUnit}
+          onSliderChange={value => props.onTimeAmountChange(value)}
+          onSelectChange={value => props.onUnitChange(value)}
+          onOccurrenceChange={value => props.onOccurrenceChange(value)}
+        />
 
-  onSliderChange = timeAmount => {
-    this.setState({ timeAmount });
-    this.props.onTimeAmountChange(timeAmount);
-  };
-  onUnitChange = timeUnit => {
-    this.setState({ timeUnit });
-    this.props.onUnitChange(timeUnit);
-  };
-  onDayClicked = day => {
-    this.setState({ showCalendar: false });
-  };
-
-  onDateSelect = selectedDate => {
-    this.setState({ showCalendar: false, selectedDate });
-    this.props.onDateSelect(selectedDate);
-  };
-  render() {
-    return (
-      <>
-        <Container>
-          <TitleTab color="#0b999d">Date</TitleTab>
-          <br />
-          <input
-            type="text"
-            onClick={this.onInputClick}
-            value={this.state.selectedDate}
-            readOnly
+        <SecondHalfDiv>
+          <TitleTab color="#0b999d">Observations</TitleTab>
+          <TextArea
+            onChange={event => props.onObservationsChange(event.target.value)}
           />
-          {this.state.showCalendar ? (
-            <CalendarTable onDateSelect={day => this.onDateSelect(day)} />
-          ) : (
-            <></>
-          )}
-          <FrequencySetter
-            unitOptions={this.props.unitOptions}
-            timeAmount={this.state.frequency.timeAmount}
-            timeUnit={this.state.frequency.timeUnit}
-            onSliderChange={value => this.onSliderChange(value)}
-            onSelectChange={value => this.onUnitChange(value)}
-            onOccurrenceChange={value => this.props.onOccurrenceChange(value)}
-          />
-
-          <SecondHalfDiv>
-            <TitleTab color="#0b999d">Observations</TitleTab>
-            <TextArea
-              onChange={event =>
-                this.props.onObservationsChange(event.target.value)
-              }
-            />
-          </SecondHalfDiv>
-        </Container>
-      </>
-    );
-  }
-}
+        </SecondHalfDiv>
+      </Container>
+    </>
+  );
+};
