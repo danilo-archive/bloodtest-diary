@@ -84,7 +84,7 @@ function logDelete(username, tableName, entryID, message = undefined, callback =
  *                          as it needs to explain what happened.
  * @param {function} Optional action, called with the result of insertQuery.
  */
-function logOther(username, tableName, entryID, message = undefined, callback = undefined) {
+function logOther(username, tableName, entryID, message, callback = undefined) {
     if (message === undefined) {
         throw new Error("Invalid use of a logger function.");
     }
@@ -126,17 +126,18 @@ function log(type, username, tableName, entryID, message = undefined, callback =
     db_controller.insertQuery(sql)
     .then((result) => {
         if (showConsoleOutput) {
+            message = (message === "NULL") ? "No message." : message;
             if (s.length > 0 && result.status === "OK") {
-                console.log("Successful log: user " + username + " " + s + " " + tableName + "(" + entryID + ").");
+                console.log("Log: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message);
             }
             else if (s.length > 0) {
                 console.log("===========================");
-                console.log("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "):");
+                console.log("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message);
                 console.log(result.err);
                 console.log("===========================");
             }
             else if (result.status === "OK") {
-                console.log("Successful log: user " + username + " committed other action: " + message);
+                console.log("Log: user " + username + " committed other action: " + message);
             }
             else {
                 console.log("===========================");

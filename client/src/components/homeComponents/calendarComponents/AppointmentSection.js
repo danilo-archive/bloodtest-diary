@@ -5,6 +5,7 @@ import AppointmentSectionHeader from "./AppointmentSectionHeader";
 import AppointmentBox from "./AppointmentBox";
 import VerticalLine from "./VerticalLine";
 import { DropTarget } from "react-dnd";
+import formatDate from "dateformat";
 
 const AppointmentSection = styled.div`
   text-align: center;
@@ -14,17 +15,16 @@ const AppointmentSection = styled.div`
   background: ${props => props.background};
 `;
 
-function formatOverdueTitle(header){
-  let tokens = header.split(" ");
-  if (tokens.length > 5){
-    return `Week Beg ${tokens[3]}-${tokens[2]}-${tokens[1]}`
-  } else {
-    return header;
-  }
+function formatOverdueTitle(section, header){
+    if (section !== "overdue"){
+        return header;
+    }else{
+        return `Week beg ${formatDate((new Date(header)), "dS mmm yyyy")}`;
+    }
 }
 
 export default props => {
-  const header = formatOverdueTitle(props.type);
+  const header = formatOverdueTitle(props.section, props.type);
   return (
       <AppointmentSection>
         <AppointmentSectionHeader color={props.color}>{header}</AppointmentSectionHeader>
