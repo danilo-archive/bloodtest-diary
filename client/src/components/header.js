@@ -68,9 +68,7 @@ class Header extends Component {
           </div>
         </div>
       </header>
-      <OfflineScreen
-        disabled = {this.state.disabled}
-      />
+      <OfflineScreen disabled = {this.state.disabled}/>
       <Alert/>
       </>
     );

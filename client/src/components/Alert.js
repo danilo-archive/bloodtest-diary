@@ -1,23 +1,17 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
+
+import OfflineScreen from "./OfflineScreen.js";
 
 let openAlertFunction;
 
 const Container = styled.div`
-.alert-enter {
-  left: -600px;
-  }
-.alert-enter.alert-enter-active {
-  left: 0;
-  transition: left 300ms ease-in;
-}
-.alert-exit {
-  opacity: 1;
-}
-.alert-exit.alert-exit-active {
-  opacity: 0.01;
-  transition: opacity 200ms ease-in;
-}
+  position: absolute;
+  z-index: 49;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgb(0, 0, 0, 0.3);
 `
 
 const StyledAlert = styled.div`
@@ -30,7 +24,7 @@ const StyledAlert = styled.div`
   transform: translate(-50%,-50%);
 
   margin: 50px;
-  z-index: 1000;
+  z-index: 50;
   border-radius: 5px;
   background-color: white;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
@@ -52,13 +46,23 @@ const StyledAlert = styled.div`
   }
 `;
 
+const DialogAlert = styled.div`
+
+`;
+const ConfirmationAlert = styled.div`
+
+`;
+const OptionAlert = styled.div`
+
+`;
+
 export default class Alert extends Component {
   constructor() {
     super();
     this.state = {
       open: false,
-      type: '',
       message: '',
+      type: '',
     }
     this.closeAlert = this.closeAlert.bind(this);
     this.openAlert = this.openAlert.bind(this);
@@ -72,7 +76,7 @@ export default class Alert extends Component {
     this.setState({
       open:true,
       message: message,
-      type: '',
+      type: type,
     })
   };
 
@@ -84,19 +88,47 @@ export default class Alert extends Component {
     })
   }
 
+  getAlert() {
+      switch(this.state.type) {
+        case 'dialogAlert':
+          return (
+
+            <DialogAlert>{this.state.message}
+              <div className={"confirmationButton"} onClick={this.closeAlert}>Ok</div>
+            </DialogAlert>
+
+          );
+        case 'confirmationAlert':
+
+          return (
+
+            <ConfirmationAlert>{this.state.message}
+              <div className={"confirmationButton"} onClick={this.closeAlert}>Ok</div>
+            </ConfirmationAlert>
+
+          );
+        case 'optionAlert':
+          return (
+
+            <OptionAlert>{this.state.message}
+              <div className={"confirmationButton"} onClick={this.closeAlert}>Ok</div>
+            </OptionAlert>
+
+          );
+        default:
+          return null;
+      }
+  }
 
   render() {
-    const { open } = this.state;
+    const content = this.getAlert();
     return (
       <>
-        {open ?
+        {this.state.open ?
           <Container>
-
-              <StyledAlert>{this.state.message}
-
-                <div className={"confirmationButton"} onClick={this.closeAlert}>Ok</div>
-              </StyledAlert>
-
+            <StyledAlert>
+              {content}
+            </StyledAlert>
           </Container>
         : null}
       </>
@@ -106,4 +138,9 @@ export default class Alert extends Component {
 
 export function openAlert({ message, type }) {
   openAlertFunction({ message, type})
+}
+
+Alert.propTypes = {
+  message: PropTypes.string,
+  type: PropTypes.oneOf(['dialogAlert', 'confirmationAlert', 'optionAlert'])
 }
