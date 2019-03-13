@@ -13,8 +13,16 @@ const Container = styled.div`
   width: 100%;
   flex-direction: column;
   background: #f5f5f5;
+  align-items: center;
+  font-family: "Rajdhani",sans-serif;
 `;
 
+const PatientProfileTitle = styled.p`
+  text-align: center;
+  font-size: 175%;
+  font-weight: bold;
+  margin: 0;
+`;
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -194,6 +202,7 @@ class PatientProfile extends Component {
         if (this.state.ready) {
             return (
                 <Container>
+                    <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
                     <PatientSection
                         patientId={this.state.patientId}
                         patientName={this.state.patientName}

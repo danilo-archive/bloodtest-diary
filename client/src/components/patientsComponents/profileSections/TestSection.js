@@ -4,13 +4,12 @@ import InfoCell from "./profileCells/InfoCell";
 import InputCell from "./profileCells/InputCell";
 import TestCell from "./profileCells/TestCell";
 import Label from "./profileCells/Label";
+import SectionContainer from "./SectionContainer"
 
 const Container = styled.div`
   margin: 3%;
   padding: 1%;
-  //border: #839595 3px solid;
-  //border-radius: 10px;`;
-
+ `;
 
 const Line = styled.hr`
   border: 0;
@@ -28,7 +27,7 @@ const Field = styled.div`
   font-family: "Rajdhani", sans-serif;
   font-size: 200%;
   overflow: scroll;
-  display:flex;
+  display: flex;
   align-items:center;;
 `;
 
@@ -41,23 +40,29 @@ export default class PatientSection extends React.Component {
 
 
     render() {
+        const content = (
+          <>
+              <Container>
+                  <Horizontal>
+                      <Field>Due</Field>
+                      <Field>Notes</Field>
+                  </Horizontal>
+                  {this.props.tests.map(test => (
+                      <TestCell
+                          key={test.test_no}
+                          due = {test.due_date}
+                          notes={test.notes}
+                      />
+                  ))}
+              </Container>
+          </>
+        );
         return (
             <>
-                <Container>
-                    <Label>Next tests</Label>
-                    <Line />
-                    <Horizontal>
-                        <Field>Due</Field>
-                        <Field>Notes</Field>
-                    </Horizontal>
-                    {this.props.tests.map(test => (
-                        <TestCell
-                            key={test.test_no}
-                            due = {test.due_date}
-                            notes={test.notes}
-                        />
-                    ))}
-                </Container>
+               <SectionContainer
+                title={"Test info"}
+                content={content}
+               />
             </>
         );
     }

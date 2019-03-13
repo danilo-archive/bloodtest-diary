@@ -237,6 +237,7 @@ class Patients extends React.Component {
                         patientId={this.state.selectedId}
                         closeModal={this.onCloseModal}
                         editToken={this.state.editToken}
+                        purpose={"Edit patient"}
                     />
                     </Modal>
 
