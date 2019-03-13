@@ -87,6 +87,11 @@ export default class EditTestView extends React.Component {
         }
     });
   };
+
+  unscheduleTest(){
+
+  }
+  
   render() {
     return this.state.ready ? (
       <>

@@ -406,4 +406,23 @@ io.on('connection',function(socket)
         io.in("patients_page").emit("patientEdited", patientId, newInfo);
 
     });
+
+    socket.on("unscheduleTest", async (testId, token, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            socket.emit("unscheduleTestResponse", { success:false, response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            socket.emit("unscheduleTestResponse", { success:false, response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await queryController.unscheduleTest(testId, token, username);
+
+    });
+
+
 });
