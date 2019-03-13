@@ -26,7 +26,7 @@ const RadioLabel = styled(Label)`
 
 const TextRadioButton = props => {
   return (
-    <Container onClick={props.onCheck}>
+    <Container>
       <RadioButton checked={props.checked} onCheck={props.onCheck} />
       <RadioLabel checked={props.checked}>{props.text}</RadioLabel>
     </Container>

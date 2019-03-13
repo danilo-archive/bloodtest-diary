@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import LabelAndSelector from "./LabelAndSelector";
+import TextRadioButton from "../editTest/TextRadioButton";
 
 const Container = styled.div`
   display: flex;
@@ -13,6 +14,7 @@ export default props => {
     <Container>
       <br />
       <LabelAndSelector
+        noRepeat={props.noRepeat}
         timeAmount={props.timeAmount}
         options={props.unitOptions}
         onValueChange={value => props.onSliderChange(value)}
@@ -22,6 +24,12 @@ export default props => {
         }}
       />
       <br />
+      <TextRadioButton
+        text="Do not repeat"
+        onCheck={check => {
+          return props.onNoRepeatChange(check);
+        }}
+      />
     </Container>
   );
 };

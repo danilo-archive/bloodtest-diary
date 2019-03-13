@@ -15,7 +15,7 @@ const Text = styled(Label)`
   position: relative;
   margin: 0 1rem;
 
-  color: #0d4e56;
+  color: ${props => (props.noRepeat ? `#c9c9c9` : `#0d4e56`)};
   transform: translate(0, 0);
 `;
 const Input = styled.input`
@@ -28,29 +28,33 @@ export default props => {
     <Container>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <div style={{ display: "flex", flexDirection: "row" }}>
-          <Text>
+          <Text noRepeat={props.noRepeat}>
             <>
               Repeat every{"  "}
               <Input
+                disabled={props.noRepeat}
                 type="text"
                 onChange={event => props.onValueChange(event.target.value)}
               />
             </>
           </Text>
-          <Select onChange={event => props.onSelectChange(event.target.value)}>
+          <Select
+            disabled={props.noRepeat}
+            onChange={event => props.onSelectChange(event.target.value)}
+          >
             {props.options.map(option => {
               return <option value={option}>{option}</option>;
             })}
           </Select>
         </div>
-        <Text>
+        <Text noRepeat={props.noRepeat}>
           <>
-            Repeat{" "}
+            Number of tests:{" "}
             <Input
+              disabled={props.noRepeat}
               type="text"
               onChange={event => props.onOccurrenceChange(event.target.value)}
-            />{" "}
-            times
+            />
           </>
         </Text>
       </div>
