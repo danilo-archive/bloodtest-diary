@@ -225,7 +225,8 @@ class ServerConnect {
         console.log(this.loginToken);
         this.socket.emit('getTestsInWeek', date, this.loginToken);
         this.socket.once('getTestsInWeekResponse', res => {
-            callback(res.response);
+            console.log({res});
+            callback(res);
         });
     }
 

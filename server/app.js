@@ -193,7 +193,7 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.getTestWithinWeek(date);
-        socket.emit('getTestsInWeekResponse', response);
+        socket.emit('getTestsInWeekResponse', {success: true, response: response.response});
     });
 
     socket.on('getOverdueTests', async (accessToken) => {
@@ -211,7 +211,7 @@ io.on('connection',function(socket)
 
         //const response = await queryController.getOverdueGroups();
         const response = await queryController.getSortedOverdueWeeks();
-        socket.emit('getOverdueTestsResponse', response.response);
+        socket.emit('getOverdueTestsResponse', {success: true, response: response.response});
     });
 
     socket.on('getTestInfo', async (testId, accessToken) => {
