@@ -23,6 +23,16 @@ const SetterValues = [
   { value: "Y", name: "Years" }
 ];
 
+/**
+*@param dateString a date of the form "20190323"
+*/
+function formatDatabaseDate(dateString){
+    let year = dateString.slice(0,4);
+    let month = dateString.slice(4,6);
+    let day = dateString.slice(6,8);
+    return `${year}/${month}/${day}`
+}
+
 const TextArea = styled.textarea`
   width: 40%;
   height: 10rem;
@@ -94,7 +104,14 @@ export default class EditTestView extends React.Component {
     console.log(params);
     this.serverConnect.editTest(this.state.test.id, params, this.token, res => {
       if (res.success) {
-        this.props.closeModal();
+          console.log(res);
+        if (res.response.insertId != undefined){
+            openAlert(`A new test had been automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}`, "confirmationAlert",
+                      "Ok", () => {this.props.closeModal()});
+        }else{
+            this.props.closeModal();
+        }
+
       } else {
         openAlert("Something went wrong", "confirmationAlert", "Ok", () => {this.props.closeModal()});
       }

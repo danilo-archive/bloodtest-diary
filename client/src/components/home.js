@@ -319,6 +319,7 @@ class Home extends Component {
                 <EditTest
                   testId={this.state.editTestId}
                   closeModal={this.onEditTestCloseModal}
+                  openModal={this.onEditTestOpenModal}
                   token={this.state.editToken}
                 />
               </Modal>

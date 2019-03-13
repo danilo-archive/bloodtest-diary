@@ -351,9 +351,9 @@ io.on('connection',function(socket)
         console.log({response});
 
         if (response.success){
-            socket.emit("editTestResponse", {success: true});
-            socket.emit("testAdded", response.response);
-            socket.in("main_page").emit("testAdded", response.response);
+            socket.emit("editTestResponse", {success: true, response: response.response});
+            socket.emit("testAdded");
+            socket.in("main_page").emit("testAdded");
         } else {
             socket.emit("editTestResponse", {success: false});
         }
