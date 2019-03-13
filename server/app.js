@@ -138,7 +138,7 @@ io.on('connection',function(socket)
         socket.emit("getAllTestsResponse", response);
     });
 
-    socket.on('getTestsOfPatient', async (patientId, accessToken) => {
+    socket.on('getNextTestsOfPatient', async (patientId, accessToken) => {
         if (!accessToken) {
             // REQUIRE TOKEN.
             socket.emit("getTestsOfPatientResponse", { success:false, response: "Authentication required." });
@@ -151,8 +151,8 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.getTestsOfPatient(patientId);
-        socket.emit('getTestsOfPatientResponse', response);
+        const response = await queryController.getNextTestsOfPatient(patientId);
+        socket.emit('getNextTestsOfPatientResponse', response);
     });
 
     /**

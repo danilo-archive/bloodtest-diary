@@ -178,9 +178,9 @@ class ServerConnect {
      * TODO eventually change name of the function.
      * TODO eventually change name of the callback.
      */
-    getTestsOfPatient(patientId, callback){
-        this.socket.emit('getTestsOfPatient', patientId, this.loginToken);
-        this.socket.once('getTestsOfPatientResponse', res => {
+    getNextTestsOfPatient(patientId, callback){
+        this.socket.emit('getNextTestsOfPatient', patientId, this.loginToken);
+        this.socket.once('getNextTestsOfPatientResponse', res => {
             callback(res.info);
         });
     }

@@ -102,6 +102,11 @@ async function getTestsOfPatient(patientId){
   return await selectQueryDatabase(sql)
 }
 
+async function getNextTestsOfPatient(patientId){
+    const sql = `SELECT * FROM Test WHERE patient_no = '${patientId}' AND completed_status='no';`;
+    return await selectQueryDatabase(sql);
+}
+
 /**
 * Get all the tests on specific date from the database
 * @param {String} date - date (format: "YYYY-MM-DD")
@@ -331,7 +336,7 @@ async function editCarer(newInfo, token, actionUsername){
 async function changeTestDueDate(testId, newDate, actionUsername){
     const token = await requestEditing("Test",testId, actionUsername);
     newDate = dateformat(newDate, "yyyymmdd");
-    
+
     const sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
     const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
     if (!res.success) {
