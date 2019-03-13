@@ -31,6 +31,9 @@ const Button = styled.button`
   word-break: break-word;
   font-family: "Rajdhani",sans-serif;
   outline: none;
+  :hover {
+    background: #018589;
+  }
 `;
 
 export default class PatientRow extends React.Component{

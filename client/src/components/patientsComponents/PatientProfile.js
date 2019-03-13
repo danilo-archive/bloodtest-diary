@@ -91,7 +91,6 @@ const SaveButton = styled.button`
   :hover {
     background-color: #018589;
     color: white;
-    border-radius: 10px;
   }
   outline: none;
 `;
