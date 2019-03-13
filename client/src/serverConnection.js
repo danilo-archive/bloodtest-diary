@@ -338,6 +338,13 @@ class ServerConnect {
             callback(res);
         });
     }
+
+    unscheduleTest(testId, callback){
+        this.socket.emit("unscheduleTest", testId, this.loginToken);
+        this.socket.once("unscheduleTestResponse", res => {
+            callback(res);
+        });
+    }
 }
 
 
