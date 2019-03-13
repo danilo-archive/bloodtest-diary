@@ -339,8 +339,8 @@ class ServerConnect {
         });
     }
 
-    unscheduleTest(testId, callback){
-        this.socket.emit("unscheduleTest", testId, this.loginToken);
+    unscheduleTest(testId, token, callback){
+        this.socket.emit("unscheduleTest", testId, token, this.loginToken);
         this.socket.once("unscheduleTestResponse", res => {
             callback(res);
         });

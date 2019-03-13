@@ -88,10 +88,20 @@ export default class EditTestView extends React.Component {
     });
   };
 
-  unscheduleTest(){
-
+  unscheduleTest = () => {
+      const confirmed = true;
+      if (confirmed){
+          this.serverConnect.unscheduleTest(this.state.test.id, this.token, res => {
+             if (res.success){
+                 alert("Test successfully unscheduled");
+                 this.props.closeModal();
+             }else{
+                 alert(res.response);
+             }
+          });
+      }
   }
-  
+
   render() {
     return this.state.ready ? (
       <>
@@ -228,7 +238,7 @@ export default class EditTestView extends React.Component {
                 <Button save onClick={this.saveTest}>
                   Save Changes
                 </Button>
-                <Button onClick={() => alert("Unschedule test")}>
+                <Button onClick={this.unscheduleTest}>
                   Unschedule test
                 </Button>
               </div>
