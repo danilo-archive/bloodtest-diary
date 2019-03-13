@@ -6,7 +6,7 @@ import ControlButtons from "./../navbarComponents/controlButtons.js"
 import WeekButtons from "./../navbarComponents/weekButtons.js"
 import NavHeader from "./../navbarComponents/navHeader.js"
 
-import OptionSwitch from "./../switch/OptionSwitch.js"
+import { openAlert } from "./../Alert.js"
 
 
 const Container = styled.div`
@@ -14,6 +14,8 @@ const Container = styled.div`
   padding: 0%;
   width: auto;
   height: 100%;
+
+  margin: 3px;
 
   overflow: hidden;
 
@@ -62,27 +64,18 @@ class Navbar extends React.Component {
 
   constructor(props){
       super(props);
-      this.onPrev = props.onPrev;
-      this.onNext = props.onNext;
-      this.onPatientsClick = props.onPatientsClick;
-      this.onHomeClick = props.onHomeClick;
-      this.onSignoutClick = props.onSignoutClick;
   }
-
-  onRefreshClick = () => {
-    this.props.refresh();
-  };
 
   render() {
     return (
       <Container>
-        <NavHeader onHomeClick = {this.onHomeClick} onRefreshClick = {this.onRefreshClick}/>
+        <NavHeader onHomeClick = {this.props.onHomeClick} onRefreshClick = {this.props.refresh}/>
         <BottomSide>
           <CalenderControls>
             <SearchBar/>
-            <WeekButtons onPrev = {this.onPrev} onNext = {this.onNext}/>
+            <WeekButtons onPrev = {this.props.onPrev} onNext = {this.props.onNext}/>
           </CalenderControls>
-          <ControlButtons onPatientsClick = {this.onPatientsClick} onSignoutClick = {this.onSignoutClick}/>
+          <ControlButtons onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
         </BottomSide>
       </Container>
     );

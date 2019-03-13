@@ -161,9 +161,7 @@ describe("Test authentication", function() {
         describe("> Test with valid token:", () => {
             it("Should return correct username and update expiry.", async () => {
                 const username = await authenticator.verifyToken("test_valid_login_token");
-                console.log("ok");
                 expect(username).to.equal("test_user_valid");
-                
                 expect(accessTokens.test_valid_login_token.username).to.equal("test_user_valid");
                 expect(accessTokens.test_invalid_login_token.username).to.equal("test_user_invalid");
                 expect(accessTokens.test_valid_login_token.expires.getDate() - date.getDate()).to.be.greaterThan(2);
