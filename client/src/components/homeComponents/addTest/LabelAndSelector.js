@@ -45,12 +45,11 @@ export default props => {
         </div>
         <Text>
           <>
-            Repeat{" "}
+            Number of tests:{" "}
             <Input
               type="text"
               onChange={event => props.onOccurrenceChange(event.target.value)}
-            />{" "}
-            times
+            />
           </>
         </Text>
       </div>
