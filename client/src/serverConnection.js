@@ -181,7 +181,7 @@ class ServerConnect {
     getNextTestsOfPatient(patientId, callback){
         this.socket.emit('getNextTestsOfPatient', patientId, this.loginToken);
         this.socket.once('getNextTestsOfPatientResponse', res => {
-            callback(res.info);
+            callback(res);
         });
     }
 

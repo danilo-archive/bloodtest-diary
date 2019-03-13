@@ -109,6 +109,7 @@ class PatientProfile extends Component {
       this.serverConnect = getServerConnect();
 
       this.loadPatient();
+      this.loadTests();
     }
 
     deletePatient() {
@@ -142,11 +143,21 @@ class PatientProfile extends Component {
         });
     }
 
+    loadTests() {
+        this.serverConnect.getNextTestsOfPatient(this.state.patientId, response => {
+            const tests = response.response;
+            this.setState({
+                testsData: tests,
+                readyTest: true
+            })
+        });
+    }
+
     onSaveClick = () => {
         let carerInfo = undefined;
         let hospitalInfo = undefined;
         if (!this.state.noCarer){
-            if (this.state.carerEmail === "" || this.state.carerEmail == undefined){
+            if (this.state.carerEmail === "" || this.state.carerEmail === undefined){
                 // TODO add UI alert
                 alert("Carer's email is compulsory");
                 return;
@@ -165,7 +176,7 @@ class PatientProfile extends Component {
             }
         }
         if (!this.state.localHospital){
-            if (this.state.hospitalEmail === "" || this.state.hospitalEmail == undefined){
+            if (this.state.hospitalEmail === "" || this.state.hospitalEmail === undefined){
                 alert("Hospital's email is compulsory");
                 return;
             }
@@ -198,7 +209,7 @@ class PatientProfile extends Component {
 
 
     render() {
-        if (this.state.ready) {
+        if (this.state.ready && this.state.readyTest) {
             return (
                 <Container>
                     <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
@@ -252,7 +263,7 @@ class PatientProfile extends Component {
                             })
                         }}
                     />
-                    <TestSection tests={[{due_date: "2019-02-02", notes: "Some notes"}]}/>
+                    <TestSection tests={this.state.testsData}/>
 
                     <ButtonContainer>
                         <DeleteContainer>

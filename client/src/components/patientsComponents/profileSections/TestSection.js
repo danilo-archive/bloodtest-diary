@@ -10,6 +10,7 @@ const Container = styled.div`
   margin: 3%;
   padding: 1%;
   width: 100%;
+  max-height: 200px;
  `;
 
 const Line = styled.hr`
@@ -48,6 +49,7 @@ export default class PatientSection extends React.Component {
                       <Field>Due</Field>
                       <Field>Notes</Field>
                   </Horizontal>
+                  {console.log(this.props.tests)}
                   {this.props.tests.map(test => (
                       <TestCell
                           key={test.test_no}

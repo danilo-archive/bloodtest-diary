@@ -3,10 +3,13 @@ import styled from "styled-components";
 import InfoCell from "./InfoCell.js";
 
 const Container = styled.div`
-  display: flex;
-  border: #ccc 1px solid;
-  border-radius: 10px;
-  margin: 1.5%;
+    display: flex;
+    border: #ccc 1px solid;
+    border-radius: 10px;
+    margin: 1.5%;
+    justify-content: center;
+    align-content: center;
+    flex-direction: row;
 `;
 
 const Field = styled.div`
@@ -21,7 +24,6 @@ const Field = styled.div`
   font-size: 125%;
   overflow: scroll;
   display:flex;
-  align-items: center;
 `;
 
 const DeleteButton = styled.button`

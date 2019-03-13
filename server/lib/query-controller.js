@@ -848,6 +848,7 @@ module.exports = {
     getAllTests,
     getTestInfo,
     getTestsOfPatient,
+    getNextTestsOfPatient,
     getAllTestsOnDate,
     getTestWithinWeek,
     getSortedOverdueWeeks,
