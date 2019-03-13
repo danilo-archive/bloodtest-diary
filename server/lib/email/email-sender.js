@@ -146,9 +146,11 @@ async function sendEmails(testIDs, emailGeneratorFunction, subjectTitle) {
 }
 
 /**
- * Generate and send a single email
- * @param {number} testID the id of the test for which to generate the email
+ * Send a single email.
+ * @param {JSON} emailInfo the information following the format required by the email-generator module documentation and return a valid JSON object with the right formatting
  * @param {array} failed an array which contains the test ids of emails for which the html generation failed
+ * @param {function} emailGeneratorFunction the function needed to generate test emails
+ * @param {string} subjectTitle  the subject title of the email
  */
 function sendOneEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
   {
@@ -170,7 +172,7 @@ function sendOneEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
     if (receiverOptions.html != null && emailInfo != null && subjectTitle != null)
       sendEmail(transporter, receiverOptions);
     else
-      failed.push(testID);
+      failed.push(emailInfo.test.test_id);
   }
 }
 
@@ -178,6 +180,7 @@ function sendOneEmail(emailInfo, failed, emailGeneratorFunction, subjectTitle) {
  * Aggregate the information following the format required by the email-generator module documentation and return a valid JSON object with the right formatting
  * @param {number} testID the id of the test for which to generate the email
  * @param {array} failed an array which contains the test ids of emails for which the html generation failed
+ * @returns {JSON} the information following the format required by the email-generator module documentation and return a valid JSON object with the right formatting
  */
 async function getEmailInfo(testID, failed) {
   //Get the test information from the database
@@ -195,7 +198,7 @@ async function getEmailInfo(testID, failed) {
   await query_controller.getHospital(patient.hospital_id).then(r => { hospital = processResult(r, failed, testID) });
   if (hospital === undefined || !hospital) return null;   //no need to continue executing the function, since the call failed
 
-  let emailInfo = {
+  const emailInfo = {
     patient: patient,
     test: test,
     hospital: hospital
