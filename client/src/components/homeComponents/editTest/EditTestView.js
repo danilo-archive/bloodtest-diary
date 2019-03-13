@@ -49,7 +49,8 @@ export default class EditTestView extends React.Component {
           date: {
             dueDate: dateformat(new Date(res.due_date), "d mmm yyyy"),
             frequency: res.frequency ? res.frequency : "",
-            occurrences: res.occurrences
+            occurrences: res.occurrences,
+            noRepeat: res.occurrences === 1
           },
           status:
             res.completed_status === "yes"
@@ -60,6 +61,7 @@ export default class EditTestView extends React.Component {
           notes: res.notes !== "null" ? res.notes : ""
         },
         showCalendar: false,
+
         ready: true
       });
     });
@@ -98,7 +100,7 @@ export default class EditTestView extends React.Component {
         <div
           style={{
             width: "35rem",
-            height: "35rem",
+            height: "38rem",
             background: "rgba(244, 244, 244,0.7)",
             position: "relative"
           }}
@@ -141,6 +143,15 @@ export default class EditTestView extends React.Component {
               onClick={() => this.setState({ showCalendar: true })}
             />
             <FrequencySelector
+              noRepeat={this.state.test.date.noRepeat}
+              onCheck={check =>
+                this.setState({
+                  test: {
+                    ...this.state.test,
+                    date: { ...this.state.test.date, noRepeat: check }
+                  }
+                })
+              }
               values={SetterValues}
               frequencyTimes={
                 this.state.test.date.frequency.split("-")[0] !== "0"

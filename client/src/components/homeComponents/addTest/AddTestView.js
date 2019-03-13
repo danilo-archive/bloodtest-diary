@@ -24,7 +24,7 @@ export default class AddTestView extends React.Component {
       timeAmount: null,
       timeUnits: ["Days", "Weeks", "Months", "Years"],
       timeUnit: "Days",
-      occurrences: 0,
+      occurrences: 1,
       noRepeat: false
     }
   };
