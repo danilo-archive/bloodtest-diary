@@ -46,7 +46,7 @@ export default class PatientRow extends React.Component{
 
     onEditClick = event => {
         console.log(`id in row: ${this.props.patient_no}`);
-        this.props.openModal(this.props.patient_no);
+        this.props.openEditModal(this.props.patient_no);
     };
 
     render(){

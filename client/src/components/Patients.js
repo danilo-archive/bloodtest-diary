@@ -4,10 +4,10 @@ import Modal from 'react-responsive-modal';
 
 import Navbar from "./homeComponents/navbar";
 import PatientsTable from "./patientsComponents/tableComponents/PatientsTable";
-//import AttributeSelector from "./patientsComponents/AttributeSelector";
 
 import {getServerConnect} from "../serverConnection.js";
 import PatientProfile from "./patientsComponents/PatientProfile";
+import NewPatient from "./patientsComponents/NewPatient";
 
 
 const Container = styled.div`
@@ -78,7 +78,8 @@ class Patients extends React.Component {
             allPatientsReady: false,
             allPatients: {},
             shownPatients: {},
-            openModal: false,
+            openEditModal: false,
+            openAddModal: false,
             selectedId: undefined
         };
         this.initOnPatientEditedCallback();
@@ -86,9 +87,11 @@ class Patients extends React.Component {
 
         this.updateRecords = this.updateRecords.bind(this);
         this.refresh = this.refresh.bind(this);
-        this.openModal = this.openModal.bind(this);
-        this.onCloseModal = this.onCloseModal.bind(this);
+        this.openEditModal = this.openEditModal.bind(this);
+        this.onCloseEditModal = this.onCloseEditModal.bind(this);
         this.logout = this.logout.bind(this);
+        this.openAddModal = this.openAddModal.bind(this);
+        this.onCloseAddModal = this.onCloseAddModal.bind(this);
     }
 
     refresh(event){
@@ -196,25 +199,33 @@ class Patients extends React.Component {
         this.props.history.replace("");
     }
 
-    openModal(id){
+    openEditModal(id){
         this.serverConnect.requestPatientEditing(id, token => {
-            console.log(`id in openModal: ${id}`);
+            console.log(`id in openEditModal: ${id}`);
             if (token){
-                this.setState({selectedId: id, openModal: true, editToken: token});
+                this.setState({selectedId: id, openEditModal: true, editToken: token});
             }else{
                 // TODO open error dialoge "someone is editing this patient"
             }
         });
-
     }
 
-    onCloseModal(){
+
+    onCloseEditModal(){
         // TODO get rid of the torken
         console.log("closing modal");
         this.serverConnect.discardPatientEditing(this.state.selectedId, this.state.editToken, res => {
-            this.setState({selectedId: undefined, openModal: false, editToken: undefined});
+            this.setState({selectedId: undefined, openEditModal: false, editToken: undefined});
         });
 
+    }
+
+    openAddModal() {
+        this.setState({openAddModal: true});
+    }
+
+    onCloseAddModal() {
+        this.setState({openAddModal: false})
     }
 
     //TODO : rename all components to capital case
@@ -230,10 +241,11 @@ class Patients extends React.Component {
 
                         />
                     </NavbarContainer>
+                    <button onClick={this.openAddModal}>add patient</button>
                     {<TableContainer>
                         <PatientsTable
                             shownPatients={this.state.shownPatients}
-                            openModal = {this.openModal}
+                            openEditModal = {this.openEditModal}
                             filterNumber = {this.number_filter}
                             filterName = {this.name_filter}
                             filterSurname = {this.surname_filter}
@@ -242,18 +254,30 @@ class Patients extends React.Component {
                         />
                     </TableContainer>}
                     <Modal
-                        open={this.state.openModal}
-                        onClose={this.onCloseModal}
+                        open={this.state.openEditModal}
+                        onClose={this.onCloseEditModal}
                         showCloseIcon={false}
                         style={modalStyles}
                         center
                         >
-                    <PatientProfile
-                        patientId={this.state.selectedId}
-                        closeModal={this.onCloseModal}
-                        editToken={this.state.editToken}
-                        purpose={"Edit patient"}
-                    />
+                        <PatientProfile
+                            patientId={this.state.selectedId}
+                            closeModal={this.onCloseEditModal}
+                            editToken={this.state.editToken}
+                            purpose={"Edit patient"}
+                        />
+                    </Modal>
+
+                    <Modal
+                        open={this.state.openAddModal}
+                        onClose={this.onCloseAddModal}
+                        showCloseIcon={false}
+                        style={modalStyles}
+                        center
+                    >
+                        <NewPatient
+                            closeModal={this.onCloseAddModal}
+                        />
                     </Modal>
 
                 </Container>
