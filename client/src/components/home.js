@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import Modal from "./Modal";
 import { ModalProvider } from "styled-react-modal";
-import "./Modal.css";
 import Navbar from "./homeComponents/navbar";
 import OverduePatients from "./homeComponents/overduePatients";
 import WeeklyCalendar from "./homeComponents/weeklyCalendar";
@@ -300,10 +299,6 @@ class Home extends Component {
                 open={this.state.openEditTestModal}
                 onClose={this.onEditTestCloseModal}
                 showCloseIcon={false}
-                styles={modalStyles}
-                classNames={{
-                  modal: "modal"
-                }}
                 center
               >
                 <EditTest
