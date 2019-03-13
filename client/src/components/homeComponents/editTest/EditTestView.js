@@ -48,11 +48,16 @@ export default class EditTestView extends React.Component {
           id: res.test_id,
           date: {
             dueDate: dateformat(new Date(res.due_date), "d mmm yyyy"),
-            frequency: res.frequency ? res.frequency : "",
+            frequency: res.frequency ? res.frequency : "0-D",
             occurrences: res.occurrences
           },
-          status: res.completed_status === "yes"? "completed": res.completed_status === "no"?"pending":"in review",
-          notes: (res.notes !== "null") ? res.notes : ""
+          status:
+            res.completed_status === "yes"
+              ? "completed"
+              : res.completed_status === "no"
+              ? "pending"
+              : "in review",
+          notes: res.notes !== "null" ? res.notes : ""
         },
         showCalendar: false,
         ready: true
@@ -66,7 +71,7 @@ export default class EditTestView extends React.Component {
       test_id: test.id,
       patient_no: patient.id,
       due_date: dateformat(new Date(test.date.dueDate), "yyyy-mm-dd"),
-      frequency: (test.date.frequency.length === 0) ? null : test.date.frequency,
+      frequency: test.date.frequency.length === 0 ? null : test.date.frequency,
       occurrences: test.date.occurrences,
       completed_status:
         test.status === "completed"
@@ -79,28 +84,28 @@ export default class EditTestView extends React.Component {
     console.log(this.token);
     console.log(params);
     this.serverConnect.editTest(this.state.test.id, params, this.token, res => {
-        if (res.success){
-            this.props.closeModal();
-        }else{
-            alert("Something went wrong");
-            this.props.closeModal();
-        }
+      if (res.success) {
+        this.props.closeModal();
+      } else {
+        alert("Something went wrong");
+        this.props.closeModal();
+      }
     });
   };
 
   unscheduleTest = () => {
-      const confirmed = true;
-      if (confirmed){
-          this.serverConnect.unscheduleTest(this.state.test.id, this.token, res => {
-             if (res.success){
-                 alert("Test successfully unscheduled");
-                 this.props.closeModal();
-             }else{
-                 alert(res.response);
-             }
-          });
-      }
-  }
+    const confirmed = true;
+    if (confirmed) {
+      this.serverConnect.unscheduleTest(this.state.test.id, this.token, res => {
+        if (res.success) {
+          alert("Test successfully unscheduled");
+          this.props.closeModal();
+        } else {
+          alert(res.response);
+        }
+      });
+    }
+  };
 
   render() {
     return this.state.ready ? (
@@ -179,7 +184,7 @@ export default class EditTestView extends React.Component {
                 })
               }
               onFrequencyChange={time => {
-                time = time === "" ? "0" : time;
+                time = time === "" || time === "-" ? "0" : time;
                 this.setState({
                   showCalendar: false,
                   test: {
@@ -238,9 +243,7 @@ export default class EditTestView extends React.Component {
                 <Button save onClick={this.saveTest}>
                   Save Changes
                 </Button>
-                <Button onClick={this.unscheduleTest}>
-                  Unschedule test
-                </Button>
+                <Button onClick={this.unscheduleTest}>Unschedule test</Button>
               </div>
             </div>
           </div>
