@@ -136,7 +136,7 @@ export default class AddTestView extends React.Component {
                 this.setState({
                   frequency: {
                     ...this.state.frequency,
-                    occurrences: value ? parseInt(value) + 1 : 1
+                    occurrences: value ? parseInt(value) : 1
                   }
                 })
               }
