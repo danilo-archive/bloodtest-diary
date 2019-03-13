@@ -98,8 +98,8 @@ export default class OptionAlert extends Component {
                 <p className="alertMessage">{this.props.message}</p>
               </div>
               <div className="alertButtonContainer">
-                <div className={"optionButton"} onClick={this.onOption1Click}>{this.props.option2Text}</div>
-                <div className={"optionButton"} onClick={this.onOption2Click}>{this.props.option1Text}</div>
+                <div className={"optionButton"} onClick={this.onOption1Click}>{this.props.option1Text}</div>
+                <div className={"optionButton"} onClick={this.onOption2Click}>{this.props.option2Text}</div>
               </div>
             </Alert>
           </>

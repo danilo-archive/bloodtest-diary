@@ -9,7 +9,7 @@ var openAlertFunction;
 
 const Container = styled.div`
   position: absolute;
-  z-index: 49;
+  z-index: 1001;
   height: 100vh;
   width: 100vw;
   background-color: rgb(0, 0, 0, 0.3);

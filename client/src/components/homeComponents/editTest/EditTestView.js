@@ -8,6 +8,7 @@ import StatusSetter from "./StatusSetter";
 import { getServerConnect } from "../../../serverConnection.js";
 import Button from "./Button";
 import dateformat from "dateformat";
+import { openAlert } from "./../../Alert.js";
 
 const DataContainer = styled.div`
   position: relative;
@@ -95,24 +96,23 @@ export default class EditTestView extends React.Component {
       if (res.success) {
         this.props.closeModal();
       } else {
-        alert("Something went wrong");
-        this.props.closeModal();
+        openAlert("Something went wrong", "confirmationAlert", "Ok", () => {this.props.closeModal()});
       }
     });
   };
 
   unscheduleTest = () => {
-    const confirmed = true;
-    if (confirmed) {
-      this.serverConnect.unscheduleTest(this.state.test.id, this.token, res => {
-        if (res.success) {
-          alert("Test successfully unscheduled");
-          this.props.closeModal();
-        } else {
-          alert(res.response);
-        }
-      });
-    }
+    openAlert("Are you sure you want to unschedule this test?", "optionAlert",
+              "No", () => {return},
+              "Yes", () => {
+                  this.serverConnect.unscheduleTest(this.state.test.id, this.token, res => {
+                    if (res.success) {
+                      openAlert("Test successfully unscheduled", "confirmationAlert", "Ok", () => {this.props.closeModal()});
+                    } else {
+                      openAlert(res.response, "confirmationAlert", "Ok", () => {this.props.closeModal()});
+                    }
+                  });
+              });
   };
 
   render() {
