@@ -9,7 +9,7 @@ const Container = styled.div`
   width: 80%;
   font-family: "Rajdhani", sans-serif;
   background: white;
-  max-height: 200px;
+  max-height: 225px;
 `;
 
 const ContentContainer = styled.div`

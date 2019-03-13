@@ -10,7 +10,7 @@ const Container = styled.div`
   margin: 3%;
   padding: 1%;
   width: 100%;
-  max-height: 200px;
+  overflow: scroll;
  `;
 
 const Line = styled.hr`
@@ -30,12 +30,22 @@ const Field = styled.div`
   font-size: 125%;
   overflow: scroll;
   display: flex;
-  align-items:center;;
+  align-items: center;;
 `;
 
 const Horizontal = styled.div`
     display: flex;
+    width: 90%;
 `;
+
+const CellContainer = styled.div`
+  display: block;
+  overflow: scroll;
+  width: 90%;
+  max-height: 160px;
+`;
+
+
 
 
 export default class PatientSection extends React.Component {
@@ -44,20 +54,19 @@ export default class PatientSection extends React.Component {
     render() {
         const content = (
           <>
-              <Container>
                   <Horizontal>
                       <Field>Due</Field>
                       <Field>Notes</Field>
                   </Horizontal>
-                  {console.log(this.props.tests)}
-                  {this.props.tests.map(test => (
-                      <TestCell
-                          key={test.test_no}
-                          due = {test.due_date}
-                          notes={test.notes}
-                      />
-                  ))}
-              </Container>
+                  <CellContainer>
+                      {this.props.tests.map(test => (
+                          <TestCell
+                              key={test.test_no}
+                              due = {test.due_date.substring(0, 10)}
+                              notes={test.notes}
+                          />
+                      ))}
+                  </CellContainer>
           </>
         );
         return (

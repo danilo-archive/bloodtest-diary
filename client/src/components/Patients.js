@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Modal from 'react-responsive-modal';
+import ModalStyle from "./Modal";
+import { ModalProvider } from "styled-react-modal";
+import "./Modal.css";
 
 import Navbar from "./homeComponents/navbar";
 import PatientsTable from "./patientsComponents/tableComponents/PatientsTable";
@@ -60,6 +63,26 @@ const TableContainer = styled.div`
 
     flex-grow: 1;
     flex-shrink: 1;
+`;
+
+const Button = styled.button`
+  border: none;
+  margin-bottom: 1%;
+  color: white;
+  padding: 7px 12px;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 200;
+  background-color: #0b989d;
+  word-break: break-word;
+  font-family: "Rajdhani",sans-serif;
+  outline: none;
+  :hover {
+    background: #018589;
+  }
 `;
 
 const modalStyles = {
@@ -241,7 +264,7 @@ class Patients extends React.Component {
 
                         />
                     </NavbarContainer>
-                    <button onClick={this.openAddModal}>add patient</button>
+                    <Button onClick={this.openAddModal}>Add patient</Button>
                     {<TableContainer>
                         <PatientsTable
                             shownPatients={this.state.shownPatients}

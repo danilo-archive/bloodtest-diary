@@ -4,12 +4,12 @@ import InfoCell from "./InfoCell.js";
 
 const Container = styled.div`
     display: flex;
-    border: #ccc 1px solid;
-    border-radius: 10px;
     margin: 1.5%;
     justify-content: center;
     align-content: center;
     flex-direction: row;
+    border: #ccc 1px solid;
+    border-radius: 10px;
 `;
 
 const Field = styled.div`
