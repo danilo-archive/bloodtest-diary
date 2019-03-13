@@ -9,6 +9,7 @@ import SectionContainer from "./SectionContainer"
 const Container = styled.div`
   margin: 3%;
   padding: 1%;
+  width: 100%;
  `;
 
 const Line = styled.hr`
@@ -25,7 +26,7 @@ const Field = styled.div`
   height: 100%;
   color: inherit;
   font-family: "Rajdhani", sans-serif;
-  font-size: 200%;
+  font-size: 125%;
   overflow: scroll;
   display: flex;
   align-items:center;;
