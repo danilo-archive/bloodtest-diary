@@ -11,6 +11,7 @@ export default class PatientSection extends React.Component {
         super(props);
 
         this.onInputChange = this.onInputChange.bind(this);
+        this.editable = !this.props.editable;
     }
 
     onInputChange() {
@@ -28,7 +29,7 @@ export default class PatientSection extends React.Component {
                 <InputCell
                     field={"Patient id"}
                     id={"patient_id"}
-                    disabled
+                    disabled={this.editable}
                     value={this.props.patientId}
                     onChange={this.onInputChange}
                 />
