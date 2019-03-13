@@ -645,7 +645,7 @@ async function insertQueryDatabase(sql, tableName, actionUsername, id = undefine
   const response = await databaseController.insertQuery(sql);
   if (response.status == "OK"){
       id = (id === undefined) ? response.response.insertId : id;
-      //logger.logInsert(actionUsername, tableName, id, "Successful.");
+      logger.logInsert(actionUsername, tableName, id, "Successful.");
       return {success: true, response: {insertId: id} };
   }else {
       if (response.err.type === "SQL Error") {
