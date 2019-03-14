@@ -252,7 +252,7 @@ async function editPatientExtended(newInfo,token, actionUsername)
     //Carer added with patient update
     if(patient.carer_id==null){
       carerQueryResponse = await addCarer(carer, actionUsername)
-      patientNewInfo['carer_id'] = carerQueryResponse.insertId;
+      patientNewInfo['carer_id'] = carerQueryResponse.response.insertId;
     }
     //Database has info on this carer
     else{
@@ -272,7 +272,7 @@ async function editPatientExtended(newInfo,token, actionUsername)
     //Hospital added with update
     if(patient.hospital_id==null){
       hospitalQueryResponse = await addHospital(hospital, actionUsername)
-      patientNewInfo['hospital_id'] = hospitalQueryResponse.insertId;
+      patientNewInfo['hospital_id'] = hospitalQueryResponse.response.insertId;
     }
     //Database has info on the hospital
     else{
