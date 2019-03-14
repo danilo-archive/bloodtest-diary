@@ -1,5 +1,5 @@
 /**
- * Controller functions to get dates using a frequency foramt
+ * Controller functions to get dates using a frequency format
  * @module calendar-controller
  * @author Danilo Del Busso
  * @version 0.0.1
