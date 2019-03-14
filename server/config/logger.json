@@ -4,5 +4,5 @@
     "consoleOutput": true,
     "fileOutput": true,
     "colorize" : true,
-    "outputFilePath": "./../server.log"
+    "outputFilePath": "./../logs"
 }
