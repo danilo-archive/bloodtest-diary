@@ -78,6 +78,12 @@ class NewPatient extends Component {
 
     constructor(props){
         super(props);
+        this.state = {
+            noCarer: true,
+            localHospital: true
+        };
+        this.serverConnect = getServerConnect();
+
     }
 
     onAddClick = () => {
@@ -137,10 +143,13 @@ class NewPatient extends Component {
         };
         console.log({newInfo});
         //TODO : save patient
-        /*this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
-            alert(`-- success = ${res.success}`);
-            this.props.closeModal();
-        });*/
+        this.serverConnect.addPatient(newInfo, res => {
+            if (res.success) {
+                openAlert("Patient added successfully", "confirmationAlert", "Ok", () => {this.props.closeModal()});
+            } else {
+                openAlert("An error occurred while adding patient", "confirmationAlert", "Ok");
+            }
+        });
     };
 
 
