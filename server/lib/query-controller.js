@@ -627,9 +627,52 @@ async function deleteHospital(hospitalid, actionUsername)
   return await deleteQueryDatabase("Hospital",hospitalid,sql, actionUsername);
 }
 
+/**
+* Delete Patient and cancel the patient edit token
+* @param {String} patientid - patient_no of a patient
+* @param {String} token - token to be returned with query
+* @param {string} actionUsername The user who issued the request.
+* @return {JSON} result of the query - {success:Boolean response:"Entry deleted"/Error}
+**/
+async function deletePatient(patientid, token, actionUsername){
+  const check = await checkIfPatientsTestsAreEdited(patientid)
+  if(check){
+    return {success:false, response:"Someone is editing the test"}
+  }
+  //Error on the check
+  if(!check.success && typeof check.success != 'undefined'){
+    return check
+  }
+  //Try returning token
+  const tokenResponse = await returnToken("Patient", patientid, token, actionUsername);
+  if(!tokenResponse.success){
+    return tokenResponse;
+  }
+  //Patient with tests can be deleted
+  const sql = prepareDeleteSQL("Patient","patient_no",patientid)
+  return await deleteQueryDatabase("Patient",patientid,sql,actionUsername)
+}
 /*===============================*
       HELPER FUNCTIONS BELOW:
  *===============================*/
+
+/**
+* Check if test are edited within the TokenControl database
+* @return {Boolean} {false - If no tests are edited (no tokens)}
+* @return {Boolean} {true - If tests are edited (tokens in table)}
+* @return {JSON} {Error response}
+**/
+async function checkIfPatientsTestsAreEdited(patientid){
+  const sql = `Select test_id From Test Where patient_no = '${patientid}' AND test_id IN (Select table_key From TokenControl Where table_name = "Test");`;
+  const response = await selectQueryDatabase(sql);
+  if(response.success && response.response.length==0){
+    return false;
+  }
+  if(response.success && response.response.length>0){
+    return true;
+  }
+  return response;
+}
 
 /**
 * Produce multiple queries on the database to retrieve test within the week
@@ -972,6 +1015,7 @@ module.exports = {
     addUser,
     addPatient,
     addHospital,
+    addPatientExtended,
     addCarer,
   //UPDATES
     updatePassword,
@@ -984,6 +1028,7 @@ module.exports = {
     editHospital,
   //DELETE
     deleteHospital,
+    deletePatient,
     deleteCarer,
   //TOKEN CONTROL
     requestEditing,

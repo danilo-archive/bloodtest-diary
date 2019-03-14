@@ -68,7 +68,7 @@ CREATE TABLE Test (
     completed_date DATE,
     notes TEXT,
     PRIMARY KEY (test_id),
-    FOREIGN KEY (patient_no) REFERENCES Patient(patient_no)
+    FOREIGN KEY (patient_no) REFERENCES Patient(patient_no) ON DELETE CASCADE
 );
 
 CREATE TABLE User (
