@@ -51,7 +51,7 @@ export default class EditTestView extends React.Component {
           date: {
             dueDate: dateformat(new Date(res.due_date), "d mmm yyyy"),
 
-            frequency: res.frequency ? res.frequency : "0-D",
+            frequency: res.frequency && res.frequency !== "null" &&  res.frequency !== null ? res.frequency : "0-D",
             occurrences: res.occurrences,
             noRepeat: res.occurrences === 1
           },
