@@ -107,22 +107,13 @@ class Patients extends React.Component {
         };
         this.initOnPatientEditedCallback();
         this.initAllPatients();
-
-        this.updateRecords = this.updateRecords.bind(this);
-        this.refresh = this.refresh.bind(this);
-        this.openEditModal = this.openEditModal.bind(this);
-        this.onCloseEditModal = this.onCloseEditModal.bind(this);
-        this.logout = this.logout.bind(this);
-        this.openAddModal = this.openAddModal.bind(this);
-        this.onCloseAddModal = this.onCloseAddModal.bind(this);
     }
 
-    refresh(event){
+    refresh = event => {
         this.initAllPatients();
     }
 
-    initAllPatients() {
-        console.log("fire");
+    initAllPatients(){
         this.serverConnect.getAllPatients(res => {
             this.setState({
                 allPatients: res,
@@ -134,28 +125,8 @@ class Patients extends React.Component {
 
     initOnPatientEditedCallback(){
         this.serverConnect.setOnPatientEdited((patientId, newInfo) => {
-            this.updateRecords(patientId, newInfo);
+            this.initAllPatients();
         });
-    }
-    updateRecords(id, newInfo){
-        for (var i = 0; i < this.state.allPatients.length ; ++i){
-            let patient = this.state.allPatients[i];
-            if (patient.patient_no === id){
-                let newPatients = [...this.state.allPatients];
-                newPatients[i] = newInfo
-                this.setState({allPatients: newPatients});
-                break;
-            }
-        }
-        for (var i = 0; i < this.state.shownPatients.length ; ++i){
-            let patient = this.state.shownPatients[i];
-            if (patient.patient_no === id){
-                let newPatients = [...this.state.shownPatients];
-                newPatients[i] = newInfo
-                this.setState({shownPatients: newPatients});
-                return;
-            }
-        }
     }
 
     number_filter = value => {
@@ -213,16 +184,16 @@ class Patients extends React.Component {
         }
     };
 
-    onHomeClick(event) {
+    onHomeClick = event => {
         this.props.history.push("home")
     }
 
-    logout(event){
+    logout = event => {
         this.serverConnect.deleteLoginToken();
         this.props.history.replace("");
     }
 
-    openEditModal(id){
+    openEditModal = id => {
         this.serverConnect.requestPatientEditing(id, token => {
             console.log(`id in openEditModal: ${id}`);
             if (token){
@@ -234,7 +205,7 @@ class Patients extends React.Component {
     }
 
 
-    onCloseEditModal(){
+    onCloseEditModal = () => {
         // TODO get rid of the torken
         console.log("closing modal");
         this.serverConnect.discardPatientEditing(this.state.selectedId, this.state.editToken, res => {
@@ -243,11 +214,11 @@ class Patients extends React.Component {
 
     }
 
-    openAddModal() {
+    openAddModal = () => {
         this.setState({openAddModal: true});
     }
 
-    onCloseAddModal() {
+    onCloseAddModal = () => {
         this.setState({openAddModal: false})
     }
 

@@ -114,11 +114,21 @@ class PatientProfile extends Component {
       this.loadTests();
     }
 
-    deletePatient() {
-        console.log("i am deleting patient");
+    deletePatient = () => {
+        console.log("deleting")
+        this.serverConnect.deletePatient(this.state.patientId, this.state.editToken, res => {
+            if (res.success){
+                openAlert("Patient successfully deleted", "confirmationAlert",
+                "Ok", () => {
+                    this.props.closeModal();
+                });
+            }else{
+                openAlert("Something went wrong while deleating", "confirmationAlert", "Ok", () => {return});
+            }
+        });
     }
 
-    deleteOption () {
+    deleteOption = () => {
         openAlert("Are you sure you want to delete this patient ?", "optionAlert", "Yes", this.deletePatient, "No", () => {return});
     }
 

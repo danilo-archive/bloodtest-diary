@@ -291,6 +291,13 @@ class ServerConnect {
         });
     }
 
+    deletePatient(patientId, token, callback){
+        this.socket.emit("deletePatient", patientId, token, this.loginToken);
+        this.socket.once("deletePatientResponse", res => {
+            callback(res);
+        });
+    }
+
     /**
     * Thim method emits a request to add a test into the database
     * @param patientId The number of the patient that has to take the test.

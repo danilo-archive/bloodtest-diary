@@ -326,9 +326,30 @@ io.on('connection',function(socket)
         const response = await queryController.addPatientExtended(newPatient, username);
         if (response.success){
             socket.emit("addPatientResponse", {success: true, response: response.response});
-            io.in("patients_page").emit("patientEdited");
+            io.in("patients_page").emit("patientEdited", newPatient.patient_no, newPatient);
         }else{
             socket.emit("addPatientResponse", {success: false});
+        }
+    });
+
+    socket.on("deletePatient", async (patientId, token, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            socket.emit("deletePatientResponse", { success:false, response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            socket.emit("deletePatientResponse", { success:false, response: "Invalid credentials." });
+            return;
+        }
+        const response = await queryController.deletePatient(patientId, token, username);
+        if (response.success){
+            socket.emit("deletePatientResponse", {success: true});
+            io.in("patients_page").emit("patientEdited");
+        }else{
+            socket.emit("deletePatientResponse", {success: false});
         }
     });
 
