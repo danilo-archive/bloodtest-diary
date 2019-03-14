@@ -3,7 +3,7 @@
  * It allows to save a log file and/or output the log to console.
  * @module logger
  * @author Danilo Del Busso
- * @version 0.0.1
+ * @version 0.0.2
  */
 
 /*
