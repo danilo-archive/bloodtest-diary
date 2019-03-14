@@ -8,6 +8,7 @@ import {getServerConnect} from "../../../serverConnection.js";
 import {isPastDate} from "../../../lib/calendar-controller.js";
 import { DragSource } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
+import {openAlert} from "../../Alert.js";
 
 const serverConnect = getServerConnect();
 const Container = styled.div`
@@ -107,7 +108,7 @@ const spec = {
       if (newDate){
         serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate, res => {
             if (!res.success){
-                alert("Somebody is already editing this test");
+                openAlert("Somebody is aready editing this test", "confirmationAlert", "Ok");
             }
         });
       }
@@ -156,7 +157,7 @@ class AppointmentBox extends React.Component {
   onStatusClick = status => {
     this.serverConnect.changeTestStatus(this.props.id, status, res => {
         if (!res.success){
-            alert("something went wrong, maybe somebody is editing this test");
+            openAlert("Somebody is aready editing this test", "confirmationAlert", "Ok");
         }
     });
   };

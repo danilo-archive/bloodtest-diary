@@ -6,6 +6,7 @@ import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import TestSection from "./profileSections/TestSection";
 import {getServerConnect} from "../../serverConnection";
+import {openAlert} from "../Alert";
 
 
 const Container = styled.div`
@@ -113,7 +114,11 @@ class PatientProfile extends Component {
     }
 
     deletePatient() {
-        console.log("some id is deleted")
+        console.log("i am deleting patient");
+    }
+
+    deleteOption () {
+        openAlert("Are you sure you want to delete this patient ?", "optionAlert", "Yes", this.deletePatient, "No", () => {return});
     }
 
     loadPatient() {
@@ -159,7 +164,7 @@ class PatientProfile extends Component {
         if (!this.state.noCarer){
             if (this.state.carerEmail === "" || this.state.carerEmail === undefined){
                 // TODO add UI alert
-                alert("Carer's email is compulsory");
+                openAlert("Carer's email is compulsory", "confirmationAlert", "Ok");
                 return;
             }
             carerInfo = {
@@ -177,7 +182,7 @@ class PatientProfile extends Component {
         }
         if (!this.state.localHospital){
             if (this.state.hospitalEmail === "" || this.state.hospitalEmail === undefined){
-                alert("Hospital's email is compulsory");
+                openAlert("Hospital's email is compulsory","confirmationAlert", "Ok");
                 return;
             }
             hospitalInfo = {
@@ -201,8 +206,11 @@ class PatientProfile extends Component {
         };
         console.log({newInfo});
         this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
-            alert(`-- success = ${res.success}`);
-            this.props.closeModal();
+            if (res.success) {
+                openAlert("Patient edited successfully", "confirmationAlert", "Ok", () => {this.props.closeModal()});
+            } else {
+                openAlert("An error occurred while editing patient", "confirmationAlert", "Ok");
+            }
         });
     };
 
@@ -267,7 +275,7 @@ class PatientProfile extends Component {
 
                     <ButtonContainer>
                         <DeleteContainer>
-                            <DeleteButton onClick={this.deletePatient}>Delete patient</DeleteButton>
+                            <DeleteButton onClick={this.deleteOption}>Delete patient</DeleteButton>
                         </DeleteContainer>
                         <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                         <SaveButton onClick={this.onSaveClick}>Save changes</SaveButton>

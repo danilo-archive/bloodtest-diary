@@ -49,12 +49,19 @@ export default class EditTestView extends React.Component {
           date: {
             dueDate: dateformat(new Date(res.due_date), "d mmm yyyy"),
             frequency: res.frequency ? res.frequency : "",
-            occurrences: res.occurrences
+            occurrences: res.occurrences,
+            noRepeat: res.occurrences === 1
           },
-          status: res.completed_status === "yes"? "completed": res.completed_status === "no"?"pending":"in review",
-          notes: (res.notes !== "null") ? res.notes : ""
+          status:
+            res.completed_status === "yes"
+              ? "completed"
+              : res.completed_status === "no"
+              ? "pending"
+              : "in review",
+          notes: res.notes !== "null" ? res.notes : ""
         },
         showCalendar: false,
+
         ready: true
       });
     });
@@ -66,8 +73,8 @@ export default class EditTestView extends React.Component {
       test_id: test.id,
       patient_no: patient.id,
       due_date: dateformat(new Date(test.date.dueDate), "yyyy-mm-dd"),
-      frequency: (test.date.frequency.length === 0) ? null : test.date.frequency,
-      occurrences: test.date.occurrences,
+      frequency: test.date.frequency.length === 0 ? null : test.date.frequency,
+      occurrences: test.date.noRepeat ? 1 : test.date.occurrences,
       completed_status:
         test.status === "completed"
           ? "yes"
@@ -79,12 +86,12 @@ export default class EditTestView extends React.Component {
     console.log(this.token);
     console.log(params);
     this.serverConnect.editTest(this.state.test.id, params, this.token, res => {
-        if (res.success){
-            this.props.closeModal();
-        }else{
-            alert("Something went wrong");
-            this.props.closeModal();
-        }
+      if (res.success) {
+        this.props.closeModal();
+      } else {
+        alert("Something went wrong");
+        this.props.closeModal();
+      }
     });
   };
   render() {
@@ -93,7 +100,7 @@ export default class EditTestView extends React.Component {
         <div
           style={{
             width: "35rem",
-            height: "35rem",
+            height: "38rem",
             background: "rgba(244, 244, 244,0.7)",
             position: "relative"
           }}
@@ -136,6 +143,15 @@ export default class EditTestView extends React.Component {
               onClick={() => this.setState({ showCalendar: true })}
             />
             <FrequencySelector
+              noRepeat={this.state.test.date.noRepeat}
+              onCheck={check =>
+                this.setState({
+                  test: {
+                    ...this.state.test,
+                    date: { ...this.state.test.date, noRepeat: check }
+                  }
+                })
+              }
               values={SetterValues}
               frequencyTimes={
                 this.state.test.date.frequency.split("-")[0] !== "0"

@@ -4,8 +4,8 @@ import styled from "styled-components";
 import PatientSection from "./profileSections/PatientSection";
 import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
-import TestSection from "./profileSections/TestSection";
 import {getServerConnect} from "../../serverConnection";
+import { openAlert } from "../Alert"
 
 
 const Container = styled.div`
@@ -86,15 +86,19 @@ class NewPatient extends Component {
     onAddClick = () => {
         let carerInfo = undefined;
         let hospitalInfo = undefined;
+        if (this.state.patientId === "" || this.state.patientId === undefined) {
+            openAlert("Patient Id is compulsory", "confirmationAlert", "Ok");
+            return;
+        }
 
         if (this.state.patientName === "" || this.state.patientName === undefined || this.state.patientSurname === "" || this.state.patientSurname === undefined) {
-            alert("Patient name and surname are compulsory")
+            openAlert("Patient name and surname are compulsory", "confirmationAlert", "Ok");
             return;
         }
         if (!this.state.noCarer){
             if (this.state.carerEmail === "" || this.state.carerEmail === undefined){
                 // TODO add UI alert
-                alert("Carer's email is compulsory");
+                openAlert("Carer's email is compulsory", "confirmationAlert", "Ok");
                 return;
             }
             carerInfo = {
@@ -112,7 +116,7 @@ class NewPatient extends Component {
         }
         if (!this.state.localHospital){
             if (this.state.hospitalEmail === "" || this.state.hospitalEmail === undefined){
-                alert("Hospital's email is compulsory");
+                openAlert("Hospital's email is compulsory", "confirmationAlert", "Ok");
                 return;
             }
             hospitalInfo = {
@@ -149,6 +153,7 @@ class NewPatient extends Component {
             <Container>
                 <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
                 <PatientSection
+                    editable={true}
                     patientId={""}
                     patientName={""}
                     patientSurname={""}
@@ -164,7 +169,7 @@ class NewPatient extends Component {
                     }}
                 />
                 <CarerSection
-                    carerId={""}
+                    carerId={""} //TODO : generate this
                     carerRelationship={""}
                     carerName={""}
                     carerSurname={""}
@@ -183,12 +188,11 @@ class NewPatient extends Component {
                     }}
                 />
                 <HospitalSection
-                    hospitalId={""}
+                    hospitalId={""} //TODO : generate this
                     hospitalName={""}
                     hospitalEmail={""}
                     hospitalPhone={""}
                     localHospital={this.state.localHospital}
-                    //TODO : maybe find different way of doing this
                     onHospitalClick={() => this.setState({localHospital: !this.state.localHospital})}
                     onChange={hospital => {
                         this.setState({
