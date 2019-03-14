@@ -16,6 +16,7 @@ const Container = styled.div`
   background: #f5f5f5;
   align-items: center;
   font-family: "Rajdhani",sans-serif;
+  padding: 1%;
 `;
 
 const PatientProfileTitle = styled.p`

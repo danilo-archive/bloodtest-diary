@@ -15,6 +15,7 @@ const Container = styled.div`
   background: #f5f5f5;
   align-items: center;
   font-family: "Rajdhani",sans-serif;
+  padding: 1%;
 `;
 
 const PatientProfileTitle = styled.p`
@@ -43,7 +44,7 @@ const CloseButton = styled.button`
 
   height: 44px;
   min-width: 100px;
-  margin: 4%;
+  margin-right: 2%;
 
   :hover {
     background: #c8c8c8;
@@ -59,7 +60,7 @@ const SaveButton = styled.button`
   color: white;
   text-align: center;
   text-decoration: none;
-  margin: 4%;
+  margin-left: 2%;
   border-radius: 10px;
 
   height: 44px;

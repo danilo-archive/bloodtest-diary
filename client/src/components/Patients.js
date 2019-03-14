@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
-import Modal from "react-responsive-modal";
+import { ModalProvider } from "styled-react-modal";
+import Modal from "./Modal";
 
 import Navbar from "./homeComponents/navbar";
 import PatientsTable from "./patientsComponents/tableComponents/PatientsTable";
@@ -254,55 +255,58 @@ class Patients extends React.Component {
     render() {
         if (this.state.allPatientsReady) {
             return (
-                <Container>
-                    <NavbarContainer>
-                        <Navbar
-                            onHomeClick={this.onHomeClick}
-                            onSignoutClick={this.logout}
-                            refresh={this.refresh}
+                <ModalProvider>
+                    <Container>
+                        <NavbarContainer>
+                            <Navbar
+                                onHomeClick={this.onHomeClick}
+                                onSignoutClick={this.logout}
+                                refresh={this.refresh}
 
-                        />
-                    </NavbarContainer>
-                    <Button onClick={this.openAddModal}>Add patient</Button>
-                    {<TableContainer>
-                        <PatientsTable
-                            shownPatients={this.state.shownPatients}
-                            openEditModal = {this.openEditModal}
-                            filterNumber = {this.number_filter}
-                            filterName = {this.name_filter}
-                            filterSurname = {this.surname_filter}
-                            filterEmail = {this.email_filter}
-                            filterPhone = {this.phone_filter}
-                        />
-                    </TableContainer>}
-                    <Modal
-                        open={this.state.openEditModal}
-                        onClose={this.onCloseEditModal}
-                        showCloseIcon={false}
-                        style={modalStyles}
-                        center
+                            />
+                        </NavbarContainer>
+                        <Button onClick={this.openAddModal}>Add patient</Button>
+                        <TableContainer>
+                            <PatientsTable
+                                shownPatients={this.state.shownPatients}
+                                openEditModal = {this.openEditModal}
+                                filterNumber = {this.number_filter}
+                                filterName = {this.name_filter}
+                                filterSurname = {this.surname_filter}
+                                filterEmail = {this.email_filter}
+                                filterPhone = {this.phone_filter}
+                            />
+                        </TableContainer>
+                        <Modal
+                            open={this.state.openEditModal}
+                            onClose={this.onCloseEditModal}
+                            showCloseIcon={false}
+                            style={modalStyles}
+                            center
+                            >
+                            <PatientProfile
+                                patientId={this.state.selectedId}
+                                closeModal={this.onCloseEditModal}
+                                editToken={this.state.editToken}
+                                purpose={"Edit patient"}
+                            />
+                        </Modal>
+
+                        <Modal
+                            open={this.state.openAddModal}
+                            onClose={this.onCloseAddModal}
+                            showCloseIcon={false}
+                            style={modalStyles}
+                            center
                         >
-                        <PatientProfile
-                            patientId={this.state.selectedId}
-                            closeModal={this.onCloseEditModal}
-                            editToken={this.state.editToken}
-                            purpose={"Edit patient"}
-                        />
-                    </Modal>
+                            <NewPatient
+                                closeModal={this.onCloseAddModal}
+                                purpose={"Add patient"}
+                            />
+                        </Modal>
 
-                    <Modal
-                        open={this.state.openAddModal}
-                        onClose={this.onCloseAddModal}
-                        showCloseIcon={false}
-                        style={modalStyles}
-                        center
-                    >
-                        <NewPatient
-                            closeModal={this.onCloseAddModal}
-                        />
-                    </Modal>
-
-                </Container>
+                    </Container>
+                </ModalProvider>
             );
         } else {
             return (
