@@ -1,6 +1,6 @@
 /** 
- * A logger module, it allows for different levels of logging.
- * It allows to save a log file and/or output the log to console.
+ * A logger module, it allows for different levels of logging
+ * and to save a log file and/or output the log to console.
  * @module logger
  * @author Danilo Del Busso
  * @version 0.0.2
@@ -19,8 +19,8 @@ module.exports = {
     warning,
     debug,
     changeOption,
-    flush,
-    flushAll
+    deleteLogFile,
+    deleteAllLogFiles
 }
 
 const jsonController = require('./json-controller.js');
@@ -220,7 +220,7 @@ function append(element) {
 /**
  * Flush the content of the log file. And delete it.
  */
-function flush() {
+function deleteLogFile() {
     if (options === null) {
         options = initialise(CONFIG_FILE_PATH);
     }
@@ -234,7 +234,7 @@ function flush() {
 /**
  * Flush the content of every log file and delete them.
  */
-function flushAll() {
+function deleteAllLogFiles() {
     deleteFolderRecursive(options.outputFilePath);
 }
 
