@@ -700,7 +700,7 @@ describe("Update queries tests", function(){
         response.response.hospitalQuery.success.should.equal(true);
         response.response.hospitalQuery.response.affectedRows.should.equal(1);
         response.response.carerQuery.success.should.equal(true);
-        response.response.carerQuery.insertId.should.equal("405");
+        response.response.carerQuery.response.insertId.should.equal("405");
       })
       it("Accept the partial patient edit (patient,carer) and insert hospital (STUBBED)", async function(){
         const dbController = {
@@ -726,7 +726,7 @@ describe("Update queries tests", function(){
         response.response.patientQuery.success.should.equal(true);
         response.response.patientQuery.response.affectedRows.should.equal(1);
         response.response.hospitalQuery.success.should.equal(true);
-        response.response.hospitalQuery.insertId.should.equal("350");
+        response.response.hospitalQuery.response.insertId.should.equal("350");
         response.response.carerQuery.success.should.equal(true);
         response.response.carerQuery.response.affectedRows.should.equal(1);
       })
