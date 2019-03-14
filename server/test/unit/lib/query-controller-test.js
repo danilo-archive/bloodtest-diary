@@ -1118,6 +1118,74 @@ describe("Delte queries tests", function(){
         response.response.should.equal("Entry deleted");
       })
     })
+    context("Delete patient", function(){
+      let spy;
+      beforeEach(()=>{
+          spy = sinon.spy(queryController.deletePatient);
+      })
+      it("Fail deletion due to an select error (STUBBED)", async function(){
+        const dbController = {
+          selectQuery: async function() {
+            return {status: "ERR", err: {error:"STUBBED ERROR"}
+          }
+        }}
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("400");
+        response.success.should.equal(false);
+        response.response.error.should.equal("STUBBED ERROR");
+      })
+      it("Fail deletion due to an token in database (STUBBED)", async function(){
+        const dbController = {
+          deleteQuery: async function() {
+            return {status: "ERR", err: {error:"STUBBED ERROR"}}
+          },
+          selectQuery: async function() {
+            return {status: "OK", response:{rows:[{test_id:"200"},{test_id:"400"}]}}
+          },
+          cancelEditing: async function(){
+            return {status: "OK", response:"Token cancel"}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("400");
+        response.success.should.equal(false);
+        response.response.should.equal("Someone is editing the test");
+      })
+      it("Fail deletion due to deletion error (STUBBED)", async function(){
+        const dbController = {
+          deleteQuery: async function() {
+            return {status: "ERR", err: {error:"STUBBED ERROR"}}
+          },
+          selectQuery: async function() {
+            return {status: "OK", response:{rows:[]}}
+          },
+          cancelEditing: async function(){
+            return {status: "OK", response:"Token cancel"}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("400");
+        response.success.should.equal(false);
+        response.response.error.should.equal("STUBBED ERROR");
+      })
+      it("Fail deletion due to token error (STUBBED)", async function(){
+        const dbController = {
+          deleteQuery: async function() {
+            return {status: "ERR", err: {error:"STUBBED ERROR"}}
+          },
+          selectQuery: async function() {
+            return {status: "OK", response:{rows:[]}}
+          },
+          cancelEditing: async function(){
+            return {status: "ERR", err:{error:"STUBBED ERROR"}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("400");
+        response.success.should.equal(false);
+        response.response.error.should.equal("STUBBED ERROR");
+      })
+    })
 })
 
 describe("Other functionality", function(){

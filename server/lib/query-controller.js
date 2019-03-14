@@ -636,21 +636,21 @@ async function deleteHospital(hospitalid, actionUsername)
 **/
 async function deletePatient(patientid, token, actionUsername){
   const check = await checkIfPatientsTestsAreEdited(patientid)
-  if(check){
+  if(check===true){
     return {success:false, response:"Someone is editing the test"}
   }
+  if(check===false){
+    //Try returning token
+    const tokenResponse = await returnToken("Patient", patientid, token, actionUsername);
+    if(!tokenResponse.success){
+      return tokenResponse;
+    }
+    //Patient with tests can be deleted
+    const sql = prepareDeleteSQL("Patient","patient_no",patientid)
+    return await deleteQueryDatabase("Patient",patientid,sql,actionUsername)
+  }
   //Error on the check
-  if(!check.success && typeof check.success != 'undefined'){
-    return check
-  }
-  //Try returning token
-  const tokenResponse = await returnToken("Patient", patientid, token, actionUsername);
-  if(!tokenResponse.success){
-    return tokenResponse;
-  }
-  //Patient with tests can be deleted
-  const sql = prepareDeleteSQL("Patient","patient_no",patientid)
-  return await deleteQueryDatabase("Patient",patientid,sql,actionUsername)
+  return check
 }
 /*===============================*
       HELPER FUNCTIONS BELOW:
