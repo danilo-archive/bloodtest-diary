@@ -256,6 +256,7 @@ class Home extends Component {
               <div className={"rightSideDash"}>
                 <div className={"navbar"}>
                   <Navbar
+                    page="Dashboard"
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}

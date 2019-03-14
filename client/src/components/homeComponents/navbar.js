@@ -66,19 +66,41 @@ class Navbar extends React.Component {
       super(props);
   }
 
+  getNavbar() {
+      switch(this.props.page) {
+        case 'Dashboard':
+          return (
+            <>
+              <NavHeader title={this.props.page} onHomeClick={this.props.onHomeClick} onRefreshClick={this.props.refresh}/>
+              <BottomSide>
+                <CalenderControls>
+                  <SearchBar/>
+                  <WeekButtons onPrev = {this.props.onPrev} onNext = {this.props.onNext}/>
+                </CalenderControls>
+                <ControlButtons onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
+              </BottomSide>
+            </>
+          );
+        case 'Patients':
+          return (
+            <>
+              <NavHeader title={this.props.page} onHomeClick = {this.props.onHomeClick} onRefreshClick = {this.props.refresh}/>
+              <BottomSide>
+                <ControlButtons onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
+              </BottomSide>
+            </>
+          );
+        default:
+          return null;
+      }
+  }
 
 
   render() {
+    const content = this.getNavbar();
     return (
       <Container>
-        <NavHeader onHomeClick = {this.props.onHomeClick} onRefreshClick = {this.props.refresh}/>
-        <BottomSide>
-          <CalenderControls>
-            <SearchBar/>
-            <WeekButtons onPrev = {this.props.onPrev} onNext = {this.props.onNext}/>
-          </CalenderControls>
-          <ControlButtons onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
-        </BottomSide>
+        {content}
       </Container>
     );
   }

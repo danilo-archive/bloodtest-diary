@@ -143,6 +143,7 @@ class Patients extends React.Component {
         <Container>
           <NavbarContainer>
             <Navbar
+              page="Patients"
               onHomeClick={this.onHomeClick}
               onSignoutClick={this.logout}
               refresh={this.refresh}

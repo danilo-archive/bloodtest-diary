@@ -13,11 +13,6 @@ const AppointmentSection = styled.div`
   padding: 0;
   width: auto;
   background: ${props => props.background};
-
-  padding-left: ${props => ((props.section === "calender") ? `10px` : '0px')};
-  padding-right: ${props => ((props.section === "calender") ? `10px` : '0px')};
-
-  asdasd
 `;
 
 function formatOverdueTitle(section, header){
@@ -30,11 +25,11 @@ function formatOverdueTitle(section, header){
 
 export default props => {
   const header = formatOverdueTitle(props.section, props.type);
-  console.log(props.section, props.section === "calender")
+  const padding = ((props.section === "calender") ? `8px` : '0px');
   return (
-      <AppointmentSection>
+      <AppointmentSection style={{ 'padding-left': padding, 'padding-right': padding}}>
         <AppointmentSectionHeader color={props.color} section={props.section}>{header}</AppointmentSectionHeader>
-        <VerticalLine />
+        <VerticalLine style={{ 'margin-left': padding}}/>
         {props.appointments.map(appointment => (
           <AppointmentBox
             id = {appointment.test_id}
@@ -43,7 +38,6 @@ export default props => {
             time={appointment.time}
             dueDate={appointment.due_date}
             editTest={props.editTest}
-            section={props.section}
           />
         ))}
       </AppointmentSection>
