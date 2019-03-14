@@ -311,6 +311,27 @@ io.on('connection',function(socket)
         }
     });
 
+    socket.on("addPatient", async (newPatient, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            socket.emit("addPatientResponse", { success:false, response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            socket.emit("addPatientResponse", { success:false, response: "Invalid credentials." });
+            return;
+        }
+        const response = await queryController.addPatientExtended(newPatient, username);
+        if (response.success){
+            socket.emit("addPatientResponse", {success: true, response: response.response});
+            io.in("patients_page").emit("patientEdited");
+        }else{
+            socket.emit("addPatientResponse", {success: false});
+        }
+    });
+
     socket.on('testStatusChange', async (testId, newStatus, accessToken) => {
         if (!accessToken) {
             // REQUIRE TOKEN.
