@@ -19,13 +19,16 @@ module.exports = {
     warning,
     debug,
     changeOption,
-    flush
+    flush,
+    flushAll
 }
 
 const jsonController = require('./json-controller.js');
 const CONFIG_FILE_PATH = './../config/logger.json'
 const fs = require('fs');
+const dateformat = require('dateformat');
 let writeStream = null;
+let logPath = "";
 
 
 const colors = {  //all colors are with background. usage: console.log(colors.Red, "string to display colorized") or replace the "%s" with the string that has to be colored
@@ -44,10 +47,10 @@ const defaultOptions = {   //default options for the use of the module
     consoleOutput: true,
     fileOutput: true,
     colorize: true,
-    outputFilePath: './../server.log'
+    outputFilePath: './../logs/'
 }
-
 let options = initialise(CONFIG_FILE_PATH); //the options used by the logger
+
 
 /*
 |--------------------------------------------------------------------------
@@ -115,8 +118,16 @@ function initialise(configPath) {
     if (json == null) {
         json = defaultOptions;
     }
-    if (writeStream == null)
-        writeStream = fs.createWriteStream(json.outputFilePath, { 'flags': 'a' });  //flag "a" allows for appending
+    if (writeStream == null) {
+        let outputFilePath = json.outputFilePath;
+        if (outputFilePath[outputFilePath.length - 1] !== '/')  //check if the outputfilepath is formatted as a directory
+            outputFilePath += '/';
+        if (!fs.existsSync(outputFilePath))
+            fs.mkdirSync(outputFilePath);
+
+        logPath = outputFilePath + dateformat(new Date(), "yyyymmdd_HHMMss") + "_server.log";
+        writeStream = fs.createWriteStream(logPath, { 'flags': 'a' });
+    }  //flag "a" allows for appending
     return json;
 }
 
@@ -140,8 +151,7 @@ function createLog(messages, level) {
 
     let timeStamp = ""
     if (options.timeStamp == true)
-        timeStamp = "|" + new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') + "|";  //taken from https://bit.ly/2CdTDmv
-
+        timeStamp = "|" + dateformat(new Date(), "yyyy-mm-dd HH-MM-ss") + "|";
     const fileOutputString = `${timeStamp} ${level} =>`;
 
     if (options.fileOutput == true) {
@@ -208,20 +218,26 @@ function append(element) {
 
 
 /**
- * Flush the content of the log file.
- * If one doesn't exist, create an empty log file.
+ * Flush the content of the log file. And delete it.
  */
 function flush() {
     if (options === null) {
         options = initialise(CONFIG_FILE_PATH);
     }
-    fs.writeFile(options.outputFilePath, "", function (err) {
+    fs.unlinkSync(logPath, function (err) {
         if (err) {
             return error(err)
         }
         return;
     });
 }
+/**
+ * Flush the content of every log file and delete them.
+ */
+function flushAll() {
+    deleteFolderRecursive(options.outputFilePath);
+}
+
 
 /**
 |--------------------------------------------------------------------------
@@ -285,4 +301,28 @@ function argumentsToArray(args) {
     }
     catch (e) { warning(e) }
     return array;
+}
+
+
+/**
+ * Recursively and synchronously delete all files inside a path.
+ * taken from https://bit.ly/2TqLDWv
+ * @param {string} path 
+ */
+function deleteFolderRecursive(path) {
+    if (fs.existsSync(path)) {
+        fs.readdirSync(path).forEach(function (file) {
+            const curPath = path + "/" + file;
+            if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath, function (err) {
+                    if (err) {
+                        return error(err);
+                    }
+                    return;
+                });
+            }
+        });
+    }
 }
