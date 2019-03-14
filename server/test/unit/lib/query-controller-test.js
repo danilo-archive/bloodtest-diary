@@ -32,6 +32,9 @@ describe("Select queries tests", function(){
   context("Get All patients", function(){
     test(queryController.getAllPatients);
   })
+  context("Get Next Test of patient", function(){
+    test(queryController.getNextTestsOfPatient,"400")
+  })
   context("Get Patient", function(){
     test(queryController.getPatient, "4000");
   })
@@ -210,6 +213,61 @@ describe("Insert queries tests", function(){
       it("Should reject new carer (STUBBED)", async function() {
         stubbedErrorInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
       })
+    })
+    context("Add new patient extended", function(){
+      let spy;
+      beforeEach(()=>{
+          spy = sinon.spy(queryController.addPatientExtended);
+      })
+
+      it("Add patient correctly with new carer and new hospital - correct info (STUBBED)", async function(){
+        const dbController = {
+          insertQuery: async function() {
+            return {status:"OK", response: { insertId: "test_insert_id"}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({patient_no:"30230320",patient_name:"Bill",patient_surname:"Murray",hospital_email:"gmail",carer_email:"outlook"});
+        console.log(response);
+        response.success.should.equal(true);
+        response.response.insertedId.should.equal("30230320");
+      });
+      it("Add patient correctly with new carer - missing hospital info (STUBBED)", async function(){
+        const dbController = {
+          insertQuery: async function() {
+            return {status:"OK", response: { insertId: "test_insert_id"}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({patient_no:"302303205",patient_name:"Bill",patient_surname:"Murray",carer_email:"outlook"});
+        console.log(response);
+        response.success.should.equal(true);
+        response.response.insertedId.should.equal("302303205");
+      });
+      it("Add patient correctly with new hospital - missing carer info (STUBBED)", async function(){
+        const dbController = {
+          insertQuery: async function() {
+            return {status:"OK", response: { insertId: "test_insert_id"}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({patient_no:"302303437720",patient_name:"Bill",patient_surname:"Murray",hospital_email:"gmail"});
+        console.log(response);
+        response.success.should.equal(true);
+        response.response.insertedId.should.equal("302303437720");
+      });
+      it("Add patient correctly without new carer nor new hospital - correct info (STUBBED)", async function(){
+        const dbController = {
+          insertQuery: async function() {
+            return {status:"OK", response: { insertId: "test_insert_id"}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({patient_no:"30230320",patient_name:"Bill",patient_surname:"Murray"});
+        console.log(response);
+        response.success.should.equal(true);
+        response.response.insertedId.should.equal("30230320");
+      });
     })
 })
 
@@ -700,7 +758,7 @@ describe("Update queries tests", function(){
         response.response.hospitalQuery.success.should.equal(true);
         response.response.hospitalQuery.response.affectedRows.should.equal(1);
         response.response.carerQuery.success.should.equal(true);
-        response.response.carerQuery.insertId.should.equal("405");
+        response.response.carerQuery.response.insertId.should.equal("405");
       })
       it("Accept the partial patient edit (patient,carer) and insert hospital (STUBBED)", async function(){
         const dbController = {
@@ -726,7 +784,7 @@ describe("Update queries tests", function(){
         response.response.patientQuery.success.should.equal(true);
         response.response.patientQuery.response.affectedRows.should.equal(1);
         response.response.hospitalQuery.success.should.equal(true);
-        response.response.hospitalQuery.insertId.should.equal("350");
+        response.response.hospitalQuery.response.insertId.should.equal("350");
         response.response.carerQuery.success.should.equal(true);
         response.response.carerQuery.response.affectedRows.should.equal(1);
       })
@@ -819,7 +877,6 @@ describe("Update queries tests", function(){
     })
 })
 
-
 describe("Delte queries tests", function(){
     context("Delete hospital", function(){
       let spy;
@@ -878,6 +935,7 @@ describe("Delte queries tests", function(){
       })
     })
 })
+
 describe("Other functionality", function(){
   context("Request token cancelation", function(){
     let spy;
