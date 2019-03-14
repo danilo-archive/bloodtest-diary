@@ -9,11 +9,11 @@ require('mocha-sinon'); //needed for checking console log
 
 describe("Test getEmailInfo method with patient email", function () {
     before(function () {
-        let query_controller = require('./../../../../lib/query-controller')
-        getTestStub = sinon.stub(query_controller, "getTest");
-        getHospitalStub = sinon.stub(query_controller, "getHospital");
-        getPatientStub = sinon.stub(query_controller, "getPatient");
-        getCarerStub = sinon.stub(query_controller, "getCarer");
+        const query_controller = require('./../../../../lib/query-controller')
+        const getTestStub = sinon.stub(query_controller, "getTest");
+        const getHospitalStub = sinon.stub(query_controller, "getHospital");
+        const getPatientStub = sinon.stub(query_controller, "getPatient");
+        const getCarerStub = sinon.stub(query_controller, "getCarer");
 
         email_sender = proxyquire('./../../../../lib/email/email-sender', { query_controller: { getTest: getTestStub, getPatient: getPatientStub, getHospital: getHospitalStub, getCarer: getCarerStub } })
     })
