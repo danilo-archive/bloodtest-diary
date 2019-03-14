@@ -18,7 +18,7 @@ const CalendarContainer = styled.div`
   position: relative;
   border: solid 1px rgb(131,149,149, 0.2);
   min-width: 15rem;
-  overflow : hidden;
+  overflow: hidden;
 `;
 const monthNames = [
   "Jan",
@@ -84,6 +84,7 @@ class CalendarDay extends React.Component {
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
               editTest={this.props.editTest}
+              section={this.props.section}
             />
             <div style={{width:"100%",height:"130px"}}/>
           </ScrollBox>

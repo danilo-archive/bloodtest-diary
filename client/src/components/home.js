@@ -272,7 +272,6 @@ class Home extends Component {
                       editTest={this.onEditTestOpenModal}
                     />
                   </div>
-                  <div className={"divider"} />
                   <div className={"ongoingWeekly"}>
                     <OngoingWeekly
                       currentMonday={this.currentMonday}
