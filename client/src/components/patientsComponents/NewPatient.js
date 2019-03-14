@@ -78,10 +78,6 @@ class NewPatient extends Component {
 
     constructor(props){
         super(props);
-        this.state = {
-            noCarer: true,
-            localHospital: true
-        };
     }
 
     onAddClick = () => {
@@ -162,6 +158,7 @@ class NewPatient extends Component {
                     patientPhone={""}
                     onChange={patient => {
                         this.setState({
+                            patientId: patient.patientId,
                             patientName: patient.patientName,
                             patientSurname: patient.patientSurname,
                             patientEmail: patient.patientEmail,
