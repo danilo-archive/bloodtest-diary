@@ -492,6 +492,114 @@ async function addCarer(json, actionUsername)
   return await insertQueryDatabase(sql, "Carer", actionUsername);
 }
 
+/**
+* Add new patient entry to the database with optional carer/hospital
+* @param {JSON} - entry to add
+* @param {string} actionUsername The user who issued the request.
+* @return {JSON} result of the query - {success:Boolean response:{insertedId/problem (+ optional fields)}}
+**/
+async function addPatientExtended(patientInfo,actionUsername)
+{
+  const insertProperties = Object.keys(patientInfo);
+  const carer = {};
+  const hospital = {};
+  const patient = {};
+  for(let i=0; i<insertProperties.length; i++)
+  {
+     if((insertProperties[i].startsWith('carer') || insertProperties[i] == 'relationship') && patientInfo[insertProperties[i]])
+     {
+       carer[insertProperties[i]] = patientInfo[insertProperties[i]];
+     }
+     if((insertProperties[i].startsWith('hospital')) && patientInfo[insertProperties[i]])
+     {
+       hospital[insertProperties[i]] = patientInfo[insertProperties[i]];
+     }
+     if((insertProperties[i].startsWith('patient') || insertProperties[i] == 'additional_info') && patientInfo[insertProperties[i]])
+     {
+       patient[insertProperties[i]] = patientInfo[insertProperties[i]];
+     }
+  }
+
+  let carerInsertResponse = {};
+  //Try to add any data
+  if(Object.keys(carer).length>0){
+    carerInsertResponse = await addCarer(carer,actionUsername)
+    if(carerInsertResponse.success){
+      patient["carer_id"]=carerInsertResponse.response.insertId;
+    }
+  }
+  else{
+    patient["carer_id"]="NULL";
+  }
+
+  let hospitalInsertResponse = {};
+  //Try to add any data
+  if(Object.keys(hospital).length>0){
+    hospitalInsertResponse = await addHospital(hospital,actionUsername)
+    if(hospitalInsertResponse.success){
+      patient["hospital_id"]=hospitalInsertResponse.response.insertId;
+    }
+  }
+  else{
+    patient["hospital_id"]="NULL";
+  }
+
+  //Both queries failed
+  if(!patient.hospital_id && !patient.carer_id){
+    return {success: false, response:{problem:"Incorrect data for carer and hospital"}}
+  }
+  //Hospital query failed but carer was inserted
+  if(patient.carer_id&&!patient.hospital_id)
+  {
+    let success = true;
+    if(patient.carer_id!="NULL"){
+      const deleteResponse = await deleteCarer(patient.carer_id,actionUsername)
+      if(!deleteResponse.success){
+        success = false;
+      }
+    }
+    return {success: false, response:{problem:"Incorrect data for hospital", delete:success}}
+  }
+
+  //Carer query failed but hospital was inserted
+  if(patient.hospital_id && !patient.carer_id){
+    let success = true;
+    if(patient.hospital_id!="NULL"){
+      const deleteResponse = await deleteHospital(patient.hospital_id,actionUsername)
+      if(!deleteResponse.success){
+        success = false;
+      }
+    }
+    return {success: false, response:{problem:"Incorrect data for carer", delete:success}}
+  }
+
+  //Both added correctly
+  if(patient.hospital_id && patient.carer_id){
+    const  patientInsertResponse = await addPatient(patient,actionUsername)
+    if(patientInsertResponse.success){
+      return {success: true, response:{insertedId:patient.patient_no}}
+    }
+    //Query to insert patient failed
+    else{
+      let carer = true;
+      let hospital = true;
+      if(patient.carer_id!="NULL"){
+        const deleteResponse = await deleteCarer(patient.carer_id,actionUsername)
+        if(!deleteResponse.success){
+          carer = false;
+        }
+      }
+      if(patient.hospital_id!="NULL"){
+        const deleteResponse = await deleteHospital(patient.hospital_id,actionUsername)
+        if(!deleteResponse.success){
+          hospital = false;
+        }
+      }
+      return{success:false,
+        response:{problem:"Problem on patient insert", carer: carer, hospital: hospital}}
+    }
+  }
+}
 /*===============================*
           DELETE QUERIES
  *===============================*/
@@ -644,7 +752,7 @@ async function insertQueryDatabase(sql, tableName, actionUsername, id = undefine
   if (response.status == "OK"){
       id = (id === undefined) ? response.response.insertId : id;
       logger.logInsert(actionUsername, tableName, id, "Successful.");
-      return {success: true, insertId: id};
+      return {success: true, response: {insertId: id}};
   }else {
       if (response.err.type === "SQL Error") {
         logger.logInsert(actionUsername, tableName, "-1",
@@ -760,9 +868,19 @@ function prepareInsertSQL(table,object)
   const values = Object.values(object);
   for(let i=0; i<values.length-1; i++)
   {
+    if(values[i]!='NULL'){
       sql += `'${values[i]}',`;
+    }
+    else{
+      sql += `${values[i]},`;
+    }
   }
-  sql += `'${values[values.length-1]}');`
+  if(values[values.length-1]!='NULL'){
+      sql += `'${values[values.length-1]}');`
+  }
+  else{
+      sql += `${values[values.length-1]});`
+  }
   return sql;
 }
 
