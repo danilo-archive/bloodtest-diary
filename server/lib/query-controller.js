@@ -397,13 +397,11 @@ async function changeTestStatus(test, actionUsername)
 
   if (res.success && scheduleNew) {
     const insertedResponse = await scheduleNextTest(test.testId, actionUsername);
-    console.log(insertedResponse)
     if(insertedResponse.response){
       res.response.new_date = insertedResponse.response.new_date;
       res.response.insertId = insertedResponse.response.insertId;
     }
   }
-  console.log(res)
   return res;
 }
 
@@ -593,7 +591,7 @@ function getNextDueDate(frequency, completed_date)
 * @param newInfo {JSON} - (optional) new info to add into database with new test
 * @return {JSON} - result of query {success:true/false reply:(optional;when no new entry inserted due to finished range of tests)}
 **/
-async function scheduleNextTest(testId, actionUsername, newInfo={})
+async function scheduleNextTest(testId, actionUsername)
 {
   const response = await getTest(testId);
   const test = response.response[0];
@@ -601,18 +599,16 @@ async function scheduleNextTest(testId, actionUsername, newInfo={})
   // also frequency needs to be defined (not null)
   if(test.frequency !== null && test.occurrences > 1){
     const newTest = {
-      patient_no: (!newInfo.patient_no) ? test.patient_no : newInfo.patient_no,
-      frequency:(!newInfo.frequency) ? test.frequency : newInfo.frequency,
-      due_date: (!newInfo.due_date) ? getNextDueDate(test.frequency, test.completed_date) : newInfo.due_date, // use completed_date that is stored in the DB instead of creating a new one on the go
-      occurrences: (!newInfo.occurrences) ? (test.occurrences-1) : (newInfo.occurrences), // newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
-      notes: (!newInfo.notes) ? test.notes : newInfo.notes
+      patient_no: test.patient_no,
+      frequency: test.frequency,
+      due_date: getNextDueDate(test.frequency, test.completed_date), // use completed_date that is stored in the DB instead of creating a new one on the go
+      occurrences:(test.occurrences-1), // newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
+      notes:test.notes
     }
-    console.log(newTest)
     const response = await addTest(newTest, actionUsername);
     if(response.success){
       response.response["new_date"] = newTest.due_date;
     }
-    console.log(response);
     return response;
   }
   return {success: true, reply: "No new tests"};
@@ -697,7 +693,6 @@ async function insertQueryDatabase(sql, tableName, actionUsername, id = undefine
 async function requestEditing(table, id, actionUsername)
 {
   const data = await databaseController.requestEditing(table,id).then( data => {return data;});
-  console.log(data)
   // TODO: return token + expiration
   if (data.status == "OK"){
     logger.logOther(actionUsername, table, id, "Request for editing was approved.");
