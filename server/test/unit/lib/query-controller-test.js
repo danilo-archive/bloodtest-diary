@@ -506,6 +506,54 @@ describe("Update queries tests", function(){
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
       })
+      it("Accept completed update and accept new test(STUBBED)", async function(){
+        const dbController = {
+          requestEditing: async function() {
+            return {status: "OK", response:{token:"2000"}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"yes", occurrences:"3", frequency:"2-W"}]}}
+          },
+          insertQuery: async function()
+          {
+            return {status: "OK", response: {insertId:"505"}}
+          },
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({testId:"2000",newStatus:"completed"}, testUsername);
+        response.success.should.equal(true);
+        response.response.affectedRows.should.equal(1);
+        response.response.new_date.should.equal("20201114");
+        response.response.insertId.should.equal("505");
+        spy.calledOnce.should.equal(true);
+      })
+      it("Accept completed update and reject new test(STUBBED)", async function(){
+        const dbController = {
+          requestEditing: async function() {
+            return {status: "OK", response:{token:"2000"}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"yes", occurrences:"3", frequency:"2-W"}]}}
+          },
+          insertQuery: async function()
+          {
+            return {status: "ERR", err: {error:"STUBBED ERROR"}}
+          },
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({testId:"2000",newStatus:"completed"}, testUsername);
+        response.success.should.equal(true);
+        response.response.affectedRows.should.equal(1);
+        spy.calledOnce.should.equal(true);
+      })
       it("Reject completed update (STUBBED)", async function(){
         const dbController = {
           requestEditing: async function() {
@@ -1114,6 +1162,82 @@ describe("Delte queries tests", function(){
         }}
         queryController.__set__("databaseController",dbController);
         const response = await spy("400");
+        response.success.should.equal(true);
+        response.response.should.equal("Entry deleted");
+      })
+    })
+    context("Delete test", function(){
+      let spy;
+      beforeEach(()=>{
+          spy = sinon.spy(queryController.deleteTest);
+      })
+      it("Fail deletion due to an error (STUBBED)", async function(){
+        const dbController = {
+          deleteQuery: async function() {
+            return {status: "ERR", err: {error:"STUBBED ERROR"}
+          }
+        }}
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("500");
+        response.success.should.equal(false);
+        response.response.error.should.equal("STUBBED ERROR");
+      })
+      it("Accept delete request (STUBBED)", async function(){
+        const dbController = {
+          deleteQuery: async function() {
+            return {status: "OK", err: {query:"OK", affectedRows:1}
+          }
+        }}
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("600");
+        response.success.should.equal(true);
+        response.response.should.equal("Entry deleted");
+      })
+    })
+    context("Unschedule test", function(){
+      let spy;
+      beforeEach(()=>{
+          spy = sinon.spy(queryController.unscheduleTest);
+      })
+      it("Fail unscheduling due to a deletion error (STUBBED)", async function(){
+        const dbController = {
+          deleteQuery: async function() {
+            return {status: "ERR", err: {error:"STUBBED ERROR"}}
+          },
+          cancelEditing: async function(){
+            return {status:"OK", response:"Token canceled"}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("500");
+        response.success.should.equal(false);
+        response.response.error.should.equal("STUBBED ERROR");
+      })
+      it("Fail unscheduling due to a token return error (STUBBED)", async function(){
+        const dbController = {
+          deleteQuery: async function() {
+            return {status: "ERR", err: {error:"STUBBED ERROR"}}
+          },
+          cancelEditing: async function(){
+            return {status:"ERR", err: {error:"STUBBED ERROR2"}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("500");
+        response.success.should.equal(false);
+        response.response.error.should.equal("STUBBED ERROR2");
+      })
+      it("Accept unscheduling request (STUBBED)", async function(){
+        const dbController = {
+          deleteQuery: async function() {
+            return {status: "OK", err: {query:"OK", affectedRows:1}}
+          },
+          cancelEditing: async function(){
+              return {status:"OK", response:"Token canceled"}
+            }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("600");
         response.success.should.equal(true);
         response.response.should.equal("Entry deleted");
       })

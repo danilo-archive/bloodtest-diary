@@ -187,13 +187,17 @@ async function editTest(testId, newInfo,token, actionUsername){
       scheduleNew = true;
       newInfo['completed_date'] = dateformat(new Date(), "yyyymmdd");
     }
+    else{
+      newInfo['completed_date'] = 'NULL';
+    }
     const sql = prepareUpdateSQL("Test",newInfo,"test_id");
     const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
 
     if (res.success && scheduleNew) {
        const insertedResponse = await scheduleNextTest(testId, actionUsername);
-       if(insertedResponse.insertId){
-         res["insertId"] = insertedResponse.insertId;
+       if(insertedResponse.response){
+         res.response.new_date = insertedResponse.response.new_date;
+         res.response.insertId = insertedResponse.response.insertId;
        }
     }
     return res;
@@ -398,11 +402,11 @@ async function changeTestStatus(test, actionUsername)
 
   if (res.success && scheduleNew) {
     const insertedResponse = await scheduleNextTest(test.testId, actionUsername);
-    if(insertedResponse.insertId){
-      res["insertId"] = insertedResponse.insertId;
+    if(insertedResponse.response){
+      res.response.new_date = insertedResponse.response.new_date;
+      res.response.insertId = insertedResponse.response.insertId;
     }
   }
-
   return res;
 }
 
@@ -652,6 +656,33 @@ async function deletePatient(patientid, token, actionUsername){
   //Error on the check
   return check
 }
+
+/**
+* Delete test entry from database
+* @param {String} testid - id of a test to be deleted
+* @param {string} actionUsername The user who issued the request.
+* @return {JSON} result of the query - {success:Boolean response:"Entry deleted"/Error}
+**/
+async function deleteTest(testid, actionUsername){
+  const sql = prepareDeleteSQL("Test","test_id",testid);
+  return await deleteQueryDatabase("Test",testid,sql, actionUsername);
+}
+
+/**
+* Unschedule test
+* @param testid {String} - id of the test to delete
+* @param token {String} - token to realease with the unscheduling
+* @param actionUsername {String} - username that triggered the action
+**/
+async function unscheduleTest(testid,token,actionUsername)
+{
+  const tokenRealeaseResponse = await returnToken("Test", testid, token, actionUsername);
+  if(!tokenRealeaseResponse.success){
+    return tokenRealeaseResponse;
+  }
+  const testDeletionResponse = await deleteTest(testid, actionUsername);
+  return testDeletionResponse;
+}
 /*===============================*
       HELPER FUNCTIONS BELOW:
  *===============================*/
@@ -717,7 +748,7 @@ function getNextDueDate(frequency, completed_date)
 * @param newInfo {JSON} - (optional) new info to add into database with new test
 * @return {JSON} - result of query {success:true/false reply:(optional;when no new entry inserted due to finished range of tests)}
 **/
-async function scheduleNextTest(testId, actionUsername, newInfo={})
+async function scheduleNextTest(testId, actionUsername)
 {
   const response = await getTest(testId);
   const test = response.response[0];
@@ -725,17 +756,20 @@ async function scheduleNextTest(testId, actionUsername, newInfo={})
   // also frequency needs to be defined (not null)
   if(test.frequency !== null && test.occurrences > 1){
     const newTest = {
-      patient_no: (!newInfo.patient_no) ? test.patient_no : newInfo.patient_no,
-      frequency:(!newInfo.frequency) ? test.frequency : newInfo.frequency,
-      due_date: (!newInfo.due_date) ? getNextDueDate(test.frequency, test.completed_date) : newInfo.due_date, // use completed_date that is stored in the DB instead of creating a new one on the go
-      occurrences: (!newInfo.occurrences) ? (test.occurrences-1) : (newInfo.occurrences), // newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
-      notes: (!newInfo.notes) ? test.notes : newInfo.notes
+      patient_no: test.patient_no,
+      frequency: test.frequency,
+      due_date: getNextDueDate(test.frequency, test.completed_date), // use completed_date that is stored in the DB instead of creating a new one on the go
+      occurrences:(test.occurrences-1), // newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
+      notes:test.notes
     }
-    return await addTest(newTest, actionUsername);
+    const response = await addTest(newTest, actionUsername);
+    if(response.success){
+      response.response["new_date"] = newTest.due_date;
+    }
+    return response;
   }
   return {success: true, reply: "No new tests"};
 }
-
 /**
 * Run multiple queries on the database
 * @param {Array} queries - array of queries to run
@@ -940,7 +974,12 @@ function prepareUpdateSQL(table, object, idProperty)
   for(let i=0; i<properties.length; i++)
   {
     if(properties[i]!= idProperty){
-      sql += `${properties[i]} = '${values[i]}', `;
+      if(values[i]!="NULL"){
+        sql += `${properties[i]} = '${values[i]}', `;
+      }
+      else{
+        sql += `${properties[i]} = NULL, `;
+      }
     }
     else{
       pos = i;
@@ -1030,6 +1069,8 @@ module.exports = {
     deleteHospital,
     deletePatient,
     deleteCarer,
+    unscheduleTest,
+    deleteTest,
   //TOKEN CONTROL
     requestEditing,
     returnToken

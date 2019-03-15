@@ -225,7 +225,8 @@ class ServerConnect {
         console.log(this.loginToken);
         this.socket.emit('getTestsInWeek', date, this.loginToken);
         this.socket.once('getTestsInWeekResponse', res => {
-            callback(res.response);
+            console.log({res});
+            callback(res);
         });
     }
 
@@ -349,6 +350,13 @@ class ServerConnect {
     editPatient(patientId, newData, token, callback){
         this.socket.emit("editPatient", patientId, newData, token, this.loginToken);
         this.socket.once("editPatientResponse", res => {
+            callback(res);
+        });
+    }
+
+    unscheduleTest(testId, token, callback){
+        this.socket.emit("unscheduleTest", testId, token, this.loginToken);
+        this.socket.once("unscheduleTestResponse", res => {
             callback(res);
         });
     }
