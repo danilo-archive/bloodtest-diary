@@ -61,9 +61,11 @@ export default class PatientSection extends React.Component {
                   <CellContainer>
                       {this.props.tests.map(test => (
                           <TestCell
-                              key={test.test_no}
+                              key={test.test_id}
+                              testId={test.test_id}
                               due = {test.due_date.substring(0, 10)}
                               notes={test.notes}
+                              deleteTest={this.props.deleteTest}
                           />
                       ))}
                   </CellContainer>

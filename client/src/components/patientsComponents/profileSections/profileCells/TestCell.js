@@ -52,7 +52,7 @@ export default class TestCell extends React.Component {
             <Container >
                 <Field key={"due"} fontSize={"150%"}>{this.props.due}</Field>
                 <Field key={"notes"} fontSize={"150%"}>{this.props.notes}</Field>
-                <DeleteButton>Delete test</DeleteButton>
+                <DeleteButton onClick={() => {this.props.deleteTest(this.props.testId)}}>Delete test</DeleteButton>
             </Container>
           </>
         );

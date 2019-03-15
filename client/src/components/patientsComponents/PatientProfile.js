@@ -132,6 +132,28 @@ class PatientProfile extends Component {
         openAlert("Are you sure you want to delete this patient ?", "optionAlert", "Yes", this.deletePatient, "No", () => {return});
     }
 
+    onDeleteTestClick = testId => {
+        openAlert("Are you sure you want to delete this Test ?", "optionAlert", "Yes", () => {this.deleteTest(testId)}, "No", () => {return});
+    }
+    deleteTest = testId => {
+        this.serverConnect.requestTestEditing(testId, token => {
+            console.log(testId)
+            console.log(token);
+            if (token){
+                this.serverConnect.unscheduleTest(testId, token, res => {
+                    if (res.success){
+                        this.loadTests();
+                        openAlert("Test successfully deleted", "confirmationAlert", "Ok", () => {return});
+                    }else{
+                        openAlert("Something went wrong", "confirmationAlert", "Ok", () => {return});
+                    }
+                });
+            }else{
+                openAlert("This test is currently being edited", "confirmationAlert", "Ok", () => {return});
+            }
+        });
+    }
+
     loadPatient() {
         this.serverConnect.getFullPatientInfo(this.state.patientId, response => {
            const info = response[0];
@@ -282,7 +304,10 @@ class PatientProfile extends Component {
                             })
                         }}
                     />
-                    <TestSection tests={this.state.testsData}/>
+                    <TestSection
+                        tests={this.state.testsData}
+                        deleteTest={this.onDeleteTestClick}
+                    />
 
                     <ButtonContainer>
                         <DeleteContainer>
