@@ -267,8 +267,8 @@ class ServerConnect {
 
     requestPatientEditing(patientId, callback){
         this.socket.emit("requestPatientEditToken", patientId, this.loginToken);
-        this.socket.once("requestPatientEditTokenResponse", token => {
-            callback(token);
+        this.socket.once("requestPatientEditTokenResponse", res => {
+            callback(res);
         });
     }
 

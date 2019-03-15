@@ -114,6 +114,14 @@ class PatientProfile extends Component {
       this.loadTests();
     }
 
+    handleError = res => {
+        if (res.errorType === "authentication"){
+            openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
+        }else{
+            openAlert("Unknown error occurred", "confirmationAlert", "Ok", () => {return});
+        }
+    }
+
     deletePatient = () => {
         console.log("deleting")
         this.serverConnect.deletePatient(this.state.patientId, this.state.editToken, res => {
@@ -155,39 +163,47 @@ class PatientProfile extends Component {
     }
 
     loadPatient() {
-        this.serverConnect.getFullPatientInfo(this.state.patientId, response => {
-           const info = response[0];
-           this.setState({
-               patientName : info.patient_name,
-               patientSurname : info.patient_surname,
-               patientEmail : info.patient_email,
-               patientPhone : info.patient_phone,
-               carerId : info.carer_id,
-               carerRelationship: info.relationship,
-               carerName: info.carer_name,
-               carerSurname: info.carer_surname,
-               carerEmail: info.carer_email,
-               carerPhone: info.carer_phone,
-               hospitalId: info.hospital_id,
-               hospitalName: info.hospital_name,
-               hospitalEmail: info.hospital_email,
-               hospitalPhone: info.hospital_phone,
+        this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
+           if (res.success){
+               const info = res.response[0];
+               this.setState({
+                   patientName : info.patient_name,
+                   patientSurname : info.patient_surname,
+                   patientEmail : info.patient_email,
+                   patientPhone : info.patient_phone,
+                   carerId : info.carer_id,
+                   carerRelationship: info.relationship,
+                   carerName: info.carer_name,
+                   carerSurname: info.carer_surname,
+                   carerEmail: info.carer_email,
+                   carerPhone: info.carer_phone,
+                   hospitalId: info.hospital_id,
+                   hospitalName: info.hospital_name,
+                   hospitalEmail: info.hospital_email,
+                   hospitalPhone: info.hospital_phone,
 
-               noCarer: info.carer_id ? false : true,
-               localHospital: info.hospital_id ? false : true,
-               ready: true
-               //TODO : store patients tests
-           });
+                   noCarer: info.carer_id ? false : true,
+                   localHospital: info.hospital_id ? false : true,
+                   ready: true
+                   //TODO : store patients tests
+               });
+           }else{
+              this.handleError(res);
+           }
         });
     }
 
     loadTests() {
-        this.serverConnect.getNextTestsOfPatient(this.state.patientId, response => {
-            const tests = response.response;
-            this.setState({
-                testsData: tests,
-                readyTest: true
-            })
+        this.serverConnect.getNextTestsOfPatient(this.state.patientId, res => {
+            if (res.success){
+                const tests = res.response;
+                this.setState({
+                    testsData: tests,
+                    readyTest: true
+                })
+            }else{
+                this.handleError(res);
+            }
         });
     }
 

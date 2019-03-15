@@ -113,6 +113,14 @@ class Patients extends React.Component {
         this.initAllPatients();
     }
 
+    handleError = (res, error) => {
+        if (res.errorType === "authentication"){
+            openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
+        }else{
+            openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
+        }
+    }
+
     initAllPatients(){
         this.serverConnect.getAllPatients(res => {
             if (res.success){
@@ -198,19 +206,18 @@ class Patients extends React.Component {
     }
 
     openEditModal = id => {
-        this.serverConnect.requestPatientEditing(id, token => {
+        this.serverConnect.requestPatientEditing(id, res => {
             console.log(`id in openEditModal: ${id}`);
-            if (token){
-                this.setState({selectedId: id, openEditModal: true, editToken: token});
+            if (res.token){
+                this.setState({selectedId: id, openEditModal: true, editToken: res.token});
             }else{
-                // TODO open error dialoge "someone is editing this patient"
+                this.handleError(res, "Somebody is already editing this patient");
             }
         });
     }
 
 
     onCloseEditModal = () => {
-        // TODO get rid of the torken
         console.log("closing modal");
         this.serverConnect.discardPatientEditing(this.state.selectedId, this.state.editToken, res => {
             this.setState({selectedId: undefined, openEditModal: false, editToken: undefined});

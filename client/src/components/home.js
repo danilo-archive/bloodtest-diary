@@ -92,10 +92,14 @@ class Home extends Component {
     });
   }
 
-  handleInvalidResponseError(){
-      openAlert("Authentication with server failed", "confirmationAlert", "Go back to Login", () => {
-         this.logout();
-      });
+  handleInvalidResponseError(res, error){
+      if (res.errorType === "authentication"){
+          openAlert("Authentication with server failed", "confirmationAlert", "Go back to Login", () => {
+             this.logout();
+          });
+      }else{
+          openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
+      }
   }
 
   initOverduePanel() {
@@ -106,7 +110,7 @@ class Home extends Component {
             overdueReady: true
           });
       }else{
-          this.handleInvalidResponseError();
+          this.handleInvalidResponseError(res);
       }
     });
   }
@@ -123,7 +127,7 @@ class Home extends Component {
             weekDays: newWeek
           });
       }else{
-          this.handleInvalidResponseError();
+          this.handleInvalidResponseError(res);
       }
     });
   }
