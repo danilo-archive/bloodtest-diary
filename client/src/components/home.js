@@ -92,12 +92,22 @@ class Home extends Component {
     });
   }
 
+  handleInvalidResponseError(){
+      openAlert("Authentication with server failed", "confirmationAlert", "Go back to Login", () => {
+         this.logout();
+      });
+  }
+
   initOverduePanel() {
     this.serverConnect.getOverdueTests(res => {
-      this.setState({
-        overdueTests: res,
-        overdueReady: true
-      });
+      if (res.success){
+          this.setState({
+            overdueTests: res.response,
+            overdueReady: true
+          });
+      }else{
+          this.handleInvalidResponseError();
+      }
     });
   }
 
@@ -105,12 +115,16 @@ class Home extends Component {
     let monday = newWeek ? newWeek[0] : this.state.weekDays[0];
     newWeek = newWeek ? newWeek : this.state.weekDays;
     this.serverConnect.getTestsInWeek(monday, res => {
-      this.setState({
-        ongoingTests: res[5],
-        calendar: res.slice(0, 5),
-        dashboardReady: true,
-        weekDays: newWeek
-      });
+      if (res.success){
+          this.setState({
+            ongoingTests: res.response[5],
+            calendar: res.response.slice(0, 5),
+            dashboardReady: true,
+            weekDays: newWeek
+          });
+      }else{
+          this.handleInvalidResponseError();
+      }
     });
   }
 
@@ -305,6 +319,7 @@ class Home extends Component {
                 <EditTest
                   testId={this.state.editTestId}
                   closeModal={this.onEditTestCloseModal}
+                  openModal={this.onEditTestOpenModal}
                   token={this.state.editToken}
                 />
               </Modal>

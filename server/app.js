@@ -193,7 +193,7 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.getTestWithinWeek(date);
-        socket.emit('getTestsInWeekResponse', response);
+        socket.emit('getTestsInWeekResponse', {success: true, response: response.response});
     });
 
     socket.on('getOverdueTests', async (accessToken) => {
@@ -211,7 +211,7 @@ io.on('connection',function(socket)
 
         //const response = await queryController.getOverdueGroups();
         const response = await queryController.getSortedOverdueWeeks();
-        socket.emit('getOverdueTestsResponse', response.response);
+        socket.emit('getOverdueTestsResponse', {success: true, response: response.response});
     });
 
     socket.on('getTestInfo', async (testId, accessToken) => {
@@ -327,7 +327,7 @@ io.on('connection',function(socket)
         const test = {testId: testId, newStatus: newStatus}
         const response = await queryController.changeTestStatus(test, username);
         if (response.success){
-            socket.emit('testStatusChangeResponse', {success: true});
+            socket.emit('testStatusChangeResponse', {success: true, response: response.response});
             io.in("main_page").emit('testStatusChange', testId, newStatus);
         }else{
             socket.emit('testStatusChangeResponse', {success: false});
@@ -351,9 +351,9 @@ io.on('connection',function(socket)
         console.log({response});
 
         if (response.success){
-            socket.emit("editTestResponse", {success: true});
-            socket.emit("testAdded", response.response);
-            socket.in("main_page").emit("testAdded", response.response);
+            socket.emit("editTestResponse", {success: true, response: response.response});
+            socket.emit("testAdded");
+            socket.in("main_page").emit("testAdded");
         } else {
             socket.emit("editTestResponse", {success: false});
         }
@@ -406,4 +406,29 @@ io.on('connection',function(socket)
         io.in("patients_page").emit("patientEdited", patientId, newInfo);
 
     });
+
+    socket.on("unscheduleTest", async (testId, token, accessToken) => {
+        if (!accessToken) {
+            // REQUIRE TOKEN.
+            socket.emit("unscheduleTestResponse", { success:false, response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            // INVALID TOKEN.
+            socket.emit("unscheduleTestResponse", { success:false, response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await queryController.unscheduleTest(testId, token, username);
+        if (response.success){
+            socket.emit("unscheduleTestResponse", { success:true });
+            io.in("main_page").emit("testAdded");
+        }else{
+            socket.emit("unscheduleTestResponse", {success:false, message: "Something went wrong"});
+        }
+
+    });
+
+
 });

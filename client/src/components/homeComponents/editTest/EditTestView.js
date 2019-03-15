@@ -8,7 +8,8 @@ import StatusSetter from "./StatusSetter";
 import { getServerConnect } from "../../../serverConnection.js";
 import Button from "./Button";
 import dateformat from "dateformat";
-
+import { openAlert } from "./../../Alert.js";
+import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
 const DataContainer = styled.div`
   position: relative;
   width: 45rem;
@@ -21,6 +22,7 @@ const SetterValues = [
   { value: "M", name: "Months" },
   { value: "Y", name: "Years" }
 ];
+
 
 const TextArea = styled.textarea`
   width: 40%;
@@ -48,7 +50,8 @@ export default class EditTestView extends React.Component {
           id: res.test_id,
           date: {
             dueDate: dateformat(new Date(res.due_date), "d mmm yyyy"),
-            frequency: res.frequency ? res.frequency : "",
+
+            frequency: res.frequency && res.frequency !== "null" &&  res.frequency !== null ? res.frequency : "0-D",
             occurrences: res.occurrences,
             noRepeat: res.occurrences === 1
           },
@@ -73,8 +76,13 @@ export default class EditTestView extends React.Component {
       test_id: test.id,
       patient_no: patient.id,
       due_date: dateformat(new Date(test.date.dueDate), "yyyy-mm-dd"),
-      frequency: test.date.frequency.length === 0 ? null : test.date.frequency,
-      occurrences: test.date.noRepeat ? 1 : test.date.occurrences,
+      frequency:
+        test.date.frequency.length === 0
+          ? null
+          : test.date.frequency.split("-")[1] === "M"
+          ? `${parseInt(test.date.frequency.split("-")[0]) * 4}-W`
+          : test.date.frequency,
+      occurrences: test.date.occurrences,
       completed_status:
         test.status === "completed"
           ? "yes"
@@ -87,13 +95,34 @@ export default class EditTestView extends React.Component {
     console.log(params);
     this.serverConnect.editTest(this.state.test.id, params, this.token, res => {
       if (res.success) {
-        this.props.closeModal();
+          console.log(res);
+        if (res.response.insertId != undefined){
+            openAlert(`A new test had been automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}`, "confirmationAlert",
+                      "Ok", () => {this.props.closeModal()});
+        }else{
+            this.props.closeModal();
+        }
+
       } else {
-        alert("Something went wrong");
-        this.props.closeModal();
+        openAlert("Something went wrong", "confirmationAlert", "Ok", () => {this.props.closeModal()});
       }
     });
   };
+
+  unscheduleTest = () => {
+    openAlert("Are you sure you want to unschedule this test?", "optionAlert",
+              "No", () => {return},
+              "Yes", () => {
+                  this.serverConnect.unscheduleTest(this.state.test.id, this.token, res => {
+                    if (res.success) {
+                      openAlert("Test successfully unscheduled", "confirmationAlert", "Ok", () => {this.props.closeModal()});
+                    } else {
+                      openAlert(res.response, "confirmationAlert", "Ok", () => {this.props.closeModal()});
+                    }
+                  });
+              });
+  };
+
   render() {
     return this.state.ready ? (
       <>
@@ -180,7 +209,7 @@ export default class EditTestView extends React.Component {
                 })
               }
               onFrequencyChange={time => {
-                time = time === "" ? "0" : time;
+                time = time === "" || time === "-" ? "0" : time;
                 this.setState({
                   showCalendar: false,
                   test: {
@@ -239,9 +268,7 @@ export default class EditTestView extends React.Component {
                 <Button save onClick={this.saveTest}>
                   Save Changes
                 </Button>
-                <Button onClick={() => alert("Unschedule test")}>
-                  Unschedule test
-                </Button>
+                <Button onClick={this.unscheduleTest}>Unschedule test</Button>
               </div>
             </div>
           </div>

@@ -1,9 +1,9 @@
 /**
  * This file contains tests that test the behaviour of token-generator.js
- * 
+ *
  * @author Luka Kralj
  * @version 1.0
- * 
+ *
  * @module token-generator-test
  * @see module:token-generator
  */
@@ -126,20 +126,20 @@ describe("Test calendar controller:", () => {
 
     describe("Test with valid arguments:", () => {
         describe("> '1-Y' & 12 Mar 2019:", () => {
-            it("Should return 12 Mar 2020.", () => {
+            it("Should return 14 Mar 2020.", () => {
                 const param = new Date("2019-03-12");
                 let actual = calendarController.getNextDueDate("1-Y", param);
                 actual = dateformat(actual, "yyyymmdd")
-                const expected = "20200312";
+                const expected = "20200314";
                 expect(actual).to.equal(expected);
             });
         });
         describe("> '1-Y' & 14 Mar 2019 (check Saturday):", () => {
-            it("Should return 16 Mar 2020.", () => {
+            it("Should return 14 Mar 2020.", () => {
                 const param = new Date("2019-03-14");
                 let actual = calendarController.getNextDueDate("1-Y", param);
                 actual = dateformat(actual, "yyyymmdd")
-                const expected = "20200316";
+                const expected = "20200314";
                 expect(actual).to.equal(expected);
             });
         });
@@ -148,7 +148,7 @@ describe("Test calendar controller:", () => {
                 const param = new Date("2019-03-12");
                 let actual = calendarController.getNextDueDate("5-D", param);
                 actual = dateformat(actual, "yyyymmdd")
-                const expected = "20190318";
+                const expected = "20190317";
                 expect(actual).to.equal(expected);
             });
         });
@@ -157,7 +157,7 @@ describe("Test calendar controller:", () => {
                 const param = new Date("2019-02-01");
                 let actual = calendarController.getNextDueDate("4-W", param);
                 actual = dateformat(actual, "yyyymmdd")
-                const expected = "20190301";
+                const expected = "20190302";
                 expect(actual).to.equal(expected);
             });
         });
@@ -166,7 +166,7 @@ describe("Test calendar controller:", () => {
                 const param = new Date("2019-04-12");
                 let actual = calendarController.getNextDueDate("7-D", param);
                 actual = dateformat(actual, "yyyymmdd")
-                const expected = "20190423";
+                const expected = "20190420";
                 expect(actual).to.equal(expected);
             });
         });
