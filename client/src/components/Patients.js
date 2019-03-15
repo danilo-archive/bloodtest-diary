@@ -11,7 +11,7 @@ import LoadingAnimation from "./loadingScreen/loadingAnimation";
 import {getServerConnect} from "../serverConnection.js";
 import PatientProfile from "./patientsComponents/PatientProfile";
 import NewPatient from "./patientsComponents/NewPatient";
-
+import {openAlert} from "./Alert";
 
 const Container = styled.div`
   border: blue 0 solid;
@@ -115,11 +115,15 @@ class Patients extends React.Component {
 
     initAllPatients(){
         this.serverConnect.getAllPatients(res => {
-            this.setState({
-                allPatients: res,
-                shownPatients: res,
-                allPatientsReady: true
-            });
+            if (res.success){
+                this.setState({
+                    allPatients: res.response,
+                    shownPatients: res.response,
+                    allPatientsReady: true
+                });
+            }else{
+                openAlert("Authentication failed", "confirmationAlert", "Go back to login", () => {this.logout()});
+            }
         });
     };
 
