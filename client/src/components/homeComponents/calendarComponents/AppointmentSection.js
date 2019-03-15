@@ -25,7 +25,7 @@ function formatOverdueTitle(section, header){
 
 export default props => {
   const header = formatOverdueTitle(props.section, props.type);
-  const padding = ((props.section === "calender") ? `8px` : '0px');
+  const padding = ((props.section === "calendar") ? `8px` : '0px');
   return (
       <AppointmentSection style={{ 'padding-left': padding, 'padding-right': padding}}>
         <AppointmentSectionHeader color={props.color} section={props.section}>{header}</AppointmentSectionHeader>
@@ -38,6 +38,7 @@ export default props => {
             time={appointment.time}
             dueDate={appointment.due_date}
             editTest={props.editTest}
+            section = {props.section}
           />
         ))}
       </AppointmentSection>

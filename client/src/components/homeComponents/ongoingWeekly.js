@@ -59,7 +59,7 @@ class OngoingWeekly extends React.Component {
             <AppointmentSection
               type="Appointments"
               appointments={this.props.anytimeAppointments}
-              section="ongoing"
+              section={"ongoing"}
               editTest={this.props.editTest}
             />
             <div style={{width:"100%",height:"45px"}}/>

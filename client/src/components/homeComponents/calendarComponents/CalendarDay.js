@@ -84,7 +84,7 @@ class CalendarDay extends React.Component {
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
               editTest={this.props.editTest}
-              section={this.props.section}
+              section={"calendar"}
             />
             <div style={{width:"100%",height:"130px"}}/>
           </ScrollBox>
