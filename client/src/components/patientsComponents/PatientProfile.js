@@ -27,15 +27,10 @@ const PatientProfileTitle = styled.p`
 `;
 
 const ButtonContainer = styled.div`
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
-  justify-content: center;
-`;
-
-const DeleteContainer = styled.div`
-  width: 100%;
-  display: flex;
   justify-content: center;
 `;
 
@@ -46,7 +41,8 @@ const DeleteButton = styled.button`
   text-align: center;
   text-decoration: none;
   border-radius: 10px;
-
+  margin: 4%;
+  
   height: 44px;
   min-width: 100px;
 
@@ -120,10 +116,10 @@ class PatientProfile extends Component {
         }else{
             openAlert("Unknown error occurred", "confirmationAlert", "Ok", () => {return});
         }
-    }
+    };
 
     deletePatient = () => {
-        console.log("deleting")
+        console.log("deleting");
         this.serverConnect.deletePatient(this.state.patientId, this.state.editToken, res => {
             if (res.success){
                 openAlert("Patient successfully deleted", "confirmationAlert",
@@ -134,18 +130,19 @@ class PatientProfile extends Component {
                 openAlert("Something went wrong while deleating", "confirmationAlert", "Ok", () => {return});
             }
         });
-    }
+    };
 
     deleteOption = () => {
         openAlert("Are you sure you want to delete this patient ?", "optionAlert", "Yes", this.deletePatient, "No", () => {return});
-    }
+    };
 
     onDeleteTestClick = testId => {
         openAlert("Are you sure you want to delete this Test ?", "optionAlert", "Yes", () => {this.deleteTest(testId)}, "No", () => {return});
-    }
+    };
+
     deleteTest = testId => {
         this.serverConnect.requestTestEditing(testId, token => {
-            console.log(testId)
+            console.log(testId);
             console.log(token);
             if (token){
                 this.serverConnect.unscheduleTest(testId, token, res => {
@@ -160,7 +157,7 @@ class PatientProfile extends Component {
                 openAlert("This test is currently being edited", "confirmationAlert", "Ok", () => {return});
             }
         });
-    }
+    };
 
     loadPatient() {
         this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
@@ -326,10 +323,8 @@ class PatientProfile extends Component {
                     />
 
                     <ButtonContainer>
-                        <DeleteContainer>
-                            <DeleteButton onClick={this.deleteOption}>Delete patient</DeleteButton>
-                        </DeleteContainer>
                         <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
+                        <DeleteButton onClick={this.deleteOption}>Delete patient</DeleteButton>
                         <SaveButton onClick={this.onSaveClick}>Save changes</SaveButton>
                     </ButtonContainer>
 
