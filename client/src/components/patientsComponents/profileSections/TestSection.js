@@ -1,22 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import InfoCell from "./profileCells/InfoCell";
-import InputCell from "./profileCells/InputCell";
 import TestCell from "./profileCells/TestCell";
-import Label from "./profileCells/Label";
 import SectionContainer from "./SectionContainer"
-
-const Container = styled.div`
-  margin: 3%;
-  padding: 1%;
-  width: 100%;
-  overflow: scroll;
- `;
-
-const Line = styled.hr`
-  border: 0;
-  border-bottom: solid 1px rgb(100, 100, 100, 0.5);
-`;
 
 const EmptyContainer = styled.div`
   width: 100%;

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 import PatientRow from "./PatientRow.js";
 import FilterCell from "./FilterCell.js";
-import {getServerConnect} from "../../../serverConnection.js";
 
 const Table = styled.table`
   width: 100%;
@@ -77,7 +76,7 @@ class PatientsTable extends React.Component {
                     <TableHead>Patient surname</TableHead>
                     <TableHead>Patient email</TableHead>
                     <TableHead>Patient phone</TableHead>
-                    <TableHead></TableHead>
+                    <TableHead/>
                 </TableRow>
                 <TableRow>
                     <FilterCell

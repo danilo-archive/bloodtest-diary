@@ -44,7 +44,7 @@ const CloseButton = styled.button`
 
   height: 44px;
   min-width: 100px;
-  margin-right: 2%;
+  margin: 4%;
 
   :hover {
     background: #c8c8c8;
@@ -60,7 +60,7 @@ const SaveButton = styled.button`
   color: white;
   text-align: center;
   text-decoration: none;
-  margin-left: 2%;
+  margin: 4%;
   border-radius: 10px;
 
   height: 44px;
