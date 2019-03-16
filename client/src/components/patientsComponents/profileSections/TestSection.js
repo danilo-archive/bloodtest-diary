@@ -18,6 +18,12 @@ const Line = styled.hr`
   border-bottom: solid 1px rgb(100, 100, 100, 0.5);
 `;
 
+const EmptyContainer = styled.div`
+  width: 100%;
+  text-align: center;
+  font-size: 115%;
+`;
+
 const Field = styled.div`
   position: relative;
   padding-left: 1%;
@@ -71,13 +77,29 @@ export default class PatientSection extends React.Component {
                   </CellContainer>
           </>
         );
-        return (
+        const emptyTest = (
             <>
-               <SectionContainer
-                title={"Test info"}
-                content={content}
-               />
+                <EmptyContainer>Patient has no tests scheduled</EmptyContainer>
             </>
         );
+        if (this.props.tests.length > 0) {
+            return (
+                <>
+                    <SectionContainer
+                        title={"Test info"}
+                        content={content}
+                    />
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <SectionContainer
+                        title={"Test info"}
+                        content={emptyTest}
+                    />
+                </>
+            );
+        }
     }
 }
