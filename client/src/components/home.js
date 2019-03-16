@@ -92,10 +92,14 @@ class Home extends Component {
     });
   }
 
-  handleInvalidResponseError(){
-      openAlert("Authentication with server failed", "confirmationAlert", "Go back to Login", () => {
-         this.logout();
-      });
+  handleInvalidResponseError(res, defaultError){
+      if (res.errorType === "authentication"){
+          openAlert("Authentication with server failed", "confirmationAlert", "Go back to Login", () => {
+             this.logout();
+          });
+      }else{
+          openAlert(`${defaultError} ? ${defaultError} : "Unknown error occurred"`, "confirmationAlert", "Ok", () => {return});
+      }
   }
 
   initOverduePanel() {
@@ -106,7 +110,7 @@ class Home extends Component {
             overdueReady: true
           });
       }else{
-          this.handleInvalidResponseError();
+          this.handleInvalidResponseError(res);
       }
     });
   }
@@ -123,7 +127,7 @@ class Home extends Component {
             weekDays: newWeek
           });
       }else{
-          this.handleInvalidResponseError();
+          this.handleInvalidResponseError(res);
       }
     });
   }
@@ -144,7 +148,7 @@ class Home extends Component {
     }
   }
 
-  modifyTest(id, modificationFunction) {
+  /*modifyTest(id, modificationFunction) {
     for (var i = 0; i < this.state.overdueTests.length; ++i) {
       let group = this.state.overdueTests[i];
       for (var j = 0; j < group.tests.length; ++j) {
@@ -185,22 +189,15 @@ class Home extends Component {
         }
       }
     }
-  }
+}*/
 
   refresh(event) {
-    console.log("refresh");
     this.updateDashboard();
     this.initOverduePanel();
   }
 
   onPatientsClick(event) {
     this.props.history.push("patients");
-  }
-
-  refresh(event) {
-    console.log("refresh");
-    this.updateDashboard();
-    this.initOverduePanel();
   }
 
   logout(event) {
