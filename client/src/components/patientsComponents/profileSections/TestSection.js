@@ -4,13 +4,14 @@ import InfoCell from "./profileCells/InfoCell";
 import InputCell from "./profileCells/InputCell";
 import TestCell from "./profileCells/TestCell";
 import Label from "./profileCells/Label";
+import SectionContainer from "./SectionContainer"
 
 const Container = styled.div`
   margin: 3%;
   padding: 1%;
-  //border: #839595 3px solid;
-  //border-radius: 10px;`;
-
+  width: 100%;
+  overflow: scroll;
+ `;
 
 const Line = styled.hr`
   border: 0;
@@ -26,38 +27,56 @@ const Field = styled.div`
   height: 100%;
   color: inherit;
   font-family: "Rajdhani", sans-serif;
-  font-size: 200%;
+  font-size: 125%;
   overflow: scroll;
-  display:flex;
-  align-items:center;;
+  display: flex;
+  align-items: center;;
 `;
 
 const Horizontal = styled.div`
     display: flex;
+    width: 90%;
 `;
+
+const CellContainer = styled.div`
+  display: block;
+  overflow: scroll;
+  width: 90%;
+  max-height: 160px;
+`;
+
+
 
 
 export default class PatientSection extends React.Component {
 
 
     render() {
+        const content = (
+          <>
+                  <Horizontal>
+                      <Field>Due</Field>
+                      <Field>Notes</Field>
+                  </Horizontal>
+                  <CellContainer>
+                      {this.props.tests.map(test => (
+                          <TestCell
+                              key={test.test_id}
+                              testId={test.test_id}
+                              due = {test.due_date.substring(0, 10)}
+                              notes={test.notes}
+                              deleteTest={this.props.deleteTest}
+                          />
+                      ))}
+                  </CellContainer>
+          </>
+        );
         return (
             <>
-                <Container>
-                    <Label>Next tests</Label>
-                    <Line />
-                    <Horizontal>
-                        <Field>Due</Field>
-                        <Field>Notes</Field>
-                    </Horizontal>
-                    {this.props.tests.map(test => (
-                        <TestCell
-                            key={test.test_no}
-                            due = {test.due_date}
-                            notes={test.notes}
-                        />
-                    ))}
-                </Container>
+               <SectionContainer
+                title={"Test info"}
+                content={content}
+               />
             </>
         );
     }

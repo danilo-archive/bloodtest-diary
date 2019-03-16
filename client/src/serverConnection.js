@@ -178,10 +178,10 @@ class ServerConnect {
      * TODO eventually change name of the function.
      * TODO eventually change name of the callback.
      */
-    getTestsOfPatient(patientId, callback){
-        this.socket.emit('getTestsOfPatient', patientId, this.loginToken);
-        this.socket.once('getTestsOfPatientResponse', res => {
-            callback(res.info);
+    getNextTestsOfPatient(patientId, callback){
+        this.socket.emit('getNextTestsOfPatient', patientId, this.loginToken);
+        this.socket.once('getNextTestsOfPatientResponse', res => {
+            callback(res);
         });
     }
 
@@ -267,8 +267,8 @@ class ServerConnect {
 
     requestPatientEditing(patientId, callback){
         this.socket.emit("requestPatientEditToken", patientId, this.loginToken);
-        this.socket.once("requestPatientEditTokenResponse", token => {
-            callback(token);
+        this.socket.once("requestPatientEditTokenResponse", res => {
+            callback(res);
         });
     }
 
@@ -281,6 +281,20 @@ class ServerConnect {
     discardPatientEditing(id, token, callback){
         this.socket.emit("discardEditing", "Patient", id, token, this.loginToken);
         this.socket.once("discardEditingResponse", res => {
+            callback(res);
+        });
+    }
+
+    addPatient(newPatient, callback){
+        this.socket.emit("addPatient", newPatient, this.loginToken);
+        this.socket.once("addPatientResponse", res => {
+            callback(res);
+        });
+    }
+
+    deletePatient(patientId, token, callback){
+        this.socket.emit("deletePatient", patientId, token, this.loginToken);
+        this.socket.once("deletePatientResponse", res => {
             callback(res);
         });
     }

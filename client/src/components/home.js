@@ -92,13 +92,13 @@ class Home extends Component {
     });
   }
 
-  handleInvalidResponseError(res, defaultError){
+  handleInvalidResponseError(res, error){
       if (res.errorType === "authentication"){
           openAlert("Authentication with server failed", "confirmationAlert", "Go back to Login", () => {
              this.logout();
           });
       }else{
-          openAlert(`${defaultError} ? ${defaultError} : "Unknown error occurred"`, "confirmationAlert", "Ok", () => {return});
+          openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
       }
   }
 

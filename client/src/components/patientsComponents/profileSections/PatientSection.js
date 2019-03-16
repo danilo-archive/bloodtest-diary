@@ -9,17 +9,23 @@ export default class PatientSection extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            emailFormat: true,
+            phoneFormat: true
+        };
 
         this.onInputChange = this.onInputChange.bind(this);
+        this.editable = !this.props.editable;
     }
 
     onInputChange() {
+        const patientId = document.getElementById("patient_id").value;
         const patientName = document.getElementById("patient_name").value;
         const patientSurname = document.getElementById("patient_surname").value;
         const patientEmail = document.getElementById("patient_email").value;
         const patientPhone = document.getElementById("patient_phone").value;
 
-        this.props.onChange({patientName, patientSurname, patientEmail, patientPhone});
+        this.props.onChange({patientId, patientName, patientSurname, patientEmail, patientPhone});
     }
 
     render() {
@@ -28,7 +34,7 @@ export default class PatientSection extends React.Component {
                 <InputCell
                     field={"Patient id"}
                     id={"patient_id"}
-                    disabled
+                    disabled={this.editable}
                     value={this.props.patientId}
                     onChange={this.onInputChange}
                 />
