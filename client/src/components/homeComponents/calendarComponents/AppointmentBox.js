@@ -163,7 +163,7 @@ class AppointmentBox extends React.Component {
                 openAlert(`A new test was automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}`, "confirmationAlert", "Ok");
             }
         }else{
-            openAlert("Somebody is aready editing this test", "confirmationAlert", "Ok");
+            this.props.handleError(res, "Somebody is aready editing this test")
         }
     });
   };
