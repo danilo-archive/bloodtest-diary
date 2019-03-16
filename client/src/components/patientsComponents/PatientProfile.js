@@ -114,14 +114,6 @@ class PatientProfile extends Component {
       this.loadTests();
     }
 
-    handleError = res => {
-        if (res.errorType === "authentication"){
-            openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
-        }else{
-            openAlert("Unknown error occurred", "confirmationAlert", "Ok", () => {return});
-        }
-    }
-
     deletePatient = () => {
         console.log("deleting")
         this.serverConnect.deletePatient(this.state.patientId, this.state.editToken, res => {
@@ -144,12 +136,10 @@ class PatientProfile extends Component {
         openAlert("Are you sure you want to delete this Test ?", "optionAlert", "Yes", () => {this.deleteTest(testId)}, "No", () => {return});
     }
     deleteTest = testId => {
-        this.serverConnect.requestTestEditing(testId, token => {
-            console.log(testId)
-            console.log(token);
-            if (token){
-                this.serverConnect.unscheduleTest(testId, token, res => {
-                    if (res.success){
+        this.serverConnect.requestTestEditing(testId, res => {
+            if (res.token){
+                this.serverConnect.unscheduleTest(testId, res.token, res2 => {
+                    if (res2.success){
                         this.loadTests();
                         openAlert("Test successfully deleted", "confirmationAlert", "Ok", () => {return});
                     }else{
@@ -157,7 +147,7 @@ class PatientProfile extends Component {
                     }
                 });
             }else{
-                openAlert("This test is currently being edited", "confirmationAlert", "Ok", () => {return});
+                this.props.handleError(res, "This test is currently being edited")
             }
         });
     }
@@ -188,7 +178,7 @@ class PatientProfile extends Component {
                    //TODO : store patients tests
                });
            }else{
-              this.handleError(res);
+              this.props.handleError(res);
            }
         });
     }
@@ -202,7 +192,7 @@ class PatientProfile extends Component {
                     readyTest: true
                 })
             }else{
-                this.handleError(res);
+                this.props.handleError(res);
             }
         });
     }

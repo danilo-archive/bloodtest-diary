@@ -181,15 +181,15 @@ class Home extends Component {
   };
 
   onEditTestOpenModal = testId => {
-    this.serverConnect.requestTestEditing(testId, token => {
-      if (token != undefined) {
+    this.serverConnect.requestTestEditing(testId, res => {
+      if (res.token != undefined) {
         this.setState({
           openEditTestModal: true,
           editTestId: testId,
-          editToken: token
+          editToken: res.token
         });
       } else {
-        openAlert("Somebody is aready editing this test", "confirmationAlert", "Ok");
+          this.handleInvalidResponseError(res, "Somebody is aready editing this test")
       }
     });
   };
