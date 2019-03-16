@@ -13,7 +13,7 @@ const TableRow = styled.tr`
     display: table;
     width: 100%;
     box-sizing: border-box;
-    :hover {background-color: #f5f5f5;}
+    :hover {background-color: #f2f2f2;}
     :nth-child(even) {background-color: #f2f2f2;}
 `;
 
