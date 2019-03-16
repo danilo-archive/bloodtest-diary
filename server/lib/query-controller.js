@@ -102,6 +102,11 @@ async function getTestsOfPatient(patientId){
   return await selectQueryDatabase(sql)
 }
 
+async function getNextTestsOfPatient(patientId){
+    const sql = `SELECT * FROM Test WHERE patient_no = '${patientId}' AND completed_status='no';`;
+    return await selectQueryDatabase(sql);
+}
+
 /**
 * Get all the tests on specific date from the database
 * @param {String} date - date (format: "YYYY-MM-DD")
@@ -251,7 +256,7 @@ async function editPatientExtended(newInfo,token, actionUsername)
     //Carer added with patient update
     if(patient.carer_id==null){
       carerQueryResponse = await addCarer(carer, actionUsername)
-      patientNewInfo['carer_id'] = carerQueryResponse.insertId;
+      patientNewInfo['carer_id'] = carerQueryResponse.response.insertId;
     }
     //Database has info on this carer
     else{
@@ -271,7 +276,7 @@ async function editPatientExtended(newInfo,token, actionUsername)
     //Hospital added with update
     if(patient.hospital_id==null){
       hospitalQueryResponse = await addHospital(hospital, actionUsername)
-      patientNewInfo['hospital_id'] = hospitalQueryResponse.insertId;
+      patientNewInfo['hospital_id'] = hospitalQueryResponse.response.insertId;
     }
     //Database has info on the hospital
     else{
@@ -490,6 +495,114 @@ async function addCarer(json, actionUsername)
   return await insertQueryDatabase(sql, "Carer", actionUsername);
 }
 
+/**
+* Add new patient entry to the database with optional carer/hospital
+* @param {JSON} - entry to add
+* @param {string} actionUsername The user who issued the request.
+* @return {JSON} result of the query - {success:Boolean response:{insertedId/problem (+ optional fields)}}
+**/
+async function addPatientExtended(patientInfo,actionUsername)
+{
+  const insertProperties = Object.keys(patientInfo);
+  const carer = {};
+  const hospital = {};
+  const patient = {};
+  for(let i=0; i<insertProperties.length; i++)
+  {
+     if((insertProperties[i].startsWith('carer') || insertProperties[i] == 'relationship') && patientInfo[insertProperties[i]])
+     {
+       carer[insertProperties[i]] = patientInfo[insertProperties[i]];
+     }
+     if((insertProperties[i].startsWith('hospital')) && patientInfo[insertProperties[i]])
+     {
+       hospital[insertProperties[i]] = patientInfo[insertProperties[i]];
+     }
+     if((insertProperties[i].startsWith('patient') || insertProperties[i] == 'additional_info') && patientInfo[insertProperties[i]])
+     {
+       patient[insertProperties[i]] = patientInfo[insertProperties[i]];
+     }
+  }
+
+  let carerInsertResponse = {};
+  //Try to add any data
+  if(Object.keys(carer).length>0){
+    carerInsertResponse = await addCarer(carer,actionUsername)
+    if(carerInsertResponse.success){
+      patient["carer_id"]=carerInsertResponse.response.insertId;
+    }
+  }
+  else{
+    patient["carer_id"]="NULL";
+  }
+
+  let hospitalInsertResponse = {};
+  //Try to add any data
+  if(Object.keys(hospital).length>0){
+    hospitalInsertResponse = await addHospital(hospital,actionUsername)
+    if(hospitalInsertResponse.success){
+      patient["hospital_id"]=hospitalInsertResponse.response.insertId;
+    }
+  }
+  else{
+    patient["hospital_id"]="NULL";
+  }
+
+  //Both queries failed
+  if(!patient.hospital_id && !patient.carer_id){
+    return {success: false, response:{problem:"Incorrect data for carer and hospital"}}
+  }
+  //Hospital query failed but carer was inserted
+  if(patient.carer_id&&!patient.hospital_id)
+  {
+    let success = true;
+    if(patient.carer_id!="NULL"){
+      const deleteResponse = await deleteCarer(patient.carer_id,actionUsername)
+      if(!deleteResponse.success){
+        success = false;
+      }
+    }
+    return {success: false, response:{problem:"Incorrect data for hospital", delete:success}}
+  }
+
+  //Carer query failed but hospital was inserted
+  if(patient.hospital_id && !patient.carer_id){
+    let success = true;
+    if(patient.hospital_id!="NULL"){
+      const deleteResponse = await deleteHospital(patient.hospital_id,actionUsername)
+      if(!deleteResponse.success){
+        success = false;
+      }
+    }
+    return {success: false, response:{problem:"Incorrect data for carer", delete:success}}
+  }
+
+  //Both added correctly
+  if(patient.hospital_id && patient.carer_id){
+    const  patientInsertResponse = await addPatient(patient,actionUsername)
+    if(patientInsertResponse.success){
+      return {success: true, response:{insertedId:patient.patient_no}}
+    }
+    //Query to insert patient failed
+    else{
+      let carer = true;
+      let hospital = true;
+      if(patient.carer_id!="NULL"){
+        const deleteResponse = await deleteCarer(patient.carer_id,actionUsername)
+        if(!deleteResponse.success){
+          carer = false;
+        }
+      }
+      if(patient.hospital_id!="NULL"){
+        const deleteResponse = await deleteHospital(patient.hospital_id,actionUsername)
+        if(!deleteResponse.success){
+          hospital = false;
+        }
+      }
+      return{success:false,
+        response:{problem:"Problem on patient insert", carer: carer, hospital: hospital}}
+    }
+  }
+}
 /*===============================*
           DELETE QUERIES
  *===============================*/
@@ -516,6 +629,32 @@ async function deleteHospital(hospitalid, actionUsername)
 {
   const sql = prepareDeleteSQL("Hospital","hospital_id",hospitalid);
   return await deleteQueryDatabase("Hospital",hospitalid,sql, actionUsername);
+}
+
+/**
+* Delete Patient and cancel the patient edit token
+* @param {String} patientid - patient_no of a patient
+* @param {String} token - token to be returned with query
+* @param {string} actionUsername The user who issued the request.
+* @return {JSON} result of the query - {success:Boolean response:"Entry deleted"/Error}
+**/
+async function deletePatient(patientid, token, actionUsername){
+  const check = await checkIfPatientsTestsAreEdited(patientid)
+  if(check===true){
+    return {success:false, response:"Someone is editing the test"}
+  }
+  if(check===false){
+    //Try returning token
+    const tokenResponse = await returnToken("Patient", patientid, token, actionUsername);
+    if(!tokenResponse.success){
+      return tokenResponse;
+    }
+    //Patient with tests can be deleted
+    const sql = prepareDeleteSQL("Patient","patient_no",patientid)
+    return await deleteQueryDatabase("Patient",patientid,sql,actionUsername)
+  }
+  //Error on the check
+  return check
 }
 
 /**
@@ -547,6 +686,24 @@ async function unscheduleTest(testid,token,actionUsername)
 /*===============================*
       HELPER FUNCTIONS BELOW:
  *===============================*/
+
+/**
+* Check if test are edited within the TokenControl database
+* @return {Boolean} {false - If no tests are edited (no tokens)}
+* @return {Boolean} {true - If tests are edited (tokens in table)}
+* @return {JSON} {Error response}
+**/
+async function checkIfPatientsTestsAreEdited(patientid){
+  const sql = `Select test_id From Test Where patient_no = '${patientid}' AND test_id IN (Select table_key From TokenControl Where table_name = "Test");`;
+  const response = await selectQueryDatabase(sql);
+  if(response.success && response.response.length==0){
+    return false;
+  }
+  if(response.success && response.response.length>0){
+    return true;
+  }
+  return response;
+}
 
 /**
 * Produce multiple queries on the database to retrieve test within the week
@@ -669,7 +826,7 @@ async function insertQueryDatabase(sql, tableName, actionUsername, id = undefine
   if (response.status == "OK"){
       id = (id === undefined) ? response.response.insertId : id;
       logger.logInsert(actionUsername, tableName, id, "Successful.");
-      return {success: true, response: {insertId: id} };
+      return {success: true, response: {insertId: id}};
   }else {
       if (response.err.type === "SQL Error") {
         logger.logInsert(actionUsername, tableName, "-1",
@@ -792,7 +949,12 @@ function prepareInsertSQL(table,object)
       sql += `${values[i]},`;
     }
   }
-  sql += `'${values[values.length-1]}');`
+  if(values[values.length-1]!='NULL'){
+      sql += `'${values[values.length-1]}');`
+  }
+  else{
+      sql += `${values[values.length-1]});`
+  }
   return sql;
 }
 
@@ -883,6 +1045,7 @@ module.exports = {
     getAllTests,
     getTestInfo,
     getTestsOfPatient,
+    getNextTestsOfPatient,
     getAllTestsOnDate,
     getTestWithinWeek,
     getSortedOverdueWeeks,
@@ -891,6 +1054,7 @@ module.exports = {
     addUser,
     addPatient,
     addHospital,
+    addPatientExtended,
     addCarer,
   //UPDATES
     updatePassword,
@@ -903,6 +1067,7 @@ module.exports = {
     editHospital,
   //DELETE
     deleteHospital,
+    deletePatient,
     deleteCarer,
     unscheduleTest,
     deleteTest,

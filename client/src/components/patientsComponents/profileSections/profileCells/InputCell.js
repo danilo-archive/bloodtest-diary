@@ -4,6 +4,7 @@ import styled from "styled-components";
 const Container = styled.div`
  margin: 1%;
  text-align: center;
+ width: 30%;
 `;
 
 const Field = styled.label`
@@ -11,8 +12,8 @@ const Field = styled.label`
 `;
 
 const Input = styled.input.attrs({ spellCheck: "false"})`
-  padding: 12px 20px;
-  margin: 2px 0 8px;
+  padding: 1% 4%;
+  margin: 0.5% 0 1%;
   display: block;
   width: 100%;
   border: 1px solid #ccc;
@@ -20,6 +21,7 @@ const Input = styled.input.attrs({ spellCheck: "false"})`
   box-sizing: border-box;
   font-family: "Rajdhani", sans-serif;
 `;
+
 
 class InputCell extends React.Component {
 
@@ -36,7 +38,7 @@ class InputCell extends React.Component {
         if (this.props.disabled === true) {
             return (
                 <Container>
-                    <Field for={this.props.id}>{this.props.field}</Field>
+                    <Field htmlFor={this.props.id}>{this.props.field}</Field>
                     <Input
                         defaultValue={this.props.value}
                         id={this.props.id}
@@ -47,7 +49,9 @@ class InputCell extends React.Component {
             );
         } else if (this.props.type === "checkbox"){
             return (
-                <Container>
+                <Container
+                    style={{width: `100%`}}
+                >
                     <Field htmlFor={this.props.id}>{this.props.field}</Field>
                     <Input
                         defaultValue={this.props.value}
@@ -61,7 +65,7 @@ class InputCell extends React.Component {
         } else {
             return (
                 <Container>
-                    <Field for={this.props.id}>{this.props.field}</Field>
+                    <Field htmlFor={this.props.id}>{this.props.field}</Field>
                     <Input
                         defaultValue={this.props.value}
                         id={this.props.id}

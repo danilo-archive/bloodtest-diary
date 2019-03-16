@@ -6,6 +6,7 @@ import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import TestSection from "./profileSections/TestSection";
 import {getServerConnect} from "../../serverConnection";
+import {openAlert} from "../Alert";
 
 
 const Container = styled.div`
@@ -13,10 +14,48 @@ const Container = styled.div`
   width: 100%;
   flex-direction: column;
   background: #f5f5f5;
+  align-items: center;
+  font-family: "Rajdhani",sans-serif;
+  padding: 1%;
+`;
+
+const PatientProfileTitle = styled.p`
+  text-align: center;
+  font-size: 175%;
+  font-weight: bold;
+  margin: 0;
 `;
 
 const ButtonContainer = styled.div`
-  margin-bottom: 3%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+`;
+
+const DeleteContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+const DeleteButton = styled.button`
+  border: none;
+  background-color: #f44336;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 10px;
+
+  height: 44px;
+  min-width: 100px;
+
+  :hover {
+    background-color: #dc2836;
+    color: white;
+    border-radius: 10px;
+  }
+  outline: none;
 `;
 
 const CloseButton = styled.button`
@@ -25,41 +64,37 @@ const CloseButton = styled.button`
   color: black;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
-  width: 10%;
   border-radius: 10px;
-  margin-left: 35%;
 
   height: 44px;
   min-width: 100px;
-
+  margin: 4%;
 
   :hover {
     background: #c8c8c8;
     color: black;
+    border-radius: 10px;
   }
+  outline: none;
 `;
 
 const SaveButton = styled.button`
   border: none;
-  background-color: #f44336;
+  background-color: #0b999d;
   color: white;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
-  width: 10%;
+  margin: 4%;
   border-radius: 10px;
-
-  float: right;
-  margin-right: 35%;
 
   height: 44px;
   min-width: 100px;
 
   :hover {
-    background-color: #dc2836;
+    background-color: #018589;
     color: white;
   }
+  outline: none;
 `;
 
 
@@ -76,32 +111,99 @@ class PatientProfile extends Component {
       this.serverConnect = getServerConnect();
 
       this.loadPatient();
+      this.loadTests();
+    }
+
+    handleError = res => {
+        if (res.errorType === "authentication"){
+            openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
+        }else{
+            openAlert("Unknown error occurred", "confirmationAlert", "Ok", () => {return});
+        }
+    }
+
+    deletePatient = () => {
+        console.log("deleting")
+        this.serverConnect.deletePatient(this.state.patientId, this.state.editToken, res => {
+            if (res.success){
+                openAlert("Patient successfully deleted", "confirmationAlert",
+                "Ok", () => {
+                    this.props.closeModal();
+                });
+            }else{
+                openAlert("Something went wrong while deleating", "confirmationAlert", "Ok", () => {return});
+            }
+        });
+    }
+
+    deleteOption = () => {
+        openAlert("Are you sure you want to delete this patient ?", "optionAlert", "Yes", this.deletePatient, "No", () => {return});
+    }
+
+    onDeleteTestClick = testId => {
+        openAlert("Are you sure you want to delete this Test ?", "optionAlert", "Yes", () => {this.deleteTest(testId)}, "No", () => {return});
+    }
+    deleteTest = testId => {
+        this.serverConnect.requestTestEditing(testId, token => {
+            console.log(testId)
+            console.log(token);
+            if (token){
+                this.serverConnect.unscheduleTest(testId, token, res => {
+                    if (res.success){
+                        this.loadTests();
+                        openAlert("Test successfully deleted", "confirmationAlert", "Ok", () => {return});
+                    }else{
+                        openAlert("Something went wrong", "confirmationAlert", "Ok", () => {return});
+                    }
+                });
+            }else{
+                openAlert("This test is currently being edited", "confirmationAlert", "Ok", () => {return});
+            }
+        });
     }
 
     loadPatient() {
-        this.serverConnect.getFullPatientInfo(this.state.patientId, response => {
-           const info = response[0];
-           this.setState({
-               patientName : info.patient_name,
-               patientSurname : info.patient_surname,
-               patientEmail : info.patient_email,
-               patientPhone : info.patient_phone,
-               carerId : info.carer_id,
-               carerRelationship: info.relationship,
-               carerName: info.carer_name,
-               carerSurname: info.carer_surname,
-               carerEmail: info.carer_email,
-               carerPhone: info.carer_phone,
-               hospitalId: info.hospital_id,
-               hospitalName: info.hospital_name,
-               hospitalEmail: info.hospital_email,
-               hospitalPhone: info.hospital_phone,
+        this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
+           if (res.success){
+               const info = res.response[0];
+               this.setState({
+                   patientName : info.patient_name,
+                   patientSurname : info.patient_surname,
+                   patientEmail : info.patient_email,
+                   patientPhone : info.patient_phone,
+                   carerId : info.carer_id,
+                   carerRelationship: info.relationship,
+                   carerName: info.carer_name,
+                   carerSurname: info.carer_surname,
+                   carerEmail: info.carer_email,
+                   carerPhone: info.carer_phone,
+                   hospitalId: info.hospital_id,
+                   hospitalName: info.hospital_name,
+                   hospitalEmail: info.hospital_email,
+                   hospitalPhone: info.hospital_phone,
 
-               noCarer: info.carer_id ? false : true,
-               localHospital: info.hospital_id ? false : true,
-               ready: true
-               //TODO : store patients tests
-           });
+                   noCarer: info.carer_id ? false : true,
+                   localHospital: info.hospital_id ? false : true,
+                   ready: true
+                   //TODO : store patients tests
+               });
+           }else{
+              this.handleError(res);
+           }
+        });
+    }
+
+    loadTests() {
+        this.serverConnect.getNextTestsOfPatient(this.state.patientId, res => {
+            if (res.success){
+                const tests = res.response;
+                this.setState({
+                    testsData: tests,
+                    readyTest: true
+                })
+            }else{
+                this.handleError(res);
+            }
         });
     }
 
@@ -109,9 +211,9 @@ class PatientProfile extends Component {
         let carerInfo = undefined;
         let hospitalInfo = undefined;
         if (!this.state.noCarer){
-            if (this.state.carerEmail === "" || this.state.carerEmail == undefined){
+            if (this.state.carerEmail === "" || this.state.carerEmail === undefined){
                 // TODO add UI alert
-                alert("Carer's email is compulsory");
+                openAlert("Carer's email is compulsory", "confirmationAlert", "Ok");
                 return;
             }
             carerInfo = {
@@ -128,8 +230,8 @@ class PatientProfile extends Component {
             }
         }
         if (!this.state.localHospital){
-            if (this.state.hospitalEmail === "" || this.state.hospitalEmail == undefined){
-                alert("Hospital's email is compulsory");
+            if (this.state.hospitalEmail === "" || this.state.hospitalEmail === undefined){
+                openAlert("Hospital's email is compulsory","confirmationAlert", "Ok");
                 return;
             }
             hospitalInfo = {
@@ -153,17 +255,21 @@ class PatientProfile extends Component {
         };
         console.log({newInfo});
         this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
-            alert(`-- success = ${res.success}`);
-            this.props.closeModal();
+            if (res.success) {
+                openAlert("Patient edited successfully", "confirmationAlert", "Ok", () => {this.props.closeModal()});
+            } else {
+                openAlert("An error occurred while editing patient", "confirmationAlert", "Ok");
+            }
         });
     };
 
 
 
     render() {
-        if (this.state.ready) {
+        if (this.state.ready && this.state.readyTest) {
             return (
                 <Container>
+                    <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
                     <PatientSection
                         patientId={this.state.patientId}
                         patientName={this.state.patientName}
@@ -214,9 +320,15 @@ class PatientProfile extends Component {
                             })
                         }}
                     />
-                    <TestSection tests={[{due_date: "2019-02-02", notes: "Some notes"}]}/>
+                    <TestSection
+                        tests={this.state.testsData}
+                        deleteTest={this.onDeleteTestClick}
+                    />
 
                     <ButtonContainer>
+                        <DeleteContainer>
+                            <DeleteButton onClick={this.deleteOption}>Delete patient</DeleteButton>
+                        </DeleteContainer>
                         <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                         <SaveButton onClick={this.onSaveClick}>Save changes</SaveButton>
                     </ButtonContainer>

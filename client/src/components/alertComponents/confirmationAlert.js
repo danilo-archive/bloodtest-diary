@@ -29,18 +29,14 @@ const Alert = styled.div`
   }
 
   .alertMessage {
-    margin-right: 20px;
-    margin-left: 20px;
-
-    margin-top: 5px;
-    margin-bottom: 0px;
+    margin: 5px 20px 0px;
     text-align: center;
 
     overflow: scroll;
   }
 
   .alertButtonContainer {
-    border: solid 0px red;
+    border: solid 0 red;
     border-top: solid 1px rgb(131,149,149, 0.8);
 
     min-height: 60px;
@@ -62,11 +58,8 @@ const Alert = styled.div`
     width: auto;
     min-width: 20%;
     height: auto;
-    padding: 2px;
-    padding-left: 5px;
-    padding-right: 5px;
-    margin: 3%;
-    margin-right: 5%;
+    padding: 2px 5px;
+    margin: 3% 5% 3% 3%;
     cursor: pointer;
     outline:none;
 
@@ -84,7 +77,7 @@ export default class ConfirmationAlert extends Component {
     onOption1Click = event => {
         this.props.closeAlert();
         if(this.props.option1Callback){this.props.option1Callback()}
-    }
+    };
 
     render(){
       return (
