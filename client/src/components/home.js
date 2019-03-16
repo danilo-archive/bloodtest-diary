@@ -92,16 +92,6 @@ class Home extends Component {
     });
   }
 
-  handleInvalidResponseError(res, error){
-      if (res.errorType === "authentication"){
-          openAlert("Authentication with server failed", "confirmationAlert", "Go back to Login", () => {
-             this.logout();
-          });
-      }else{
-          openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
-      }
-  }
-
   initOverduePanel() {
     this.serverConnect.getOverdueTests(res => {
       if (res.success){
@@ -115,7 +105,17 @@ class Home extends Component {
     });
   }
 
-  updateDashboard(newWeek = undefined) {
+  handleInvalidResponseError = (res, error) => {
+      if (res.errorType === "authentication"){
+          openAlert("Authentication with server failed", "confirmationAlert", "Go back to Login", () => {
+             this.logout();
+          });
+      }else{
+          openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
+      }
+  }
+
+  updateDashboard = (newWeek = undefined) => {
     let monday = newWeek ? newWeek[0] : this.state.weekDays[0];
     newWeek = newWeek ? newWeek : this.state.weekDays;
     this.serverConnect.getTestsInWeek(monday, res => {
@@ -132,7 +132,7 @@ class Home extends Component {
     });
   }
 
-  modifyOverdueTest(id, modificationFunction) {
+  modifyOverdueTest = (id, modificationFunction) => {
     for (var i = 0; i < this.state.overdueTests.length; ++i) {
       let group = this.state.overdueTests[i];
       for (var j = 0; j < group.tests.length; ++j) {
@@ -148,69 +148,26 @@ class Home extends Component {
     }
   }
 
-  /*modifyTest(id, modificationFunction) {
-    for (var i = 0; i < this.state.overdueTests.length; ++i) {
-      let group = this.state.overdueTests[i];
-      for (var j = 0; j < group.tests.length; ++j) {
-        var test = group.tests[j];
-        if (test.test_id === id) {
-          let newOverdueTests = [...this.state.overdueTests];
-          let testToModify = newOverdueTests[i].tests[j];
-          let modifiedTest = modificationFunction(testToModify);
-          newOverdueTests[i].tests[j] = modifiedTest;
-          this.setState({ overdueTests: newOverdueTests });
-        }
-      }
-    }
-    // check if it's ongoing
-    for (var i = 0; i < this.state.ongoingTests.length; ++i) {
-      var test = this.state.ongoingTests[i];
-      if (test.test_id === id) {
-        let newOngoingTests = [...this.state.ongoingTests];
-        let testToModify = newOngoingTests[i];
-        let modifiedTest = modificationFunction(testToModify);
-        newOngoingTests[i] = modifiedTest;
-        this.setState({ ongoingTests: newOngoingTests });
-        return;
-      }
-    }
-    //check if it's in the current calendar
-    for (var i = 0; i < this.state.calendar.length; ++i) {
-      var day = this.state.calendar[i];
-      for (var j = 0; j < day.length; ++j) {
-        var test = day[j];
-        if (test.test_id === id) {
-          let newCalendar = [...this.state.calendar];
-          let testToModify = newCalendar[i][j];
-          let modifiedTest = modificationFunction(testToModify);
-          newCalendar[i][j] = modifiedTest;
-          this.setState({ calendar: newCalendar });
-          return;
-        }
-      }
-    }
-}*/
-
-  refresh(event) {
+  refresh = event => {
     this.updateDashboard();
     this.initOverduePanel();
   }
 
-  onPatientsClick(event) {
+  onPatientsClick = event => {
     this.props.history.push("patients");
   }
 
-  logout(event) {
+  logout = event => {
     this.serverConnect.deleteLoginToken();
     this.props.history.replace("");
   }
 
-  handleNext(event) {
+  handleNext = event => {
     let nextWeek = getNextWeek([...this.state.weekDays]);
     this.updateDashboard(nextWeek);
   }
 
-  handlePrevious(event) {
+  handlePrevious = event => {
     let previousWeek = getPreviousWeek([...this.state.weekDays]);
     this.updateDashboard(previousWeek);
   }
@@ -262,6 +219,7 @@ class Home extends Component {
                   )}
                   anytimeAppointments={this.state.overdueTests}
                   editTest={this.onEditTestOpenModal}
+                  handleError={this.handleInvalidResponseError}
                 />
               </div>
               <div className={"rightSideDash"}>
@@ -281,6 +239,7 @@ class Home extends Component {
                       weekDays={this.state.weekDays}
                       openModal={this.onAddTestOpenModal}
                       editTest={this.onEditTestOpenModal}
+                      handleError={this.handleInvalidResponseError}
                     />
                   </div>
                   <div className={"divider"} />
@@ -291,6 +250,7 @@ class Home extends Component {
                       notificationNumber={this.state.ongoingTests.length}
                       anytimeAppointments={this.state.ongoingTests}
                       editTest={this.onEditTestOpenModal}
+                      handleError={this.handleInvalidResponseError}
                     />
                   </div>
                 </div>
