@@ -67,6 +67,8 @@ CREATE TABLE Test (
     completed_status ENUM("yes", "no", "in review") NOT NULL DEFAULT "no",
     completed_date DATE,
     notes TEXT,
+    last_reminder DATE,
+    reminders_sent INTEGER DEFAULT 0,
     PRIMARY KEY (test_id),
     FOREIGN KEY (patient_no) REFERENCES Patient(patient_no) ON DELETE CASCADE
 );

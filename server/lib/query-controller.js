@@ -1,9 +1,18 @@
+/**
+ * This module collects all the queries that are dealing with the core data.
+ * 
+ * @author Mateusz Nowak, Luka Kralj
+ * @module query-controller
+ * @version 1.0
+ */
+
 const databaseController = require('./db_controller/db-controller.js');
 const authenticator = require("./authenticator.js");
 const calendarController = require("./calendar-controller.js");
 const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
+const mysql = require('mysql');
 
 /*===============================*
           SELECT QUERIES
@@ -168,6 +177,64 @@ async function getTestWithinWeek(date)
   return response;
 }
 
+/**
+ * Returns overdue tests that are separated into two groups. One group are the tests that haven't been
+ * sent a reminder. The other group are the tests that have already been sent a reminder.
+ * Response includes some basic info about the test.
+ * 
+ * @param {string} actionUsername The user who issued the request.
+ * @returns {JSON} {
+ *    success: true|false, 
+ *    response: {
+ *        notReminded: [{
+ *          test_id: 
+ *          due_date:
+ *          patient_no:
+ *          patient_name:
+ *          patient_surname:
+ *        }, ...]
+ *        reminded: [{
+ *          test_id: 
+ *          due_date:
+ *          patient_no:
+ *          patient_name:
+ *          patient_surname:
+ *          last_reminder:
+ *          reminders_sent: 
+ *        }, ...]
+ *    }
+ *  }
+ */
+async function getOverdueReminderGroups(actionUsername) {
+  const sql = `Select test_id, due_date, patient_no, patient_name, patient_surname, last_reminder, reminders_sent
+            From Test NATURAL JOIN Patient 
+            where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' AND
+            (last_reminder IS NULL OR last_reminder < CURDATE()) ORDER BY last_reminder ASC;`
+
+  const res = await selectQueryDatabase(sql);
+
+  if (!res.success) {
+    return res;
+  }
+
+  const overdue = res.response;
+  const notReminded = [];
+  const reminded = [];
+
+  for (let i = 0; i < overdue.length; i++) {
+    const token = await requestEditing("Test", overdue[i].test_id, actionUsername);
+    if (token && overdue[i].reminders_sent === 0) {
+      overdue[i]["token"] = token;
+      notReminded.push(overdue[i]);
+    }
+    else if (token) {
+      overdue[i]["token"] = token;
+      reminded.push(overdue[i]);
+    }
+  }
+  
+  return { success:true, response: { notReminded: notReminded, reminded: reminded}};
+}
 
 /*===============================*
           UPDATE QUERIES
@@ -408,6 +475,44 @@ async function changeTestStatus(test, actionUsername)
     }
   }
   return res;
+}
+
+/**
+* Send reminders for overdue tests.
+* @param {Array} testIDs - List of all the overdue tests' IDs
+* @param {string} actionUsername The user who issued the request.
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
+**/
+async function sendOverdueReminders(testIDs, actionUsername) {
+  const failedToSend = [];
+
+  for (let i = 0; i < testIDs.length; i++) {
+    const token = requestEditing("Test", testIDs[i], actionUsername);
+    if (!token) {
+      failedToSend.push(testIDs[i]);
+      continue;
+    }
+
+    const res; // = send email();
+    if (res) {
+      // email sent successfully
+      let sql = "UPDATE Test SET last_reminder = CURDATE(), reminders_sent = reminders_sent + 1 WHERE test_id= ? ";
+      sql = mysql.format(sql, testIDs[i]);
+      await updateQueryDatabase("Test", testIDs[i], sql, token, actionUsername);
+    }
+    else {
+      // could not send an email
+      failedToSend.push(testIDs[i]);
+      await returnToken("Test", testIDs[i], token, actionUsername);
+    }
+  }
+
+  if (failedToSend.length > 0) {
+    return {success:false, response: failedToSend};
+  }
+  else {
+    return {success:true, response: "All tests sent."};
+  }
 }
 
 /*===============================*
@@ -1033,6 +1138,18 @@ async function returnToken(table, id, token, actionUsername)
   }
 }
 
+/**
+ * Await for this function to pause execution for a certain time.
+ *
+ * @param {number} ms Time in milliseconds
+ * @returns {Promise}
+ */
+function sleep(ms){
+  return new Promise((resolve) => {
+      setTimeout(resolve,ms);
+  });
+}
+
 module.exports = {
   //SELECTS
     getPatient,
@@ -1049,6 +1166,7 @@ module.exports = {
     getAllTestsOnDate,
     getTestWithinWeek,
     getSortedOverdueWeeks,
+    getOverdueReminderGroups,
   //INSERTS
     addTest,
     addUser,
@@ -1065,6 +1183,7 @@ module.exports = {
     editPatientExtended,
     editCarer,
     editHospital,
+    sendOverdueReminders,
   //DELETE
     deleteHospital,
     deletePatient,
