@@ -181,7 +181,6 @@ async function getTestWithinWeek(date)
 * @param {string} actionUsername The user who issued the request.
 */
 async function editTest(testId, newInfo,token, actionUsername){
-  console.log(newInfo);
     let scheduleNew = false;
     if(newInfo.completed_status == "yes" || newInfo.completed_status == "in review")
     {
@@ -1076,5 +1075,10 @@ module.exports = {
     deleteTest,
   //TOKEN CONTROL
     requestEditing,
-    returnToken
+    returnToken,
+  //Helper functions - for tests only
+    selectQueryDatabase,
+    insertQueryDatabase,
+    deleteQueryDatabase,
+    updateQueryDatabase,
 };
