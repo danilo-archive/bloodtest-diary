@@ -501,7 +501,7 @@ async function sendOverdueReminders(testIDs, actionUsername) {
   const failedHospital = [];
 
   for (let i = 0; i < testIDs.length; i++) {
-    const token = requestEditing("Test", testIDs[i], actionUsername);
+    const token = await requestEditing("Test", testIDs[i], actionUsername);
     if (!token) {
       failedBoth.push(testIDs[i]);
       continue;
@@ -527,7 +527,7 @@ async function sendOverdueReminders(testIDs, actionUsername) {
       updateQueryDatabase("Test", testIDs[i], sql, token, actionUsername)
         .then((res) => {
           if (!res.success) {
-            console.log("Error updating latest reminder. Response: " + res);
+            console.log("Error updating latest reminder. Response: " + JSON.stringify(res));
           }
         });
     }

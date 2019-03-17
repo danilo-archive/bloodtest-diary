@@ -86,7 +86,7 @@ function produceHash(password, iterations, salt)
 async function initTokens() {
   const res = await db_controller.selectQuery("SELECT * FROM AccessTokens");
   if (res.status !== "OK") {
-    console.log("Could not initialise tokens from the DB. Response: " + res);
+    console.log("Could not initialise tokens from the DB. Response: " + JSON.stringify(res));
     return;
   }
   const rows = res.response.rows;
