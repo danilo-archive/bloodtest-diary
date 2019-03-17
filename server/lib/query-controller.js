@@ -238,15 +238,15 @@ async function editPatientExtended(newInfo,token, actionUsername)
   let querySuccess = true;
   for(let i=0; i<updateProperties.length; i++)
    {
-     if((updateProperties[i].startsWith('carer') || updateProperties[i] == 'relationship') && newInfo[updateProperties[i]])
+     if(updateProperties[i].startsWith('carer') || updateProperties[i] == 'relationship')
      {
        carer[updateProperties[i]] = newInfo[updateProperties[i]];
      }
-     if((updateProperties[i].startsWith('hospital')) && newInfo[updateProperties[i]])
+     if(updateProperties[i].startsWith('hospital'))
      {
        hospital[updateProperties[i]] = newInfo[updateProperties[i]];
      }
-     if((updateProperties[i].startsWith('patient') || updateProperties[i] == 'additional_info') && newInfo[updateProperties[i]])
+     if(updateProperties[i].startsWith('patient') || updateProperties[i] == 'additional_info')
      {
        patientNewInfo[updateProperties[i]] = newInfo[updateProperties[i]];
      }
@@ -510,15 +510,15 @@ async function addPatientExtended(patientInfo,actionUsername)
   const patient = {};
   for(let i=0; i<insertProperties.length; i++)
   {
-     if((insertProperties[i].startsWith('carer') || insertProperties[i] == 'relationship') && patientInfo[insertProperties[i]])
+     if(insertProperties[i].startsWith('carer') || insertProperties[i] == 'relationship')
      {
        carer[insertProperties[i]] = patientInfo[insertProperties[i]];
      }
-     if((insertProperties[i].startsWith('hospital')) && patientInfo[insertProperties[i]])
+     if(insertProperties[i].startsWith('hospital'))
      {
        hospital[insertProperties[i]] = patientInfo[insertProperties[i]];
      }
-     if((insertProperties[i].startsWith('patient') || insertProperties[i] == 'additional_info') && patientInfo[insertProperties[i]])
+     if(insertProperties[i].startsWith('patient') || insertProperties[i] == 'additional_info')
      {
        patient[insertProperties[i]] = patientInfo[insertProperties[i]];
      }
