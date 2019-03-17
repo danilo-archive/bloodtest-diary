@@ -201,8 +201,9 @@ class Patients extends React.Component {
     }
 
     logout = event => {
-        this.serverConnect.deleteLoginToken();
-        this.props.history.replace("");
+      this.serverConnect.logout(res => {
+          this.props.history.replace("");
+      });
     }
 
     openEditModal = id => {

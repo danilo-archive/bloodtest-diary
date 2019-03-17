@@ -137,6 +137,21 @@ class ServerConnect {
         });
     }
 
+    /**
+     * Function to be called before logout.
+     * Asks the server to get rid of the authentication token stored in the db
+     * @param callback The callback function to be called on response
+     */
+    logout(callback){
+        this.socket.emit("logout", this.loginToken);
+        this.socket.once("logoutResponse", res => {
+            if (res.success){
+                this.deleteLoginToken();
+            }
+            callback(res);
+        });
+    }
+
 
     /**
      * Function to be called when all patients have to be retrieved.
