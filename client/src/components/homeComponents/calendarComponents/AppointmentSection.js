@@ -38,7 +38,8 @@ export default props => {
             time={appointment.time}
             dueDate={appointment.due_date}
             editTest={props.editTest}
-            section = {props.section}
+            section={props.section}
+            handleError={props.handleError}
           />
         ))}
       </AppointmentSection>

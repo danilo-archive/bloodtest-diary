@@ -85,6 +85,7 @@ class CalendarDay extends React.Component {
               appointments={this.props.anytimeAppointments}
               editTest={this.props.editTest}
               section={"calendar"}
+              handleError={this.props.handleError} 
             />
             <div style={{width:"100%",height:"130px"}}/>
           </ScrollBox>

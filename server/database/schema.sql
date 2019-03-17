@@ -21,7 +21,8 @@ DROP TABLE IF EXISTS Test;
 DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS Carer;
 DROP TABLE IF EXISTS Hospital;
-DROP TABLE IF EXISTS TokenControl;
+DROP TABLE IF EXISTS EditTokens;
+DROP TABLE IF EXISTS AccessTokens;
 DROP TABLE IF EXISTS ActionLog;
 DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS LoginCredentials;
@@ -67,8 +68,10 @@ CREATE TABLE Test (
     completed_status ENUM("yes", "no", "in review") NOT NULL DEFAULT "no",
     completed_date DATE,
     notes TEXT,
+    last_reminder DATE,
+    reminders_sent INTEGER DEFAULT 0,
     PRIMARY KEY (test_id),
-    FOREIGN KEY (patient_no) REFERENCES Patient(patient_no)
+    FOREIGN KEY (patient_no) REFERENCES Patient(patient_no) ON DELETE CASCADE
 );
 
 CREATE TABLE User (
@@ -85,12 +88,20 @@ CREATE TABLE User (
 -- data. They only provide additional functionality.
 -- ================================
 
-CREATE TABLE TokenControl (
+CREATE TABLE EditTokens (
     token VARCHAR(100),
     table_name ENUM("Carer", "Hospital", "Patient", "Test", "User") NOT NULL,
     table_key VARCHAR(50) NOT NULL,
     expiration DATETIME NOT NULL,
     PRIMARY KEY (token)
+);
+
+CREATE TABLE AccessTokens (
+    token VARCHAR(255),
+    username VARCHAR(100) NOT NULL,
+    expiration DATETIME NOT NULL,
+    PRIMARY KEY (token),
+    FOREIGN KEY (username) REFERENCES User(username)
 );
 
 CREATE TABLE ActionLog (

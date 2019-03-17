@@ -5,15 +5,15 @@ import ConfirmationAlert from "./alertComponents/confirmationAlert"
 import DialogAlert from "./alertComponents/dialogAlert"
 import OptionAlert from "./alertComponents/optionAlert"
 
-var openAlertFunction;
+let openAlertFunction;
 
 const Container = styled.div`
   position: absolute;
-  z-index: 49;
+  z-index: 1001; //to make it higher than modals
   height: 100vh;
   width: 100vw;
   background-color: rgb(0, 0, 0, 0.3);
-`
+`;
 
 const StyledAlert = styled.div`
   min-width: 290px;
@@ -37,8 +37,8 @@ const StyledAlert = styled.div`
 
 
 export default class Alert extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       open: false,
       message: '',
@@ -47,7 +47,7 @@ export default class Alert extends Component {
       option1Callback: undefined,
       option2Text: '',
       option2Callback: undefined,
-    }
+    };
     this.closeAlert = this.closeAlert.bind(this);
     this.openAlert = this.openAlert.bind(this);
   }
@@ -58,7 +58,7 @@ export default class Alert extends Component {
 
   openAlert({ message, type, option1Text, option1Callback,  option2Text, option2Callback }) {
     this.setState({
-      open:true,
+      open: true,
       message: message,
       type: type,
       option1Text: option1Text,
@@ -70,7 +70,7 @@ export default class Alert extends Component {
 
   closeAlert() {
     this.setState({
-      open:false,
+      open: false,
       message: '',
       type: '',
       option1Text: '',
@@ -110,6 +110,7 @@ export default class Alert extends Component {
             />
           );
         default:
+          //TODO : catch this
           return null;
       }
   }
