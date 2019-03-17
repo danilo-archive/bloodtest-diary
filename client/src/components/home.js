@@ -312,6 +312,7 @@ class Home extends Component {
                 <AddTest
                   selectedDate={this.state.selectedDate}
                   closeModal={this.onAddTestCloseModal}
+                  logout={this.logout}
                 />
               </Modal>
               <Modal
