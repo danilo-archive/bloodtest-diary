@@ -1544,6 +1544,72 @@ describe("Other functionality", function(){
       response.success.should.equal(false);
     })
   })
+  context("Prepare insert query", function(){
+    let spy;
+    beforeEach(()=>{
+        spy = sinon.spy(queryController.prepareInsertSQL);
+    })
+    it("Prepare Insert query 1", function() {
+      const sql = spy("Test", {test_id:"400", due_date:"2019-03-04"})
+      sql.should.equal("INSERT INTO Test(test_id,due_date) Values('400','2019-03-04');");
+    })
+    it("Prepare Insert query 2", function() {
+      const sql = spy("Test", {test_id:"400", due_date:"NULL"})
+      sql.should.equal("INSERT INTO Test(test_id,due_date) Values('400',NULL);");
+    })
+    it("Prepare Insert query 3", function() {
+      const sql = spy("Test", {test_id:"400", due_date:"2019-03-04", completed_date:"2019-04-04", patient_no:"400"})
+      sql.should.equal("INSERT INTO Test(test_id,due_date,completed_date,patient_no) Values('400','2019-03-04','2019-04-04','400');");
+    })
+    it("Prepare Insert query 4", function() {
+      const sql = spy("Test", {test_id:"400", due_date:"NULL", completed_date:"2019-04-04", patient_no:"NULL"})
+      sql.should.equal("INSERT INTO Test(test_id,due_date,completed_date,patient_no) Values('400',NULL,'2019-04-04',NULL);");
+    })
+    it("Prepare Insert query 5", function() {
+      const sql = spy("Test", {test_id:"NULL", due_date:"NULL", completed_date:"NULL", patient_no:"NULL"})
+      sql.should.equal("INSERT INTO Test(test_id,due_date,completed_date,patient_no) Values(NULL,NULL,NULL,NULL);");
+    })
+  })
+  context("Prepare delete query", function(){
+    let spy;
+    beforeEach(()=>{
+        spy = sinon.spy(queryController.prepareDeleteSQL);
+    })
+    it("Prepare Delete query 1", function() {
+      const sql = spy("Test", "test_id", "400")
+      sql.should.equal("DELETE FROM Test WHERE test_id='400' LIMIT 1;");
+    })
+    it("Prepare Delete query 2", function() {
+      const sql = spy("Patient", "patient_no", "500")
+      sql.should.equal("DELETE FROM Patient WHERE patient_no='500' LIMIT 1;");
+    })
+  })
+  context("Prepare update query", function(){
+    let spy;
+    beforeEach(()=>{
+        spy = sinon.spy(queryController.prepareUpdateSQL);
+    })
+    it("Prepare Update query 1", function() {
+      const sql = spy("Test", {test_id:"400", due_date:"NULL", completed_date:"2019-04-04", patient_no:"NULL"} , "test_id")
+      sql.should.equal("Update Test SET due_date = NULL, completed_date = '2019-04-04', patient_no = NULL WHERE test_id = '400';")
+    })
+    it("Prepare Update query 2", function() {
+      const sql = spy("Test", {test_id:"300", due_date:"NULL", completed_date:"NULL", patient_no:"NULL"} , "test_id")
+      sql.should.equal("Update Test SET due_date = NULL, completed_date = NULL, patient_no = NULL WHERE test_id = '300';")
+    })
+    it("Prepare Update query 3", function() {
+      const sql = spy("Test", {test_id:"300", due_date:"2020-12-12", completed_date:"NULL", patient_no:"NULL"} , "test_id")
+      sql.should.equal("Update Test SET due_date = '2020-12-12', completed_date = NULL, patient_no = NULL WHERE test_id = '300';")
+    })
+    it("Prepare Update query 4", function() {
+      const sql = spy("Test", {test_id:"NULL", due_date:"NULL", completed_date:"NULL", patient_no:"NULL"} , "test_id")
+      sql.should.equal("Update Test SET due_date = NULL, completed_date = NULL, patient_no = NULL WHERE test_id = NULL;")
+    })
+    it("Prepare Update query 5", function() {
+      const sql = spy("Test", {test_id:"NULL", due_date:"NULL", completed_date:"NULL", patient_no:"500"} , "test_id")
+      sql.should.equal("Update Test SET due_date = NULL, completed_date = NULL, patient_no = '500' WHERE test_id = NULL;")
+    })
+  })
   context("Request token cancelation", function(){
     let spy;
     beforeEach(()=>{

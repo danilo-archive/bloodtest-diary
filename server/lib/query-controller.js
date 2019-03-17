@@ -987,7 +987,12 @@ function prepareUpdateSQL(table, object, idProperty)
   }
   //delete ", " from sql query
   sql = sql.substr(0,sql.length-2);
-  sql += ` WHERE ${idProperty} = ${mysql.escape(values[pos])};`
+  if(values[pos]!="NULL"){
+    sql += ` WHERE ${idProperty} = ${mysql.escape(values[pos])};`
+  }
+  else{
+    sql += ` WHERE ${idProperty} = NULL;`
+  }
   //For debug:
   //console.log(sql);
   return sql;
@@ -1081,4 +1086,7 @@ module.exports = {
     insertQueryDatabase,
     deleteQueryDatabase,
     updateQueryDatabase,
+    prepareInsertSQL,
+    prepareUpdateSQL,
+    prepareDeleteSQL
 };
