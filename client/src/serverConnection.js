@@ -260,8 +260,8 @@ class ServerConnect {
 
     requestTestEditing(testId, callback){
         this.socket.emit("requestTestEditToken", testId, this.loginToken);
-        this.socket.once("requestTestEditTokenResponse", token => {
-            callback(token);
+        this.socket.once("requestTestEditTokenResponse", res => {
+            callback(res);
         });
     }
 
