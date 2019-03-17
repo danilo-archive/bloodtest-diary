@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import TextLabel from "../editTest/Label";
+import formatDate from "dateformat";
 
 const Container = styled.div`
   border-radius: 0px 36px 36px 0px;
@@ -21,7 +22,7 @@ const Label = styled(TextLabel)`
 export default props => {
   return (
     <Container>
-      <Label>{props.dueDate}</Label>
+      <Label>{formatDate((new Date(props.dueDate)), "dS mmm yyyy")}</Label>
     </Container>
   );
 };

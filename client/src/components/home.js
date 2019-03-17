@@ -46,7 +46,7 @@ class Home extends Component {
       editTestId: undefined,
       editToken: undefined,
       notified: undefined,
-      notNotified: undefined
+      notNotified: undefined,
     };
   }
 
