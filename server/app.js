@@ -213,8 +213,37 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.getTestInfo(testId);
-        console.log({response});
         socket.emit("getTestInfoResponse", response);
+    });
+
+    socket.on('getOverdueReminderGroups', async (accessToken) => {
+        if (!accessToken) {
+            socket.emit("getOverdueReminderGroupsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("getOverdueReminderGroupsResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await queryController.getOverdueReminderGroups();
+        socket.emit("getOverdueReminderGroupsResponse", response);
+    });
+
+    socket.on('sendOverdueReminders', async (testIDs, accessToken) => {
+        if (!accessToken) {
+            socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await queryController.sendOverdueReminders(testIDs, username);
+        socket.emit("sendOverdueRemindersResponse", response);
     });
 
     socket.on("requestTestEditToken", async (testId, accessToken) => {

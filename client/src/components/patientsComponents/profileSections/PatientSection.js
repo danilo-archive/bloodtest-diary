@@ -1,7 +1,4 @@
 import React from "react";
-import styled from "styled-components";
-
-import InfoCell from "./profileCells/InfoCell";
 import InputCell from "./profileCells/InputCell";
 import SectionContainer from "./SectionContainer"
 
