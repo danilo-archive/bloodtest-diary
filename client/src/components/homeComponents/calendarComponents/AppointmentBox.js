@@ -109,7 +109,8 @@ const spec = {
       if (newDate){
         serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate, res => {
             if (!res.success){
-                openAlert("Somebody is aready editing this test", "confirmationAlert", "Ok");
+                props.handleError(res, "Somebody is aready editing this test")
+                //openAlert("Somebody is aready editing this test", "confirmationAlert", "Ok");
             }
         });
       }
@@ -162,7 +163,7 @@ class AppointmentBox extends React.Component {
                 openAlert(`A new test was automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}`, "confirmationAlert", "Ok");
             }
         }else{
-            openAlert("Somebody is aready editing this test", "confirmationAlert", "Ok");
+            this.props.handleError(res, "Somebody is aready editing this test")
         }
     });
   };
@@ -182,6 +183,7 @@ class AppointmentBox extends React.Component {
               onStatusClick={this.props.tentative ? () => {} : this.onStatusClick}
               editTest={this.props.editTest}
               testId={this.props.id}
+              handleError={this.props.handleError}
           />
         </Container>
       </div>

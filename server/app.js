@@ -229,7 +229,7 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.requestEditing("Test", testId, username);
-        socket.emit("requestTestEditTokenResponse", response);
+        socket.emit("requestTestEditTokenResponse", {success: true, token: response});
 
     });
 

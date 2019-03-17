@@ -271,6 +271,7 @@ class Patients extends React.Component {
                                 closeModal={this.onCloseEditModal}
                                 editToken={this.state.editToken}
                                 purpose={"Edit patient"}
+                                handleError={this.handleError}
                             />
                         </Modal>
 
@@ -284,6 +285,7 @@ class Patients extends React.Component {
                             <NewPatient
                                 closeModal={this.onCloseAddModal}
                                 purpose={"Add patient"}
+                                handleError={this.handleError}
                             />
                         </Modal>
 
