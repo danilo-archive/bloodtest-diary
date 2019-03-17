@@ -1,5 +1,5 @@
 /**
- * Controller functions to get dates using a frequency foramt
+ * Controller functions to get dates using a frequency format
  * @module calendar-controller
  * @author Danilo Del Busso
  * @version 0.0.1
@@ -12,6 +12,16 @@ function isPastDate(date){
     today.setHours(0, 0, 0, 0);
     date = new Date(date);
     return date < today;
+}
+
+/**
+*@param dateString a date of the form "20190323"
+*/
+function formatDatabaseDate(dateString){
+    let year = dateString.slice(0,4);
+    let month = dateString.slice(4,6);
+    let day = dateString.slice(6,8);
+    return `${year}/${month}/${day}`
 }
 
 /**
@@ -202,5 +212,6 @@ module.exports = {
     getCurrentWeek,
     getPreviousWeek,
     getMondayOfWeek,
-    getNextDates
+    getNextDates,
+    formatDatabaseDate
 }

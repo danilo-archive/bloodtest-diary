@@ -1,6 +1,6 @@
 /**
  * Controller functions to handle overdue tests
- * @module calendar-controller
+ * @module overdue-controller
  * @author Jacopo Madaluni
  * @version 0.0.1
  */

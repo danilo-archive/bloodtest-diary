@@ -8,7 +8,7 @@ const Screen = styled.div`
   height: 100vh;
   width: 100vw;
   background-color: rgb(0, 0, 0, 0.7);
-  z-index: 100;
+  z-index: 1002;
 `;
 
 export default class OfflineScreen extends Component {

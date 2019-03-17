@@ -1,21 +1,6 @@
 import React from "react";
-import styled from "styled-components";
-import InfoCell from "./profileCells/InfoCell";
 import InputCell from "./profileCells/InputCell";
 import SectionContainer from "./SectionContainer";
-
-const Container = styled.div`
-  margin: 1% 10%;
-  padding: 1%;
-  border: #839595 3px solid;
-  border-radius: 10px;
-  width: 80%;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  justify-content: center;
-  background: white;
-`;
 
 class HospitalSection extends React.Component {
 

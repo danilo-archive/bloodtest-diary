@@ -16,7 +16,7 @@ const Alert = styled.div`
   font-size: 150%;
 
   .alertMessageContainer {
-    border: solid 0px blue;
+    border: solid 0 blue;
 
     height: 100%;
     width: 100%;
@@ -30,11 +30,7 @@ const Alert = styled.div`
   }
 
   .alertMessage {
-    margin-right: 20px;
-    margin-left: 20px;
-
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px 20px;
     text-align: center;
 
     overflow: scroll;

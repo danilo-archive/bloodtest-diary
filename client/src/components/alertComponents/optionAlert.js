@@ -29,13 +29,8 @@ const Alert = styled.div`
   }
 
   .alertMessage {
-    margin-right: 20px;
-    margin-left: 20px;
-
-    margin-top: 5px;
-    margin-bottom: 0px;
+    margin: 5px 20px 0;
     text-align: center;
-
     overflow: scroll;
   }
 
@@ -62,9 +57,7 @@ const Alert = styled.div`
     width: auto;
     min-width: 20%;
     height: auto;
-    padding: 2px;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 2px 5px;
     margin: 3%;
     cursor: pointer;
     outline:none;
@@ -83,12 +76,12 @@ export default class OptionAlert extends Component {
     onOption1Click = event => {
         this.props.closeAlert();
         if(this.props.option1Callback){this.props.option1Callback()}
-    }
+    };
 
     onOption2Click = event => {
         this.props.closeAlert();
         if(this.props.option2Callback){this.props.option2Callback()}
-    }
+    };
 
     render(){
       return (
@@ -98,8 +91,8 @@ export default class OptionAlert extends Component {
                 <p className="alertMessage">{this.props.message}</p>
               </div>
               <div className="alertButtonContainer">
-                <div className={"optionButton"} onClick={this.onOption1Click}>{this.props.option2Text}</div>
-                <div className={"optionButton"} onClick={this.onOption2Click}>{this.props.option1Text}</div>
+                <div className={"optionButton"} onClick={this.onOption1Click}>{this.props.option1Text}</div>
+                <div className={"optionButton"} onClick={this.onOption2Click}>{this.props.option2Text}</div>
               </div>
             </Alert>
           </>

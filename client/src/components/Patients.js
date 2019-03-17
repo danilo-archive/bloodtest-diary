@@ -1,189 +1,309 @@
 import React, { Component } from "react";
 import styled from "styled-components";
-import Modal from "react-responsive-modal";
+import { ModalProvider } from "styled-react-modal";
+import Modal from "./PatientModal";
 
 import Navbar from "./homeComponents/navbar";
 import PatientsTable from "./patientsComponents/tableComponents/PatientsTable";
-//import AttributeSelector from "./patientsComponents/AttributeSelector";
 
 import LoadingAnimation from "./loadingScreen/loadingAnimation";
 
 import {getServerConnect} from "../serverConnection.js";
 import PatientProfile from "./patientsComponents/PatientProfile";
+import NewPatient from "./patientsComponents/NewPatient";
+import {openAlert} from "./Alert";
 
 const Container = styled.div`
   border: blue 0 solid;
-  height: calc(100vh - 65px);
-  width: auto;
-  position: relative;
-  top: 30px;
-  margin: 1% 1% 1% 1%;
+    height: calc(100vh - 65px);
+    width: auto;
+    position: relative;
+    top: 30px;
+    margin: 1% 1% 1% 1%;
 
   flex-wrap: wrap;
   align-content: flex-start;
   justify-content: center;
+
 `;
 
 const NavbarContainer = styled.div`
-  border: #839595 3px solid;
-  border-radius: 10px;
-  margin-left: 0.5%;
-  margin-bottom: 9px;
+    border: #839595 0 solid;
 
-  max-height: 225px;
-  min-height: 200px;
-  width: auto;
+    background-color: white;
 
-  flex-grow: 1;
-  flex-shrink: 1;
+    margin-bottom: 1%;
 
-  overflow: scroll;
+    padding: 10px 1%;
+
+    min-height: 150px;
+    max-height: 150px;
+
+    flex-grow: 1;
+    flex-shrink: 2;
+
+    overflow: hidden;
+
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 `;
 
 const TableContainer = styled.div`
-  color: #ffffff;
-  border: green 0 solid;
-  height: 80%;
-  width: 100%;
+    color: #ffffff;
+    border: green 0 solid;
+    height: 80%;
+    width: 100%;
 
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: stretch;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch ;
 
-  flex-grow: 1;
-  flex-shrink: 1;
+    flex-grow: 1;
+    flex-shrink: 1;
 `;
+
+const Button = styled.button`
+  border: none;
+  margin-bottom: 1%;
+  color: white;
+  padding: 7px 12px;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 200;
+  background-color: #0b989d;
+  word-break: break-word;
+  font-family: "Rajdhani",sans-serif;
+  outline: none;
+  :hover {
+    background: #018589;
+  }
+`;
+
 const modalStyles = {
-  padding: 0
+    border: `solid 0 black`
 };
 
 class Patients extends React.Component {
-  constructor(props) {
-    super(props);
-    this.onHomeClick = this.onHomeClick.bind(this);
-    this.serverConnect = getServerConnect();
-    this.serverConnect.joinPatientsPage();
 
-    this.state = {
-      allPatientsReady: false,
-      allPatients: {},
-      openModal: false,
-      selectedId: undefined
-    };
-    this.initOnPatientEditedCallback();
-    this.initAllPatients();
+    constructor(props){
+        super(props);
+        this.onHomeClick = this.onHomeClick.bind(this);
+        this.serverConnect = getServerConnect();
+        this.serverConnect.joinPatientsPage();
 
-    this.refresh = this.refresh.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.onCloseModal = this.onCloseModal.bind(this);
-    this.logout = this.logout.bind(this);
-  }
-
-  refresh(event) {
-    this.initAllPatients();
-  }
-
-  initOnPatientEditedCallback() {
-    this.serverConnect.setOnPatientEdited((patientId, newInfo) => {
-      this.initAllPatients();
-    });
-  }
-
-  initAllPatients() {
-    this.serverConnect.getAllPatients(res => {
-      this.setState({
-        allPatients: res,
-        shownPatients: res,
-        allPatientsReady: true
-      });
-    });
-  }
-
-  onHomeClick(event) {
-    this.props.history.push("home");
-  }
-
-  logout(event) {
-    this.serverConnect.deleteLoginToken();
-    this.props.history.replace("");
-  }
-
-  openModal(id) {
-    this.serverConnect.requestPatientEditing(id, token => {
-      console.log(`id in openModal: ${id}`);
-      if (token) {
-        this.setState({ selectedId: id, openModal: true, editToken: token });
-      } else {
-        // TODO open error dialoge "someone is editing this patient"
-      }
-    });
-  }
-
-  onCloseModal() {
-    // TODO get rid of the torken
-    console.log("closing modal");
-    this.serverConnect.discardPatientEditing(
-      this.state.selectedId,
-      this.state.editToken,
-      res => {
-        this.setState({
-          selectedId: undefined,
-          openModal: false,
-          editToken: undefined
-        });
-      }
-    );
-  }
-
-  //TODO : rename all components to capital case
-  render() {
-    if (this.state.allPatientsReady) {
-      return (
-        <Container>
-          <NavbarContainer>
-            <Navbar
-              onHomeClick={this.onHomeClick}
-              onSignoutClick={this.logout}
-              refresh={this.refresh}
-            />
-          </NavbarContainer>
-          {
-            <TableContainer>
-              <PatientsTable
-                allPatients={this.state.shownPatients}
-                openModal={this.openModal}
-              />
-            </TableContainer>
-          }
-          <Modal
-            open={this.state.openModal}
-            onClose={this.onCloseModal}
-            showCloseIcon={false}
-            style={modalStyles}
-            center
-          >
-            <PatientProfile
-              patientId={this.state.selectedId}
-              closeModal={this.onCloseModal}
-              editToken={this.state.editToken}
-            />
-          </Modal>
-        </Container>
-      );
-    } else {
-      return (
-        <div style={{
-          position: "absolute",
-          left: "50%",
-          top: "50%",
-          transform: "translate(-50%,-50%)",
-        }}>
-        <LoadingAnimation/>
-      </div>
-      );
+        this.state = {
+            allPatientsReady: false,
+            allPatients: {},
+            shownPatients: {},
+            openEditModal: false,
+            openAddModal: false,
+            selectedId: undefined
+        };
+        this.initOnPatientEditedCallback();
+        this.initAllPatients();
     }
-  }
+
+    refresh = event => {
+        this.initAllPatients();
+    };
+
+    handleError = (res, error) => {
+        if (res.errorType === "authentication"){
+            openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
+        }else{
+            openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
+        }
+    };
+
+    initAllPatients(){
+        this.serverConnect.getAllPatients(res => {
+            if (res.success){
+                this.setState({
+                    allPatients: res.response,
+                    shownPatients: res.response,
+                    allPatientsReady: true
+                });
+            }else{
+                openAlert("Authentication failed", "confirmationAlert", "Go back to login", () => {this.logout()});
+            }
+        });
+    };
+
+    initOnPatientEditedCallback(){
+        this.serverConnect.setOnPatientEdited((patientId, newInfo) => {
+            this.initAllPatients();
+        });
+    }
+
+    number_filter = value => {
+        if (value === "") { this.setState({shownPatients: this.state.allPatients})}
+        else{
+            this.setState({
+              shownPatients: this.state.allPatients.filter(
+                patient => patient.patient_no.includes(value)
+              )
+            });
+        }
+    };
+
+    name_filter = value => {
+        if (value === "") { this.setState({shownPatients: this.state.allPatients})}
+        else{
+            this.setState({
+              shownPatients: this.state.allPatients.filter(
+                patient => patient.patient_name ? patient.patient_name.includes(value) : false
+              )
+            });
+        }
+    };
+
+    surname_filter = value => {
+        if (value === "") { this.setState({shownPatients: this.state.allPatients})}
+        else{
+            this.setState({
+              shownPatients: this.state.allPatients.filter(
+                patient => patient.patient_surname ? patient.patient_surname.includes(value) : false
+              )
+            });
+        }
+    };
+
+    email_filter = value => {
+        if (value === "") { this.setState({shownPatients: this.state.allPatients})}
+        else{
+            this.setState({
+              shownPatients: this.state.allPatients.filter(
+                patient => patient.patient_email ? patient.patient_email.includes(value) : false
+              )
+            });
+        }
+    };
+
+    phone_filter = value => {
+        if (value === "") { this.setState({shownPatients: this.state.allPatients})}
+        else{
+            this.setState({
+              shownPatients: this.state.allPatients.filter(
+                patient => patient.patient_phone ? patient.patient_phone.includes(value) : false
+              )
+            });
+        }
+    };
+
+    onHomeClick = event => {
+        this.props.history.push("home")
+    };
+
+    logout = event => {
+      this.serverConnect.logout(res => {
+          this.props.history.replace("");
+      });
+    }
+
+
+    openEditModal = id => {
+        this.serverConnect.requestPatientEditing(id, res => {
+            console.log(`id in openEditModal: ${id}`);
+            if (res.token){
+                this.setState({selectedId: id, openEditModal: true, editToken: res.token});
+            }else{
+                this.handleError(res, "Somebody is already editing this patient");
+            }
+        });
+    };
+
+
+    onCloseEditModal = () => {
+        console.log("closing modal");
+        this.serverConnect.discardPatientEditing(this.state.selectedId, this.state.editToken, res => {
+            this.setState({selectedId: undefined, openEditModal: false, editToken: undefined});
+        });
+
+    };
+
+    openAddModal = () => {
+        this.setState({openAddModal: true});
+    };
+
+    onCloseAddModal = () => {
+        this.setState({openAddModal: false})
+    };
+
+    //TODO : rename all components to capital case
+    render() {
+        if (this.state.allPatientsReady) {
+            return (
+                <ModalProvider>
+                    <Container>
+                        <NavbarContainer>
+                            <Navbar
+                                onHomeClick={this.onHomeClick}
+                                onSignoutClick={this.logout}
+                                refresh={this.refresh}
+
+                            />
+                        </NavbarContainer>
+                        <Button onClick={this.openAddModal}>Add patient</Button>
+                        <TableContainer>
+                            <PatientsTable
+                                shownPatients={this.state.shownPatients}
+                                openEditModal = {this.openEditModal}
+                                filterNumber = {this.number_filter}
+                                filterName = {this.name_filter}
+                                filterSurname = {this.surname_filter}
+                                filterEmail = {this.email_filter}
+                                filterPhone = {this.phone_filter}
+                            />
+                        </TableContainer>
+                        <Modal
+                            open={this.state.openEditModal}
+                            onClose={this.onCloseEditModal}
+                            showCloseIcon={false}
+                            style={modalStyles}
+                            center
+                            >
+                            <PatientProfile
+                                patientId={this.state.selectedId}
+                                closeModal={this.onCloseEditModal}
+                                editToken={this.state.editToken}
+                                purpose={"Edit patient"}
+                                handleError={this.handleError}
+                            />
+                        </Modal>
+
+                        <Modal
+                            open={this.state.openAddModal}
+                            onClose={this.onCloseAddModal}
+                            showCloseIcon={false}
+                            style={modalStyles}
+                            center
+                        >
+                            <NewPatient
+                                closeModal={this.onCloseAddModal}
+                                purpose={"Add patient"}
+                                handleError={this.handleError}
+                            />
+                        </Modal>
+
+                    </Container>
+                </ModalProvider>
+            );
+        } else {
+            return (
+                <div style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%,-50%)",
+                }}>
+                    <LoadingAnimation/>
+                </div>
+            );
+        }
+    }
 }
 
 export default Patients;

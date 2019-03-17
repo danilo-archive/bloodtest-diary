@@ -38,6 +38,7 @@ export default props => {
             dueDate={appointment.due_date}
             editTest={props.editTest}
             section={props.section}
+            handleError={props.handleError}
           />
         ))}
       </AppointmentSection>
