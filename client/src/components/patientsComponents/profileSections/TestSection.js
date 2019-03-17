@@ -1,21 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import InfoCell from "./profileCells/InfoCell";
-import InputCell from "./profileCells/InputCell";
 import TestCell from "./profileCells/TestCell";
-import Label from "./profileCells/Label";
 import SectionContainer from "./SectionContainer"
 
-const Container = styled.div`
-  margin: 3%;
-  padding: 1%;
+const EmptyContainer = styled.div`
   width: 100%;
-  overflow: scroll;
- `;
-
-const Line = styled.hr`
-  border: 0;
-  border-bottom: solid 1px rgb(100, 100, 100, 0.5);
+  text-align: center;
+  font-size: 115%;
 `;
 
 const Field = styled.div`
@@ -71,13 +62,29 @@ export default class PatientSection extends React.Component {
                   </CellContainer>
           </>
         );
-        return (
+        const emptyTest = (
             <>
-               <SectionContainer
-                title={"Test info"}
-                content={content}
-               />
+                <EmptyContainer>Patient has no tests scheduled</EmptyContainer>
             </>
         );
+        if (this.props.tests.length > 0) {
+            return (
+                <>
+                    <SectionContainer
+                        title={"Test info"}
+                        content={content}
+                    />
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <SectionContainer
+                        title={"Test info"}
+                        content={emptyTest}
+                    />
+                </>
+            );
+        }
     }
 }
