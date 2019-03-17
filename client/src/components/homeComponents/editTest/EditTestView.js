@@ -82,7 +82,7 @@ export default class EditTestView extends React.Component {
           : test.date.frequency.split("-")[1] === "M"
           ? `${parseInt(test.date.frequency.split("-")[0]) * 4}-W`
           : test.date.frequency,
-      occurrences: test.date.occurrences,
+      occurrences: test.date.noRepeat ? 1 : test.date.occurrences,
       completed_status:
         test.status === "completed"
           ? "yes"
