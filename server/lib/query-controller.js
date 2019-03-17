@@ -1,3 +1,11 @@
+/**
+ * This module collects all the queries that are dealing with the core data.
+ * 
+ * @author Mateusz Nowak, Luka Kralj
+ * @module query-controller
+ * @version 1.0
+ */
+
 const databaseController = require('./db_controller/db-controller.js');
 const authenticator = require("./authenticator.js");
 const calendarController = require("./calendar-controller.js");
@@ -5,6 +13,8 @@ const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
 const mysql = require('mysql');
+const email_sender = require('./email/email-sender');
+
 /*===============================*
           SELECT QUERIES
  *===============================*/
@@ -168,6 +178,61 @@ async function getTestWithinWeek(date)
   return response;
 }
 
+/**
+ * Returns overdue tests that are separated into two groups. One group are the tests that haven't been
+ * sent a reminder. The other group are the tests that have already been sent a reminder.
+ * Response includes some basic info about the test.
+ * 
+ * @param {string} actionUsername The user who issued the request.
+ * @returns {JSON} {
+ *    success: true|false, 
+ *    response: {
+ *        notReminded: [{
+ *          test_id: 
+ *          due_date:
+ *          patient_no:
+ *          patient_name:
+ *          patient_surname:
+ *        }, ...]
+ *        reminded: [{
+ *          test_id: 
+ *          due_date:
+ *          patient_no:
+ *          patient_name:
+ *          patient_surname:
+ *          last_reminder:
+ *          reminders_sent: 
+ *        }, ...]
+ *    }
+ *  }
+ */
+async function getOverdueReminderGroups() {
+  const sql = `Select test_id, due_date, patient_no, patient_name, patient_surname, last_reminder, reminders_sent
+            From Test NATURAL JOIN Patient 
+            where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' AND
+            (last_reminder IS NULL OR last_reminder < CURDATE()) ORDER BY last_reminder ASC;`
+
+  const res = await selectQueryDatabase(sql);
+
+  if (!res.success) {
+    return res;
+  }
+
+  const overdue = res.response;
+  const notReminded = [];
+  const reminded = [];
+
+  for (let i = 0; i < overdue.length; i++) {
+    if (overdue[i].reminders_sent === 0) {
+      notReminded.push(overdue[i]);
+    }
+    else {
+      reminded.push(overdue[i]);
+    }
+  }
+  
+  return { success:true, response: { notReminded: notReminded, reminded: reminded}};
+}
 
 /*===============================*
           UPDATE QUERIES
@@ -408,6 +473,83 @@ async function changeTestStatus(test, actionUsername)
     }
   }
   return res;
+}
+
+/**
+ * Send reminders for overdue tests.
+ *
+ * @param {Array} testIDs - List of all the overdue tests' IDs
+ * @param {string} actionUsername The user who issued the request.
+ * @return {JSON} result of the query. success is true only if all the emails were successfully sent.
+ *            Some emails might fail to be sent for various reasons. It can be that the patient was sent
+ *            an email but the hospital was not or vice versa, or maybe both emails failed to send.
+ *            Response format:
+ *            {success: true, response: "All emails sent successfully."}
+ * 
+ *            The three "failed" lists are disjoint.
+ *            {success: false,
+ *             response: {
+ *              failedBoth: [] // might be empty
+ *              failedPatient: [] // might be empty
+ *              failedHospital: [] // might be empty
+ *             }
+ *            }
+ **/
+async function sendOverdueReminders(testIDs, actionUsername) {
+  const failedBoth = [];
+  const failedPatient = [];
+  const failedHospital = [];
+
+  for (let i = 0; i < testIDs.length; i++) {
+    const token = await requestEditing("Test", testIDs[i], actionUsername);
+    if (!token) {
+      failedBoth.push(testIDs[i]);
+      continue;
+    }
+
+    const failed_pat = await email_sender.sendOverdueTestReminderToPatient([testIDs[i]]);  
+    const failed_hos = await email_sender.sendOverdueTestReminderToHospital([testIDs[i]]); 
+
+    if (failed_pat.length === 1 && failed_hos.length === 1) {
+      failedBoth.push(testIDs[i]);
+    }
+    else if (failed_pat.length === 1) {
+      failedPatient.push(testIDs[i]);
+    }
+    else if (failed_hos.length === 1) {
+      failedHospital.push(testIDs[i]);
+    }
+
+    if (failed_pat.length === 0) {
+      // email for patient sent successfully
+      let sql = "UPDATE Test SET last_reminder = CURDATE(), reminders_sent = reminders_sent + 1 WHERE test_id= ? ";
+      sql = mysql.format(sql, testIDs[i]);
+      updateQueryDatabase("Test", testIDs[i], sql, token, actionUsername)
+        .then((res) => {
+          if (!res.success) {
+            console.log("Error updating latest reminder. Response: " + JSON.stringify(res));
+          }
+        });
+    }
+    else {
+      // release token
+      returnToken("Test", testIDs[i], token, actionUsername);
+    }
+  }
+
+  if (failedBoth.length === 0 && failedPatient.length === 0 && failedHospital.length === 0) {
+    return {success:true, response: "All emails sent successfully."};
+  }
+  else {
+    return {
+      success: false,
+      response : {
+        failedBoth: failedBoth,
+        failedPatient: failedPatient,
+        failedHospital: failedHospital
+      }
+    };
+  }
 }
 
 /*===============================*
@@ -686,13 +828,13 @@ async function unscheduleTest(testid,token,actionUsername)
  *===============================*/
 
 /**
-* Check if test are edited within the TokenControl database
+* Check if test are edited within the EditTokens database
 * @return {Boolean} {false - If no tests are edited (no tokens)}
 * @return {Boolean} {true - If tests are edited (tokens in table)}
 * @return {JSON} {Error response}
 **/
 async function checkIfPatientsTestsAreEdited(patientid){
-  const sql = `Select test_id From Test Where patient_no = ${mysql.escape(patientid)} AND test_id IN (Select table_key From TokenControl Where table_name = "Test");`;
+  const sql = `Select test_id From Test Where patient_no = ${mysql.escape(patientid)} AND test_id IN (Select table_key From EditTokens Where table_name = "Test");`;
   const response = await selectQueryDatabase(sql);
   if(response.success && response.response.length==0){
     return false;
@@ -1056,6 +1198,7 @@ module.exports = {
     getAllTestsOnDate,
     getTestWithinWeek,
     getSortedOverdueWeeks,
+    getOverdueReminderGroups,
   //INSERTS
     addTest,
     addUser,
@@ -1072,6 +1215,7 @@ module.exports = {
     editPatientExtended,
     editCarer,
     editHospital,
+    sendOverdueReminders,
   //DELETE
     deleteHospital,
     deletePatient,
