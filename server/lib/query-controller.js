@@ -13,6 +13,7 @@ const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
 const mysql = require('mysql');
+const email_sender = require('./email/email-sender');
 
 /*===============================*
           SELECT QUERIES
@@ -205,7 +206,7 @@ async function getTestWithinWeek(date)
  *    }
  *  }
  */
-async function getOverdueReminderGroups(actionUsername) {
+async function getOverdueReminderGroups() {
   const sql = `Select test_id, due_date, patient_no, patient_name, patient_surname, last_reminder, reminders_sent
             From Test NATURAL JOIN Patient 
             where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' AND
@@ -222,13 +223,10 @@ async function getOverdueReminderGroups(actionUsername) {
   const reminded = [];
 
   for (let i = 0; i < overdue.length; i++) {
-    const token = await requestEditing("Test", overdue[i].test_id, actionUsername);
-    if (token && overdue[i].reminders_sent === 0) {
-      overdue[i]["token"] = token;
+    if (overdue[i].reminders_sent === 0) {
       notReminded.push(overdue[i]);
     }
-    else if (token) {
-      overdue[i]["token"] = token;
+    else {
       reminded.push(overdue[i]);
     }
   }
@@ -478,40 +476,79 @@ async function changeTestStatus(test, actionUsername)
 }
 
 /**
-* Send reminders for overdue tests.
-* @param {Array} testIDs - List of all the overdue tests' IDs
-* @param {string} actionUsername The user who issued the request.
-* @return {JSON} result of the query - {success:true/false response:Array/Error}
-**/
+ * Send reminders for overdue tests.
+ *
+ * @param {Array} testIDs - List of all the overdue tests' IDs
+ * @param {string} actionUsername The user who issued the request.
+ * @return {JSON} result of the query. success is true only if all the emails were successfully sent.
+ *            Some emails might fail to be sent for various reasons. It can be that the patient was sent
+ *            an email but the hospital was not or vice versa, or maybe both emails failed to send.
+ *            Response format:
+ *            {success: true, response: "All emails sent successfully."}
+ * 
+ *            The three "failed" lists are disjoint.
+ *            {success: false,
+ *             response: {
+ *              failedBoth: [] // might be empty
+ *              failedPatient: [] // might be empty
+ *              failedHospital: [] // might be empty
+ *             }
+ *            }
+ **/
 async function sendOverdueReminders(testIDs, actionUsername) {
-  const failedToSend = [];
+  const failedBoth = [];
+  const failedPatient = [];
+  const failedHospital = [];
 
   for (let i = 0; i < testIDs.length; i++) {
     const token = requestEditing("Test", testIDs[i], actionUsername);
     if (!token) {
-      failedToSend.push(testIDs[i]);
+      failedBoth.push(testIDs[i]);
       continue;
     }
 
-    const res = false; // = send email();
-    if (res) {
-      // email sent successfully
+    const failed_pat = await email_sender.sendOverdueTestReminderToPatient([testIDs[i]]);  
+    const failed_hos = await email_sender.sendOverdueTestReminderToHospital([testIDs[i]]); 
+
+    if (failed_pat.length === 1 && failed_hos.length === 1) {
+      failedBoth.push(testIDs[i]);
+    }
+    else if (failed_pat.length === 1) {
+      failedPatient.push(testIDs[i]);
+    }
+    else if (failed_hos.length === 1) {
+      failedHospital.push(testIDs[i]);
+    }
+
+    if (failed_pat.length === 0) {
+      // email for patient sent successfully
       let sql = "UPDATE Test SET last_reminder = CURDATE(), reminders_sent = reminders_sent + 1 WHERE test_id= ? ";
       sql = mysql.format(sql, testIDs[i]);
-      await updateQueryDatabase("Test", testIDs[i], sql, token, actionUsername);
+      updateQueryDatabase("Test", testIDs[i], sql, token, actionUsername)
+        .then((res) => {
+          if (!res.success) {
+            console.log("Error updating latest reminder. Response: " + res);
+          }
+        });
     }
     else {
-      // could not send an email
-      failedToSend.push(testIDs[i]);
-      await returnToken("Test", testIDs[i], token, actionUsername);
+      // release token
+      returnToken("Test", testIDs[i], token, actionUsername);
     }
   }
 
-  if (failedToSend.length > 0) {
-    return {success:false, response: failedToSend};
+  if (failedBoth.length === 0 && failedPatient.length === 0 && failedHospital.length === 0) {
+    return {success:true, response: "All emails sent successfully."};
   }
   else {
-    return {success:true, response: "All tests sent."};
+    return {
+      success: false,
+      response : {
+        failedBoth: failedBoth,
+        failedPatient: failedPatient,
+        failedHospital: failedHospital
+      }
+    };
   }
 }
 
