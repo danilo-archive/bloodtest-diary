@@ -6,6 +6,7 @@ import PatientSelect from "./PatientSelect";
 import DateSelectorSection from "./DateSelectorSection";
 import { getServerConnect } from "../../../serverConnection.js";
 import dateformat from "dateformat";
+import {openAlert} from "../../Alert";
 const DataContainer = styled.div`
   position: relative;
   width: 100%;
@@ -34,17 +35,30 @@ export default class AddTestView extends React.Component {
     this.getAllPatients();
   }
 
+  handleError = (res, error) => {
+      if (res.errorType === "authentication"){
+          openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
+      }else{
+          openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
+      }
+  }
+
   getAllPatients = () => {
     this.serverConnect.getAllPatients(res => {
-      res = res.map(patient => {
-        return {
-          name: `${patient.patient_name} ${patient.patient_surname}`,
-          id: `${patient.patient_no}`
-        };
-      });
-      this.setState({ allPatients: res });
+      if (res.success){
+          let patients = res.response.map(patient => {
+            return {
+              name: `${patient.patient_name} ${patient.patient_surname}`,
+              id: `${patient.patient_no}`
+            };
+          });
+          this.setState({ allPatients: patients });
+        }else{
+            this.handleError(res);
+        }
     });
-  };
+  }
+
   close = () => {
     this.setState({ open: false });
   };
