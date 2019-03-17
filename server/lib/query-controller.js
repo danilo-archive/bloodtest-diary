@@ -493,7 +493,7 @@ async function sendOverdueReminders(testIDs, actionUsername) {
       continue;
     }
 
-    const res; // = send email();
+    const res = false; // = send email();
     if (res) {
       // email sent successfully
       let sql = "UPDATE Test SET last_reminder = CURDATE(), reminders_sent = reminders_sent + 1 WHERE test_id= ? ";
@@ -793,13 +793,13 @@ async function unscheduleTest(testid,token,actionUsername)
  *===============================*/
 
 /**
-* Check if test are edited within the TokenControl database
+* Check if test are edited within the EditTokens database
 * @return {Boolean} {false - If no tests are edited (no tokens)}
 * @return {Boolean} {true - If tests are edited (tokens in table)}
 * @return {JSON} {Error response}
 **/
 async function checkIfPatientsTestsAreEdited(patientid){
-  const sql = `Select test_id From Test Where patient_no = '${patientid}' AND test_id IN (Select table_key From TokenControl Where table_name = "Test");`;
+  const sql = `Select test_id From Test Where patient_no = '${patientid}' AND test_id IN (Select table_key From EditTokens Where table_name = "Test");`;
   const response = await selectQueryDatabase(sql);
   if(response.success && response.response.length==0){
     return false;
@@ -1136,18 +1136,6 @@ async function returnToken(table, id, token, actionUsername)
     }
     return {success:false, response: response.err};
   }
-}
-
-/**
- * Await for this function to pause execution for a certain time.
- *
- * @param {number} ms Time in milliseconds
- * @returns {Promise}
- */
-function sleep(ms){
-  return new Promise((resolve) => {
-      setTimeout(resolve,ms);
-  });
 }
 
 module.exports = {

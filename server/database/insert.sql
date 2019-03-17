@@ -6,7 +6,7 @@ DELETE FROM Test;
 DELETE FROM Patient;
 DELETE FROM Carer;
 DELETE FROM Hospital;
-DELETE FROM TokenControl;
+DELETE FROM EditTokens;
 DELETE FROM ActionLog;
 DELETE FROM User;
 

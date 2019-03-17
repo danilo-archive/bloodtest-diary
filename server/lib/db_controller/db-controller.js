@@ -23,12 +23,14 @@ module.exports = {
     updateQuery,
     requestEditing,
     refreshToken,
-    cancelEditing
+    cancelEditing,
+    updateAccessToken,
+    deleteAccessToken
 };
 
 const mysql = require("mysql");
 const tokenGenerator = require("./token-generator");
-const dateFormat = require("dateformat");
+const dateformat = require("dateformat");
 const databaseConfig = require("../../config/database");
 const Database = require("./Database");
 
@@ -110,7 +112,7 @@ async function deleteQuery(sql, entryTable, entryID) {
         return response;
     }
     
-    await tokenControlEntryExists(database, entryTable, entryID)
+    await editTokensEntryExists(database, entryTable, entryID)
     .then(async (result) => {
         if (result) {
             response = await getErrResponse("Entry is being modified and cannot be deleted.");
@@ -169,7 +171,7 @@ async function updateQuery(sql, entryTable, entryID, token) {
         return response;
     }
 
-    await tokenControlEntryExists(database, entryTable, entryID, token)
+    await editTokensEntryExists(database, entryTable, entryID, token)
     .then(async (result) => {
         if (result) {
              // Token is valid. Execute query:
@@ -193,7 +195,7 @@ async function updateQuery(sql, entryTable, entryID, token) {
     }
 
     // delete token
-    let deleteQuery = "DELETE FROM TokenControl WHERE token = ?";
+    let deleteQuery = "DELETE FROM EditTokens WHERE token = ?";
     deleteQuery = mysql.format(deleteQuery, [token]);
     await getResult(deleteQuery, database, async (result) => {
         if (result.affectedRows != 1) {
@@ -245,7 +247,7 @@ async function requestEditing(entryTable, entryID) {
         return response;
     }
 
-    await tokenControlEntryExists(database, entryTable, entryID)
+    await editTokensEntryExists(database, entryTable, entryID)
     .then(async (result) => {
         if (result) {
             response = await getErrResponse("Entry is being modified and cannot be edited.");
@@ -265,14 +267,14 @@ async function requestEditing(entryTable, entryID) {
     const token_ = tokenGenerator.generateToken();
     const nowDate = new Date();
     nowDate.setMinutes(nowDate.getMinutes() + TOKEN_VALIDITY_MINUTES);
-    const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-    const insertQuery = mysql.format("INSERT INTO TokenControl VALUES (?, ?, ?, ?)", 
+    const expires = dateformat(nowDate, "yyyymmddHHMMss");
+    const insertQuery = mysql.format("INSERT INTO EditTokens VALUES (?, ?, ?, ?)", 
                                         [token_, entryTable, entryID, expires]);
 
     response = await getResult(insertQuery, database, () => {
         return {
             token: token_,
-            expires: dateFormat(nowDate, "yyyy-mm-dd HH:MM:ss")
+            expires: dateformat(nowDate, "yyyy-mm-dd HH:MM:ss")
         };
     });
 
@@ -299,11 +301,11 @@ async function refreshToken(entryTable, entryID, token) {
     const database = new Database(databaseConfig);
 
     let response = undefined;
-    await tokenControlEntryExists(database, entryTable, entryID, token)
+    await editTokensEntryExists(database, entryTable, entryID, token)
     .then(async (result) => {
         if (result) {
             // Token is valid. Update it.
-            const sql = mysql.format("DELETE FROM TokenControl WHERE token = ?", [token]); 
+            const sql = mysql.format("DELETE FROM EditTokens WHERE token = ?", [token]); 
             await getResult(sql, database, (result) => {
                 return result;
             });
@@ -311,14 +313,14 @@ async function refreshToken(entryTable, entryID, token) {
             const token_ = tokenGenerator.generateToken();
             const nowDate = new Date();
             nowDate.setMinutes(nowDate.getMinutes() + TOKEN_VALIDITY_MINUTES);
-            const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-            const insertQuery = mysql.format("INSERT INTO TokenControl VALUES (?, ?, ?, ?)", 
+            const expires = dateformat(nowDate, "yyyymmddHHMMss");
+            const insertQuery = mysql.format("INSERT INTO EditTokens VALUES (?, ?, ?, ?)", 
                                                 [token_, entryTable, entryID, expires]);
 
             response = await getResult(insertQuery, database, () => {
                 return {
                     token: token_,
-                    expires: dateFormat(nowDate, "yyyy-mm-dd HH:MM:ss")
+                    expires: dateformat(nowDate, "yyyy-mm-dd HH:MM:ss")
                 };
             });
         }
@@ -347,11 +349,11 @@ async function cancelEditing(entryTable, entryID, token) {
     }
     const database = new Database(databaseConfig);
     let response = undefined;
-    await tokenControlEntryExists(database, entryTable, entryID, token)
+    await editTokensEntryExists(database, entryTable, entryID, token)
     .then(async (result) => {
         if (result) {
             // Token is valid. Delete it.
-            const sql = mysql.format("DELETE FROM TokenControl WHERE token = ?", [token]); 
+            const sql = mysql.format("DELETE FROM EditTokens WHERE token = ?", [token]); 
             await getResult(sql, database, (result) => {
                 return result;
             });
@@ -365,6 +367,47 @@ async function cancelEditing(entryTable, entryID, token) {
 
     database.close();
     return response;
+}
+
+/**
+ * Updates the expiration of an access token specified.
+ *
+ * @param {string} accessToken - Access token we are editing.
+ * @param {Date} newExpiration New expiration for this token.
+ * @returns {Promise<JSON>} JSON object that contains response data or error message.
+ */
+async function updateAccessToken(accessToken, newExpiration) {
+    let sql = "UPDATE AccessTokens SET expiration = ? WHERE token = ?";
+    sql = mysql.format(sql, [dateformat(newExpiration, "yyyymmddHHMMss"), accessToken]);
+    const database = new Database(databaseConfig);
+    const res = await getResult(sql, database, () => {
+        return {status:"OK"};
+    });
+    database.close();
+    if (res.status !== "OK") {
+        console.log("Could not update access token expiration in the DB.");
+    }
+    return res;
+}
+
+/**
+ * Deletes the access token specified.
+ *
+ * @param {string} accessToken - Access token we are editing.
+ * @returns {Promise<JSON>} JSON object that contains response data or error message.
+ */
+async function deleteAccessToken(accessToken) {
+    let sql = "DELETE FROM AccessTokens WHERE token = ?";
+    sql = mysql.format(sql, [accessToken]);
+    const database = new Database(databaseConfig);
+    const res = await getResult(sql, database, () => {
+        return {status:"OK"};
+    });
+    database.close();
+    if (res.status !== "OK") {
+        console.log("Could not delete access token in the DB.");
+    }
+    return res;
 }
 
 //=====================================
@@ -473,7 +516,7 @@ function startsWith(toCheck, compareTo) {
 }
 
 /**
- * Check if the entry with the given parameters exists in the TokenControl table.
+ * Check if the entry with the given parameters exists in the EditTokens table.
  *
  * @param {Database} database
  * @param {string} entryTable
@@ -481,12 +524,12 @@ function startsWith(toCheck, compareTo) {
  * @param {string} token
  * @returns {Promise<boolean>} True if such entry exists, false if not.
  */
-async function tokenControlEntryExists(database, entryTable, entryID, token) {
+async function editTokensEntryExists(database, entryTable, entryID, token) {
     if (database === undefined || entryTable === undefined || entryID === undefined) {
         return await Promise.reject("Invalid use of entryExists.");
     }
 
-    let tokenQuery = "SELECT * FROM TokenControl "
+    let tokenQuery = "SELECT * FROM EditTokens "
     tokenQuery += "WHERE table_name = ? AND table_key = ?";
     const options = [entryTable, entryID];
     if (token !== undefined) {
@@ -501,7 +544,7 @@ async function tokenControlEntryExists(database, entryTable, entryID, token) {
             if ((expires - new Date()) <= 0) {
                 // Token has expired.
                 
-                let delQuery = "DELETE FROM TokenControl "
+                let delQuery = "DELETE FROM EditTokens "
                 delQuery += "WHERE table_name = ? AND table_key = ?";
                 const options = [entryTable, entryID];
                 if (token !== undefined) {
