@@ -547,11 +547,6 @@ async function addPatientExtended(patientInfo,actionUsername)
   else{
     patient["hospital_id"]="NULL";
   }
-
-  //Both queries failed
-  if(!patient.hospital_id && !patient.carer_id){
-    return {success: false, response:{problem:"Incorrect data for carer and hospital"}}
-  }
   //Hospital query failed but carer was inserted
   if(patient.carer_id&&!patient.hospital_id)
   {
@@ -602,6 +597,9 @@ async function addPatientExtended(patientInfo,actionUsername)
       return{success:false,
         response:{problem:"Problem on patient insert", carer: carer, hospital: hospital}}
     }
+  }
+  else{
+    return {success: false, response:{problem:"Incorrect data for carer and hospital"}}
   }
 }
 /*===============================*
