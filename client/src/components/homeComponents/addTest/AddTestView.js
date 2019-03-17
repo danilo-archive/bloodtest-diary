@@ -37,7 +37,11 @@ export default class AddTestView extends React.Component {
 
   handleError = (res, error) => {
       if (res.errorType === "authentication"){
-          openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
+          openAlert("Authentication error", "confirmationAlert",
+          "Go back to login", () => {
+              this.props.closeModal();
+              this.props.logout();
+            });
       }else{
           openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
       }
