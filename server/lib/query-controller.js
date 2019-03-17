@@ -25,7 +25,7 @@ const email_sender = require('./email/email-sender');
  * @return {JSON} - {success:Boolean response:Array or Error}
  */
 async function getPatient(patient_no) {
-  const sql = `SELECT * FROM Patient WHERE patient_no = '${patient_no}';`
+  const sql = `SELECT * FROM Patient WHERE patient_no = ${mysql.escape(patient_no)};`
   return await selectQueryDatabase(sql);
 }
 
@@ -36,7 +36,7 @@ async function getPatient(patient_no) {
  */
 // TODO to be tested
 async function getFullPatientInfo(patient_no){
-  const sql = `SELECT * FROM Patient LEFT OUTER JOIN Hospital ON Patient.hospital_id=Hospital.hospital_id LEFT OUTER JOIN Carer ON Patient.carer_id=Carer.carer_id WHERE Patient.patient_no = '${patient_no}';`
+  const sql = `SELECT * FROM Patient LEFT OUTER JOIN Hospital ON Patient.hospital_id=Hospital.hospital_id LEFT OUTER JOIN Carer ON Patient.carer_id=Carer.carer_id WHERE Patient.patient_no = ${mysql.escape(patient_no)};`
   return await selectQueryDatabase(sql);
 }
 
@@ -46,7 +46,7 @@ async function getFullPatientInfo(patient_no){
  * @return {JSON} - {success:Boolean response:Array or Error}
  */
 async function getCarer(carerID) {
-  const sql = `SELECT * FROM Carer WHERE carer_id = '${carerID}';`
+  const sql = `SELECT * FROM Carer WHERE carer_id = ${mysql.escape(carerID)};`
   return await selectQueryDatabase(sql);
 }
 
@@ -56,7 +56,7 @@ async function getCarer(carerID) {
  * @return {JSON} - {success:Boolean response:Array or Error}
  */
 async function getHospital(hospital_id) {
-  const sql = `SELECT * FROM Hospital WHERE hospital_id = '${hospital_id}';`
+  const sql = `SELECT * FROM Hospital WHERE hospital_id = ${mysql.escape(hospital_id)};`
   return await selectQueryDatabase(sql);
 }
 
@@ -77,7 +77,7 @@ async function getAllPatients()
 **/
 async function getUser(username)
 {
-  const sql = `Select * From User Where username='${username}' Limit 1;`;
+  const sql = `Select * From User Where username=${mysql.escape(username)} Limit 1;`;
   return await selectQueryDatabase(sql)
 }
 
@@ -98,7 +98,7 @@ async function getAllTests()
 **/
 async function getTest(test_id)
 {
-  const sql = `Select * From Test Where test_id=${test_id};`;
+  const sql = `Select * From Test Where test_id=${mysql.escape(test_id)};`;
   return await selectQueryDatabase(sql)
 }
 
@@ -108,12 +108,12 @@ async function getTest(test_id)
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getTestsOfPatient(patientId){
-  const sql = `Select * From Test Where patient_no = ${patientId};`;
+  const sql = `Select * From Test Where patient_no = ${mysql.escape(patientId)};`;
   return await selectQueryDatabase(sql)
 }
 
 async function getNextTestsOfPatient(patientId){
-    const sql = `SELECT * FROM Test WHERE patient_no = '${patientId}' AND completed_status='no';`;
+    const sql = `SELECT * FROM Test WHERE patient_no = ${mysql.escape(patientId)} AND completed_status='no';`;
     return await selectQueryDatabase(sql);
 }
 
@@ -124,7 +124,7 @@ async function getNextTestsOfPatient(patientId){
 **/
 async function getAllTestsOnDate(date)
 {
-  const sql = `Select * From Test Where due_date = '${date}';`;
+  const sql = `Select * From Test Where due_date = ${mysql.escape(date)};`;
   return await selectQueryDatabase(sql)
 }
 
@@ -134,7 +134,7 @@ async function getAllTestsOnDate(date)
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getTestInfo(test_id){
-    const sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_id=${test_id}`;
+    const sql = `SELECT * FROM Test JOIN Patient ON Patient.patient_no = Test.patient_no WHERE test_id=${mysql.escape(test_id)}`;
     return await selectQueryDatabase(sql);
 }
 
@@ -302,15 +302,15 @@ async function editPatientExtended(newInfo,token, actionUsername)
   let querySuccess = true;
   for(let i=0; i<updateProperties.length; i++)
    {
-     if((updateProperties[i].startsWith('carer') || updateProperties[i] == 'relationship') && newInfo[updateProperties[i]])
+     if(updateProperties[i].startsWith('carer') || updateProperties[i] == 'relationship')
      {
        carer[updateProperties[i]] = newInfo[updateProperties[i]];
      }
-     if((updateProperties[i].startsWith('hospital')) && newInfo[updateProperties[i]])
+     if(updateProperties[i].startsWith('hospital'))
      {
        hospital[updateProperties[i]] = newInfo[updateProperties[i]];
      }
-     if((updateProperties[i].startsWith('patient') || updateProperties[i] == 'additional_info') && newInfo[updateProperties[i]])
+     if(updateProperties[i].startsWith('patient') || updateProperties[i] == 'additional_info')
      {
        patientNewInfo[updateProperties[i]] = newInfo[updateProperties[i]];
      }
@@ -405,7 +405,7 @@ async function changeTestDueDate(testId, newDate, actionUsername){
     const token = await requestEditing("Test",testId, actionUsername);
     newDate = dateformat(newDate, "yyyymmdd");
 
-    const sql = `UPDATE Test SET due_date='${newDate}' WHERE test_id = ${testId};`;
+    const sql = `UPDATE Test SET due_date=${mysql.escape(newDate)} WHERE test_id = ${mysql.escape(testId)};`;
     const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
     if (!res.success) {
       res.response = res.response.problem;
@@ -432,7 +432,7 @@ async function updatePassword(json, actionUsername)
   const user = response.response[0];
   if(user){
     const hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
-    const sql = `UPDATE User SET hashed_password='${hash}', WHERE username = ${json.username} LIMIT 1;`;
+    const sql = `UPDATE User SET hashed_password=${hash}, WHERE username = ${mysql.escape(json.username)} LIMIT 1;`;
     return await updateQueryDatabase("User",json.username,sql,token, actionUsername);
   }
   else{
@@ -462,7 +462,7 @@ async function changeTestStatus(test, actionUsername)
     case "inReview" : {status = "in review"; date=`CURDATE()`; scheduleNew = true; break;}
     default: return {success:false, response: "NO SUCH UPDATE"}
   }
-  const sql = `UPDATE Test SET completed_status='${status}', completed_date=${date} WHERE test_id = ${test.testId};`;
+  const sql = `UPDATE Test SET completed_status=${mysql.escape(status)}, completed_date=${mysql.escape(date)} WHERE test_id = ${mysql.escape(test.testId)};`;
   const res = await updateQueryDatabase("Test",test.testId,sql,token, actionUsername);
 
   if (res.success && scheduleNew) {
@@ -572,7 +572,7 @@ async function addUser(json, actionUsername)
   const salt = authenticator.produceSalt();
   //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
   const hash = authenticator.produceHash(json.hashed_password,iterations,salt);
-  const sql = `INSERT INTO User VALUES(${json.username},${hash},${salt},${iterations},${json.email});`;
+  const sql = `INSERT INTO User VALUES(${mysql.escape(json.username)},${hash},${salt},${iterations},${mysql.escape(json.email)});`;
   return await insertQueryDatabase(sql, "User", actionUsername, json.username);
 }
 
@@ -651,15 +651,15 @@ async function addPatientExtended(patientInfo,actionUsername)
   const patient = {};
   for(let i=0; i<insertProperties.length; i++)
   {
-     if((insertProperties[i].startsWith('carer') || insertProperties[i] == 'relationship') && patientInfo[insertProperties[i]])
+     if(insertProperties[i].startsWith('carer') || insertProperties[i] == 'relationship')
      {
        carer[insertProperties[i]] = patientInfo[insertProperties[i]];
      }
-     if((insertProperties[i].startsWith('hospital')) && patientInfo[insertProperties[i]])
+     if(insertProperties[i].startsWith('hospital'))
      {
        hospital[insertProperties[i]] = patientInfo[insertProperties[i]];
      }
-     if((insertProperties[i].startsWith('patient') || insertProperties[i] == 'additional_info') && patientInfo[insertProperties[i]])
+     if(insertProperties[i].startsWith('patient') || insertProperties[i] == 'additional_info')
      {
        patient[insertProperties[i]] = patientInfo[insertProperties[i]];
      }
@@ -687,11 +687,6 @@ async function addPatientExtended(patientInfo,actionUsername)
   }
   else{
     patient["hospital_id"]="NULL";
-  }
-
-  //Both queries failed
-  if(!patient.hospital_id && !patient.carer_id){
-    return {success: false, response:{problem:"Incorrect data for carer and hospital"}}
   }
   //Hospital query failed but carer was inserted
   if(patient.carer_id&&!patient.hospital_id)
@@ -743,6 +738,9 @@ async function addPatientExtended(patientInfo,actionUsername)
       return{success:false,
         response:{problem:"Problem on patient insert", carer: carer, hospital: hospital}}
     }
+  }
+  else{
+    return {success: false, response:{problem:"Incorrect data for carer and hospital"}}
   }
 }
 /*===============================*
@@ -836,7 +834,7 @@ async function unscheduleTest(testid,token,actionUsername)
 * @return {JSON} {Error response}
 **/
 async function checkIfPatientsTestsAreEdited(patientid){
-  const sql = `Select test_id From Test Where patient_no = '${patientid}' AND test_id IN (Select table_key From EditTokens Where table_name = "Test");`;
+  const sql = `Select test_id From Test Where patient_no = ${mysql.escape(patientid)} AND test_id IN (Select table_key From EditTokens Where table_name = "Test");`;
   const response = await selectQueryDatabase(sql);
   if(response.success && response.response.length==0){
     return false;
@@ -861,12 +859,12 @@ function getTestsDuringTheWeek(date)
   while(i<5)
   {
     const day = -1*(weekDay - 1) + i;
-    sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD('${date}', INTERVAL ${day} DAY);`;
+    sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD(${mysql.escape(date)}, INTERVAL ${mysql.escape(day)} DAY);`;
     daysInWeek.push(databaseController.selectQuery(sql));
     i++;
   }
   const day = -1*(weekDay - 1) + i;
-  sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD('${date}', INTERVAL ${day} DAY) OR due_date = DATE_ADD('${date}', INTERVAL ${day+1} DAY);`;
+  sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD(${mysql.escape(date)}, INTERVAL ${mysql.escape(day)} DAY) OR due_date = DATE_ADD(${mysql.escape(date)}, INTERVAL ${mysql.escape(day+1)} DAY);`;
   daysInWeek.push(databaseController.selectQuery(sql));
   return daysInWeek;
 }
@@ -1085,18 +1083,20 @@ function prepareInsertSQL(table,object)
   for(let i=0; i<values.length-1; i++)
   {
     if(values[i]!='NULL'){
-      sql += `'${values[i]}',`;
+      sql += `${mysql.escape(values[i])},`;
     }
     else{
       sql += `${values[i]},`;
     }
   }
   if(values[values.length-1]!='NULL'){
-      sql += `'${values[values.length-1]}');`
+      sql += `${mysql.escape(values[values.length-1])});`
   }
   else{
       sql += `${values[values.length-1]});`
   }
+   //For debug:
+  //console.log(sql);
   return sql;
 }
 
@@ -1117,7 +1117,7 @@ function prepareUpdateSQL(table, object, idProperty)
   {
     if(properties[i]!= idProperty){
       if(values[i]!="NULL"){
-        sql += `${properties[i]} = '${values[i]}', `;
+        sql += `${properties[i]} = ${mysql.escape(values[i])}, `;
       }
       else{
         sql += `${properties[i]} = NULL, `;
@@ -1129,7 +1129,14 @@ function prepareUpdateSQL(table, object, idProperty)
   }
   //delete ", " from sql query
   sql = sql.substr(0,sql.length-2);
-  sql += ` WHERE ${idProperty} = '${values[pos]}';`
+  if(values[pos]!="NULL"){
+    sql += ` WHERE ${idProperty} = ${mysql.escape(values[pos])};`
+  }
+  else{
+    sql += ` WHERE ${idProperty} = NULL;`
+  }
+  //For debug:
+  //console.log(sql);
   return sql;
 }
 
@@ -1143,7 +1150,7 @@ function prepareUpdateSQL(table, object, idProperty)
 function prepareDeleteSQL(table, idProperty, id)
 {
   // TODO: add logging in delete
-  const sql = `DELETE FROM ${table} WHERE ${idProperty}='${id}' LIMIT 1;`;
+  const sql = `DELETE FROM ${table} WHERE ${idProperty}=${mysql.escape(id)} LIMIT 1;`;
   return sql;
 }
 
@@ -1217,5 +1224,13 @@ module.exports = {
     deleteTest,
   //TOKEN CONTROL
     requestEditing,
-    returnToken
+    returnToken,
+  //Helper functions - for tests only
+    selectQueryDatabase,
+    insertQueryDatabase,
+    deleteQueryDatabase,
+    updateQueryDatabase,
+    prepareInsertSQL,
+    prepareUpdateSQL,
+    prepareDeleteSQL
 };

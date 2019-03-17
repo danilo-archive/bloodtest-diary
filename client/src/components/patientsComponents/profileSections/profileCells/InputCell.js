@@ -29,10 +29,6 @@ class InputCell extends React.Component {
         super(props);
     }
 
-    test() {
-        console.log("i changed value");
-    }
-
     render() {
         //TODO : improve this
         if (this.props.disabled === true) {

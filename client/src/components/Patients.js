@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import { ModalProvider } from "styled-react-modal";
-import Modal from "./Modal";
+import Modal from "./PatientModal";
 
 import Navbar from "./homeComponents/navbar";
 import PatientsTable from "./patientsComponents/tableComponents/PatientsTable";
@@ -28,16 +28,13 @@ const Container = styled.div`
 `;
 
 const NavbarContainer = styled.div`
-    border: #839595 0px solid;
+    border: #839595 0 solid;
 
     background-color: white;
 
     margin-bottom: 1%;
 
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 1%;
-    padding-right: 1%;
+    padding: 10px 1%;
 
     min-height: 150px;
     max-height: 150px;
@@ -86,7 +83,7 @@ const Button = styled.button`
 `;
 
 const modalStyles = {
-    padding: `0`
+    border: `solid 0 black`
 };
 
 class Patients extends React.Component {
@@ -111,7 +108,7 @@ class Patients extends React.Component {
 
     refresh = event => {
         this.initAllPatients();
-    }
+    };
 
     handleError = (res, error) => {
         if (res.errorType === "authentication"){
@@ -119,7 +116,7 @@ class Patients extends React.Component {
         }else{
             openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
         }
-    }
+    };
 
     initAllPatients(){
         this.serverConnect.getAllPatients(res => {
@@ -142,7 +139,7 @@ class Patients extends React.Component {
     }
 
     number_filter = value => {
-        if (value == "") { this.setState({shownPatients: this.state.allPatients})}
+        if (value === "") { this.setState({shownPatients: this.state.allPatients})}
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
@@ -153,7 +150,7 @@ class Patients extends React.Component {
     };
 
     name_filter = value => {
-        if (value == "") { this.setState({shownPatients: this.state.allPatients})}
+        if (value === "") { this.setState({shownPatients: this.state.allPatients})}
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
@@ -164,7 +161,7 @@ class Patients extends React.Component {
     };
 
     surname_filter = value => {
-        if (value == "") { this.setState({shownPatients: this.state.allPatients})}
+        if (value === "") { this.setState({shownPatients: this.state.allPatients})}
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
@@ -175,7 +172,7 @@ class Patients extends React.Component {
     };
 
     email_filter = value => {
-        if (value == "") { this.setState({shownPatients: this.state.allPatients})}
+        if (value === "") { this.setState({shownPatients: this.state.allPatients})}
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
@@ -186,7 +183,7 @@ class Patients extends React.Component {
     };
 
     phone_filter = value => {
-        if (value == "") { this.setState({shownPatients: this.state.allPatients})}
+        if (value === "") { this.setState({shownPatients: this.state.allPatients})}
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
@@ -198,12 +195,12 @@ class Patients extends React.Component {
 
     onHomeClick = event => {
         this.props.history.push("home")
-    }
+    };
 
     logout = event => {
         this.serverConnect.deleteLoginToken();
         this.props.history.replace("");
-    }
+    };
 
     openEditModal = id => {
         this.serverConnect.requestPatientEditing(id, res => {
@@ -214,7 +211,7 @@ class Patients extends React.Component {
                 this.handleError(res, "Somebody is already editing this patient");
             }
         });
-    }
+    };
 
 
     onCloseEditModal = () => {
@@ -223,15 +220,15 @@ class Patients extends React.Component {
             this.setState({selectedId: undefined, openEditModal: false, editToken: undefined});
         });
 
-    }
+    };
 
     openAddModal = () => {
         this.setState({openAddModal: true});
-    }
+    };
 
     onCloseAddModal = () => {
         this.setState({openAddModal: false})
-    }
+    };
 
     //TODO : rename all components to capital case
     render() {
