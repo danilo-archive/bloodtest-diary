@@ -6,6 +6,8 @@ import ScrollBox from "../calendarComponents/ScrollBox";
 import TestBox from "./TestBox";
 import SubmitButton from "./SubmitButton";
 import { inherits } from "util";
+import { openAlert } from "./../../Alert.js";
+import {getServerConnect} from "./../../../serverConnection.js";
 const Container = styled.div`
   position: relative;
   height: 592px;
@@ -20,6 +22,7 @@ const Scroll = styled(ScrollBox)`
 export default class EmailModal extends Component {
   constructor(props) {
     super(props);
+    this.serverConnect = getServerConnect();
     this.state = {
       selected: [],
       notNotified: props.notNotified.map(patient => {
@@ -78,6 +81,21 @@ export default class EmailModal extends Component {
 
     return count === array2.length;
   }
+
+  submit = () => {
+      let idList = this.state.selected.map(patient => patient.testId);
+      this.serverConnect.sendReminders(idList, res => {
+         if (res.success){
+             openAlert("Patients contacted successfully", "confirmationAlert",
+                        "Ok", () => {
+                            this.props.closeModal();
+                        });
+         }else{
+             this.props.handleError(res, "Something went wrong");
+         }
+      });
+  }
+
   render() {
     return (
       <Container>
@@ -129,13 +147,7 @@ export default class EmailModal extends Component {
         </Scroll>
 
         <SubmitButton
-          onClick={() => {
-            alert(
-              `Sending emails to: ${this.state.selected.map(
-                patient => patient.patientName
-              )}`
-            );
-          }}
+          onClick={this.submit}
         />
       </Container>
     );
