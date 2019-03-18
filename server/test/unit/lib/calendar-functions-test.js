@@ -9,7 +9,7 @@
  */
 
 const expect = require("chai").expect;
-const calendarController = require('../../../lib/calendar-controller');
+const calendarController = require('../../../lib/calendar-functions');
 const dateformat = require('dateformat');
 
 describe("Test calendar controller:", () => {

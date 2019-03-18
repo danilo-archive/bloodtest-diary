@@ -2,7 +2,7 @@
  * The module responsible for all the queries on the database
  * and processing of the data retrieved.
  * @module server
- * @author Mateusz Nowak & Jacopo Madaluni
+ * @author Mateusz Nowak, Jacopo Madaluni, Luka Kralj
  * @version 0.0.1
  */
 
@@ -13,7 +13,7 @@ const io = require('socket.io')(http);
 
 const queryController = require('./lib/query-controller.js');
 const CONFIG_FILE_PATH = __dirname + '/config/config.json';
-const jsonController = require('./lib/json-controller');
+const jsonController = require('./lib/json-parser');
 const conf = jsonController.getJSON(CONFIG_FILE_PATH);
 const port = conf.port;
 const authenticator = require("./lib/authenticator.js");

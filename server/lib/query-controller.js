@@ -8,7 +8,7 @@
 
 const databaseController = require('./db_controller/db-controller.js');
 const authenticator = require("./authenticator.js");
-const calendarController = require("./calendar-controller.js");
+const calendarController = require("./calendar-functions.js");
 const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
