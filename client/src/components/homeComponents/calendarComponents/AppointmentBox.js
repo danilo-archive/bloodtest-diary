@@ -94,15 +94,14 @@ const Container = styled.div`
 const RightClickMenu = props => {
     return(
         <Menu id={props.id} style={{position: "absolute", zIndex: "4"}}>
-           <Item onClick={() => {console.log("Lorem")}}>Lorem</Item>
-           <Item onClick={() => {console.log("Ipsum")}}>Ipsum</Item>
-           <Item onClick={() => {props.openColorPicker(props.id)}}>Choose Color</Item>
+           <Item onClick={() => {props.editTest(props.id)}}>Edit</Item>
            <Separator />
-           <Item disabled>Dolor</Item>
+           <Item disabled={!props.completed}>Schedule next</Item>
            <Separator />
-           <Submenu label="Choose Color">
+           <Submenu label="Choose color">
              <ColorPicker testId={props.id} />
            </Submenu>
+           <Item>Remove color</Item>
         </Menu>
     );
 }
@@ -192,7 +191,7 @@ class AppointmentBox extends React.Component {
     const {isDragging, connectDragSource} = this.props;
     return connectDragSource(
       <div>
-      <RightClickMenu id={this.props.id} openColorPicker={this.props.openColorPicker}/>
+      <RightClickMenu id={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
       <MenuProvider id={this.props.id}>
         <Container isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
