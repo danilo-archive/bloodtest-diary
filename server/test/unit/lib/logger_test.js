@@ -3,7 +3,7 @@ const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
 const rewire = require('rewire');
-const mock_fs = require('mock-fs');
+
 let logger = rewire('./../../../lib/logger', false);
 beforeEach(() => {
     logger = rewire('./../../../lib/logger', false);
@@ -11,27 +11,52 @@ beforeEach(() => {
     logger.changeOption("consoleOutput", false);
 });
 
-describe("Test if module can fetch options for logging", () => {
+describe("Test logger module functionalities", () => {
     afterEach(() => {
         logger.deleteLogFile();
     });
-    it('should log successfully when given a non-existent path', () => {
 
-        const json_controller = require('./../../../lib/json-controller');
-        const getJSONStub = sinon.stub(json_controller, "getJSON");
-        getJSONStub.callsFake(function () {
-            return null;
-        })
-        const initialise = logger.__get__("initialise");
-        initialise("test");
-        logger.log("test")
-        getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
-            lastLine.should.contain("test");
-        })
-        logger.deleteLogFile();
-        getJSONStub.restore();
-    });
-    it('should log successfully when given an existent path', () => {
+    const commands = ["LOG", "INFO", "WARNING", "ERROR", "DEBUG"];
+    for (const c in commands) {
+        const command = commands[c];
+        it(`should log ${command} successfully when given a non-existent path`, () => {
+
+            const json_controller = require('./../../../lib/json-controller');
+            const getJSONStub = sinon.stub(json_controller, "getJSON");
+            getJSONStub.callsFake(function () {
+                return null;
+            })
+            const initialise = logger.__get__("initialise");
+            initialise("test");
+            callCommand(command, logger, "test");
+
+            getJSONStub.restore();
+        });
+        it(`should log ${command} successfully when given an existent path`, () => {
+            const json_controller = require('./../../../lib/json-controller');
+            const getJSONStub = sinon.stub(json_controller, "getJSON");
+            getJSONStub.callsFake(function () {
+                return {
+                    "compact": true,
+                    "timeStamp": true,
+                    "consoleOutput": true,
+                    "fileOutput": true,
+                    "colorize": true,
+                    "outputFilePath": "./../logs/"
+                };
+            })
+            const initialise = logger.__get__("initialise");
+            initialise("./../logs/");
+            callCommand(command, logger, "test");
+            getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
+                lastLine.should.contain("test");
+                lastLine.should.contain(command)
+            })
+            getJSONStub.restore();
+        });
+    }
+
+    it('should log with level LOG when createLog is called with null level', () => {
         const json_controller = require('./../../../lib/json-controller');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
         getJSONStub.callsFake(function () {
@@ -46,13 +71,122 @@ describe("Test if module can fetch options for logging", () => {
         })
         const initialise = logger.__get__("initialise");
         initialise("./../logs/");
-        logger.log("test")
+        const createLog = logger.__get__("createLog");
+        createLog(["test"], null)
         getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
             lastLine.should.contain("test");
+            lastLine.should.contain("LOG")
         })
-        logger.deleteLogFile();
         getJSONStub.restore();
-    });
+    })
+
+
+    it('should log with level LOG when createLog is called with undefined level', () => {
+        const json_controller = require('./../../../lib/json-controller');
+        const getJSONStub = sinon.stub(json_controller, "getJSON");
+        getJSONStub.callsFake(function () {
+            return {
+                "compact": true,
+                "timeStamp": true,
+                "consoleOutput": true,
+                "fileOutput": true,
+                "colorize": true,
+                "outputFilePath": "./../logs/"
+            };
+        })
+        const initialise = logger.__get__("initialise");
+        initialise("./../logs/");
+        const createLog = logger.__get__("createLog");
+        createLog(["test"], undefined)
+        getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
+            lastLine.should.contain("test");
+            lastLine.should.contain("LOG")
+        })
+        getJSONStub.restore();
+
+    })
+
+
+    it('should be able to create options even when output directory string does not have a / at the end', () => {
+        const json_controller = require('./../../../lib/json-controller');
+        const getJSONStub = sinon.stub(json_controller, "getJSON");
+        getJSONStub.callsFake(function () {
+            return {
+                "compact": true,
+                "timeStamp": true,
+                "consoleOutput": true,
+                "fileOutput": true,
+                "colorize": true,
+                "outputFilePath": "./../logs"
+            };
+        })
+        const initialise = logger.__get__("initialise");
+        initialise("./../logs/");
+        const createLog = logger.__get__("createLog");
+        logger.changeOption("consoleOutput", false);
+
+        createLog(["test"], undefined)
+        getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
+            lastLine.should.contain("test");
+            lastLine.should.contain("LOG")
+        })
+        getJSONStub.restore();
+    })
+
+    it('should be able to create options even when they are null when calling createLog()', () => {
+        const json_controller = require('./../../../lib/json-controller');
+        const getJSONStub = sinon.stub(json_controller, "getJSON");
+        getJSONStub.callsFake(function () {
+            return {
+                "compact": true,
+                "timeStamp": true,
+                "consoleOutput": true,
+                "fileOutput": true,
+                "colorize": true,
+                "outputFilePath": "./../logs"
+            };
+        })
+        const initialise = logger.__get__("initialise");
+        initialise("./../logs/");
+
+        const createLog = logger.__get__("createLog");
+        logger.__set__("options", null)  //manually setting options to null
+        logger.changeOption("consoleOutput", false);
+
+        createLog(["test"], "LOG")
+        getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
+            lastLine.should.contain("test");
+            lastLine.should.contain("LOG")
+        })
+        getJSONStub.restore();
+    })
+
+    it('should send an error to the log when the messages array is undefined', () => {
+        const json_controller = require('./../../../lib/json-controller');
+        const getJSONStub = sinon.stub(json_controller, "getJSON");
+        getJSONStub.callsFake(function () {
+            return {
+                "compact": true,
+                "timeStamp": true,
+                "consoleOutput": true,
+                "fileOutput": true,
+                "colorize": true,
+                "outputFilePath": "./../logs"
+            };
+        })
+        const initialise = logger.__get__("initialise");
+        initialise("./../logs/");
+        logger.__set__("options", null)  //manually setting options to null
+        logger.changeOption("consoleOutput", false);
+        const createLog = logger.__get__("createLog");
+        createLog(undefined, undefined)
+        getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
+            lastLine.should.contain("Log failed with messages array:");
+            lastLine.should.contain("ERROR")
+        })
+        getJSONStub.restore();
+    })
+
 });
 
 after(() => { //remove the logs folder
@@ -96,3 +230,27 @@ function getLastLineOfFile(fileName) {
     })
 }
 
+/**
+ * Call a logger command
+ * @param {string} command the command to call
+ * @param {JSON} logger the logger module object
+ */
+function callCommand(command, logger, message) {
+    switch (command) {
+        case "INFO":
+            logger.info(message);
+            break;
+        case "ERROR":
+            logger.error(message);
+            break;
+        case "WARNING":
+            logger.warning(message);
+            break;
+        case "DEBUG":
+            logger.debug(message);
+            break;
+        default:
+            logger.log(message);
+            break;
+    }
+}
