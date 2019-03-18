@@ -6,6 +6,7 @@ import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import TestSection from "./profileSections/TestSection";
 import {getServerConnect} from "../../serverConnection";
+import InputChecker from "../../inputChecker";
 import {openAlert} from "../Alert";
 
 
@@ -194,15 +195,55 @@ class PatientProfile extends Component {
         });
     }
 
+    checkValues () {
+        if (InputChecker.emptyCheck(this.state.patientId)) {
+            return {correct: false, message: "Patient Id is compulsory"};
+        }
+        if (InputChecker.emptyCheck(this.state.patientName) || InputChecker.emptyCheck(this.state.patientSurname)) {
+            return {correct: false, message: "Patient name and surname are compulsory"};
+        }
+        if (!InputChecker.emailCheck(this.state.patientEmail)) {
+            return {correct: false, message: "Wrong format of patient's email"};
+        }
+        /*if (!InputChecker.phoneCheck(this.state.patientPhone)) {
+            return {correct: false, message: "Wrong format of patient's phone"}
+        }*/
+        if (!this.state.noCarer) {
+            if (InputChecker.emptyCheck(this.state.carerEmail)) {
+                return {correct: false, message: "Carer's email is compulsory"};
+            }
+            if (!InputChecker.emailCheck(this.state.carerEmail)) {
+                return {correct: false, message: "Wrong format of carer's email"};
+            }
+            /*if (!InputChecker.phoneCheck(this.state.carerPhone)) {
+                return {correct: false, message: "Wrong format of carer's phone"}
+            }*/
+        }
+        if (!this.state.localHospital) {
+            if (InputChecker.emptyCheck(this.state.hospitalEmail)){
+                return {correct: false, message: "Hospital's email is compulsory"};
+            }
+            if (!InputChecker.emailCheck(this.state.hospitalEmail)) {
+                return {correct: false, message: "Wrong format of hospital's email"};
+            }
+            /*if (!InputChecker.phoneCheck(this.state.hospitalPhone)) {
+                return {correct: false, message: "Wrong format of hospital's phone"}
+            }*/
+        }
+        return {correct : true};
+    }
+
     onSaveClick = () => {
+        const result = this.checkValues();
+        if (!result.correct) {
+            openAlert(result.message, "confirmationAlert", "Ok");
+            return;
+        }
+
         let carerInfo = undefined;
         let hospitalInfo = undefined;
-        if (!this.state.noCarer){
-            if (this.state.carerEmail === "" || this.state.carerEmail === undefined){
-                // TODO add UI alert
-                openAlert("Carer's email is compulsory", "confirmationAlert", "Ok");
-                return;
-            }
+
+        if (!this.state.noCarer) {
             carerInfo = {
                 carerId: this.state.carerId,
                 carerRelationship: this.state.carerRelationship,
@@ -211,16 +252,12 @@ class PatientProfile extends Component {
                 carerEmail: this.state.carerEmail,
                 carerPhone: this.state.carerPhone
             }
-        }else{
+        } else {
             carerInfo = {
                 carerId: undefined
             }
         }
         if (!this.state.localHospital){
-            if (this.state.hospitalEmail === "" || this.state.hospitalEmail === undefined){
-                openAlert("Hospital's email is compulsory","confirmationAlert", "Ok");
-                return;
-            }
             hospitalInfo = {
                 hospitalId: this.state.hospitalId,
                 hospitalName: this.state.hospitalName,
@@ -232,6 +269,7 @@ class PatientProfile extends Component {
                 hospitalId: undefined
             }
         }
+
 
         const {patientId, editToken, patientName, patientSurname, patientEmail, patientPhone} = this.state;
         let newInfo = {
