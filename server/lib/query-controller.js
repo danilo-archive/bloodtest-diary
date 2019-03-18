@@ -1,6 +1,6 @@
 /**
  * This module collects all the queries that are dealing with the core data.
- * 
+ *
  * @author Mateusz Nowak, Luka Kralj
  * @module query-controller
  * @version 1.0
@@ -182,33 +182,33 @@ async function getTestWithinWeek(date)
  * Returns overdue tests that are separated into two groups. One group are the tests that haven't been
  * sent a reminder. The other group are the tests that have already been sent a reminder.
  * Response includes some basic info about the test.
- * 
+ *
  * @param {string} actionUsername The user who issued the request.
  * @returns {JSON} {
- *    success: true|false, 
+ *    success: true|false,
  *    response: {
  *        notReminded: [{
- *          test_id: 
+ *          test_id:
  *          due_date:
  *          patient_no:
  *          patient_name:
  *          patient_surname:
  *        }, ...]
  *        reminded: [{
- *          test_id: 
+ *          test_id:
  *          due_date:
  *          patient_no:
  *          patient_name:
  *          patient_surname:
  *          last_reminder:
- *          reminders_sent: 
+ *          reminders_sent:
  *        }, ...]
  *    }
  *  }
  */
 async function getOverdueReminderGroups() {
   const sql = `Select test_id, due_date, patient_no, patient_name, patient_surname, last_reminder, reminders_sent
-            From Test NATURAL JOIN Patient 
+            From Test NATURAL JOIN Patient
             where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' AND
             (last_reminder IS NULL OR last_reminder < CURDATE()) ORDER BY last_reminder ASC;`
 
@@ -230,7 +230,7 @@ async function getOverdueReminderGroups() {
       reminded.push(overdue[i]);
     }
   }
-  
+
   return { success:true, response: { notReminded: notReminded, reminded: reminded}};
 }
 
@@ -441,6 +441,22 @@ async function updatePassword(json, actionUsername)
 }
 
 /**
+* Update recovery email of an user
+* @param {JSON} json - user
+* @param {string} token - token to issue the request with
+* @param {string} actionUsername The user who issued the request.
+* Obligatory properties:
+* @property username {String}
+* @property recovery_email {String}
+* @return {JSON} - {success:Boolean response:Array or Error}
+**/
+async function updateUserEmail(json,token,actionUsername)
+{
+  const sql = prepareUpdateSQL("User", json, "username")
+  return await updateQueryDatabase("User",json.username,sql,token,actionUsername)
+}
+
+/**
 * Change the status of the test in the database
 * @param {JSON} test
 * @param {string} actionUsername The user who issued the request.
@@ -485,7 +501,7 @@ async function changeTestStatus(test, actionUsername)
  *            an email but the hospital was not or vice versa, or maybe both emails failed to send.
  *            Response format:
  *            {success: true, response: "All emails sent successfully."}
- * 
+ *
  *            The three "failed" lists are disjoint.
  *            {success: false,
  *             response: {
@@ -507,8 +523,8 @@ async function sendOverdueReminders(testIDs, actionUsername) {
       continue;
     }
 
-    const failed_pat = await email_sender.sendOverdueTestReminderToPatient([testIDs[i]]);  
-    const failed_hos = await email_sender.sendOverdueTestReminderToHospital([testIDs[i]]); 
+    const failed_pat = await email_sender.sendOverdueTestReminderToPatient([testIDs[i]]);
+    const failed_hos = await email_sender.sendOverdueTestReminderToHospital([testIDs[i]]);
 
     if (failed_pat.length === 1 && failed_hos.length === 1) {
       failedBoth.push(testIDs[i]);
