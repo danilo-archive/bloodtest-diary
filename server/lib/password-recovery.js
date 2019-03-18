@@ -8,7 +8,9 @@ recoverPassword
 };
 
 /**
-*
+* Recover password of user
+* @param {String} username - user to recover password
+* @result {JSON} result - {success:Boolean response:(optional) Error/Problem}
 **/
 async function recoverPassword(username){
   const user = await queryController.getUser(username);
@@ -19,6 +21,7 @@ async function recoverPassword(username){
     return {success:false, response:"No user found!"}
   }
   const newPassword = authenticator.produceSalt();
+  //TODO: DELETE
   console.log("PASSWORD HERE FOR TESTING: " + newPassword);
   const hash = crypto.createHash('sha256').update(newPassword).digest('hex');
   const responseUserUpdate = await queryController.updatePassword({username:username, hashed_password:hash},username);
