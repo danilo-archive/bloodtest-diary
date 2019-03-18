@@ -528,10 +528,10 @@ async function changeTestColour(testId, newColour, actionUsername){
 * @returns result of the query - {success:Boolean response:Array/Error}
 */
 async function changePatientColour(patientNo, newColour, actionUsername){
-  const token = await requestEditing("Patient",testId, actionUsername);
+  const token = await requestEditing("Patient",patientNo, actionUsername);
   newColour = (newColour == null) ? "NULL" : mysql.escape(newColour);
-  const sql = `UPDATE Patient SET test_colour=${newColour} WHERE patient_no = ${mysql.escape(testId)};`;
-  const res = await updateQueryDatabase("Patient",testId,sql,token, actionUsername);
+  const sql = `UPDATE Patient SET test_colour=${newColour} WHERE patient_no = ${mysql.escape(patientNo)};`;
+  const res = await updateQueryDatabase("Patient",patientNo,sql,token, actionUsername);
   if (!res.success) {
     res.response = res.response.problem;
   }
