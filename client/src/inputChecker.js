@@ -41,18 +41,21 @@ class InputChecker {
     }
 
     /**
-     * Checks if input is an email address
+     * Checks if input is an email address or empty
      * This is not a complete check some invalid emails will still return true
      * @param input String of some value
      * @returns {boolean} Match with regular expression
      */
 
     static emailCheck(input) {
+        if (this.emptyCheck(input)) {
+            return true;
+        }
         return emailRegex.test(input);
     }
 
     /**
-     * Checks if input is a phone number
+     * Checks if input is a phone number or empty
      * @param input String of some value
      * @returns {boolean} Match with regular expression
      */
