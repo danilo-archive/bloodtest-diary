@@ -24,7 +24,7 @@ const Container = styled.div`
 `;
 
 
-export default class SearchBar extends Component {
+export default class WeekButtons extends Component {
 
     constructor(props){
         super(props);

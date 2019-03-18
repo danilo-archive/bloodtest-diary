@@ -10,6 +10,8 @@ import settings from "../images/settings.png"
 import OfflineScreen from "./OfflineScreen.js";
 import {getServerConnect} from "../serverConnection.js";
 
+import Alert from "./Alert.js"
+
 
 const navbarIcons = styled.div`
     .icon {
@@ -35,12 +37,16 @@ class Header extends Component {
 
   }
 
+  safeClose = event => {
+      this.serverConnect.logout(res=>{return});
+  }
+
   render() {
     return (
     <>
       <header id="titlebar">
           <div id="window-title">
-            <span>King's College London NHS</span>
+            <span>Kings College London NHS</span>
           </div>
           <div className={navbarIcons}>
            <div id="window-controls">
@@ -61,14 +67,13 @@ class Header extends Component {
                   <img className={"icon"} src={maximize} alt={"Maximize Button"}/>
               </div>
               <div className="button" id="close-button">
-                  <img className={"icon"} src={close} alt={"Close Button"}/>
+                  <img onClick={this.safeClose} className={"icon"} src={close} alt={"Close Button"}/>
               </div>
           </div>
         </div>
       </header>
-      <OfflineScreen
-        disabled = {this.state.disabled}
-      />
+      <OfflineScreen disabled = {this.state.disabled}/>
+      <Alert/>
       </>
     );
   }

@@ -57,7 +57,7 @@ const query_controller = require("../query-controller");
  * @param {array} testIDs the IDs of the tests to be sent
  */
 function sendReminderEmailToPatient(testIDs) {
-  sendEmails(testIDs, email_generator.testReminderForPatient, "Reminder for your test");
+  return sendEmails(testIDs, email_generator.testReminderForPatient, "Reminder for your test");
 }
 
 /**
@@ -67,7 +67,7 @@ function sendReminderEmailToPatient(testIDs) {
  * @param {array} testIDs the IDs of the tests to be sent
  */
 function sendReminderEmailToHospital(testIDs) {
-  sendEmails(testIDs, email_generator.testReminderForHospital, "Reminder for a test");
+  return sendEmails(testIDs, email_generator.testReminderForHospital, "Reminder for a test");
 }
 
 /**
@@ -77,7 +77,7 @@ function sendReminderEmailToHospital(testIDs) {
  * @param {array} testIDs the IDs of the tests to be sent
  */
 function sendOverdueTestReminderToPatient(testIDs) {
-  sendEmails(testIDs, email_generator.overdueTestReminderForPatient, "Reminder for your overdue test")
+  return sendEmails(testIDs, email_generator.overdueTestReminderForPatient, "Reminder for your overdue test")
 }
 /**
  * Send overdue tests reminders to hospitals.
@@ -86,7 +86,7 @@ function sendOverdueTestReminderToPatient(testIDs) {
  * @param {array} testIDs the IDs of the tests to be sent
  */
 function sendOverdueTestReminderToHospital(testIDs) {
-  sendEmails(testIDs, email_generator.overdueTestReminderForHospital, "Reminder for an overdue test")
+  return sendEmails(testIDs, email_generator.overdueTestReminderForHospital, "Reminder for an overdue test")
 }
 
 /*
@@ -105,11 +105,11 @@ function sendOverdueTestReminderToHospital(testIDs) {
  * @returns {array} an array which contains the test ids of emails for which the html generation failed
  */
 async function sendEmails(testIDs, emailGeneratorFunction, subjectTitle) {
+  const failed = []; //array will contain the test ids of emails for which the html generation failed
   if (Array.isArray(testIDs)) {
     if (testIDs.length === 0) {
       console.error("The TestIDs array is empty, could not send any mail");
     } else {
-      const failed = []; //array will contain the test ids of emails for which the html generation failed
       let completed = 0;
       testIDs.forEach(async testID => {
         let emailInfo = null;
@@ -143,6 +143,7 @@ async function sendEmails(testIDs, emailGeneratorFunction, subjectTitle) {
   } else {
     console.error("The testIDs object is not an array")
   }
+  return failed;
 }
 
 /**

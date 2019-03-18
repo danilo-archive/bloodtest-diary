@@ -1,8 +1,8 @@
 /**
  * Provides a function that calculates a new due date.
- * 
+ *
  * NB: this controller differs from the one on the client side!
- * 
+ *
  * @module calendar-controller
  * @author Danilo Del Busso, Luka Kralj
  * @version 1.0
@@ -20,9 +20,9 @@ const hd = new Holidays('GB');
  * @param {date} startingDate the starting date from which to calculate the next date
  */
 function getNextDueDate(frequency, startingDate) {
-    if (startingDate === undefined || 
-        frequency === undefined || 
-        frequency === null || 
+    if (startingDate === undefined ||
+        frequency === undefined ||
+        frequency === null ||
         frequency.split('-').length != 2 ||
         !(startingDate instanceof Date)) {
         return null;
@@ -55,7 +55,7 @@ function getNextDueDate(frequency, startingDate) {
             return null;
     }
 
-    while(isHoliday(date) || isWeekend(date)) {
+    while(isHoliday(date) || !isWeekend(date)) {
         date.setDate(date.getDate() + 1);
     }
 

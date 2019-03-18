@@ -8,6 +8,8 @@ import {getServerConnect} from "../../../serverConnection.js";
 import {isPastDate} from "../../../lib/calendar-controller.js";
 import { DragSource } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
+import {openAlert} from "../../Alert.js";
+import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
 
 const serverConnect = getServerConnect();
 const Container = styled.div`
@@ -107,7 +109,8 @@ const spec = {
       if (newDate){
         serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate, res => {
             if (!res.success){
-                alert("Somebody is already editing this test");
+                props.handleError(res, "Somebody is aready editing this test")
+                //openAlert("Somebody is aready editing this test", "confirmationAlert", "Ok");
             }
         });
       }
@@ -155,8 +158,12 @@ class AppointmentBox extends React.Component {
 
   onStatusClick = status => {
     this.serverConnect.changeTestStatus(this.props.id, status, res => {
-        if (!res.success){
-            alert("something went wrong, maybe somebody is editing this test");
+        if (res.success){
+            if (res.response.insertId != undefined){
+                openAlert(`A new test was automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}`, "confirmationAlert", "Ok");
+            }
+        }else{
+            this.props.handleError(res, "Somebody is aready editing this test")
         }
     });
   };
@@ -176,6 +183,7 @@ class AppointmentBox extends React.Component {
               onStatusClick={this.props.tentative ? () => {} : this.onStatusClick}
               editTest={this.props.editTest}
               testId={this.props.id}
+              handleError={this.props.handleError}
           />
         </Container>
       </div>

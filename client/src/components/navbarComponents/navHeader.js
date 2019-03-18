@@ -70,7 +70,6 @@ const RefreshButton = styled.div`
 
 `;
 
-
 export default class NavHeader extends Component {
     constructor(props){
         super(props);
