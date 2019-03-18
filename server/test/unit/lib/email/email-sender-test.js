@@ -3,17 +3,23 @@ const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
 const proxyquire = require('proxyquire')
-let email_sender = require('./../../../../lib/email/email-sender'); 
+let email_sender = require('./../../../../lib/email/email-sender');
 require('mocha-sinon'); //needed for checking console log
+let getTestStub = null
+let getHospitalStub = null;
+let getPatientStub = null;
+let getCarerStub = null;
 
 
 describe("Test getEmailInfo method with patient email", function () {
+  
+
     before(function () {
         const query_controller = require('./../../../../lib/query-controller')
-        const getTestStub = sinon.stub(query_controller, "getTest");
-        const getHospitalStub = sinon.stub(query_controller, "getHospital");
-        const getPatientStub = sinon.stub(query_controller, "getPatient");
-        const getCarerStub = sinon.stub(query_controller, "getCarer");
+        getTestStub = sinon.stub(query_controller, "getTest");
+        getHospitalStub = sinon.stub(query_controller, "getHospital");
+        getPatientStub = sinon.stub(query_controller, "getPatient");
+        getCarerStub = sinon.stub(query_controller, "getCarer");
 
         email_sender = proxyquire('./../../../../lib/email/email-sender', { query_controller: { getTest: getTestStub, getPatient: getPatientStub, getHospital: getHospitalStub, getCarer: getCarerStub } })
     })
@@ -234,10 +240,10 @@ describe("Test sendEmails method", function () {
         email_sender.sendEmails([null], fakeEmailGeneratingFunction, "Test Title");
         expect(console.error.calledWith("Could not generate emailInfo JSON"))
     });
-    
-    it('should give an error for a test for which an html email could not be generated', ()=>{
 
-        let query_controller = require('./../../../../lib/query-controller')
+    it('should give an error for a test for which an html email could not be generated', () => {
+
+        const query_controller = require('./../../../../lib/query-controller')
         getTestStub = sinon.stub(query_controller, "getTest");
         getHospitalStub = sinon.stub(query_controller, "getHospital");
         getPatientStub = sinon.stub(query_controller, "getPatient");
@@ -252,7 +258,7 @@ describe("Test sendEmails method", function () {
 
     });
 
-    it('should successfully send an email', function(){
+    it('should successfully send an email', function () {
 
         email_sender = proxyquire('./../../../../lib/email/email-sender', { query_controller: { getTest: getTestStub, getPatient: getPatientStub, getHospital: getHospitalStub, getCarer: getCarerStub } })
 
@@ -281,7 +287,7 @@ const fakeGetQuery = async function (resultID) {
     if (isNaN(id) || id <= 0) {
         return [];
     }
-    let result = {
+    const result = {
         "response": [{
             "test_id": 1,
             "due_date": new Date(),
@@ -299,7 +305,6 @@ const fakeGetQuery = async function (resultID) {
             "carer_id": null,
             "additional_info": null,
 
-            "carer_id": "1",
             "carer_name": "Albert",
             "carer_surname": "Butler",
             "carer_email": "albert@gotham.com",
@@ -326,7 +331,7 @@ const fakeGetQueryNoPatientEmail = async function (resultID) {
     if (isNaN(id) || id <= 0) {
         return [];
     }
-    let result = {
+    const result = {
         "response": [{
             "test_id": 1,
             "due_date": new Date(),
@@ -372,7 +377,7 @@ const fakeGetQueryNoPatient = async function (resultID) {
     if (isNaN(id) || id <= 0) {
         return [];
     }
-    let result = {
+    const result = {
         "response": [{
             "test_id": 1,
             "due_date": new Date(),
