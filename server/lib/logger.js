@@ -80,7 +80,7 @@ function error() {
  * Use to create a warning log message. It takes any number of parameters
 */
 function warning() {
-    createLog(argumentsToArray(arguments), "WARN")
+    createLog(argumentsToArray(arguments), "WARNING")
 }
 
 /**
@@ -120,11 +120,11 @@ function initialise(configPath) {
         json = defaultOptions;
 
     let outputFilePath = json.outputFilePath;
+    if (outputFilePath[outputFilePath.length - 1] !== '/')  //check if the output file path is formatted as a directory
+        outputFilePath += '/';
     logPath = outputFilePath + dateformat(new Date(), "yyyymmdd_HHMMss") + "_server.log";
 
     if (writeStream == null) {
-        if (outputFilePath[outputFilePath.length - 1] !== '/')  //check if the output file path is formatted as a directory
-            outputFilePath += '/';
         if (!fs.existsSync(outputFilePath))
             fs.mkdirSync(outputFilePath);
 
@@ -183,7 +183,7 @@ function createLog(messages, level) {
             case "ERROR":
                 color = colors.Red;
                 break;
-            case "WARN":
+            case "WARNING":
                 color = colors.Yellow;
                 break;
             case "DEBUG":
@@ -318,7 +318,7 @@ function deleteFolderRecursive(path) {
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach(function (file) {
             const curPath = path + "/" + file;
-            if (fs.lstatSync(curPath).isDirectory()) { // recurse
+            if (fs.lstatSync(curPath).isDirectory()) { 
                 deleteFolderRecursive(curPath);
             } else { // delete file
                 fs.unlinkSync(curPath, function (err) {
