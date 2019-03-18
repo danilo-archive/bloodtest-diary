@@ -190,12 +190,12 @@ function passwordRecoveryEmail(email_info) {
   const new_password = email_info.user.new_password;
   const computed_html = mjml2html(`
   <mjml>
-       ${getHead("Forgotten password - new email")}
+       ${getHead("Forgotten password - new password")}
        <mj-body>
           ${getTopImage(header_image_url)}
           <mj-section>
              <mj-column width="45%">
-                <mj-text align="center" font-weight="500" padding="0px" font-size="18px">YOUR BLOOD TEST IS OVERDUE</mj-text>
+                <mj-text align="center" font-weight="500" padding="0px" font-size="18px">Password recovery email</mj-text>
                 <mj-divider border-width="2px" border-color="#616161" />
                 <mj-divider border-width="2px" border-color="#616161" width="45%" />
              </mj-column>
