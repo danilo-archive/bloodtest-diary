@@ -17,7 +17,7 @@ async function recoverPassword(username){
   if(!user.success){
     return user;
   }
-  if(!user.response[0].length==0){
+  if(user.response[0].length==0){
     return {success:false, response:"No user found!"}
   }
   const newPassword = authenticator.produceSalt();
