@@ -17,6 +17,7 @@ const jsonController = require('./lib/json-parser');
 const conf = jsonController.getJSON(CONFIG_FILE_PATH);
 const port = conf.port;
 const authenticator = require("./lib/authenticator.js");
+const email_controller = require('./lib/email/email-controller');
 
 http.listen(port);
 
@@ -242,7 +243,7 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.sendOverdueReminders(testIDs, username);
+        const response = await email_controller.sendOverdueReminders(testIDs, username);
         socket.emit("sendOverdueRemindersResponse", response);
     });
 

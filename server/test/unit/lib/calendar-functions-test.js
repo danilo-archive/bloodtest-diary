@@ -4,7 +4,7 @@
  * @author Luka Kralj
  * @version 1.0
  *
- * @module token-generator-test
+ * @module token-functions-test
  * @see module:token-generator
  */
 
