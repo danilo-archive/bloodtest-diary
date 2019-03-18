@@ -12,6 +12,7 @@ import {openAlert} from "../../Alert.js";
 import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
 import { Menu, Item, Separator, Submenu, MenuProvider } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.min.css';
+import ColorPicker from "./ColorPicker";
 
 const serverConnect = getServerConnect();
 const Container = styled.div`
@@ -95,12 +96,12 @@ const RightClickMenu = props => {
         <Menu id={props.id} style={{position: "absolute", zIndex: "4"}}>
            <Item onClick={() => {console.log("Lorem")}}>Lorem</Item>
            <Item onClick={() => {console.log("Ipsum")}}>Ipsum</Item>
+           <Item onClick={() => {props.openColorPicker(props.id)}}>Choose Color</Item>
            <Separator />
            <Item disabled>Dolor</Item>
            <Separator />
-           <Submenu label="Foobar">
-            <Item onClick={() => {console.log("foo")}}>Foo</Item>
-            <Item onClick={() => {console.log("bar")}}>Bar</Item>
+           <Submenu label="Choose Color">
+             <ColorPicker testId={props.id} />
            </Submenu>
         </Menu>
     );
@@ -191,7 +192,7 @@ class AppointmentBox extends React.Component {
     const {isDragging, connectDragSource} = this.props;
     return connectDragSource(
       <div>
-      <RightClickMenu id={this.props.id}/>
+      <RightClickMenu id={this.props.id} openColorPicker={this.props.openColorPicker}/>
       <MenuProvider id={this.props.id}>
         <Container isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}

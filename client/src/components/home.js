@@ -9,7 +9,8 @@ import OngoingWeekly from "./homeComponents/ongoingWeekly";
 import AddTest from "./homeComponents/addTest/AddTestView";
 import VerticalLine from "./homeComponents/calendarComponents/VerticalLine";
 import LoadingAnimation from "./loadingScreen/loadingAnimation";
-import { openAlert } from "./Alert.js"
+import { openAlert } from "./Alert.js";
+import ColorPicker from "./homeComponents/calendarComponents/ColorPicker.js";
 
 import EditTest from "./homeComponents/editTest/EditTestView";
 import {
