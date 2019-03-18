@@ -4,6 +4,8 @@
 --
 -- N.B. This is the development schema only
 --      as it deletes all data before being recreated.
+--
+-- @author Luka Kralj
 -- ====================================================
 
 
@@ -25,7 +27,6 @@ DROP TABLE IF EXISTS EditTokens;
 DROP TABLE IF EXISTS AccessTokens;
 DROP TABLE IF EXISTS ActionLog;
 DROP TABLE IF EXISTS User;
-DROP TABLE IF EXISTS LoginCredentials;
 
 CREATE TABLE Hospital (
     hospital_id INTEGER AUTO_INCREMENT,
