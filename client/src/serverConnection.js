@@ -66,6 +66,10 @@ class ServerConnect {
         this.socket.on("patientEdited", (patientId, newInfo) => {
             this.onPatientEdit(patientId, newInfo);
         });
+
+        this.socket.on("testEdited", (id, newInfo) => {
+            this.onTestEdit(id, newInfo);
+        });
     }
 
     /**
