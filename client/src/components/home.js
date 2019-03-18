@@ -70,6 +70,7 @@ class Home extends Component {
 
   initCallbacks() {
     this.initOnTestAdded();
+    this.initOnTestEdit();
     this.initOnTestStatusChange();
   }
 
@@ -93,8 +94,8 @@ class Home extends Component {
     this.serverConnect.setOnTestEdit((id, newTest) => {
       this.updateDashboard();
       this.modifyOverdueTest(id, test => {
-        test = newTest;
-        return newTest;
+        let modified = newTest;
+        return modified;
       });
     });
   }
@@ -147,7 +148,9 @@ class Home extends Component {
         if (test.test_id === id) {
           let newOverdueTests = [...this.state.overdueTests];
           let testToModify = newOverdueTests[i].tests[j];
+          console.log({testToModify});
           let modifiedTest = modificationFunction(testToModify);
+          console.log({modifiedTest})
           newOverdueTests[i].tests[j] = modifiedTest;
           this.setState({ overdueTests: newOverdueTests });
         }
