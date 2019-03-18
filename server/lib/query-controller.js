@@ -248,8 +248,11 @@ async function getOverdueReminderGroups() {
 async function editTest(testId, newInfo,token, actionUsername){
     let scheduleNew = false;
     const testInfo = await getTest(testId);
-    if(!testInfo.success || testInfo.response.length==0){
+    if(!testInfo.success){
       return testInfo;
+    }
+    if(testInfo.response.length==0){
+      return {success:false, response:"No new tests added - No test found!"}
     }
     if(newInfo.completed_status == "yes" || newInfo.completed_status == "in review")
     {
@@ -460,8 +463,11 @@ async function changeTestStatus(test, actionUsername)
   // TODO: first check if it can edit. If edit successful then schedule a new one.
   let scheduleNew = false;
   const testInfo = await getTest(test.testId);
-  if(!testInfo.success || testInfo.response.length==0){
+  if(!testInfo.success){
     return testInfo;
+  }
+  if(testInfo.response.length==0){
+    return {success:false, response:"No new tests added - No test found!"}
   }
   switch(test.newStatus)
   {

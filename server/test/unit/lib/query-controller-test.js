@@ -535,7 +535,7 @@ describe("Update queries tests", function(){
         response.response.error.should.equal("STUBBED ERROR");
         spy.calledOnce.should.equal(true);
       })
-      it("Accept empty test edit - no test found", async function(){
+      it("Fail empty test edit - no test found", async function(){
         const dbController = {
           requestEditing: async function() {
             return {status: "OK", response:{ token:"400"}}
@@ -550,9 +550,8 @@ describe("Update queries tests", function(){
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
-        console.log(response);
-        response.success.should.equal(true);
-        response.response.length.should.equal(0);
+        response.success.should.equal(false);
+        response.response.should.equal("No new tests added - No test found!");
       })
       it("Reject random update (STUBBED)", async function(){
         const dbController = {
@@ -925,7 +924,7 @@ describe("Update queries tests", function(){
         response.success.should.equal(false);
         response.response.error.should.equal("STUBBED ERROR")
       })
-      it("Accept empty test edit - no test found", async function(){
+      it("Fail empty test edit - no test found", async function(){
         const dbController = {
           updateQuery: async function() {
             return {status: "OK", response:{affectedRows:1}}
@@ -941,9 +940,8 @@ describe("Update queries tests", function(){
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testUsername);
-        console.log(response);
-        response.success.should.equal(true);
-        response.response.length.should.equal(0);
+        response.success.should.equal(false);
+        response.response.should.equal("No new tests added - No test found!");
       })
       it("Accept test edit and add new test (depending on data from database) - in review (STUBBED)", async function(){
         const dbController = {
