@@ -59,13 +59,13 @@ class InputChecker {
      * @param input String of some value
      * @returns {boolean} Match with regular expression
      */
-
-    static phoneCheck(input) {
+    //TODO : make this work
+    /*static phoneCheck(input) {
         if (this.emptyCheck(input)) {
             return true;
         }
         return phoneRegex.test(input);
-    }
+    }*/
 }
 
 export default InputChecker;
