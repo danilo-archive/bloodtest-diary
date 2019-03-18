@@ -17,6 +17,8 @@ const Container = styled.div`
   bottom: 0;
   right: 0;
   transition: 250ms;
+  cursor: pointer;
+  user-select: none;
   &:hover {
     background: #0b999d;
   }

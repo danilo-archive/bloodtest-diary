@@ -446,6 +446,20 @@ class ServerConnect {
             callback(res);
         });
     }
+
+    getOverdueReminderGroups(callback){
+        this.socket.emit("getOverdueReminderGroups", this.loginToken);
+        this.socket.once("getOverdueReminderGroupsResponse", res => {
+            callback(res);
+        });
+    }
+
+    sendReminders(testIds, callback){
+        this.socket.emit("sendOverdueReminders", testIds, this.loginToken);
+        this.socket.once("sendOverdueRemindersResponse", res => {
+            callback(res);
+        });
+    }
 }
 
 

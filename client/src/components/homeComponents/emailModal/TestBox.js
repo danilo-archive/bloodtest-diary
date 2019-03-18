@@ -6,7 +6,7 @@ import RadioButton from "../editTest/RadioButton";
 import TextLabel from "../editTest/Label";
 import TimePill from "../calendarComponents/TimePill";
 const Container = styled.div`
-  height: 40px;
+  height: 35px;
   width:  ${props => (props.title ? `90%` : `80%`)}
   margin:auto;
   margin-bottom: 0.5rem;

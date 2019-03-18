@@ -6,6 +6,8 @@ import ScrollBox from "../calendarComponents/ScrollBox";
 import TestBox from "./TestBox";
 import SubmitButton from "./SubmitButton";
 import { inherits } from "util";
+import { openAlert } from "./../../Alert.js";
+import { getServerConnect } from "./../../../serverConnection.js";
 const Container = styled.div`
   position: relative;
   height: 592px;
@@ -15,11 +17,13 @@ const Container = styled.div`
 `;
 
 const Scroll = styled(ScrollBox)`
-  height: 27%;
+  height: ${props => (!props.fullLength ? `33%` : `66%`)};
+  border: 1px solid #b0b0b0b0;
 `;
 export default class EmailModal extends Component {
   constructor(props) {
     super(props);
+    this.serverConnect = getServerConnect();
     this.state = {
       selected: [],
       notNotified: props.notNotified.map(patient => {
@@ -78,65 +82,88 @@ export default class EmailModal extends Component {
 
     return count === array2.length;
   }
+
+  submit = () => {
+    let idList = this.state.selected.map(patient => patient.testId);
+    this.serverConnect.sendReminders(idList, res => {
+      if (res.success) {
+        openAlert(
+          "Patients contacted successfully",
+          "confirmationAlert",
+          "Ok",
+          () => {
+            this.props.closeModal();
+          }
+        );
+      } else {
+        this.props.handleError(res, "Something went wrong");
+      }
+    });
+  };
+
   render() {
     return (
       <Container>
         <Title>Email Reminders</Title>
-        <TestBox
-          selected={this.areAllIncluded(
-            this.state.selected,
-            this.state.notNotified
-          )}
-          onAllCheck={check =>
-            check
-              ? this.select(this.state.notNotified)
-              : this.deselect(this.state.notNotified)
-          }
-          title={true}
-          text="Not yet notified"
-        />
-        <Scroll>
-          <Section
-            selected={this.state.selected}
-            tests={this.state.notNotified}
-            select={(check, patient) =>
-              check ? this.select(patient) : this.deselect(patient)
-            }
-          />
-        </Scroll>
-        <br />
-        <TestBox
-          selected={this.areAllIncluded(
-            this.state.selected,
-            this.state.notified
-          )}
-          onAllCheck={check =>
-            check
-              ? this.select(this.state.notified)
-              : this.deselect(this.state.notified)
-          }
-          title={true}
-          text="Already Notified"
-        />
-        <Scroll>
-          <Section
-            select={(check, patient) =>
-              check ? this.select(patient) : this.deselect(patient)
-            }
-            selected={this.state.selected}
-            tests={this.state.notified}
-          />
-        </Scroll>
+        {this.state.notNotified.length !== 0 ? (
+          <>
+            <TestBox
+              selected={this.areAllIncluded(
+                this.state.selected,
+                this.state.notNotified
+              )}
+              onAllCheck={check =>
+                check
+                  ? this.select(this.state.notNotified)
+                  : this.deselect(this.state.notNotified)
+              }
+              title={true}
+              text="Not yet notified"
+            />
+            <Scroll fullLength={this.state.notified.length === 0}>
+              <Section
+                selected={this.state.selected}
+                tests={this.state.notNotified}
+                select={(check, patient) =>
+                  check ? this.select(patient) : this.deselect(patient)
+                }
+              />
+            </Scroll>
+            <br />
+          </>
+        ) : (
+          ``
+        )}
+        {this.state.notified.length !== 0 ? (
+          <>
+            <TestBox
+              selected={this.areAllIncluded(
+                this.state.selected,
+                this.state.notified
+              )}
+              onAllCheck={check =>
+                check
+                  ? this.select(this.state.notified)
+                  : this.deselect(this.state.notified)
+              }
+              title={true}
+              text="Already Notified"
+            />
+            <Scroll fullLength={this.state.notNotified.length === 0}>
+              <Section
+                select={(check, patient) =>
+                  check ? this.select(patient) : this.deselect(patient)
+                }
+                selected={this.state.selected}
+                tests={this.state.notified}
+              />
+            </Scroll>
+          </>
+        ) : (
+          ``
+        )}
 
-        <SubmitButton
-          onClick={() => {
-            alert(
-              `Sending emails to: ${this.state.selected.map(
-                patient => patient.patientName
-              )}`
-            );
-          }}
-        />
+        <SubmitButton onClick={this.submit} />
       </Container>
     );
   }
