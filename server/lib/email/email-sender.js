@@ -30,7 +30,8 @@ module.exports = {
   sendReminderEmailToPatient,
   sendReminderEmailToHospital,
   sendOverdueTestReminderToPatient,
-  sendOverdueTestReminderToHospital
+  sendOverdueTestReminderToHospital,
+  sendPasswordRecoveryEmail
 };
 
 
@@ -52,8 +53,6 @@ const query_controller = require("../query-controller");
 function sendPasswordRecoveryEmail(emailInfo){
   const config = jsonController.getJSON(CONFIG_ABSOLUTE_PATH);
   const transporter = nodeMailer.createTransport(config.transporter);
-  console.log(transporter);
-
   const receiverOptions = {
     from: transporter.options.auth.user,
     to:  email_generator.passwordRecoveryEmail(emailInfo).to,
@@ -268,7 +267,7 @@ function sendEmail(transporter, receiverOptions) {
       console.log(err);
     } else {
       console.log("Email sent successfully")
-      console.log(info);
+      //console.log(info);
       transporter.close();
     }
   });

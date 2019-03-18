@@ -432,7 +432,7 @@ async function updatePassword(json, actionUsername)
   const user = response.response[0];
   if(user){
     const hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
-    const sql = `UPDATE User SET hashed_password=${hash}, WHERE username = ${mysql.escape(json.username)} LIMIT 1;`;
+    const sql = `UPDATE User SET hashed_password='${hash}' WHERE username = ${mysql.escape(json.username)} LIMIT 1;`;
     return await updateQueryDatabase("User",json.username,sql,token, actionUsername);
   }
   else{
@@ -1224,6 +1224,7 @@ module.exports = {
     addCarer,
   //UPDATES
     updatePassword,
+    updateUserEmail,
     changeTestStatus,
     changeTestDueDate,
     editTest,

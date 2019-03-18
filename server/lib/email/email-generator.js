@@ -29,6 +29,11 @@ They all need information contained in the "email_info" JSON objects.
     "hospital_email": "hospital@gotham.com",
     "hospital_phone": null
   }
+  "user":{
+    "username": "admin"
+    "new_password": "newpassword123"
+    "recovery_email": "admin@admin.com"
+  }
 }
 * @module email-generator
  * @author Danilo Del Busso
