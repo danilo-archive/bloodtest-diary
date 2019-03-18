@@ -10,6 +10,8 @@ import { DragSource } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import {openAlert} from "../../Alert.js";
 import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
+import { Menu, Item, Separator, Submenu, MenuProvider } from 'react-contexify';
+import 'react-contexify/dist/ReactContexify.min.css';
 
 const serverConnect = getServerConnect();
 const Container = styled.div`
@@ -86,6 +88,23 @@ const Container = styled.div`
         margin-right: 7px;
       }
 `;
+
+
+const RightClickMenu = props => {
+    return(
+        <Menu id={props.id} style={{position: "absolute", zIndex: "4"}}>
+           <Item onClick={() => {console.log("Lorem")}}>Lorem</Item>
+           <Item onClick={() => {console.log("Ipsum")}}>Ipsum</Item>
+           <Separator />
+           <Item disabled>Dolor</Item>
+           <Separator />
+           <Submenu label="Foobar">
+            <Item onClick={() => {console.log("foo")}}>Foo</Item>
+            <Item onClick={() => {console.log("bar")}}>Bar</Item>
+           </Submenu>
+        </Menu>
+    );
+}
 
 const mapping = {
     "yes":"completed",
@@ -172,9 +191,10 @@ class AppointmentBox extends React.Component {
     const {isDragging, connectDragSource} = this.props;
     return connectDragSource(
       <div>
+      <RightClickMenu id={this.props.id}/>
+      <MenuProvider id={this.props.id}>
         <Container isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
-
           <StatusCircle
             type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
           />
@@ -185,7 +205,10 @@ class AppointmentBox extends React.Component {
               testId={this.props.id}
               handleError={this.props.handleError}
           />
+
         </Container>
+        </MenuProvider>
+
       </div>
     );
   }
