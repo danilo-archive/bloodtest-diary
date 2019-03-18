@@ -507,8 +507,25 @@ async function sendOverdueReminders(testIDs, actionUsername) {
       continue;
     }
 
-    const failed_pat = await email_sender.sendOverdueTestReminderToPatient([testIDs[i]]);  
-    const failed_hos = await email_sender.sendOverdueTestReminderToHospital([testIDs[i]]); 
+    const test = (await getTest(testIDs[i])).response[0];
+    const patient = (await getPatient(test.patient_no)).response[0];
+    let hospital;
+    let carer;
+    if (patient.carer_id !== null) {
+      carer = (await getCarer(patient.carer_id)).response[0];
+    }
+    if (patient.hospital_id !== null) {
+      hospital = (await getHospital(patient.hospital_id)).response[0];
+    }
+
+    const emailInfo = {
+      patient: patient,
+      hospital: hospital,
+      test: test,
+      carer: carer
+    };
+    const failed_pat = await email_sender.sendOneOverdueTestReminderToPatient(emailInfo);  
+    const failed_hos = await email_sender.sendOneOverdueTestReminderToHospital(emailInfo); 
 
     if (failed_pat.length === 1 && failed_hos.length === 1) {
       failedBoth.push(testIDs[i]);
@@ -1046,9 +1063,17 @@ async function updateQueryDatabase(table,id,sql,token, actionUsername)
 **/
 async function deleteQueryDatabase(table,id,sql, actionUsername)
 {
+    let deletedInfo;
+    switch (table) {
+      case "Test": deletedInfo = (await getTest(id)).response[0]; break;
+      case "Patient": deletedInfo = (await getFullPatientInfo(id)).response[0]; break;
+      case "Hospital": deletedInfo = (await getHospital(id)).response[0]; break;
+      case "Carer": deletedInfo = (await getCarer(id)).response[0]; break;
+    }
+
     const response = await databaseController.deleteQuery(sql,table,id)
     if(response.status === "OK"){
-      logger.logDelete(actionUsername, table, id, "Successful.");
+      logger.logDelete(actionUsername, table, id, "Successful. Deleted data: >>" + JSON.stringify(deletedInfo) + "<<.");
       return {success:true, response: "Entry deleted"}
     }
     else{

@@ -6,7 +6,7 @@ const proxyquire = require('proxyquire')
 let email_sender = require('./../../../../lib/email/email-sender'); 
 require('mocha-sinon'); //needed for checking console log
 
-
+/*
 describe("Test getEmailInfo method with patient email", function () {
     before(function () {
         let query_controller = require('./../../../../lib/query-controller')
@@ -211,7 +211,7 @@ describe("Test getEmailInfo method with patient email", function () {
         failedIDs.length.should.equal(validIDs.length);
     });
 });
-
+*/
 
 describe("Test sendEmails method", function () {
     beforeEach(function () {
