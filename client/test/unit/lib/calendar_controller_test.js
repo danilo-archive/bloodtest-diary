@@ -154,9 +154,9 @@ describe("Test week handling", function() {
     it ("Should return the correct previous week given a well formed week", function() {
 
         const weekTest1 = [(new Date(2019, 1, 25)), (new Date(2019, 1, 26)), (new Date(2019, 1, 27)),
-                           (new Date(2019, 1, 28)), (new Date(2019, 2, 1))];
+                           (new Date(2019, 1, 28)), (new Date(2019, 2, 1)), (new Date(2019,2,2))];
         const weekTest2 = [(new Date(2019, 2, 25)), (new Date(2019, 2, 26)), (new Date(2019, 2, 27)),
-                           (new Date(2019, 2, 28)), (new Date(2019, 2, 29))];
+                           (new Date(2019, 2, 28)), (new Date(2019, 2, 29)), (new Date(2019, 2, 30))];
 
         let result1 = [];
         calendar_controller.getPreviousWeek(weekTest1).forEach(day => {
@@ -179,6 +179,9 @@ describe("Test week handling", function() {
         result1[4].getDate().should.equal(22);
         result1[4].getMonth().should.equal(1);
         result1[4].getFullYear().should.equal(2019);
+        result1[5].getDate().should.equal(23);
+        result1[5].getMonth().should.equal(1);
+        result1[5].getFullYear().should.equal(2019);
 
         let result2 = [];
         calendar_controller.getPreviousWeek(weekTest2).forEach(day => {
@@ -201,12 +204,15 @@ describe("Test week handling", function() {
         result2[4].getDate().should.equal(22);
         result2[4].getMonth().should.equal(2);
         result2[4].getFullYear().should.equal(2019);
+        result2[5].getDate().should.equal(23);
+        result2[5].getMonth().should.equal(2);
+        result2[5].getFullYear().should.equal(2019);
 
     });
 
     it ("Should return the correct next week given a well formed week", function() {
         const weekTest3 = [(new Date(2019, 1, 25)), (new Date(2019, 1, 26)), (new Date(2019, 1, 27)),
-                           (new Date(2019, 1, 28)), (new Date(2019, 2, 1))];
+                           (new Date(2019, 1, 28)), (new Date(2019, 2, 1)), (new Date(2019,2,2))];
 
         let result3 = [];
         calendar_controller.getNextWeek(weekTest3).forEach(day => {
@@ -229,9 +235,12 @@ describe("Test week handling", function() {
         result3[4].getDate().should.equal(8);
         result3[4].getMonth().should.equal(2);
         result3[4].getFullYear().should.equal(2019);
+        result3[5].getDate().should.equal(9);
+        result3[5].getMonth().should.equal(2);
+        result3[5].getFullYear().should.equal(2019);
 
         const weekTest4 = [(new Date(2019, 2, 25)), (new Date(2019, 2, 26)), (new Date(2019, 2, 27)),
-                           (new Date(2019, 2, 28)), (new Date(2019, 2, 29))];
+                           (new Date(2019, 2, 28)), (new Date(2019, 2, 29)), (new Date(2019,2,30))];
 
         let result4 = []
         calendar_controller.getNextWeek(weekTest4).forEach(day => {
@@ -254,6 +263,9 @@ describe("Test week handling", function() {
         result4[4].getDate().should.equal(5);
         result4[4].getMonth().should.equal(3);
         result4[4].getFullYear().should.equal(2019);
+        result4[5].getDate().should.equal(6);
+        result4[5].getMonth().should.equal(3);
+        result4[5].getFullYear().should.equal(2019);
     });
 
 });
