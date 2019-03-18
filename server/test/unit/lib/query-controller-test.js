@@ -505,6 +505,10 @@ describe("Update queries tests", function(){
           },
           updateQuery: async function() {
             return {status: "OK", response:{affectedRows:1}}
+          },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
           }
         }
         queryController.__set__("databaseController",dbController);
@@ -512,10 +516,51 @@ describe("Update queries tests", function(){
         response.success.should.equal(false);
         spy.calledOnce.should.equal(true);
       })
+      it("Fail - no test found due to an error  (STUBBED)", async function(){
+        const dbController = {
+          requestEditing: async function() {
+            return {status: "OK", response:{ token:"400"}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          },
+          selectQuery: async function()
+          {
+            return {status: "ERR", err: {error:"STUBBED ERROR"}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
+        response.success.should.equal(false);
+        response.response.error.should.equal("STUBBED ERROR");
+        spy.calledOnce.should.equal(true);
+      })
+      it("Fail empty test edit - no test found", async function(){
+        const dbController = {
+          requestEditing: async function() {
+            return {status: "OK", response:{ token:"400"}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          },
+          selectQuery: async function()
+          {
+            return {status: "OK", response:{rows:[]}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
+        response.success.should.equal(false);
+        response.response.should.equal("No new tests added - No test found!");
+      })
       it("Reject random update (STUBBED)", async function(){
         const dbController = {
           requestEditing: async function() {
             return {status: "OK", response:{ token:"30000" }}
+          },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
           }
         }
         queryController.__set__("databaseController",dbController);
@@ -534,7 +579,7 @@ describe("Update queries tests", function(){
           },
           selectQuery: async function()
           {
-            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
+            return {status: "OK", response: {rows:[{patient_no:"400", completed_status:"yes"}]}}
           }
         }
         queryController.__set__("databaseController",dbController);
@@ -553,7 +598,7 @@ describe("Update queries tests", function(){
           },
           selectQuery: async function()
           {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"yes", occurrences:"3", frequency:"2-W"}]}}
+            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
           },
           insertQuery: async function()
           {
@@ -578,7 +623,7 @@ describe("Update queries tests", function(){
           },
           selectQuery: async function()
           {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"yes", occurrences:"3", frequency:"2-W"}]}}
+            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
           },
           insertQuery: async function()
           {
@@ -601,7 +646,7 @@ describe("Update queries tests", function(){
           },
           selectQuery: async function()
           {
-            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
+              return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
           }
         }
         queryController.__set__("databaseController",dbController);
@@ -618,6 +663,10 @@ describe("Update queries tests", function(){
           updateQuery: async function() {
             return {status: "OK", response:{affectedRows:1}}
           },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
+          }
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
@@ -633,6 +682,10 @@ describe("Update queries tests", function(){
           updateQuery: async function() {
             return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
           },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
+          }
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
@@ -650,7 +703,11 @@ describe("Update queries tests", function(){
           },
           selectQuery: async function()
           {
-            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
+            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
+          },
+          insertQuery: async function()
+          {
+            return {status: "OK", response: {insertId:"505"}}
           }
         }
         queryController.__set__("databaseController",dbController);
@@ -667,6 +724,10 @@ describe("Update queries tests", function(){
           updateQuery: async function() {
             return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
           },
+          selectQuery: async function()
+          {
+            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
+          }
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"inReview"}, testUsername);
@@ -843,6 +904,44 @@ describe("Update queries tests", function(){
       let spy;
       beforeEach(()=>{
           spy = sinon.spy(queryController.editTest);
+      })
+      it("Fail test edit - no test found due to an database error (STUBBED)", async function(){
+        const dbController = {
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          },
+          selectQuery: async function()
+          {
+            return {status: "ERR", err: {error:"STUBBED ERROR"}}
+          },
+          insertQuery: async function()
+          {
+            return {status:"OK", response: { insertId: "test_insert_id"}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testUsername);
+        response.success.should.equal(false);
+        response.response.error.should.equal("STUBBED ERROR")
+      })
+      it("Fail empty test edit - no test found", async function(){
+        const dbController = {
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          },
+          selectQuery: async function()
+          {
+            return {status: "OK", response:{rows:[]}}
+          },
+          insertQuery: async function()
+          {
+            return {status:"OK", response: { insertId: "test_insert_id"}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testUsername);
+        response.success.should.equal(false);
+        response.response.should.equal("No new tests added - No test found!");
       })
       it("Accept test edit and add new test (depending on data from database) - in review (STUBBED)", async function(){
         const dbController = {
@@ -1935,6 +2034,10 @@ function setRejectUpdateQueryDatabase(){
   const dbController = {
     updateQuery: async function() {
       return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
+    },
+    selectQuery: async function()
+    {
+      return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
     }
   }
   queryController.__set__("databaseController",dbController);
@@ -1956,6 +2059,10 @@ function setAcceptUpdateQueryDatabase(){
   const dbController = {
   updateQuery: async function() {
     return {status: "OK", response:{affectedRows:1}}
+  },
+  selectQuery: async function()
+  {
+    return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
   }
   }
   queryController.__set__("databaseController",dbController);
