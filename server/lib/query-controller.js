@@ -502,6 +502,42 @@ async function updateLastReminder(testId, token, actionUsername) {
   return await updateQueryDatabase("Test", testId, sql, token, actionUsername);
 }
 
+/**
+* Edit test colour - quick update.
+*
+* @param {String} testId Id of the test to update
+* @param {string} newColour - New colour to be stored.
+* @returns result of the query - {success:Boolean response:Array/Error}
+*/
+async function changeTestColour(testId, newColour, actionUsername){
+  const token = await requestEditing("Test",testId, actionUsername);
+  newColour = (newColour == null) ? "NULL" : mysql.escape(newColour);
+  const sql = `UPDATE Test SET test_colour=${newColour} WHERE test_id = ${mysql.escape(testId)};`;
+  const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
+  if (!res.success) {
+    res.response = res.response.problem;
+  }
+  return res;
+}
+
+/**
+* Edit patient colour - quick update.
+*
+* @param {String} patientNo Number of the patient to update
+* @param {string} newColour - New colour to be stored.
+* @returns result of the query - {success:Boolean response:Array/Error}
+*/
+async function changePatientColour(patientNo, newColour, actionUsername){
+  const token = await requestEditing("Patient",testId, actionUsername);
+  newColour = (newColour == null) ? "NULL" : mysql.escape(newColour);
+  const sql = `UPDATE Patient SET test_colour=${newColour} WHERE patient_no = ${mysql.escape(testId)};`;
+  const res = await updateQueryDatabase("Patient",testId,sql,token, actionUsername);
+  if (!res.success) {
+    res.response = res.response.problem;
+  }
+  return res;
+}
+
 /*===============================*
           INSERT QUERIES
  *===============================*/
@@ -1174,6 +1210,8 @@ module.exports = {
     editCarer,
     editHospital,
     updateLastReminder,
+    changeTestColour,
+    changePatientColour,
   //DELETE
     deleteHospital,
     deletePatient,

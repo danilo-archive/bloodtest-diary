@@ -55,6 +55,7 @@ CREATE TABLE Patient (
     hospital_id INTEGER,
     carer_id INTEGER,
     additional_info TEXT,
+    patient_colour VARCHAR(10),
     PRIMARY KEY (patient_no),
     FOREIGN KEY (hospital_id) REFERENCES Hospital(hospital_id) ON DELETE SET NULL,
     FOREIGN KEY (carer_id) REFERENCES Carer(carer_id) ON DELETE SET NULL
@@ -69,6 +70,7 @@ CREATE TABLE Test (
     completed_status ENUM("yes", "no", "in review") NOT NULL DEFAULT "no",
     completed_date DATE,
     notes TEXT,
+    test_colour VARCHAR(10),
     last_reminder DATE,
     reminders_sent INTEGER DEFAULT 0,
     PRIMARY KEY (test_id),
