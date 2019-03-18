@@ -248,7 +248,7 @@ async function getOverdueReminderGroups() {
 async function editTest(testId, newInfo,token, actionUsername){
     let scheduleNew = false;
     const testInfo = await getTest(testId);
-    if(!testInfo.success){
+    if(!testInfo.success || testInfo.response.length==0){
       return testInfo;
     }
     if(newInfo.completed_status == "yes" || newInfo.completed_status == "in review")
@@ -460,27 +460,27 @@ async function changeTestStatus(test, actionUsername)
   // TODO: first check if it can edit. If edit successful then schedule a new one.
   let scheduleNew = false;
   const testInfo = await getTest(test.testId);
-  if(testInfo.success==true){
-    switch(test.newStatus)
-    {
-      case "completed": {status = "yes"; date=`CURDATE()`;scheduleNew = true; break;}
-      case "late": {status = "no"; date=`NULL`; break;}
-      case "inReview" : {status = "in review"; date=`CURDATE()`; scheduleNew = true; break;}
-      default: return {success:false, response: "NO SUCH UPDATE"}
-    }
-    const sql = `UPDATE Test SET completed_status=${mysql.escape(status)}, completed_date=${date} WHERE test_id = ${mysql.escape(test.testId)};`;
-    const res = await updateQueryDatabase("Test",test.testId,sql,token, actionUsername);
-
-    if (res.success && scheduleNew && testInfo.response[0].completed_status=="no") {
-      const insertedResponse = await scheduleNextTest(test.testId, actionUsername);
-      if(insertedResponse.response){
-        res.response.new_date = insertedResponse.response.new_date;
-        res.response.insertId = insertedResponse.response.insertId;
-      }
-    }
-    return res;
+  if(!testInfo.success || testInfo.response.length==0){
+    return testInfo;
   }
-  return testInfo;
+  switch(test.newStatus)
+  {
+    case "completed": {status = "yes"; date=`CURDATE()`;scheduleNew = true; break;}
+    case "late": {status = "no"; date=`NULL`; break;}
+    case "inReview" : {status = "in review"; date=`CURDATE()`; scheduleNew = true; break;}
+    default: return {success:false, response: "NO SUCH UPDATE"}
+  }
+  const sql = `UPDATE Test SET completed_status=${mysql.escape(status)}, completed_date=${date} WHERE test_id = ${mysql.escape(test.testId)};`;
+  const res = await updateQueryDatabase("Test",test.testId,sql,token, actionUsername);
+
+  if (res.success && scheduleNew && testInfo.response[0].completed_status=="no") {
+    const insertedResponse = await scheduleNextTest(test.testId, actionUsername);
+    if(insertedResponse.response){
+      res.response.new_date = insertedResponse.response.new_date;
+      res.response.insertId = insertedResponse.response.insertId;
+    }
+  }
+  return res;
 }
 
 /**
