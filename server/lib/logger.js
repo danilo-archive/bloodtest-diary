@@ -31,7 +31,7 @@ let writeStream = null;
 let logPath = "";
 
 
-const colors = {  //all colors are with background. usage: console.log(colors.Red, "string to display colorized") or replace the "%s" with the string that has to be colored
+const colors = {  //all colors are without background. usage: console.log(colors.Red, "string to display colorized") or replace the "%s" with the string that has to be colored
     Black: "\x1b[30m%s\x1b[0m",
     Red: "\x1b[31m%s\x1b[0m",
     Green: "\x1b[32m%s\x1b[0m",
@@ -115,19 +115,22 @@ function log() {
  */
 function initialise(configPath) {
     let json = jsonController.getJSON(configPath);
-    if (json == null) {
+
+    if (json == null)
         json = defaultOptions;
-    }
+
+    let outputFilePath = json.outputFilePath;
+    logPath = outputFilePath + dateformat(new Date(), "yyyymmdd_HHMMss") + "_server.log";
+
     if (writeStream == null) {
-        let outputFilePath = json.outputFilePath;
-        if (outputFilePath[outputFilePath.length - 1] !== '/')  //check if the outputfilepath is formatted as a directory
+        if (outputFilePath[outputFilePath.length - 1] !== '/')  //check if the output file path is formatted as a directory
             outputFilePath += '/';
         if (!fs.existsSync(outputFilePath))
             fs.mkdirSync(outputFilePath);
 
-        logPath = outputFilePath + dateformat(new Date(), "yyyymmdd_HHMMss") + "_server.log";
         writeStream = fs.createWriteStream(logPath, { 'flags': 'a' });
     }  //flag "a" allows for appending
+
     return json;
 }
 
@@ -224,12 +227,14 @@ function deleteLogFile() {
     if (options === null) {
         options = initialise(CONFIG_FILE_PATH);
     }
-    fs.unlinkSync(logPath, function (err) {
-        if (err) {
-            return error(err)
-        }
-        return;
-    });
+    if (fs.existsSync(logPath)) {
+        fs.unlinkSync(logPath, function (err) {
+            if (err) {
+                return error(err)
+            }
+            return;
+        });
+    }
 }
 /**
  * Flush the content of every log file and delete them.
@@ -324,5 +329,6 @@ function deleteFolderRecursive(path) {
                 });
             }
         });
+        fs.rmdirSync(path);
     }
 }
