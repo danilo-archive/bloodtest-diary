@@ -49,6 +49,26 @@ const query_controller = require("../query-controller");
 | these functions do not directly handle data and generate emails. They are written to simplify
 | usage of the module.
 */
+function sendPasswordRecoveryEmail(emailInfo){
+  const config = jsonController.getJSON(CONFIG_ABSOLUTE_PATH);
+  const transporter = nodeMailer.createTransport(config.transporter);
+  console.log(transporter);
+
+  const receiverOptions = {
+    from: transporter.options.auth.user,
+    to:  email_generator.passwordRecoveryEmail(emailInfo).to,
+    subject: "Password recovery email",
+    html: email_generator.passwordRecoveryEmail(emailInfo).html
+  };
+
+  if (receiverOptions.html != null && emailInfo != null){
+    sendEmail(transporter, receiverOptions);
+    return {success:true}
+  }
+  else{
+    return {success: false, error:"Could not send email with new password"}
+  }
+}
 
 /**
 * Send tests reminders to patients.
