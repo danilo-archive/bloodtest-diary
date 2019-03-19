@@ -512,7 +512,7 @@ io.on('connection',function(socket)
         }
     });
 
-    socket.on("changePatientColour", async (testId, newColour, accessToken) => {
+    socket.on("changePatientColour", async (patientNo, newColour, accessToken) => {
         if (!accessToken) {
             socket.emit("changePatientColourResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
@@ -523,7 +523,8 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.changeTestColour(testId, newColour, username);
+        const response = await queryController.changePatientColour(patientNo, newColour, username);
+        console.log(response)
         if (response.success){
             socket.emit("changePatientColourResponse", {success: true});
             io.in("main_page").emit("testAdded", response.response);

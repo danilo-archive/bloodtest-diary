@@ -19,7 +19,7 @@ const Container = styled.div`
   opacity: ${props => props.isDragging ? 0 : 1}
   display: block;
   position: relative;
-  background-color: ${props => (props.test_colour ? props.test_colour : props.patient_colour ? props.patient_colour : `white`)};
+  background-color: ${props => (props.test_colour ? props.test_colour : (props.patient_colour ? props.patient_colour : `white`))};
 
   margin-top: 3.5%;
   margin-bottom: 3.5%;
@@ -98,8 +98,11 @@ const RightClickMenu = props => {
            <Separator />
            <Item disabled={!props.completed}>Schedule next</Item>
            <Separator />
-           <Submenu label="Choose color">
-             <ColorPicker testId={props.testId} />
+           <Submenu label="Choose patient color">
+             <ColorPicker id={props.patientNo} type={"patient"}/>
+           </Submenu>
+           <Submenu label="Choose test color">
+             <ColorPicker id={props.testId} type={"test"}/>
            </Submenu>
            <Item>Remove color</Item>
         </Menu>
@@ -193,9 +196,10 @@ class AppointmentBox extends React.Component {
     const {isDragging, connectDragSource} = this.props;
     const menuId = `${this.props.id}_${this.props.section}`; //MUST BE UNIQUE
     console.log(menuId);
+    console.log(this.props.patient_colour)
     return connectDragSource(
       <div>
-      <RightClickMenu id={menuId} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
+      <RightClickMenu id={menuId} patientNo={this.props.patient_no} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
       <MenuProvider id={menuId}>
         <Container patient_colour={this.props.patient_colour} test_colour={this.props.test_colour} isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
