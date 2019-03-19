@@ -6,6 +6,7 @@ const TableHead = styled.th`
     padding: 5px;
     word-break: break-all;
     color: black;
+    background: white;
 `;
 
 const Input = styled.input.attrs({ type: "text" })`

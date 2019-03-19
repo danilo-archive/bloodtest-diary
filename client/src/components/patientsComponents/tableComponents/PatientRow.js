@@ -7,6 +7,7 @@ const TableData = styled.td`
     padding: 7px;
     word-break: break-all;
     color: black;
+    background: white;
 `;
 
 const TableRow = styled.tr`

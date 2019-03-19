@@ -4,6 +4,12 @@ import styled from 'styled-components';
 import PatientRow from "./PatientRow.js";
 import FilterCell from "./FilterCell.js";
 
+const TableContainer = styled.div`
+  padding: 5px;
+  width: 100%;
+  height: 80%;
+`;
+
 const Table = styled.table`
   width: 100%;
   height: 100%;
@@ -67,57 +73,58 @@ class PatientsTable extends React.Component {
     };
 
     render() {
-        //TODO : change class names
         return (
-            <Table>
-                <TableHeader>
-                <TableRow>
-                    <TableHead>Patient number</TableHead>
-                    <TableHead>Patient name</TableHead>
-                    <TableHead>Patient surname</TableHead>
-                    <TableHead>Patient email</TableHead>
-                    <TableHead>Patient phone</TableHead>
-                    <TableHead/>
-                </TableRow>
-                <TableRow>
-                    <FilterCell
-                        onChange={value => this.number_filter(value)}
-                        placeholder={"Search numbers ..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.name_filter(value)}
-                        placeholder={"Search names ..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.surname_filter(value)}
-                        placeholder={"Search surnames ..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.email_filter(value)}
-                        placeholder={"Search emails ..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.phone_filter(value)}
-                        placeholder={"Search phones ..."}
-                    />
-                    <FilterCell
-                    />
-                </TableRow>
-                </TableHeader>
-                <TableBody>
-                {this.props.shownPatients.map(patient => (
-                    <PatientRow
-                        key={patient.patient_no}
-                        patient_no = {patient.patient_no}
-                        patient_name = {patient.patient_name}
-                        patient_surname = {patient.patient_surname}
-                        patient_email = {patient.patient_email}
-                        patient_phone = {patient.patient_phone}
-                        openEditModal = {this.props.openEditModal}
-                    />
-                ))}
-                </TableBody>
-            </Table>
+            <TableContainer>
+                <Table>
+                    <TableHeader>
+                    <TableRow>
+                        <TableHead>Patient number</TableHead>
+                        <TableHead>Patient name</TableHead>
+                        <TableHead>Patient surname</TableHead>
+                        <TableHead>Patient email</TableHead>
+                        <TableHead>Patient phone</TableHead>
+                        <TableHead/>
+                    </TableRow>
+                    <TableRow>
+                        <FilterCell
+                            onChange={value => this.number_filter(value)}
+                            placeholder={"Search numbers ..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.name_filter(value)}
+                            placeholder={"Search names ..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.surname_filter(value)}
+                            placeholder={"Search surnames ..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.email_filter(value)}
+                            placeholder={"Search emails ..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.phone_filter(value)}
+                            placeholder={"Search phones ..."}
+                        />
+                        <FilterCell
+                        />
+                    </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                    {this.props.shownPatients.map(patient => (
+                        <PatientRow
+                            key={patient.patient_no}
+                            patient_no = {patient.patient_no}
+                            patient_name = {patient.patient_name}
+                            patient_surname = {patient.patient_surname}
+                            patient_email = {patient.patient_email}
+                            patient_phone = {patient.patient_phone}
+                            openEditModal = {this.props.openEditModal}
+                        />
+                    ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         );
     }
 }
