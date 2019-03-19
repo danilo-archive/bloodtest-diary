@@ -45,6 +45,7 @@ io.on('connection',function(socket)
             }
             socket.join(room);
             console.log(`Socket ${socket.id} joined ${room}`);
+            socket.emit("joined", room);
         }
     });
 

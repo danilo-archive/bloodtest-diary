@@ -47,6 +47,11 @@ class ServerConnect {
         this.onTestStatusChange = undefined;
         this.onTestEdit = undefined;
         this.onPatientEdit = undefined;
+        this.onRoomJoin = undefined;
+
+        this.socket.on("joined", room => {
+            this.onRoomJoin(room);
+        });
 
         /**
         *   Triggered when a new test is added.
@@ -106,6 +111,10 @@ class ServerConnect {
         this.socket.emit("join", this.currentRoom, "patients_page");
         this.currentRoom = "patients_page";
 
+    }
+
+    setOnRoomJoin(callback){
+        this.onRoomJoin = callback;
     }
 
     /**

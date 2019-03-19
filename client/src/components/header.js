@@ -36,10 +36,16 @@ class Header extends Component {
       this.serverConnect.setOnDisconnect( () => {
          this.setState({disabled: true});
       });
+      this.serverConnect.setOnRoomJoin(room => {
+         this.setPage(room);
+      });
 
   }
 
-  setPage(room) {
+  /**
+  * @param {String} room : possible rooms: login_page, main_page, patients_page
+  */
+  setPage = room => {
      this.setState({currentPage: room});
   }
 
