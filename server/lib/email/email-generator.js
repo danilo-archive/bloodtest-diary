@@ -29,6 +29,11 @@ They all need information contained in the "email_info" JSON objects.
     "hospital_email": "hospital@gotham.com",
     "hospital_phone": null
   }
+  "user":{
+    "username": "admin"
+    "new_password": "newpassword123"
+    "recovery_email": "admin@admin.com"
+  }
 }
 * @module email-generator
  * @author Danilo Del Busso, Luka Kralj
@@ -42,10 +47,11 @@ They all need information contained in the "email_info" JSON objects.
 |--------------------------------------------------------------------------
 */
 module.exports = {
-    testReminderForPatient,
-    testReminderForHospital,
-    overdueTestReminderForPatient,
-    overdueTestReminderForHospital
+  testReminderForPatient,
+  testReminderForHospital,
+  overdueTestReminderForPatient,
+  overdueTestReminderForHospital,
+  passwordRecoveryEmail
 };
 
 const dateformat = require('dateformat');
@@ -66,7 +72,7 @@ const mjml2html = require("mjml");
  */
 async function overdueTestReminderForHospital(email_info,email_config) {
     const greeting = "Dear colleagues,";
-    const computed_html = mjml2html(await generateBody(email_info, email_config.content.overdueHospital, greeting, true, email_config));
+    const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.overdueHospital, greeting, true, email_config));
 
     let subject =  email_config.content.overdueHospital.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
@@ -92,7 +98,7 @@ async function overdueTestReminderForPatient(email_info, email_config) {
         return await overdueTestReminderForCarer(email_info, email_config);
     }
     const greeting = "Dear " + email_info.patient.patient_name + " " + email_info.patient.patient_surname + ",";
-    const computed_html = mjml2html(await generateBody(email_info, email_config.content.overduePatient, greeting, true, email_config));
+    const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.overduePatient, greeting, true, email_config));
 
     let subject =  email_config.content.overduePatient.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
@@ -125,7 +131,7 @@ async function overdueTestReminderForCarer(email_info, email_config) {
         greeting += " " + email_info.carer.carer_surname;
     }
     greeting += ",";
-    const computed_html = mjml2html(await generateBody(email_info, email_config.content.overdueCarer, greeting, true, email_config));
+    const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.overdueCarer, greeting, true, email_config));
 
     let subject =  email_config.content.overdueCarer.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
@@ -142,6 +148,26 @@ async function overdueTestReminderForCarer(email_info, email_config) {
 }
 
 /**
+ * Return html for an email containing info about a new password which is generated for a User.
+ * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
+ * @returns {string} html for an email containing info about a test which is due for a patient
+ */
+async function passwordRecoveryEmail(email_info, email_config) {
+  const subject =  email_config.content.recoveryEmail.subject;
+  const newPassword = email_info.user.new_password;
+  const computed_html = mjml2html(await generateRecoveryEmailBody(newPassword, email_config.content.recoveryEmail));
+  
+
+  if (computed_html.errors.length === 0)
+        return {
+            to: email_info.user.recovery_email,
+            html:  (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
+            subjectTitle: subject
+        };
+    return null;
+}
+
+/**
  * Return html for an email containing info about a test which is due for a patient.
  * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
  * @returns {string} html for an email containing info about a test which is due for a patient
@@ -151,7 +177,7 @@ async function testReminderForPatient(email_info, email_config) {
         return await testReminderForCarer(email_info);
     }
     const greeting = "Dear " + email_info.patient.patient_name + " " + email_info.patient.patient_surname + ",";
-    const computed_html = mjml2html(await generateBody(email_info, email_config.content.generalPatient, greeting, false, email_config));
+    const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.generalPatient, greeting, false, email_config));
 
     let subject =  email_config.content.generalPatient.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
@@ -173,7 +199,7 @@ async function testReminderForPatient(email_info, email_config) {
 */
 async function testReminderForHospital(email_info, email_config) {
     const greeting = "Dear colleagues,";
-    const computed_html = mjml2html(await generateBody(email_info, email_config.content.generalHospital, greeting, false, email_config));
+    const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.generalHospital, greeting, false, email_config));
     
     let subject =  email_config.content.generalHospital.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
@@ -202,7 +228,7 @@ async function testReminderForCarer(email_info, email_config) {
         greeting += " " + email_info.carer.carer_surname;
     }
     greeting += ",";
-    const computed_html = mjml2html(await generateBody(email_info, email_config.content.generalCarer, greeting, false, email_config));
+    const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.generalCarer, greeting, false, email_config));
     
     let subject =  email_config.content.generalCarer.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
@@ -244,7 +270,7 @@ async function testReminderForCarer(email_info, email_config) {
             }
         },
  */
-async function generateBody(emailInfo, contentConfiguration, greeting, isOverdue) {
+async function generateReminderBody(emailInfo, contentConfiguration, greeting, isOverdue) {
     const patient = emailInfo.patient;
     const main = contentConfiguration.mainBody;
     let html = `
@@ -314,6 +340,43 @@ async function generateBody(emailInfo, contentConfiguration, greeting, isOverdue
 }
 
 /**
+ * Generates the body of the email according to the content configuration.
+ *
+ * @param {JSON} contentConfiguration - format: {
+            "subject": "",
+            "mainBody": "",
+        },
+ */
+async function generateRecoveryEmailBody(newPassword, contentConfiguration) {
+  const main = contentConfiguration.mainBody;
+  let html = `
+  <mjml>
+     ${getHead("Password recovery")}
+     <mj-body>
+        <mj-section>
+           <mj-column width="45%">
+              <mj-text align="center" font-weight="500" padding="0px" font-size="18px">Password recovery email</mj-text>
+              <mj-divider border-width="2px" border-color="#616161" />
+              <mj-divider border-width="2px" border-color="#616161" width="45%" />
+           </mj-column>
+        </mj-section>
+        <mj-section padding-top="30px">
+        <mj-column width="100%">
+        <mj-text>
+            Dear user, --br----br--
+            ${main} --br----br--
+            <b>New password:    </b>${newPassword}--br--
+  `;
+
+  html += `--br--</mj-text>
+          </mj-column>
+      </mj-section>
+  </mj-body>
+  </mjml>`;
+  return html;
+}
+
+/**
  * Get mjml code for image at the top of emails
  * @return {string} mjml code for image at the top of emails
  */
@@ -346,7 +409,7 @@ function getHead(title) {
           <mj-text font-weight="300" font-size="16px" color="#616161" line-height="24px" />
           <mj-section padding="0px" />
        </mj-attributes>
-    </mj-head>    
+    </mj-head>
     `;
 }
 

@@ -85,6 +85,10 @@
                 "includeDueDate": true
             }
         },
+        "recoveryEmail": {
+            "subject": "Password recovery email",
+            "mainBody": "You have requested to recover your password for Blood Test Diary system. Please use your username and the new password below to login. You can modify the password once you are logged in.--br----br--<i>If you did not request to recover your password, please, report this to your administrator as soon as possible.</i>"
+        },
         "common": {
             "logo": null,
             "footer": "For more information please contact King's College Hospital.--br----br--Kind regards,--br----br--King's College Hospital--br----br--<font face='Courier New' size='2'>--br--*************************************************************************************--br----br--This message may contain confidential information. --br--If you are not the intended recipient please inform the sender that you have received the message in error before deleting it.--br--Please do not disclose, copy or distribute information in this e-mail or take any action in relation to its contents. To do so is strictly prohibited and may be unlawful.--br--Thank you for your co-operation.--br----br--</font>"

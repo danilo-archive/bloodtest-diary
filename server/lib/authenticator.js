@@ -1,6 +1,6 @@
 /**
  * This module contains functions for user authentication and verification.
- * 
+ *
  * @author Mateusz Nowak, Luka Kralj
  * @version 1.0
  * @module authenicator
@@ -136,7 +136,7 @@ async function verifyToken(accessToken) {
         console.log("Error updating access token. Response: " + JSON.stringify(res));
       }
     });
-  
+
   return accessTokens[accessToken].username;
 }
 

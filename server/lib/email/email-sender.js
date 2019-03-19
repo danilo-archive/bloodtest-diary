@@ -28,7 +28,8 @@ module.exports = {
   sendReminderToPatient,
   sendReminderToHospital,
   sendOverdueReminderToPatient,
-  sendOverdueReminderToHospital
+  sendOverdueReminderToHospital,
+  sendPasswordRecoveryEmail
 };
 
 const email_generator = require("./email-generator");
@@ -44,6 +45,9 @@ const email_config = jsonController.getJSON(CONFIG_ABSOLUTE_PATH);
 | these functions do not directly handle data and generate emails. They are written to simplify
 | usage of the module.
 */
+async function sendPasswordRecoveryEmail(emailInfo){
+  return await sendOneEmail(emailInfo, email_generator.passwordRecoveryEmail);
+}
 
 /**
  * Send a single reminder to patient.

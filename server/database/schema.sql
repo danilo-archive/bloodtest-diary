@@ -31,7 +31,7 @@ DROP TABLE IF EXISTS User;
 CREATE TABLE Hospital (
     hospital_id INTEGER AUTO_INCREMENT,
     hospital_name VARCHAR(255),
-    hospital_email VARCHAR(100) NOT NULL,
+    hospital_email VARCHAR(100),
     hospital_phone VARCHAR(15),
     PRIMARY KEY (hospital_id)
 );
@@ -40,7 +40,7 @@ CREATE TABLE Carer (
     carer_id INTEGER AUTO_INCREMENT,
     carer_name VARCHAR(100),
     carer_surname VARCHAR(100),
-    carer_email VARCHAR(100) NOT NULL,
+    carer_email VARCHAR(100),
     carer_phone VARCHAR(15),
     relationship VARCHAR(255),
     PRIMARY KEY (carer_id)
@@ -48,14 +48,15 @@ CREATE TABLE Carer (
 
 CREATE TABLE Patient (
     patient_no VARCHAR(20),
-    patient_name VARCHAR(100) NOT NULL,
-    patient_surname VARCHAR(100) NOT NULL,
+    patient_name VARCHAR(100),
+    patient_surname VARCHAR(100),
     patient_email VARCHAR(100),
     patient_phone VARCHAR(15),
     hospital_id INTEGER,
     carer_id INTEGER,
     additional_info TEXT,
     patient_colour VARCHAR(10),
+    isAdult ENUM("yes", "no") NOT NULL DEFAULT "yes",
     PRIMARY KEY (patient_no),
     FOREIGN KEY (hospital_id) REFERENCES Hospital(hospital_id) ON DELETE SET NULL,
     FOREIGN KEY (carer_id) REFERENCES Carer(carer_id) ON DELETE SET NULL
@@ -80,6 +81,7 @@ CREATE TABLE Test (
 CREATE TABLE User (
     username VARCHAR(100),
     hashed_password VARCHAR(255) NOT NULL,
+    isAdmin ENUM("yes", "no") NOT NULL DEFAULT "no",
     salt VARCHAR(255) NOT NULL,
     iterations INTEGER NOT NULL,
     recovery_email VARCHAR(100) NOT NULL,
