@@ -17,6 +17,7 @@ const jsonController = require('./lib/json-controller');
 const conf = jsonController.getJSON(CONFIG_FILE_PATH);
 const port = conf.port;
 const authenticator = require("./lib/authenticator.js");
+const passwordRecovery = require("./lib/password-recovery.js")
 
 http.listen(port);
 
@@ -86,6 +87,13 @@ io.on('connection',function(socket)
         }
 
         socket.emit("logoutResponse", { success:true, response: "User logged out." });
+    });
+
+    //TODO: ADD CLIENT CONNECTION HERE
+    //PARAMETER - (STRING) USERNAME TO CHANGE PASSWORD  
+    socket.on('passwordRecoverRequest', async (username) => {
+        const passwordResponse = await passwordRecovery.recoverPassword(username);
+        socket.emit('passwordRecoverResponse', passwordResponse);
     });
 
     socket.on('getAllPatients', async (accessToken) => {

@@ -23,11 +23,6 @@ async function recoverPassword(username){
   const newPassword = authenticator.produceSalt();
   //TODO: DELETE
   console.log("PASSWORD HERE FOR TESTING: " + newPassword);
-  const hash = crypto.createHash('sha256').update(newPassword).digest('hex');
-  const responseUserUpdate = await queryController.updatePassword({username:username, hashed_password:hash},username);
-  if(!responseUserUpdate.success){
-    return responseUserUpdate;
-  }
   const userToEmail = {
     user:{
       username:username,
@@ -35,5 +30,10 @@ async function recoverPassword(username){
       recovery_email:user.response[0].recovery_email
     }
   }
-  return email_sender.sendPasswordRecoveryEmail(userToEmail);
+  const emailResponse = email_sender.sendPasswordRecoveryEmail(userToEmail);
+  if(!emailResponse.success){
+    return emailResponse;
+  }
+  const hash = crypto.createHash('sha256').update(newPassword).digest('hex');
+  return await queryController.updatePassword({username:username, hashed_password:hash},username);
 }
