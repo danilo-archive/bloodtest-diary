@@ -220,8 +220,7 @@ async function getTestWithinWeek(date) {
 async function getOverdueReminderGroups() {
   const sql = `Select test_id, due_date, patient_no, patient_name, patient_surname, last_reminder, reminders_sent
             From Test NATURAL JOIN Patient
-            where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' AND
-            (last_reminder IS NULL OR last_reminder < CURDATE()) ORDER BY last_reminder, due_date ASC;`;
+            where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY last_reminder, due_date ASC;`;
 
   const res = await selectQueryDatabase(sql);
 
