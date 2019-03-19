@@ -18,8 +18,8 @@ DELETE FROM EditTokens;
 DELETE FROM ActionLog;
 DELETE FROM LoginCredentials;
 
-INSERT INTO User(username, password,iterations,salt,recovery_email)
-VALUES ("admin","f0edc3ac2daf24876a782e9864e9596970a8b8717178e705cd70726b92dbfc58c8e8fb27f7082239969496d989ff65d0bb2fcc3bd91c3a0251fa221ca2cd88a5",'1268',"d50dbbbe33c2d3c545051917b6a60ccd577a1a3f1a96dfac95199e7b0de32841", "gmail@gmail.com");
+INSERT INTO User VALUES ("admin","f0edc3ac2daf24876a782e9864e9596970a8b8717178e705cd70726b92dbfc58c8e8fb27f7082239969496d989ff65d0bb2fcc3bd91c3a0251fa221ca2cd88a5","yes","d50dbbbe33c2d3c545051917b6a60ccd577a1a3f1a96dfac95199e7b0de32841",'1268',"gmail@gmail.com");
+INSERT INTO User VALUES ("admin1","f0edc3ac2daf24876a782e9864e9596970a8b8717178e705cd70726b92dbfc58c8e8fb27f7082239969496d989ff65d0bb2fcc3bd91c3a0251fa221ca2cd88a5","no","d50dbbbe33c2d3c545051917b6a60ccd577a1a3f1a96dfac95199e7b0de32841",'1268',"gmail@gmail.com");
 
 """
 

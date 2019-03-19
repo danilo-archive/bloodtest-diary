@@ -580,6 +580,7 @@ async function sendOverdueReminders(testIDs, actionUsername) {
 * @property username {String}
 * @property hashed_password {String}
 * @property email {String}
+* @property isAdmin {string} "yes" | "no"
 * @return {JSON} result of the query - {success:Boolean}
 **/
 async function addUser(json, actionUsername)
@@ -588,7 +589,7 @@ async function addUser(json, actionUsername)
   const salt = authenticator.produceSalt();
   //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
   const hash = authenticator.produceHash(json.hashed_password,iterations,salt);
-  const sql = `INSERT INTO User VALUES(${mysql.escape(json.username)},${hash},${salt},${iterations},${mysql.escape(json.email)});`;
+  const sql = `INSERT INTO User VALUES(${mysql.escape(json.username)},${hash},${mysql.escape(json.isAdmin)},${salt},${iterations},${mysql.escape(json.email)});`;
   return await insertQueryDatabase(sql, "User", actionUsername, json.username);
 }
 

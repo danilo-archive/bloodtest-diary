@@ -10,8 +10,8 @@ DELETE FROM EditTokens;
 DELETE FROM ActionLog;
 DELETE FROM User;
 
-INSERT INTO User VALUES ("admin","f0edc3ac2daf24876a782e9864e9596970a8b8717178e705cd70726b92dbfc58c8e8fb27f7082239969496d989ff65d0bb2fcc3bd91c3a0251fa221ca2cd88a5","d50dbbbe33c2d3c545051917b6a60ccd577a1a3f1a96dfac95199e7b0de32841",'1268',"gmail@gmail.com");
-INSERT INTO User VALUES ("admin1","f0edc3ac2daf24876a782e9864e9596970a8b8717178e705cd70726b92dbfc58c8e8fb27f7082239969496d989ff65d0bb2fcc3bd91c3a0251fa221ca2cd88a5","d50dbbbe33c2d3c545051917b6a60ccd577a1a3f1a96dfac95199e7b0de32841",'1268',"gmail@gmail.com");
+INSERT INTO User VALUES ("admin","f0edc3ac2daf24876a782e9864e9596970a8b8717178e705cd70726b92dbfc58c8e8fb27f7082239969496d989ff65d0bb2fcc3bd91c3a0251fa221ca2cd88a5","yes","d50dbbbe33c2d3c545051917b6a60ccd577a1a3f1a96dfac95199e7b0de32841",'1268',"gmail@gmail.com");
+INSERT INTO User VALUES ("admin1","f0edc3ac2daf24876a782e9864e9596970a8b8717178e705cd70726b92dbfc58c8e8fb27f7082239969496d989ff65d0bb2fcc3bd91c3a0251fa221ca2cd88a5","no","d50dbbbe33c2d3c545051917b6a60ccd577a1a3f1a96dfac95199e7b0de32841",'1268',"gmail@gmail.com");
 
 INSERT INTO Hospital (hospital_id, hospital_name, hospital_email) VALUES (1, 'hospital1', 'hospital1@gmail.com');
 INSERT INTO Hospital (hospital_id, hospital_name, hospital_email) VALUES (2, 'hospital2', 'hospital2@gmail.com');
