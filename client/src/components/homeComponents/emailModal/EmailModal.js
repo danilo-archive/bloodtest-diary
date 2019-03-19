@@ -12,7 +12,6 @@ const Container = styled.div`
   position: relative;
   height: 592px;
   width: 635px;
-  border-radius: 10px;
   background: white;
 `;
 
