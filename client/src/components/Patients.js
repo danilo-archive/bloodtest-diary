@@ -230,7 +230,6 @@ class Patients extends React.Component {
         this.setState({openAddModal: false})
     };
 
-    //TODO : rename all components to capital case
     render() {
         if (this.state.allPatientsReady) {
             return (
