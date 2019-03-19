@@ -94,12 +94,12 @@ const Container = styled.div`
 const RightClickMenu = props => {
     return(
         <Menu id={props.id} style={{position: "absolute", zIndex: "4"}}>
-           <Item onClick={() => {props.editTest(props.id)}}>Edit</Item>
+           <Item onClick={() => {props.editTest(props.testId)}}>Edit</Item>
            <Separator />
            <Item disabled={!props.completed}>Schedule next</Item>
            <Separator />
            <Submenu label="Choose color">
-             <ColorPicker testId={props.id} />
+             <ColorPicker testId={props.testId} />
            </Submenu>
            <Item>Remove color</Item>
         </Menu>
@@ -189,10 +189,11 @@ class AppointmentBox extends React.Component {
 
   render() {
     const {isDragging, connectDragSource} = this.props;
+    const menuId = `${this.props.id}_${this.props.section}`; //MUST BE UNIQUE
     return connectDragSource(
       <div>
-      <RightClickMenu id={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
-      <MenuProvider id={this.props.id}>
+      <RightClickMenu id={menuId} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
+      <MenuProvider id={menuId}>
         <Container isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
           <StatusCircle
