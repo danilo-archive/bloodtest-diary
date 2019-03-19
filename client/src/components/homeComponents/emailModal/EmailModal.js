@@ -16,7 +16,7 @@ const Container = styled.div`
 `;
 
 const Scroll = styled(ScrollBox)`
-  height: ${props => (!props.fullLength ? `33%` : `66%`)};
+  height: ${props => (!props.fullLength ? `27%` : `66%`)};
   border: 1px solid #b0b0b0b0;
 `;
 export default class EmailModal extends Component {
@@ -25,6 +25,8 @@ export default class EmailModal extends Component {
     this.serverConnect = getServerConnect();
     this.state = {
       selected: [],
+      response: {},
+      submitted: false,
       notNotified: props.notNotified.map(patient => {
         return {
           testId: patient.test_id,
@@ -36,7 +38,8 @@ export default class EmailModal extends Component {
         return {
           testId: patient.test_id,
           dueDate: patient.due_date,
-          patientName: `${patient.patient_name} ${patient.patient_surname}`
+          patientName: `${patient.patient_name} ${patient.patient_surname}`,
+          lastReminder: patient.last_reminder
         };
       })
     };
@@ -85,6 +88,7 @@ export default class EmailModal extends Component {
   submit = () => {
     let idList = this.state.selected.map(patient => patient.testId);
     this.serverConnect.sendReminders(idList, res => {
+      console.log(res);
       if (res.success) {
         openAlert(
           "Patients contacted successfully",
@@ -95,6 +99,15 @@ export default class EmailModal extends Component {
           }
         );
       } else {
+        this.setState({
+          failedMails: Object.keys(res.response)
+            .map(type => {
+              return res.response[type].length;
+            })
+            .reduce((a, b) => a + b),
+          response: res.response,
+          submitted: true
+        });
         this.props.handleError(res, "Something went wrong");
       }
     });
@@ -104,7 +117,41 @@ export default class EmailModal extends Component {
     return (
       <Container>
         <Title>Email Reminders</Title>
-        {this.state.notNotified.length !== 0 ? (
+        {this.state.submitted ? (
+          <>
+            <TestBox
+              noCheck
+              stat={`${this.state.failedMails}/${this.state.selected.length}`}
+              selected={this.areAllIncluded(
+                this.state.selected,
+                this.state.notNotified
+              )}
+              onAllCheck={check =>
+                check
+                  ? this.select(this.state.notNotified)
+                  : this.deselect(this.state.notNotified)
+              }
+              title={true}
+              text="Emails Sent"
+            />
+            <Scroll fullLength={this.state.notified.length === 0}>
+              <Section
+                awaitResponse={true}
+                response={this.state.response}
+                submitted={this.state.submitted}
+                selected={this.state.selected}
+                tests={this.state.selected}
+                select={(check, patient) =>
+                  check ? this.select(patient) : this.deselect(patient)
+                }
+              />
+            </Scroll>
+            <br />
+          </>
+        ) : (
+          ``
+        )}
+        {this.state.notNotified.length !== 0 && !this.state.submitted ? (
           <>
             <TestBox
               selected={this.areAllIncluded(
@@ -117,10 +164,11 @@ export default class EmailModal extends Component {
                   : this.deselect(this.state.notNotified)
               }
               title={true}
-              text="Not yet notified"
+              text="No reminders sent"
             />
             <Scroll fullLength={this.state.notified.length === 0}>
               <Section
+                submitted={this.state.submitted}
                 selected={this.state.selected}
                 tests={this.state.notNotified}
                 select={(check, patient) =>
@@ -133,7 +181,7 @@ export default class EmailModal extends Component {
         ) : (
           ``
         )}
-        {this.state.notified.length !== 0 ? (
+        {this.state.notified.length !== 0 && !this.state.submitted ? (
           <>
             <TestBox
               selected={this.areAllIncluded(
@@ -146,10 +194,11 @@ export default class EmailModal extends Component {
                   : this.deselect(this.state.notified)
               }
               title={true}
-              text="Already Notified"
+              text="Recently notified"
             />
             <Scroll fullLength={this.state.notNotified.length === 0}>
               <Section
+                submitted={this.state.submitted}
                 select={(check, patient) =>
                   check ? this.select(patient) : this.deselect(patient)
                 }
