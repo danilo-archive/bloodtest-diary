@@ -55,18 +55,7 @@ class Home extends Component {
     this.initOverduePanel();
     this.updateDashboard();
     this.initCallbacks();
-
-    this.logout = this.logout.bind(this);
-    this.refresh = this.refresh.bind(this);
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrevious = this.handlePrevious.bind(this);
-    this.onPatientsClick = this.onPatientsClick.bind(this);
-
-    this.onAddTestOpenModal = this.onAddTestOpenModal.bind(this);
-    this.onAddTestCloseModal = this.onAddTestCloseModal.bind(this);
-
-    this.openEmailModal();
-
+    //this.openEmailModal();
   };
 
   initCallbacks() {

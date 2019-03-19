@@ -19,7 +19,7 @@ const Container = styled.div`
   opacity: ${props => props.isDragging ? 0 : 1}
   display: block;
   position: relative;
-  background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
+  background-color: ${props => (props.test_colour ? props.test_colour : props.patient_colour ? props.patient_colour : `white`)};
 
   margin-top: 3.5%;
   margin-bottom: 3.5%;
@@ -119,7 +119,9 @@ const spec = {
       test_id: props.id,
       completed_status: props.type,
       patient_name: props.name,
-      dueDate: props.dueDate
+      dueDate: props.dueDate,
+      patient_colour: props.patient_colour,
+      test_colour: props.test_colour
     };
   },
   endDrag(props, monitor, component){
@@ -190,11 +192,12 @@ class AppointmentBox extends React.Component {
   render() {
     const {isDragging, connectDragSource} = this.props;
     const menuId = `${this.props.id}_${this.props.section}`; //MUST BE UNIQUE
+    console.log(menuId);
     return connectDragSource(
       <div>
       <RightClickMenu id={menuId} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
       <MenuProvider id={menuId}>
-        <Container isDragging={isDragging} tentative={this.props.tentative}>
+        <Container patient_colour={this.props.patient_colour} test_colour={this.props.test_colour} isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
           <StatusCircle
             type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
