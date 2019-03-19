@@ -24,7 +24,7 @@ const Container = styled.div`
   flex-wrap: wrap;
   align-content: flex-start;
   justify-content: center;
-
+  background: rgb(244,249,253);
 `;
 
 const NavbarContainer = styled.div`

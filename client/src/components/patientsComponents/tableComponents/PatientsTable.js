@@ -5,9 +5,10 @@ import PatientRow from "./PatientRow.js";
 import FilterCell from "./FilterCell.js";
 
 const TableContainer = styled.div`
-  padding: 5px;
+  padding: 0.5%;
   width: 100%;
   height: 80%;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 `;
 
 const Table = styled.table`
