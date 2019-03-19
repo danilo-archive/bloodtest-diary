@@ -1,6 +1,6 @@
 /**
  * Controller functions for json files reading and writing
- * @module json-controller
+ * @module json-parser
  * @author Danilo Del Busso
  * @version 0.0.2
  */

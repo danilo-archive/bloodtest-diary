@@ -10,13 +10,16 @@ import { DragSource } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import {openAlert} from "../../Alert.js";
 import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
+import { Menu, Item, Separator, Submenu, MenuProvider } from 'react-contexify';
+import 'react-contexify/dist/ReactContexify.min.css';
+import ColorPicker from "./ColorPicker";
 
 const serverConnect = getServerConnect();
 const Container = styled.div`
   opacity: ${props => props.isDragging ? 0 : 1}
   display: block;
   position: relative;
-  background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
+  background-color: ${props => (props.test_colour ? props.test_colour : (props.patient_colour ? props.patient_colour : `white`))};
 
   margin-top: 3.5%;
   margin-bottom: 3.5%;
@@ -87,6 +90,31 @@ const Container = styled.div`
       }
 `;
 
+
+const RightClickMenu = props => {
+    return(
+        <Menu id={props.id} style={{position: "absolute", zIndex: "4"}}>
+           <Item onClick={() => {props.editTest(props.testId)}}>Edit</Item>
+           <Separator />
+           <Item disabled={!props.completed}>Schedule next</Item>
+           <Separator />
+           <Submenu label="Patient color">
+             <Submenu label="Choose color">
+                <ColorPicker id={props.patientNo} type={"patient"}/>
+             </Submenu>
+             <Item>Remove color</Item>
+           </Submenu>
+           <Submenu label="Test color">
+             <Submenu label="Choose color">
+                <ColorPicker id={props.testId} type={"test"}/>
+             </Submenu>
+             <Item>Remove color</Item>
+           </Submenu>
+
+        </Menu>
+    );
+}
+
 const mapping = {
     "yes":"completed",
     "no": "pending",
@@ -100,7 +128,9 @@ const spec = {
       test_id: props.id,
       completed_status: props.type,
       patient_name: props.name,
-      dueDate: props.dueDate
+      dueDate: props.dueDate,
+      patient_colour: props.patient_colour,
+      test_colour: props.test_colour
     };
   },
   endDrag(props, monitor, component){
@@ -170,11 +200,15 @@ class AppointmentBox extends React.Component {
 
   render() {
     const {isDragging, connectDragSource} = this.props;
+    const menuId = `${this.props.id}_${this.props.section}`; //MUST BE UNIQUE
+    console.log(menuId);
+    console.log(this.props.patient_colour)
     return connectDragSource(
       <div>
-        <Container isDragging={isDragging} tentative={this.props.tentative}>
+      <RightClickMenu id={menuId} patientNo={this.props.patient_no} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
+      <MenuProvider id={menuId}>
+        <Container patient_colour={this.props.patient_colour} test_colour={this.props.test_colour} isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
-
           <StatusCircle
             type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
           />
@@ -185,7 +219,10 @@ class AppointmentBox extends React.Component {
               testId={this.props.id}
               handleError={this.props.handleError}
           />
+
         </Container>
+        </MenuProvider>
+
       </div>
     );
   }

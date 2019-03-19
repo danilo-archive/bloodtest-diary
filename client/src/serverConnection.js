@@ -460,6 +460,20 @@ class ServerConnect {
             callback(res);
         });
     }
+
+    changePatientColour(patientId, newColor, callback){
+        this.socket.emit("changePatientColour", patientId, newColor, this.loginToken);
+        this.socket.once("changePatientColourResponse", res => {
+            callback(res);
+        });
+    }
+
+    changeTestColour(testId, newColor, callback){
+        this.socket.emit("changeTestColour", testId, newColor, this.loginToken);
+        this.socket.once("changeTestColourResponse", res => {
+            callback(res);
+        });
+    }
 }
 
 
