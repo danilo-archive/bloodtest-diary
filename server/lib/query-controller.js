@@ -1061,7 +1061,8 @@ async function scheduleNextTest(testId, actionUsername) {
             frequency: test.frequency,
             due_date: getNextDueDate(test.frequency, test.completed_date), // use completed_date that is stored in the DB instead of creating a new one on the go
             occurrences: test.occurrences - 1, // newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
-            notes: test.notes
+            notes: test.notes,
+            test_colour: test.test_colour
         };
         const response = await addTest(newTest, actionUsername);
         if (response.success) {

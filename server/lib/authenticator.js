@@ -129,10 +129,7 @@ async function verifyToken(accessToken) {
   accessTokens[accessToken].expires = newExpiry;
   db_controller.updateAccessToken(accessToken, newExpiry)
     .then((res) => {
-      if (res.status === "OK") {
-        console.log("Access token expiration successfully updated.")
-      }
-      else {
+      if (res.status !== "OK") {
         console.log("Error updating access token. Response: " + JSON.stringify(res));
       }
     });
