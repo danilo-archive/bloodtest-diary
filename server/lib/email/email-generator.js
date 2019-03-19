@@ -123,6 +123,9 @@ async function overdueTestReminderForPatient(email_info, email_config) {
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
 async function overdueTestReminderForCarer(email_info, email_config) {
+    if (email_config.carer == null) {
+        return null;
+    }
     let greeting = "Dear";
     if (email_info.carer.carer_name != null && email_info.carer.carer_name.length !== 0) {
         greeting += " " + email_info.carer.carer_name;
@@ -220,6 +223,9 @@ async function testReminderForHospital(email_info, email_config) {
  * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
 */
 async function testReminderForCarer(email_info, email_config) {
+    if (email_config.carer == null) {
+        return null;
+    }
     let greeting = "Dear";
     if (email_info.carer.carer_name != null && email_info.carer.carer_name.length !== 0) {
         greeting += " " + email_info.carer.carer_name;
