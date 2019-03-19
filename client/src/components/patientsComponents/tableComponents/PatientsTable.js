@@ -27,8 +27,9 @@ const TableHead = styled.th`
     padding: 10px;
     //word-break: break-all;
     color: white;
-    background: #0b989d;
+    background: #0d4e56;
     text-align: left;
+    font-weight: normal;
 `;
 
 const TableRow = styled.tr`
