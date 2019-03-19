@@ -24,9 +24,8 @@ const WeekDaySection = props => {
           top="50%"
           left="12%"
         />
-          <Label style={{ left: "50%", top: "50%" }}>
-            {props.dayName}
-          </Label>
+        <Label style={{ left: "50%", top: "50%" }}>{props.dayName}</Label>
+        {props.children}
       </WeekDayDiv>
     </>
   );

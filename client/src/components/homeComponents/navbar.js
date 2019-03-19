@@ -6,6 +6,7 @@ import ControlButtons from "./../navbarComponents/controlButtons.js";
 import WeekButtons from "./../navbarComponents/weekButtons.js";
 import NavHeader from "./../navbarComponents/navHeader.js";
 import OptionSwitch from "../switch/OptionSwitch";
+
 import { openAlert } from "./../Alert.js";
 
 const Container = styled.div`
