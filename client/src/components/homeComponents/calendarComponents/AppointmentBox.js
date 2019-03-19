@@ -117,6 +117,7 @@ const spec = {
     }
   },
   canDrag(props, monitor){
+      console.log(props.section);
     return (props.section !== "overdue");
   }
 }

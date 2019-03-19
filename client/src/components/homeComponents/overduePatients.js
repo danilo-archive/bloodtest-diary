@@ -6,11 +6,11 @@ import ScrollBox from "./calendarComponents/ScrollBox";
 import AppointmentSection from "./calendarComponents/AppointmentSection";
 
 const Container = styled.div`
-margin: 3px;
-padding: 0%;
-width: auto;
-height: 100%;
-overflow: hidden;
+  margin: 3px;
+  padding: 0%;
+  width: auto;
+  height: 100%;
+  overflow: hidden;
 `;
 
 class OverduePatients extends React.Component {

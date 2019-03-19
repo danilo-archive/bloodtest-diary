@@ -229,6 +229,7 @@ class Home extends Component {
               <div className={"rightSideDash"}>
                 <div className={"navbar"}>
                   <Navbar
+                    page="Dashboard"
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
@@ -246,7 +247,6 @@ class Home extends Component {
                       handleError={this.handleInvalidResponseError}
                     />
                   </div>
-                  <div className={"divider"} />
                   <div className={"ongoingWeekly"}>
                     <OngoingWeekly
                       currentMonday={this.currentMonday}

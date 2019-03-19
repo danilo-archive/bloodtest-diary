@@ -25,6 +25,12 @@ const Container = styled.div`
   align-content: flex-start;
   justify-content: center;
 
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+
 `;
 
 const NavbarContainer = styled.div`
@@ -221,7 +227,6 @@ class Patients extends React.Component {
         this.serverConnect.discardPatientEditing(this.state.selectedId, this.state.editToken, res => {
             this.setState({selectedId: undefined, openEditModal: false, editToken: undefined});
         });
-
     };
 
     openAddModal = () => {
@@ -239,12 +244,12 @@ class Patients extends React.Component {
                 <ModalProvider>
                     <Container>
                         <NavbarContainer>
-                            <Navbar
-                                onHomeClick={this.onHomeClick}
-                                onSignoutClick={this.logout}
-                                refresh={this.refresh}
-
-                            />
+                          <Navbar
+                            page="Patients"
+                            onHomeClick={this.onHomeClick}
+                            onSignoutClick={this.logout}
+                            refresh={this.refresh}
+                          />
                         </NavbarContainer>
                         <Button onClick={this.openAddModal}>Add patient</Button>
                         <TableContainer>
