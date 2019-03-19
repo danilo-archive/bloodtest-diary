@@ -8,12 +8,11 @@
 
 const databaseController = require('./db_controller/db-controller.js');
 const authenticator = require("./authenticator.js");
-const calendarController = require("./calendar-controller.js");
+const calendarController = require("./calendar-functions.js");
 const _ = require("lodash");
 const logger = require('./action-logger');
 const dateformat = require('dateformat');
 const mysql = require('mysql');
-const email_sender = require('./email/email-sender');
 
 /*===============================*
           SELECT QUERIES
@@ -210,7 +209,7 @@ async function getOverdueReminderGroups() {
   const sql = `Select test_id, due_date, patient_no, patient_name, patient_surname, last_reminder, reminders_sent
             From Test NATURAL JOIN Patient
             where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' AND
-            (last_reminder IS NULL OR last_reminder < CURDATE()) ORDER BY last_reminder ASC;`
+            (last_reminder IS NULL OR last_reminder < CURDATE()) ORDER BY last_reminder, due_date ASC;`
 
   const res = await selectQueryDatabase(sql);
 
@@ -247,6 +246,13 @@ async function getOverdueReminderGroups() {
 */
 async function editTest(testId, newInfo,token, actionUsername){
     let scheduleNew = false;
+    const testInfo = await getTest(testId);
+    if(!testInfo.success){
+      return testInfo;
+    }
+    if(testInfo.response.length==0){
+      return {success:false, response:"No new tests added - No test found!"}
+    }
     if(newInfo.completed_status == "yes" || newInfo.completed_status == "in review")
     {
       scheduleNew = true;
@@ -258,7 +264,7 @@ async function editTest(testId, newInfo,token, actionUsername){
     const sql = prepareUpdateSQL("Test",newInfo,"test_id");
     const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
 
-    if (res.success && scheduleNew) {
+    if (res.success && scheduleNew  && testInfo.response[0].completed_status=="no") {
        const insertedResponse = await scheduleNextTest(testId, actionUsername);
        if(insertedResponse.response){
          res.response.new_date = insertedResponse.response.new_date;
@@ -455,6 +461,13 @@ async function changeTestStatus(test, actionUsername)
   let date;
   // TODO: first check if it can edit. If edit successful then schedule a new one.
   let scheduleNew = false;
+  const testInfo = await getTest(test.testId);
+  if(!testInfo.success){
+    return testInfo;
+  }
+  if(testInfo.response.length==0){
+    return {success:false, response:"No new tests added - No test found!"}
+  }
   switch(test.newStatus)
   {
     case "completed": {status = "yes"; date=`CURDATE()`;scheduleNew = true; break;}
@@ -465,7 +478,7 @@ async function changeTestStatus(test, actionUsername)
   const sql = `UPDATE Test SET completed_status=${mysql.escape(status)}, completed_date=${date} WHERE test_id = ${mysql.escape(test.testId)};`;
   const res = await updateQueryDatabase("Test",test.testId,sql,token, actionUsername);
 
-  if (res.success && scheduleNew) {
+  if (res.success && scheduleNew && testInfo.response[0].completed_status=="no") {
     const insertedResponse = await scheduleNextTest(test.testId, actionUsername);
     if(insertedResponse.response){
       res.response.new_date = insertedResponse.response.new_date;
@@ -476,80 +489,53 @@ async function changeTestStatus(test, actionUsername)
 }
 
 /**
- * Send reminders for overdue tests.
- *
- * @param {Array} testIDs - List of all the overdue tests' IDs
- * @param {string} actionUsername The user who issued the request.
- * @return {JSON} result of the query. success is true only if all the emails were successfully sent.
- *            Some emails might fail to be sent for various reasons. It can be that the patient was sent
- *            an email but the hospital was not or vice versa, or maybe both emails failed to send.
- *            Response format:
- *            {success: true, response: "All emails sent successfully."}
- *
- *            The three "failed" lists are disjoint.
- *            {success: false,
- *             response: {
- *              failedBoth: [] // might be empty
- *              failedPatient: [] // might be empty
- *              failedHospital: [] // might be empty
- *             }
- *            }
- **/
-async function sendOverdueReminders(testIDs, actionUsername) {
-  const failedBoth = [];
-  const failedPatient = [];
-  const failedHospital = [];
+* Update when the last reminder for this test was sent.
+*
+* @param {string} testId - id of a test to change
+* @param {string} token - The token that grants edit privileges.
+* @param {string} actionUsername The user who issued the request.
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
+**/
+async function updateLastReminder(testId, token, actionUsername) {
+  let sql = "UPDATE Test SET last_reminder = CURDATE(), reminders_sent = reminders_sent + 1 WHERE test_id= ? ";
+  sql = mysql.format(sql, [testId]);
+  return await updateQueryDatabase("Test", testId, sql, token, actionUsername);
+}
 
-  for (let i = 0; i < testIDs.length; i++) {
-    const token = await requestEditing("Test", testIDs[i], actionUsername);
-    if (!token) {
-      failedBoth.push(testIDs[i]);
-      continue;
-    }
-
-    const failed_pat = await email_sender.sendOverdueTestReminderToPatient([testIDs[i]]);
-    const failed_hos = await email_sender.sendOverdueTestReminderToHospital([testIDs[i]]);
-
-    if (failed_pat.length === 1 && failed_hos.length === 1) {
-      failedBoth.push(testIDs[i]);
-    }
-    else if (failed_pat.length === 1) {
-      failedPatient.push(testIDs[i]);
-    }
-    else if (failed_hos.length === 1) {
-      failedHospital.push(testIDs[i]);
-    }
-
-    if (failed_pat.length === 0) {
-      // email for patient sent successfully
-      let sql = "UPDATE Test SET last_reminder = CURDATE(), reminders_sent = reminders_sent + 1 WHERE test_id= ? ";
-      sql = mysql.format(sql, testIDs[i]);
-      updateQueryDatabase("Test", testIDs[i], sql, token, actionUsername)
-        .then((res) => {
-          if (!res.success) {
-            console.log("Error updating latest reminder. Response: " + JSON.stringify(res));
-          }
-        });
-    }
-    else {
-      // release token
-      returnToken("Test", testIDs[i], token, actionUsername);
-    }
+/**
+* Edit test colour - quick update.
+*
+* @param {String} testId Id of the test to update
+* @param {string} newColour - New colour to be stored.
+* @returns result of the query - {success:Boolean response:Array/Error}
+*/
+async function changeTestColour(testId, newColour, actionUsername){
+  const token = await requestEditing("Test",testId, actionUsername);
+  newColour = (newColour == null) ? "NULL" : mysql.escape(newColour);
+  const sql = `UPDATE Test SET test_colour=${newColour} WHERE test_id = ${mysql.escape(testId)};`;
+  const res = await updateQueryDatabase("Test",testId,sql,token, actionUsername);
+  if (!res.success) {
+    res.response = res.response.problem;
   }
+  return res;
+}
 
-  if (failedBoth.length === 0 && failedPatient.length === 0 && failedHospital.length === 0) {
-    return {success:true, response: "All emails sent successfully."};
+/**
+* Edit patient colour - quick update.
+*
+* @param {String} patientNo Number of the patient to update
+* @param {string} newColour - New colour to be stored.
+* @returns result of the query - {success:Boolean response:Array/Error}
+*/
+async function changePatientColour(patientNo, newColour, actionUsername){
+  const token = await requestEditing("Patient",patientNo, actionUsername);
+  newColour = (newColour == null) ? "NULL" : mysql.escape(newColour);
+  const sql = `UPDATE Patient SET test_colour=${newColour} WHERE patient_no = ${mysql.escape(patientNo)};`;
+  const res = await updateQueryDatabase("Patient",patientNo,sql,token, actionUsername);
+  if (!res.success) {
+    res.response = res.response.problem;
   }
-  else {
-    return {
-      success: false,
-      response : {
-        failedBoth: failedBoth,
-        failedPatient: failedPatient,
-        failedHospital: failedHospital
-      }
-    };
-  }
+  return res;
 }
 
 /*===============================*
@@ -1046,9 +1032,17 @@ async function updateQueryDatabase(table,id,sql,token, actionUsername)
 **/
 async function deleteQueryDatabase(table,id,sql, actionUsername)
 {
+    let deletedInfo;
+    switch (table) {
+      case "Test": deletedInfo = (await getTest(id)).response[0]; break;
+      case "Patient": deletedInfo = (await getFullPatientInfo(id)).response[0]; break;
+      case "Hospital": deletedInfo = (await getHospital(id)).response[0]; break;
+      case "Carer": deletedInfo = (await getCarer(id)).response[0]; break;
+    }
+
     const response = await databaseController.deleteQuery(sql,table,id)
     if(response.status === "OK"){
-      logger.logDelete(actionUsername, table, id, "Successful.");
+      logger.logDelete(actionUsername, table, id, "Successful. Deleted data: >>" + JSON.stringify(deletedInfo) + "<<.");
       return {success:true, response: "Entry deleted"}
     }
     else{
@@ -1215,7 +1209,9 @@ module.exports = {
     editPatientExtended,
     editCarer,
     editHospital,
-    sendOverdueReminders,
+    updateLastReminder,
+    changeTestColour,
+    changePatientColour,
   //DELETE
     deleteHospital,
     deletePatient,

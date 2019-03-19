@@ -3,7 +3,7 @@
  *
  * NB: this controller differs from the one on the client side!
  *
- * @module calendar-controller
+ * @module calendar-functions
  * @author Danilo Del Busso, Luka Kralj
  * @version 1.0
  */
