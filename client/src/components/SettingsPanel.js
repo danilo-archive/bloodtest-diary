@@ -13,15 +13,8 @@ const Container = styled.div`
 
 export default class SettingsPanel extends Component {
 
-  constructor(props){
-      super(props);
-      this.state = {
-        currentPage: this.props.currentPage,
-      }
-  }
-
   getPanel() {
-    switch(this.state.currentPage) {
+    switch(this.props.currentPage) {
       case 'login_page':
         return (
           <ConnectionPanel/>
@@ -29,6 +22,10 @@ export default class SettingsPanel extends Component {
       default:
         return (
           <>
+            <ConnectionPanel/>
+            <hr style={{
+              background: "white",
+            }}/>
             <UsersPanel/>
             <hr style={{
               background: "white",

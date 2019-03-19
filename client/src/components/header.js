@@ -47,6 +47,7 @@ class Header extends Component {
   */
   setPage = room => {
      this.setState({currentPage: room});
+     console.log(this.state.currentPage)
   }
 
   safeClose = event => {
