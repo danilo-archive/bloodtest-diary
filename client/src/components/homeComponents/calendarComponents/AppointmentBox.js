@@ -98,13 +98,19 @@ const RightClickMenu = props => {
            <Separator />
            <Item disabled={!props.completed}>Schedule next</Item>
            <Separator />
-           <Submenu label="Choose patient color">
-             <ColorPicker id={props.patientNo} type={"patient"}/>
+           <Submenu label="Patient color">
+             <Submenu label="Choose color">
+                <ColorPicker id={props.patientNo} type={"patient"}/>
+             </Submenu>
+             <Item>Remove color</Item>
            </Submenu>
-           <Submenu label="Choose test color">
-             <ColorPicker id={props.testId} type={"test"}/>
+           <Submenu label="Test color">
+             <Submenu label="Choose color">
+                <ColorPicker id={props.testId} type={"test"}/>
+             </Submenu>
+             <Item>Remove color</Item>
            </Submenu>
-           <Item>Remove color</Item>
+
         </Menu>
     );
 }
