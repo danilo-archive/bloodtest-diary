@@ -16,6 +16,8 @@ export default class AppointmentBoxDragPreview extends React.Component{
                 type={this.props.item.completed_status}
                 name={`${this.props.item.patient_name}`}
                 dueDate={this.props.item.dueDate}
+                patient_colour={this.props.item.patient_colour}
+                test_colour={this.props.item.test_colour}
             />
          </div>
       );

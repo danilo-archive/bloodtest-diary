@@ -21,7 +21,7 @@ describe("Test logger module functionalities", () => {
         const command = commands[c];
         it(`should log ${command} successfully when given a non-existent path`, () => {
 
-            const json_controller = require('./../../../lib/json-controller');
+            const json_controller = require('./../../../lib/json-parser');
             const getJSONStub = sinon.stub(json_controller, "getJSON");
             getJSONStub.callsFake(function () {
                 return null;
@@ -33,7 +33,7 @@ describe("Test logger module functionalities", () => {
             getJSONStub.restore();
         });
         it(`should log ${command} successfully when given an existent path`, () => {
-            const json_controller = require('./../../../lib/json-controller');
+            const json_controller = require('./../../../lib/json-parser');
             const getJSONStub = sinon.stub(json_controller, "getJSON");
             getJSONStub.callsFake(function () {
                 return {
@@ -57,7 +57,7 @@ describe("Test logger module functionalities", () => {
     }
 
     it('should log with level LOG when createLog is called with null level', () => {
-        const json_controller = require('./../../../lib/json-controller');
+        const json_controller = require('./../../../lib/json-parser');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
         getJSONStub.callsFake(function () {
             return {
@@ -82,7 +82,7 @@ describe("Test logger module functionalities", () => {
 
 
     it('should log with level LOG when createLog is called with undefined level', () => {
-        const json_controller = require('./../../../lib/json-controller');
+        const json_controller = require('./../../../lib/json-parser');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
         getJSONStub.callsFake(function () {
             return {
@@ -106,9 +106,9 @@ describe("Test logger module functionalities", () => {
 
     })
 
-
+    // TODO: needs fixing
     it('should be able to create options even when output directory string does not have a / at the end', () => {
-        const json_controller = require('./../../../lib/json-controller');
+        const json_controller = require('./../../../lib/json-parser');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
         getJSONStub.callsFake(function () {
             return {
@@ -134,7 +134,7 @@ describe("Test logger module functionalities", () => {
     })
 
     it('should be able to create options even when they are null when calling createLog()', () => {
-        const json_controller = require('./../../../lib/json-controller');
+        const json_controller = require('./../../../lib/json-parser');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
         getJSONStub.callsFake(function () {
             return {
@@ -162,7 +162,7 @@ describe("Test logger module functionalities", () => {
     })
 
     it('should send an error to the log when the messages array is undefined', () => {
-        const json_controller = require('./../../../lib/json-controller');
+        const json_controller = require('./../../../lib/json-parser');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
         getJSONStub.callsFake(function () {
             return {

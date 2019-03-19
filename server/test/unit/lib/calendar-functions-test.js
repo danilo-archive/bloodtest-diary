@@ -4,12 +4,12 @@
  * @author Luka Kralj
  * @version 1.0
  *
- * @module token-generator-test
+ * @module token-functions-test
  * @see module:token-generator
  */
 
 const expect = require("chai").expect;
-const calendarController = require('../../../lib/calendar-controller');
+const calendarController = require('../../../lib/calendar-functions');
 const dateformat = require('dateformat');
 
 describe("Test calendar controller:", () => {
