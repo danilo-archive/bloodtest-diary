@@ -14,54 +14,59 @@ const Container = styled.div`
 
   font-family: "Rajdhani", sans-serif;
   color: #646464;
-  font-size: 150%;
 
-
-  .inputSection {
-
-    width: 75%;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-
-    border: solid 1px #646464;
-    border-radius: 5px;
-    margin: 10px;
-    padding: 5px;
-    padding-left: 8px;
-
-  }
 
   .connectionTitle {
+    font-size: 140%;
     margin: 15px;
     margin-bottom: 5px;
   }
 
-  .connectionLabel {
-    width: auto;
-    margin-right: 8px;
-    font-size: 90%;
-    color: #646464;
-  }
+`;
+
+
+const InputSection = styled.div`
+  width: 75%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  border: solid 1px #b3b3b3;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 5px;
+  padding-left: 8px;
+
+  font-size: 120%;
 
   .connectionInput {
     width: 100%;
     color: #0b999d;
   }
 
-  .inputSection:focus-within {
-    box-shadow: 0 0 2px #0b999d;
+  &:focus-within {
+    border: solid 1px #0b999d;
   }
+
 `;
+
+const ConnectionLabel = styled.div`
+  width: auto;
+  margin-right: 8px;
+  color: #646464;
+  white-space: nowrap;
+`;
+
+
 
 export default class ConnectionPanel extends Component {
 
   constructor(props){
       super(props);
       this.state = {
-        //TODO: Get ip and port from serverConnect
+        //TODO: Get current ip and port from client
         ip: "192.168.1.1",
         port: "5000"
       };
@@ -79,19 +84,26 @@ export default class ConnectionPanel extends Component {
     });
   }
 
+  updateIP() {
+    //Update client Ip wiith state.ip
+  }
+
+  updatePort() {
+    //Update client port wiith state.port
+  }
+
   render(){
     return (
       <Container>
         <p className="connectionTitle" >Connection</p>
-
-        <div className="inputSection">
-          <div className="connectionLabel">IP:</div>
-          <input id="ipInput" type="text" name="ip" className="connectionInput" value={this.state.ip} onChange={this.handleChange}/>
-        </div>
-        <div className="inputSection">
-          <div className="connectionLabel">Port:</div>
-          <input id="portInput" type="text" name="port" className="connectionInput" value={this.state.port} onChange={this.handleChange}/>
-        </div>
+        <InputSection>
+          <ConnectionLabel>IP:</ConnectionLabel>
+          <input id="ipInput" type="text" name="ip" className="connectionInput" value={this.state.ip} onChange={this.handleChange} onBlur={this.updateIP}/>
+        </InputSection>
+        <InputSection>
+          <ConnectionLabel>Port:</ConnectionLabel>
+          <input id="portInput" type="text" name="port" className="connectionInput" value={this.state.port} onChange={this.handleChange} onBlur={this.updatePort}/>
+        </InputSection>
       </Container>
     )
   }

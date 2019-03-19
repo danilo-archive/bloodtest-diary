@@ -9,6 +9,16 @@ import PrefrencesPanel from './settingsComponents/prefrencesPanel.js';
 const Container = styled.div`
   height: auto;
   width: 300px;
+
+  divider {
+    display: block;
+    margin-before: 0.5em;
+    margin-after: 0.5em;
+    margin-start: auto;
+    margin-end: auto;
+    overflow: hidden;
+    border: solid 0.5px #0d4e56;
+  }
 `;
 
 export default class SettingsPanel extends Component {
@@ -22,14 +32,8 @@ export default class SettingsPanel extends Component {
       default:
         return (
           <>
-            <ConnectionPanel/>
-            <hr style={{
-              background: "white",
-            }}/>
             <UsersPanel/>
-            <hr style={{
-              background: "white",
-            }}/>
+            <divider />
             <PrefrencesPanel/>
           </>
         );
