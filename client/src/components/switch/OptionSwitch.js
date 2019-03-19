@@ -22,7 +22,7 @@ export default props => {
   return (
     <Container>
       <Option>{props.option1}</Option>
-      <Switch />
+      <Switch onToggleClick={props.onChange} />
       <Option>{props.option2}</Option>
     </Container>
   );
