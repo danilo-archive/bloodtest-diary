@@ -147,7 +147,7 @@ async function getTestInfo(test_id){
 async function getSortedOverdueWeeks()
 {
   const sql = `Select *, IF(((DAYOFWEEK(due_date)-2) = -1),DATE_ADD(due_date,Interval (-6) Day),DATE_ADD(due_date,Interval (-(DAYOFWEEK(due_date)-2)) Day)) AS Monday
-            From Test NATURAL JOIN Patient where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`
+             From Test NATURAL JOIN Patient where (completed_date IS NULL AND due_date < CURDATE() AND completed_status='no') OR (completed_date = CURDATE() AND due_date < CURDATE()) ORDER BY due_date ASC;`;
   const response = await selectQueryDatabase(sql);
   if(response.success == false)
   {
