@@ -36,7 +36,7 @@ const email_generator = require("./email-generator");
 const nodeMailer = require("nodemailer");
 const jsonController = require("../json-parser");
 const CONFIG_ABSOLUTE_PATH = __dirname + "/../../config/email_config.json"; //the absolute path of the email_config.json file
-
+const email_config = jsonController.getJSON(CONFIG_ABSOLUTE_PATH);
 /*
 |--------------------------------------------------------------------------
 | MAIN EMAIL SENDING FUNCTIONS
@@ -127,11 +127,9 @@ async function sendOverdueReminderToHospital(emailInfo) {
  * @returns {boolean} True if email was successfully sent, false if something went wrong.
  */
 async function sendOneEmail(emailInfo, emailGeneratorFunction) {
-  {
-    const config = jsonController.getJSON(CONFIG_ABSOLUTE_PATH);
-    const transporter = nodeMailer.createTransport(config.transporter);
+    const transporter = nodeMailer.createTransport(email_config.transporter);
 
-    const generated = emailGeneratorFunction(emailInfo);
+    const generated = await emailGeneratorFunction(emailInfo, email_config);
     if (generated == null) {
       return false;
     }
@@ -148,7 +146,6 @@ async function sendOneEmail(emailInfo, emailGeneratorFunction) {
       if (res) return true;
     } 
     return false;
-  }
 }
 
 /**
@@ -165,7 +162,6 @@ async function sendEmail(transporter, receiverOptions) {
       successful = false;
     } else {
       console.log("Email sent successfully")
-      //console.log(info);
       transporter.close();
       successful = true;
     }

@@ -12,7 +12,7 @@
                 "title": "Reminder for a blood test",
                 "appendDate": false
             },
-            "mainBody": "This is a gentle reminder that one of your patients has a blood test that is due soon. We kindly ask you to ensure they schedule an appointment with you as soon as possible.<br><br>Please see details below for more information.",
+            "mainBody": "This is a gentle reminder that one of your patients has a blood test that is due soon. We kindly ask you to ensure they schedule an appointment with you as soon as possible.--br----br--Please see details below for more information.",
             "details": {
                 "includePatientNo": true,
                 "includePatientName": true,
@@ -25,7 +25,7 @@
                 "title": "Reminder for your blood test",
                 "appendDate": false
             },
-            "mainBody": "This is a gentle reminder that you have a blood test that is due soon. We kindly ask you to schedule an appointment at your preferred hospital as soon as possible.<br><br>Please see details below for more information.",
+            "mainBody": "This is a gentle reminder that you have a blood test that is due soon. We kindly ask you to schedule an appointment at your preferred hospital as soon as possible.--br----br--Please see details below for more information.",
             "details": {
                 "includePatientNo": false,
                 "includePatientName": false,
@@ -38,7 +38,7 @@
                 "title": "Reminder for a blood test",
                 "appendDate": false
             },
-            "mainBody": "This is a gentle reminder that a patient you are responsible for has a blood test that is due soon. We kindly ask you to schedule an appointment for them at their preferred hospital as soon as possible.<br><br>Please see details below for more information.",
+            "mainBody": "This is a gentle reminder that a patient you are responsible for has a blood test that is due soon. We kindly ask you to schedule an appointment for them at their preferred hospital as soon as possible.--br----br--Please see details below for more information.",
             "details": {
                 "includePatientNo": true,
                 "includePatientName": true,
@@ -51,7 +51,7 @@
                 "title": "Reminder for an overdue blood test - ",
                 "appendDate": true
             },
-            "mainBody": "This is a gentle reminder that one of your patients has <b>missed</b> their recent blood test. We kindly ask you to ensure they schedule an appointment with you as soon as possible and attend the appointment.<br><br>Please see details below for more information.",
+            "mainBody": "This is a gentle reminder that one of your patients has <b>missed</b> their recent blood test. We kindly ask you to ensure they schedule an appointment with you as soon as possible and attend the appointment.--br----br--Please see details below for more information.",
             "details": {
                 "includePatientNo": true,
                 "includePatientName": true,
@@ -64,7 +64,7 @@
                 "title": "Reminder for your overdue blood test - ",
                 "appendDate": true
             },
-            "mainBody": "This is a gentle reminder about a recent blood test that you have <b>missed</b>. We kindly ask you to schedule an appointment at your preferred hospital as soon as possible and ensure you attend the appointment.<br><br>Please see details below for more information.",
+            "mainBody": "This is a gentle reminder about a recent blood test that you have <b>missed</b>. We kindly ask you to schedule an appointment at your preferred hospital as soon as possible and ensure you attend the appointment.--br----br--Please see details below for more information.",
             "details": {
                 "includePatientNo": false,
                 "includePatientName": false,
@@ -77,7 +77,7 @@
                 "title": "Reminder for an overdue blood test - ",
                 "appendDate": true
             },
-            "mainBody": "This is a gentle reminder that a patient you are responsible for has <b>missed</b> their recent blood test. We kindly ask you to schedule an appointment at their preferred hospital for them as soon as possible and ensure they attend the appointment.<br><br>Please see details below for more information.",
+            "mainBody": "This is a gentle reminder that a patient you are responsible for has <b>missed</b> their recent blood test. We kindly ask you to schedule an appointment at their preferred hospital for them as soon as possible and ensure they attend the appointment.--br----br--Please see details below for more information.",
             "details": {
                 "includePatientNo": true,
                 "includePatientName": true,
@@ -87,7 +87,7 @@
         },
         "common": {
             "logo": null,
-            "footer": "For more information please contact King's College Hospital.<br><br>Kind regards,<br><br>King's College Hospital<br><br><font face='Courier New' color='Black' size='2'><br>*************************************************************************************<br><br>This message may contain confidential information. <br>If you are not the intended recipient please inform the sender that you have received the message in error before deleting it.<br>Please do not disclose, copy or distribute information in this e-mail or take any action in relation to its contents. To do so is strictly prohibited and may be unlawful.<br>Thank you for your co-operation.<br><br></font>"
+            "footer": "For more information please contact King's College Hospital.--br----br--Kind regards,--br----br--King's College Hospital--br----br--<font face='Courier New' size='2'>--br--*************************************************************************************--br----br--This message may contain confidential information. --br--If you are not the intended recipient please inform the sender that you have received the message in error before deleting it.--br--Please do not disclose, copy or distribute information in this e-mail or take any action in relation to its contents. To do so is strictly prohibited and may be unlawful.--br--Thank you for your co-operation.--br----br--</font>"
         }
     }
 }
