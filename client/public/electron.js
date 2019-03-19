@@ -1,9 +1,11 @@
 const electron = require('electron');
 const app = electron.app;
+const session  = electron.session;
 const globalShortcut = electron.globalShortcut;
 const BrowserWindow = electron.BrowserWindow;
 
 const isDev = require('electron-is-dev');
+const jsonController = require("../lib/json-controller.js");
 
 const maxWindowWidth = 1400;
 const maxWindowHeight = 800;
@@ -15,6 +17,9 @@ let width = 0;
 let height = 0;
 
 let mainWindow;
+let currentSession;
+let ip;
+let port;
 
 app.on('ready', () => {
   // Register a 'CommandOrControl+X' shortcut listener.
@@ -59,15 +64,44 @@ function createWindows() {
 
 }
 
+function getCoreCookies(callback){
+    let newIp = undefined;
+    let newPort = undefined;
+    currentSession.cookies.get({url: "http://localhost"}, (err, cookies) => {
+        console.log(cookies);
+        for (let i = 0; i < cookies.length; ++i){
+            let cookie = cookies[i];
+            if (cookie.name === "ip"){
+                newIp = cookie.value;
+            }
+            else if (cookie.name === "port"){
+                newPort = cookie.value;
+            }
+        }
+        callback(newIp, newPort)
+    });
+}
 
+function safeExit(callback){
+    getCoreCookies((newIp, newPort) => {
+        if (newIp !== ip || newPort !== port){
+            jsonController.writeServerConfigFile({ip: newIp, port: newPort});
+        }
+        callback();
+    });
+}
 
 app.on('ready', () => {
 
   setScreenSize();
   createWindows();
-
+  currentSession = mainWindow.webContents.session;
+  let config = jsonController.getJSON("src/server_connect_config.json");
+  ip = config.ip;
+  port = config.port;
+  currentSession.cookies.set({name: "ip", value: config.ip, url: "http://localhost"}, err => {console.log(err)});
+  currentSession.cookies.set({name: "port", value: config.port, url: "http://localhost"}, err => {console.log(err)});
   mainWindow.once('ready-to-show', () => {
-      //TODO: CHECK CONNECTION TO SERVER
       splash.destroy();
       mainWindow.show();
   });
@@ -75,6 +109,6 @@ app.on('ready', () => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+      safeExit( () => app.quit())
   }
 });

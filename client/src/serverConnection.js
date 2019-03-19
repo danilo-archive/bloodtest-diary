@@ -15,8 +15,8 @@ import openSocket from 'socket.io-client';
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
-const host = "http://localhost";
-const port = 3265;
+const host = cookies.get("ip");
+const port = cookies.get("port");
 
 class ServerConnect {
 
