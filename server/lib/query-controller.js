@@ -261,6 +261,13 @@ async function getOverdueReminderGroups() {
  */
 async function editTest(testId, newInfo, token, actionUsername) {
   let scheduleNew = false;
+  const testInfo = await getTest(testId);
+  if (!testInfo.success) {
+    return testInfo;
+  }
+  if (testInfo.response.length == 0) {
+    return { success: false, response: "No new tests added - No test found!" };
+  }
   if (
     newInfo.completed_status == "yes" ||
     newInfo.completed_status == "in review"
@@ -279,13 +286,18 @@ async function editTest(testId, newInfo, token, actionUsername) {
     actionUsername
   );
 
-  if (res.success && scheduleNew) {
+  if (
+    res.success &&
+    scheduleNew &&
+    testInfo.response[0].completed_status == "no"
+  ) {
     const insertedResponse = await scheduleNextTest(testId, actionUsername);
     if (insertedResponse.response) {
       res.response.new_date = insertedResponse.response.new_date;
       res.response.insertId = insertedResponse.response.insertId;
     }
   }
+
   return res;
 }
 /**
@@ -537,6 +549,13 @@ async function changeTestStatus(test, actionUsername) {
   let date;
   // TODO: first check if it can edit. If edit successful then schedule a new one.
   let scheduleNew = false;
+  const testInfo = await getTest(test.testId);
+  if (!testInfo.success) {
+    return testInfo;
+  }
+  if (testInfo.response.length == 0) {
+    return { success: false, response: "No new tests added - No test found!" };
+  }
   switch (test.newStatus) {
     case "completed": {
       status = "yes";
@@ -569,7 +588,11 @@ async function changeTestStatus(test, actionUsername) {
     actionUsername
   );
 
-  if (res.success && scheduleNew) {
+  if (
+    res.success &&
+    scheduleNew &&
+    testInfo.response[0].completed_status == "no"
+  ) {
     const insertedResponse = await scheduleNextTest(
       test.testId,
       actionUsername
