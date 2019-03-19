@@ -828,6 +828,45 @@ describe("Update queries tests", function(){
         response.success.should.equal(false);
       })
     })
+    context("Update User's email", function(){
+      let spy;
+      beforeEach(()=>{
+          spy = sinon.spy(queryController.updateUserEmail);
+      })
+      it("Correctly update email (STUBBED)", async function()
+      {
+        const dbController = {
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({username:testUsername,recovery_email:"email123@gmail.com"},"400", testUsername);
+        response.success.should.equal(true);
+        response.response.affectedRows.should.equal(1);
+      })
+      it("Fail - no token (STUBBED)", async function() {
+        const dbController = {
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({username:testUsername,hashed_password:"373723172173732"});
+        response.success.should.equal(false);
+      })
+      it("Fail - query error (STUBBED)", async function() {
+        const dbController = {
+          updateQuery: async function() {
+            return {status:"ERR", err: { error:"STUBBED ERROR"}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
+        response.success.should.equal(false);
+        response.response.error.should.equal("STUBBED ERROR");
+      })
+    })
     context("Edit Patient", function(){
       let spy;
       beforeEach(()=>{

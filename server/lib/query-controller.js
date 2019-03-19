@@ -439,12 +439,28 @@ async function updatePassword(json, actionUsername)
   const user = response.response[0];
   if(user){
     const hash = authenticator.produceHash(json.hashed_password,user.iterations,user.salt);
-    const sql = `UPDATE User SET hashed_password=${hash}, WHERE username = ${mysql.escape(json.username)} LIMIT 1;`;
+    const sql = `UPDATE User SET hashed_password='${hash}' WHERE username = ${mysql.escape(json.username)} LIMIT 1;`;
     return await updateQueryDatabase("User",json.username,sql,token, actionUsername);
   }
   else{
     return {success:false , response:"No user found"}
   }
+}
+
+/**
+* Update recovery email of an user
+* @param {JSON} json - user
+* @param {string} token - token to issue the request with
+* @param {string} actionUsername The user who issued the request.
+* Obligatory properties:
+* @property username {String}
+* @property recovery_email {String}
+* @return {JSON} - {success:Boolean response:Array or Error}
+**/
+async function updateUserEmail(json,token,actionUsername)
+{
+  const sql = prepareUpdateSQL("User", json, "username")
+  return await updateQueryDatabase("User",json.username,sql,token,actionUsername)
 }
 
 /**
@@ -578,6 +594,7 @@ async function sendOverdueReminders(testIDs, actionUsername) {
 * @property username {String}
 * @property hashed_password {String}
 * @property email {String}
+* @property isAdmin {string} "yes" | "no"
 * @return {JSON} result of the query - {success:Boolean}
 **/
 async function addUser(json, actionUsername)
@@ -586,7 +603,7 @@ async function addUser(json, actionUsername)
   const salt = authenticator.produceSalt();
   //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
   const hash = authenticator.produceHash(json.hashed_password,iterations,salt);
-  const sql = `INSERT INTO User VALUES(${mysql.escape(json.username)},${hash},${salt},${iterations},${mysql.escape(json.email)});`;
+  const sql = `INSERT INTO User VALUES(${mysql.escape(json.username)},${hash},${mysql.escape(json.isAdmin)},${salt},${iterations},${mysql.escape(json.email)});`;
   return await insertQueryDatabase(sql, "User", actionUsername, json.username);
 }
 
@@ -1222,6 +1239,7 @@ module.exports = {
     addCarer,
   //UPDATES
     updatePassword,
+    updateUserEmail,
     changeTestStatus,
     changeTestDueDate,
     editTest,
