@@ -28,9 +28,9 @@ module.exports = {
   sendReminderToPatient,
   sendReminderToHospital,
   sendOverdueReminderToPatient,
-  sendOverdueReminderToHospital
+  sendOverdueReminderToHospital,
+  sendPasswordRecoveryEmail
 };
-
 
 const email_generator = require("./email-generator");
 const nodeMailer = require("nodemailer");
@@ -45,14 +45,17 @@ const email_config = jsonController.getJSON(CONFIG_ABSOLUTE_PATH);
 | these functions do not directly handle data and generate emails. They are written to simplify
 | usage of the module.
 */
+async function sendPasswordRecoveryEmail(emailInfo){
+  return await sendOneEmail(emailInfo, email_generator.passwordRecoveryEmail);
+}
 
 /**
  * Send a single reminder to patient.
- * 
+ *
  * @param {JSON} emailInfo -  {
- *                              patient: 
- *                              test: 
- *                              hospital: 
+ *                              patient:
+ *                              test:
+ *                              hospital:
  *                              carer:
  *                            }
  * @returns {boolean} True if email was successfully sent, false if something went wrong.
@@ -63,11 +66,11 @@ async function sendReminderToPatient(emailInfo) {
 
 /**
  * Send a single reminder to hospital.
- * 
+ *
  * @param {JSON} emailInfo -  {
- *                              patient: 
- *                              test: 
- *                              hospital: 
+ *                              patient:
+ *                              test:
+ *                              hospital:
  *                              carer:
  *                            }
  * @returns {boolean} True if email was successfully sent, false if something went wrong.
@@ -78,32 +81,38 @@ async function sendReminderToHospital(emailInfo) {
 
 /**
  * Send a single reminder to patient.
- * 
+ *
  * @param {JSON} emailInfo -  {
- *                              patient: 
- *                              test: 
- *                              hospital: 
+ *                              patient:
+ *                              test:
+ *                              hospital:
  *                              carer:
  *                            }
  * @returns {boolean} True if email was successfully sent, false if something went wrong.
  */
 async function sendOverdueReminderToPatient(emailInfo) {
-  return await sendOneEmail(emailInfo, email_generator.overdueTestReminderForPatient);
+  return await sendOneEmail(
+    emailInfo,
+    email_generator.overdueTestReminderForPatient
+  );
 }
 
 /**
  * Send a single reminder to hospital.
- * 
+ *
  * @param {JSON} emailInfo -  {
- *                              patient: 
- *                              test: 
- *                              hospital: 
+ *                              patient:
+ *                              test:
+ *                              hospital:
  *                              carer:
  *                            }
  * @returns {boolean} True if email was successfully sent, false if something went wrong.
  */
 async function sendOverdueReminderToHospital(emailInfo) {
-  return await sendOneEmail(emailInfo, email_generator.overdueTestReminderForHospital);
+  return await sendOneEmail(
+    emailInfo,
+    email_generator.overdueTestReminderForHospital
+  );
 }
 
 /*
@@ -116,36 +125,36 @@ async function sendOverdueReminderToHospital(emailInfo) {
 
 /**
  * Generate and send a single email.
- * 
+ *
  * @param {JSON} emailInfo -  {
- *                              patient: 
- *                              test: 
- *                              hospital: 
+ *                              patient:
+ *                              test:
+ *                              hospital:
  *                              carer:
  *                            }
  * @param {function} emailGeneratorFunction Function that generates the email from emailInfo.
  * @returns {boolean} True if email was successfully sent, false if something went wrong.
  */
 async function sendOneEmail(emailInfo, emailGeneratorFunction) {
-    const transporter = nodeMailer.createTransport(email_config.transporter);
+  const transporter = nodeMailer.createTransport(email_config.transporter);
 
-    const generated = await emailGeneratorFunction(emailInfo, email_config);
-    if (generated == null) {
-      return false;
-    }
-
-    const receiverOptions = {
-      from: transporter.options.auth.user,
-      to: generated.to,
-      subject: generated.subjectTitle,
-      html: generated.html
-    };
-
-    if (receiverOptions.to != undefined && receiverOptions.to != null) {
-      const res = await sendEmail(transporter, receiverOptions);
-      if (res) return true;
-    } 
+  const generated = await emailGeneratorFunction(emailInfo, email_config);
+  if (generated == null) {
     return false;
+  }
+
+  const receiverOptions = {
+    from: transporter.options.auth.user,
+    to: generated.to,
+    subject: generated.subjectTitle,
+    html: generated.html
+  };
+
+  if (receiverOptions.to != undefined && receiverOptions.to != null) {
+    const res = await sendEmail(transporter, receiverOptions);
+    if (res) return true;
+  }
+  return false;
 }
 
 /**
@@ -161,7 +170,7 @@ async function sendEmail(transporter, receiverOptions) {
       console.log(err);
       successful = false;
     } else {
-      console.log("Email sent successfully")
+      console.log("Email sent successfully");
       transporter.close();
       successful = true;
     }
@@ -173,15 +182,14 @@ async function sendEmail(transporter, receiverOptions) {
   return successful;
 }
 
-
 /**
-* Await for this function to pause execution for a certain time.
-*
-* @param {number} ms Time in milliseconds
-* @returns {Promise}
-*/
+ * Await for this function to pause execution for a certain time.
+ *
+ * @param {number} ms Time in milliseconds
+ * @returns {Promise}
+ */
 function sleep(ms) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     setTimeout(resolve, ms);
   });
 }

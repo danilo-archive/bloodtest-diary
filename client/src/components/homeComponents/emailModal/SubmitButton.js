@@ -8,7 +8,7 @@ const Container = styled.div`
   height: 70px;
 
   background: #0d4e56;
-  border-radius: 10px 0 10px 0;
+  border-radius: 10px 0 0 0;
   font-size: 29px;
   float: right;
   display: flex;
@@ -17,6 +17,8 @@ const Container = styled.div`
   bottom: 0;
   right: 0;
   transition: 250ms;
+  cursor: pointer;
+  user-select: none;
   &:hover {
     background: #0b999d;
   }

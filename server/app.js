@@ -294,21 +294,6 @@ io.on('connection',function(socket)
     // EDIT TOKEN EXCHANGE
     // ==============
 
-    socket.on('sendOverdueReminders', async (testIDs, accessToken) => {
-        if (!accessToken) {
-            socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
-
-        const response = await email_controller.sendOverdueReminders(testIDs, username);
-        socket.emit("sendOverdueRemindersResponse", response);
-    });
-
     socket.on("requestTestEditToken", async (testId, accessToken) => {
         if (!accessToken) {
             socket.emit("requestTestEditTokenResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -531,6 +516,32 @@ io.on('connection',function(socket)
         }else{
             socket.emit("changePatientColourResponse", {success: false});
         }
+    });
+
+    // ==============
+    // OTHER
+    // ==============
+
+     //TODO: ADD CLIENT CONNECTION HERE
+    //PARAMETER - (STRING) USERNAME TO CHANGE PASSWORD  
+    socket.on('passwordRecoverRequest', async (username) => {
+        const passwordResponse = await email_controller.recoverPassword(username);
+        socket.emit('passwordRecoverResponse', passwordResponse);
+    });
+
+    socket.on('sendOverdueReminders', async (testIDs, accessToken) => {
+        if (!accessToken) {
+            socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await email_controller.sendOverdueReminders(testIDs, username);
+        socket.emit("sendOverdueRemindersResponse", response);
     });
 
 });

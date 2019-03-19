@@ -1,19 +1,24 @@
 import styled from "styled-components";
 import React from "react";
+import Icon from "../calendarComponents/Icon";
+import { Circle } from "styled-spinkit";
 import DateBullet from "./DateBullet";
 import TextRadioButton from "../editTest/TextRadioButton";
 import RadioButton from "../editTest/RadioButton";
 import TextLabel from "../editTest/Label";
 import TimePill from "../calendarComponents/TimePill";
+import { relative } from "path";
+
 const Container = styled.div`
-  height: 40px;
+
+  height: 35px;
   width:  ${props => (props.title ? `90%` : `80%`)}
   margin:auto;
   margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   ${props => (props.title ? `justify-content:center;` : ``)}
-
+  overflow:hidden;
   background: white;
   border: 1px #e8e8e8 solid;
   white-space: nowrap;
@@ -48,17 +53,22 @@ export default props => {
           <Label title={props.title}>{props.text}</Label>
         </div>
       ) : (
-        <Label style={{ margin: "0 20%" }} title={props.title}>
+        <Label style={{ margin: "0 15%" }} title={props.title}>
           {props.text}
         </Label>
       )}
-
-      {props.title ? (
+      {props.stat ? (
+        <Label style={{ position: "relative", top: "5%" }}>
+          Failed {props.stat}
+        </Label>
+      ) : props.title ? (
         <TextRadioButton
           checked={props.selected}
           onCheck={checked => props.onAllCheck(checked)}
           text="Select All"
         />
+      ) : props.noCheck ? (
+        ``
       ) : (
         <RadioButton
           checked={props.selected}
@@ -70,6 +80,16 @@ export default props => {
             })
           }
         />
+      )}
+
+      {props.loading ? (
+        <Circle size="25" />
+      ) : props.sent ? (
+        <Icon asLabel onClick={() => {}} font-size="200%" icon="check" />
+      ) : props.fail ? (
+        <Icon asLabel onClick={() => {}} font-size="200%" icon="times" />
+      ) : (
+        ``
       )}
     </Container>
   );

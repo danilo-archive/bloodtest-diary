@@ -4,7 +4,6 @@ import TextLabel from "../editTest/Label";
 
 const Container = styled.div`
   width: 100%;
-  border-radius: 10px 10px 0 0;
   height: 10%;
   font-size: 25px;
   display: flex;
