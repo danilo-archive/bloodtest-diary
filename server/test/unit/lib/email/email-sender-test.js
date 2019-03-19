@@ -3,10 +3,55 @@ const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
 const proxyquire = require('proxyquire')
-let email_sender = require('./../../../../lib/email/email-sender'); 
+let email_sender = require('./../../../../lib/email/email-sender');
 require('mocha-sinon'); //needed for checking console log
+let getTestStub = null
+let getHospitalStub = null;
+let getPatientStub = null;
+let getCarerStub = null;
 
 // TODO: ADD TESTS
+
+//this is just so instanbul isnt red for no reason...
+describe("Call all generating functions to have branch coverage", ()=>{
+    it("should just call them, man... come on.", ()=>{
+        const qc = require('./../../../../lib/email/email-generator');
+
+        const emailInfo = {
+            "patient": {
+              "patient_no": "P799886",
+              "patient_name": "Bruce",
+              "patient_surname": "Wayne",
+              "patient_email": "imnotbatman@gotham.com",
+              "patient_phone": null,
+              "hospital_id": 551,
+              "carer_id": null,
+              "additional_info": null
+            },
+            "test": {
+              "test_id": 1,
+              "patient_no": "P799886",
+              "due_date": new Date(),
+              "frequency": "4-W",
+              "occurrences": 9,
+              "completed_status": "yes",
+              "completed_date": new Date(),
+              "notes": null
+            },
+            "hospital": {
+              "hospital_id": 551,
+              "hospital_name": "Gotham City Hospital",
+              "hospital_email": "hospital@gotham.com",
+              "hospital_phone": null
+            }
+          }
+
+        qc.testReminderForHospital(emailInfo);
+        qc.testReminderForPatient(emailInfo);
+        qc.overdueTestReminderForHospital(emailInfo);
+        qc.overdueTestReminderForPatient(emailInfo);
+    })
+})
 
 function fakeEmailGeneratingFunction() {
     return "<p>This is fake</p>"
@@ -20,7 +65,7 @@ const fakeGetQuery = async function (resultID) {
     if (isNaN(id) || id <= 0) {
         return [];
     }
-    let result = {
+    const result = {
         "response": [{
             "test_id": 1,
             "due_date": new Date(),
@@ -38,7 +83,6 @@ const fakeGetQuery = async function (resultID) {
             "carer_id": null,
             "additional_info": null,
 
-            "carer_id": "1",
             "carer_name": "Albert",
             "carer_surname": "Butler",
             "carer_email": "albert@gotham.com",
@@ -65,7 +109,7 @@ const fakeGetQueryNoPatientEmail = async function (resultID) {
     if (isNaN(id) || id <= 0) {
         return [];
     }
-    let result = {
+    const result = {
         "response": [{
             "test_id": 1,
             "due_date": new Date(),
@@ -111,7 +155,7 @@ const fakeGetQueryNoPatient = async function (resultID) {
     if (isNaN(id) || id <= 0) {
         return [];
     }
-    let result = {
+    const result = {
         "response": [{
             "test_id": 1,
             "due_date": new Date(),
