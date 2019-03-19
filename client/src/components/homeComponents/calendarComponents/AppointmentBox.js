@@ -102,13 +102,13 @@ const RightClickMenu = props => {
              <Submenu label="Choose color">
                 <ColorPicker id={props.patientNo} type={"patient"}/>
              </Submenu>
-             <Item>Remove color</Item>
+             <Item  onClick={() => {serverConnect.changePatientColour(props.patientNo, null, res => {return})}}>Remove color</Item>
            </Submenu>
            <Submenu label="Test color">
              <Submenu label="Choose color">
                 <ColorPicker id={props.testId} type={"test"}/>
              </Submenu>
-             <Item>Remove color</Item>
+             <Item onClick={() => {serverConnect.changeTestColour(props.testId, null, res => {return})}}>Remove color</Item>
            </Submenu>
 
         </Menu>

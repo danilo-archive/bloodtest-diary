@@ -60,33 +60,12 @@ class Home extends Component {
 
   initCallbacks() {
     this.initOnTestAdded();
-    this.initOnTestEdit();
-    this.initOnTestStatusChange();
   }
 
   initOnTestAdded() {
     this.serverConnect.setOnTestAdded(newTest => {
       this.updateDashboard();
-    });
-  }
-
-  initOnTestStatusChange() {
-    this.serverConnect.setOnTestStatusChange((id, status) => {
-      this.updateDashboard();
-      this.modifyOverdueTest(id, test => {
-        test.completed_status = status;
-        return test;
-      });
-    });
-  }
-
-  initOnTestEdit() {
-    this.serverConnect.setOnTestEdit((id, newTest) => {
-      this.updateDashboard();
-      this.modifyOverdueTest(id, test => {
-        let modified = newTest;
-        return modified;
-      });
+      this.initOverduePanel();
     });
   }
 
@@ -140,24 +119,6 @@ class Home extends Component {
         this.handleInvalidResponseError(res);
       }
     });
-  };
-
-  modifyOverdueTest = (id, modificationFunction) => {
-    for (var i = 0; i < this.state.overdueTests.length; ++i) {
-      let group = this.state.overdueTests[i];
-      for (var j = 0; j < group.tests.length; ++j) {
-        var test = group.tests[j];
-        if (test.test_id === id) {
-          let newOverdueTests = [...this.state.overdueTests];
-          let testToModify = newOverdueTests[i].tests[j];
-          console.log({ testToModify });
-          let modifiedTest = modificationFunction(testToModify);
-          console.log({ modifiedTest });
-          newOverdueTests[i].tests[j] = modifiedTest;
-          this.setState({ overdueTests: newOverdueTests });
-        }
-      }
-    }
   };
 
   refresh = event => {

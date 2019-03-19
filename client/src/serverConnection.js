@@ -25,51 +25,41 @@ class ServerConnect {
         this.currentRoom = "";
         this.socket = openSocket(`${host}:${port}`);
 
-        this.onConnected = undefined;
+
         /**
         *   Triggered when a connection is established.
         */
+        this.onConnected = undefined;
         this.socket.on("connected", () => {
             console.log("connected successfully");
             this.socket.emit("join", "", this.currentRoom, true);
             this.onConnected();
         });
 
-        this.onDisconnect = undefined;
         /**
         *   Triggered when the connection is lost.
         */
+        this.onDisconnect = undefined;
         this.socket.on("disconnect", () => {
             this.onDisconnect();
         });
 
-        this.onTestAdded = undefined;
-        this.onTestStatusChange = undefined;
-        this.onTestEdit = undefined;
-        this.onPatientEdit = undefined;
-
         /**
         *   Triggered when a new test is added.
         */
+        this.onTestAdded = undefined;
         this.socket.on("testAdded", newTest => {
             this.onTestAdded(newTest);
         });
-        /**
-        *   Triggered when a test status changes.
-        */
-        this.socket.on("testStatusChange", (id, status) => {
-            this.onTestStatusChange(id, status);
-        });
+
         /**
         *   Triggered when a patient is edited.
         */
+        this.onPatientEdit = undefined;
         this.socket.on("patientEdited", (patientId, newInfo) => {
             this.onPatientEdit(patientId, newInfo);
         });
 
-        this.socket.on("testEdited", (id, newInfo) => {
-            this.onTestEdit(id, newInfo);
-        });
     }
 
     /**
@@ -136,24 +126,6 @@ class ServerConnect {
         this.onTestAdded = callback;
     }
 
-    /**
-    * Sets the callback to be called when a test status is changed
-    * (when socket.on("testStatusChange") is triggered)
-    * @param {function} callback
-    */
-    setOnTestStatusChange(callback){
-        console.log("set");
-        this.onTestStatusChange = callback;
-    }
-    /**
-    * Sets the callback to be called when a test is edited
-    * -- no current action triggers this specific callback
-    * -- current version calls socket.on("testAdded") callback
-    * @param {function} callback
-    */
-    setOnTestEdit(callback){
-        this.onTestEdit = callback;
-    }
     /**
     * Sets the callback to be called when a patient is edited
     * (when socket.on("patientEdited") is triggered)

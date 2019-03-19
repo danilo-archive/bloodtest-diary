@@ -147,29 +147,29 @@ async function getTestInfo(test_id) {
 }
 
 /**
- * Get all the overdue tests from the database plus additional info about time difference
- * @return {JSON} result of the query - {success:true/false response:Array{SortedWeek}/Error}
- * @typedef {SortedWeek}
- * @property  class {String} - monday of the week, format: 'Mon Mar 04 2019 00:00:00 GMT+0000 (GMT)'
- * @property  tests {Array[JSON]} - tests within week
- **/
-async function getSortedOverdueWeeks() {
-    const sql = `Select *, IF(((DAYOFWEEK(due_date)-2) = -1),DATE_ADD(due_date,Interval (-6) Day),DATE_ADD(due_date,Interval (-(DAYOFWEEK(due_date)-2)) Day)) AS Monday
-            From Test NATURAL JOIN Patient where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY due_date ASC;`;
-    const response = await selectQueryDatabase(sql);
-    if (response.success == false) {
-        return response;
-    }
-    const groupedTests = _.groupBy(response.response, "Monday");
-    const keys = Object.keys(groupedTests);
-    let classedTests = [];
-    for (let i = 0; i < keys.length; i++) {
-        classedTests = classedTests.concat({
-            class: keys[i],
-            tests: groupedTests[keys[i]]
-        });
-    }
-    return { success: true, response: classedTests };
+* Get all the overdue tests from the database plus additional info about time difference
+* @return {JSON} result of the query - {success:true/false response:Array{SortedWeek}/Error}
+* @typedef {SortedWeek}
+* @property  class {String} - monday of the week, format: 'Mon Mar 04 2019 00:00:00 GMT+0000 (GMT)'
+* @property  tests {Array[JSON]} - tests within week
+**/
+async function getSortedOverdueWeeks()
+{
+  const sql = `Select *, IF(((DAYOFWEEK(due_date)-2) = -1),DATE_ADD(due_date,Interval (-6) Day),DATE_ADD(due_date,Interval (-(DAYOFWEEK(due_date)-2)) Day)) AS Monday
+             From Test NATURAL JOIN Patient where (completed_date IS NULL AND due_date < CURDATE() AND completed_status='no') OR (completed_date = CURDATE() AND due_date < CURDATE()) ORDER BY due_date ASC;`;
+  const response = await selectQueryDatabase(sql);
+  if(response.success == false)
+  {
+    return response;
+  }
+  const groupedTests = _.groupBy(response.response,"Monday");
+  const keys = Object.keys(groupedTests);
+  let classedTests = [];
+  for(let i=0; i<keys.length; i++)
+  {
+      classedTests=classedTests.concat({class:keys[i], tests:groupedTests[keys[i]]});
+  }
+  return {success: true , response: classedTests};
 }
 
 /**

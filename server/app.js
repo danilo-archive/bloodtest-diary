@@ -404,7 +404,7 @@ io.on('connection',function(socket)
         const response = await queryController.changeTestStatus(test, username);
         if (response.success){
             socket.emit('testStatusChangeResponse', {success: true, response: response.response});
-            io.in("main_page").emit('testStatusChange', testId, newStatus);
+            io.in("main_page").emit('testAdded');
         }else{
             socket.emit('testStatusChangeResponse', {success: false});
         }
@@ -427,7 +427,7 @@ io.on('connection',function(socket)
         if (response.success){
             socket.emit("editTestResponse", {success: true, response: response.response});
             //socket.emit("testAdded");
-            io.in("main_page").emit("testEdited", testId, newInfo);
+            io.in("main_page").emit("testAdded");
         } else {
             socket.emit("editTestResponse", {success: false});
         }
@@ -447,7 +447,7 @@ io.on('connection',function(socket)
         const response = await queryController.changeTestDueDate(testId, newDate, username);
         if (response.success){
             socket.emit("changeTestDueDateResponse", {success: true});
-            io.in("main_page").emit("testAdded", response.response);
+            io.in("main_page").emit("testAdded");
         }else{
             socket.emit("changeTestDueDateResponse", {success: false});
         }
@@ -491,7 +491,7 @@ io.on('connection',function(socket)
         const response = await queryController.changeTestColour(testId, newColour, username);
         if (response.success){
             socket.emit("changeTestColourResponse", {success: true});
-            io.in("main_page").emit("testAdded", response.response);
+            io.in("main_page").emit("testAdded");
         }else{
             socket.emit("changeTestColourResponse", {success: false});
         }
@@ -512,7 +512,7 @@ io.on('connection',function(socket)
         console.log(response)
         if (response.success){
             socket.emit("changePatientColourResponse", {success: true});
-            io.in("main_page").emit("testAdded", response.response);
+            io.in("main_page").emit("testAdded");
         }else{
             socket.emit("changePatientColourResponse", {success: false});
         }
