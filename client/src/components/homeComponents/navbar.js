@@ -77,7 +77,7 @@ class Navbar extends React.Component {
                   <SearchBar/>
                   <WeekButtons onPrev = {this.props.onPrev} onNext = {this.props.onNext}/>
                 </CalenderControls>
-                <ControlButtons onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
+                <ControlButtons page={this.props.page} onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
               </BottomSide>
             </>
           );
@@ -86,7 +86,7 @@ class Navbar extends React.Component {
             <>
               <NavHeader title={this.props.page} onHomeClick = {this.props.onHomeClick} onRefreshClick = {this.props.refresh}/>
               <BottomSide>
-                <ControlButtons onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
+                <ControlButtons page={this.props.page} onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
               </BottomSide>
             </>
           );

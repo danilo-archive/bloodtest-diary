@@ -25,6 +25,12 @@ const Container = styled.div`
   align-content: flex-start;
   justify-content: center;
 
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+
 `;
 
 const NavbarContainer = styled.div`

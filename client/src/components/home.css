@@ -175,16 +175,20 @@ body {
 
 
 ::-webkit-scrollbar {
+  width: 5px;
   height: 5px;
 }
 
-::-webkit-scrollbar:vertical {
-  display: none;
+::-webkit-scrollbar-track:vertical {
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb  {
   background: #0b989d;
   border-radius: 10px;
+}
+::-webkit-scrollbar-track  {
+  background: #eee;
 }
 
 ::-webkit-scrollbar-corner {
