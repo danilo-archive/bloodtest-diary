@@ -9,6 +9,7 @@
 
 module.exports = {
     sendOverdueReminders,
+    sendNormalReminders,
     recoverPassword
 }
 
@@ -38,6 +39,54 @@ const crypto = require("crypto");
  *            }
  **/
 async function sendOverdueReminders(testIDs, actionUsername) {
+    return await send(testIDs, actionUsername, email_sender.sendOverdueReminderToPatient, email_sender.sendOverdueReminderToHospital);
+}
+
+/**
+ * Send reminders for tests (not overdue).
+ *
+ * @param {Array} testIDs - List of all the overdue tests' IDs
+ * @param {string} actionUsername The user who issued the request.
+ * @return {JSON} result of the query. success is true only if all the emails were successfully sent.
+ *            Some emails might fail to be sent for various reasons. It can be that the patient was sent
+ *            an email but the hospital was not or vice versa, or maybe both emails failed to send.
+ *            Response format:
+ *            {success: true, response: "All emails sent successfully."}
+ * 
+ *            The three "failed" lists are disjoint.
+ *            {success: false,
+ *             response: {
+ *              failedBoth: [] // might be empty
+ *              failedPatient: [] // might be empty
+ *              failedHospital: [] // might be empty
+ *             }
+ *            }
+ **/
+async function sendNormalReminders(testIDs, actionUsername) {
+    return await send(testIDs, actionUsername, email_sender.sendReminderToPatient, email_sender.sendReminderToHospital);
+}
+
+/**
+ * Send reminders for overdue tests.
+ *
+ * @param {Array} testIDs - List of all the overdue tests' IDs
+ * @param {string} actionUsername The user who issued the request.
+ * @return {JSON} result of the query. success is true only if all the emails were successfully sent.
+ *            Some emails might fail to be sent for various reasons. It can be that the patient was sent
+ *            an email but the hospital was not or vice versa, or maybe both emails failed to send.
+ *            Response format:
+ *            {success: true, response: "All emails sent successfully."}
+ * 
+ *            The three "failed" lists are disjoint.
+ *            {success: false,
+ *             response: {
+ *              failedBoth: [] // might be empty
+ *              failedPatient: [] // might be empty
+ *              failedHospital: [] // might be empty
+ *             }
+ *            }
+ **/
+async function send(testIDs, actionUsername, patientFunction, hospitalFunction) {
     const failedBoth = [];
     const failedPatient = [];
     const failedHospital = [];
@@ -79,11 +128,11 @@ async function sendOverdueReminders(testIDs, actionUsername) {
             carer: carer
         };
 
-        const pat_ok = await email_sender.sendOverdueReminderToPatient(emailInfo);
+        const pat_ok = await patientFunction(emailInfo);
         
         let hos_ok = true;
         if (hospital !== null) {
-            hos_ok = await email_sender.sendOverdueReminderToHospital(emailInfo);
+            hos_ok = await hospitalFunction(emailInfo);
         }
 
         if (!pat_ok && !hos_ok) {

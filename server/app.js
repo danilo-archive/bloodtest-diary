@@ -544,4 +544,22 @@ io.on('connection',function(socket)
         socket.emit("sendOverdueRemindersResponse", response);
     });
 
+    socket.on('sendNormalReminders', async (testID, accessToken) => {
+        if (!accessToken) {
+            socket.emit("sendNormalRemindersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("sendNormalRemindersResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        if (!Array.isArray(testID)) {
+            testID = [testID];
+        }
+        const response = await email_controller.sendNormalReminders(testID, username);
+        socket.emit("sendNormalRemindersResponse", response);
+    });
+
 });
