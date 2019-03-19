@@ -8,6 +8,7 @@ import maximize from "../images/maximize.png"
 import close from "../images/close.png"
 import settings from "../images/settings.png"
 import OfflineScreen from "./OfflineScreen.js";
+import SettingsPanel from "./SettingsPanel.js";
 import {getServerConnect} from "../serverConnection.js";
 
 import Alert from "./Alert.js"
@@ -24,10 +25,11 @@ const navbarIcons = styled.div`
 class Header extends Component {
   constructor(props){
       super(props);
-      this.state = {
-          disabled: true
-      }
       this.serverConnect = getServerConnect();
+      this.state = {
+          disabled: true,
+          currentPage: undefined
+      }
       this.serverConnect.setOnConnect( () => {
          this.setState({disabled: false});
       });
@@ -35,6 +37,10 @@ class Header extends Component {
          this.setState({disabled: true});
       });
 
+  }
+
+  setPage(room) {
+     this.setState({currentPage: room});
   }
 
   safeClose = event => {
@@ -55,9 +61,7 @@ class Header extends Component {
                        <img className={"icon"} src={settings} alt={"Settings Button"}/>
                    </div>
                    <div className="dropdown-content">
-                    <a href="#">Settings 1</a>
-                    <a href="#">Settings 2</a>
-                    <a href="#">Settings 3</a>
+                    <SettingsPanel currentPage={this.state.currentPage}/>
                   </div>
                </div>
                <div className="button" id="min-button">

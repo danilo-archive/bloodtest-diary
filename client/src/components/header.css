@@ -71,19 +71,17 @@
   display: block;
 }
 
+.dropdown:hover #settings-button {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .dropdown-content {
   display: none;
   position: absolute;
+  right: 138px;
+  top: 28px;
+  left: auto;
   background-color: #f9f9f9;
-  min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 101;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
 }
