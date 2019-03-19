@@ -11,6 +11,7 @@ import VerticalLine from "./homeComponents/calendarComponents/VerticalLine";
 import LoadingAnimation from "./loadingScreen/loadingAnimation";
 import { openAlert } from "./Alert.js"
 import EmailModal from "./homeComponents/emailModal/EmailModal.js";
+import ColorPicker from "./homeComponents/calendarComponents/ColorPicker.js";
 
 import EditTest from "./homeComponents/editTest/EditTestView";
 import {

@@ -17,6 +17,8 @@
     "npm": "^6.8.0",
     "react": "^16.8.1",
     "react-bootstrap": "^1.0.0-beta.5",
+    "react-color": "^2.17.0",
+    "react-contexify": "^4.0.2",
     "react-dnd": "^7.0.2",
     "react-dnd-html5-backend": "^7.0.2",
     "react-dom": "^16.8.1",
