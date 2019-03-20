@@ -1,8 +1,24 @@
 import React, { Component } from 'react';
 import { withRouter, Redirect, Link } from 'react-router-dom'
+import styled from "styled-components";
+
 import './loginForm.css'
 
 const crypto = require('crypto')
+
+const RecoveryLabel = styled.p`
+  width: auto;
+  color: #646464;
+  white-space: nowrap;
+  cursor: pointer;
+  margin-bototm: 20px;;
+  text-align: center;
+
+  &:hover {
+    color: #0b999d;
+  }
+`;
+
 
 class LoginForm extends Component {
 
@@ -59,6 +75,11 @@ class LoginForm extends Component {
    })
   }
 
+  onRecoverPassword = () => {
+
+  }
+
+
   render() {
     return (
 
@@ -82,6 +103,7 @@ class LoginForm extends Component {
               <input type="submit" value="Sign In"/>
             </div>
 
+            <RecoveryLabel onClick={this.onRecoverPassword}>Recover Password</RecoveryLabel>
             <div className={"form__field login_error"}>
                 <p className={"login_paragraph"}>Username or password is invalid</p>
             </div>
