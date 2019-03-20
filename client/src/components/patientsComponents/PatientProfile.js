@@ -106,9 +106,9 @@ class PatientProfile extends Component {
         ready: false
       };
       this.serverConnect = getServerConnect();
-
       this.loadPatient();
       this.loadTests();
+
     }
 
     deletePatient = () => {
@@ -151,34 +151,37 @@ class PatientProfile extends Component {
     };
 
     loadPatient() {
-        this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
-           if (res.success){
-               const info = res.response[0];
-               this.setState({
-                   patientName : info.patient_name,
-                   patientSurname : info.patient_surname,
-                   patientEmail : info.patient_email,
-                   patientPhone : info.patient_phone,
-                   carerId : info.carer_id,
-                   carerRelationship: info.relationship,
-                   carerName: info.carer_name,
-                   carerSurname: info.carer_surname,
-                   carerEmail: info.carer_email,
-                   carerPhone: info.carer_phone,
-                   hospitalId: info.hospital_id,
-                   hospitalName: info.hospital_name,
-                   hospitalEmail: info.hospital_email,
-                   hospitalPhone: info.hospital_phone,
+        if (this.state.patientId === "") {
 
-                   noCarer: info.carer_id ? false : true,
-                   localHospital: info.hospital_id ? false : true,
-                   ready: true
-                   //TODO : store patients tests
-               });
-           }else{
-              this.props.handleError(res);
-           }
-        });
+        } else {
+            this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
+                if (res.success) {
+                    const info = res.response[0];
+                    this.setState({
+                        patientName: info.patient_name,
+                        patientSurname: info.patient_surname,
+                        patientEmail: info.patient_email,
+                        patientPhone: info.patient_phone,
+                        carerId: info.carer_id,
+                        carerRelationship: info.relationship,
+                        carerName: info.carer_name,
+                        carerSurname: info.carer_surname,
+                        carerEmail: info.carer_email,
+                        carerPhone: info.carer_phone,
+                        hospitalId: info.hospital_id,
+                        hospitalName: info.hospital_name,
+                        hospitalEmail: info.hospital_email,
+                        hospitalPhone: info.hospital_phone,
+
+                        noCarer: info.carer_id ? false : true,
+                        localHospital: info.hospital_id ? false : true,
+                        ready: true
+                    });
+                } else {
+                    this.props.handleError(res);
+                }
+            });
+        }
     }
 
     loadTests() {
@@ -196,9 +199,6 @@ class PatientProfile extends Component {
     }
 
     checkValues () {
-        if (emptyCheck(this.state.patientId)) {
-            return {correct: false, message: "Patient Id is compulsory"};
-        }
         if (emptyCheck(this.state.patientName) || emptyCheck(this.state.patientSurname)) {
             return {correct: false, message: "Patient name and surname are compulsory"};
         }
