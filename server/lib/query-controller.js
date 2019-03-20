@@ -88,15 +88,6 @@ async function getUser(username) {
 }
 
 /**
- * Get all the tests from the database
- * @return {JSON} result of the query - {success:true/false response:Array/Error}
- **/
-async function getAllTests() {
-    const sql = "Select * From Test ORDER BY due_date ASC;";
-    return await selectQueryDatabase(sql);
-}
-
-/**
  * Get test from the database
  * @param {String} test_id - id of test
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
@@ -107,31 +98,14 @@ async function getTest(test_id) {
 }
 
 /**
- * Get all the tests from a specific patient from the database
- * @param {String} patientId - id of a patient
- * @return {JSON} result of the query - {success:true/false response:Array/Error}
- **/
-async function getTestsOfPatient(patientId) {
-    const sql = `Select * From Test Where patient_no = ${mysql.escape(
-        patientId
-    )};`;
-    return await selectQueryDatabase(sql);
-}
-
+* Get not completed tests from patient
+* @param {String} patientId - id of patient
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
+**/
 async function getNextTestsOfPatient(patientId) {
     const sql = `SELECT * FROM Test WHERE patient_no = ${mysql.escape(
         patientId
     )} AND completed_status='no';`;
-    return await selectQueryDatabase(sql);
-}
-
-/**
- * Get all the tests on specific date from the database
- * @param {String} date - date (format: "YYYY-MM-DD")
- * @return {JSON} result of the query - {success:true/false response:Array/Error}
- **/
-async function getAllTestsOnDate(date) {
-    const sql = `Select * From Test Where due_date = ${mysql.escape(date)};`;
     return await selectQueryDatabase(sql);
 }
 
@@ -1437,11 +1411,8 @@ module.exports = {
     getUser,
     getAllPatients,
     getFullPatientInfo,
-    getAllTests,
     getTestInfo,
-    getTestsOfPatient,
     getNextTestsOfPatient,
-    getAllTestsOnDate,
     getTestWithinWeek,
     getSortedOverdueWeeks,
     getOverdueReminderGroups,

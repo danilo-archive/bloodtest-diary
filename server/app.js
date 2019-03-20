@@ -132,20 +132,6 @@ io.on('connection',function(socket)
         socket.emit("getFullPatientInfoResponse", {success: true, response: response.response});
     });
 
-    socket.on('getAllTests', async (accessToken) => {
-        if (!accessToken) {
-            socket.emit("getAllTestsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getAllTestsResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
-
-        const response = await queryController.getAllTests();
-        socket.emit("getAllTestsResponse", response);
-    });
 
     socket.on('getNextTestsOfPatient', async (patientId, accessToken) => {
         if (!accessToken) {
@@ -160,24 +146,6 @@ io.on('connection',function(socket)
 
         const response = await queryController.getNextTestsOfPatient(patientId);
         socket.emit('getNextTestsOfPatientResponse', response);
-    });
-
-    /**
-    *@param {String} date of type "yyyy-mm-dd"
-    **/
-    socket.on('getAllTestsOnDate', async (date, accessToken) => {
-        if (!accessToken) {
-            socket.emit("getAllTestsOnDateResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getAllTestsOnDateResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
-
-        const response = await queryController.getAllTestsOnDate(date);
-        socket.emit('getAllTestsOnDateResponse',response);
     });
 
     /**

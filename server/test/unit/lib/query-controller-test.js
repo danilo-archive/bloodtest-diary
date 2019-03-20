@@ -46,17 +46,8 @@ describe("Select queries tests", function(){
   context("Get Hospital", function(){
     test(queryController.getHospital, "300");
   })
-  context("Get All Tests", function(){
-    test(queryController.getAllTests)
-  })
-  context("Get All Tests of Patient", function(){
-    test(queryController.getTestsOfPatient,"50005");
-  })
   context("Get User", function(){
     test(queryController.getUser,testUsername);
-  });
-  context("Get All tests on date", function(){
-    test(queryController.getAllTestsOnDate,"2018-04-03");
   });
   context("Get Full Patient Info", function(){
     test(queryController.getFullPatientInfo,"P400");
