@@ -31,7 +31,8 @@
     height: 5px;
   }
   
-  ::-webkit-scrollbar-track:vertical {
+  ::-webkit-scrollbar:vertical {
+    display: none;
     background: transparent;
   }
   
@@ -40,7 +41,7 @@
     border-radius: 10px;
   }
   ::-webkit-scrollbar-track  {
-    background: #eee;
+    background: transparent;
   }
   
   ::-webkit-scrollbar-corner {
