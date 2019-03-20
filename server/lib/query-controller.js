@@ -10,7 +10,8 @@ const databaseController = require("./db_controller/db-controller.js");
 const authenticator = require("./authenticator.js");
 const calendarController = require("./calendar-functions.js");
 const _ = require("lodash");
-const logger = require("./action-logger");
+const actionLogger = require("./action-logger");
+const logger = require('./logger');
 const dateformat = require("dateformat");
 const mysql = require("mysql");
 
@@ -1124,11 +1125,11 @@ async function insertQueryDatabase(sql, tableName, actionUsername, id = undefine
     const response = await databaseController.insertQuery(sql);
     if (response.status == "OK") {
         id = id === undefined ? response.response.insertId : id;
-        logger.logInsert(actionUsername, tableName, id, "Successful.");
+        actionLogger.logInsert(actionUsername, tableName, id, "Successful.");
         return { success: true, response: { insertId: id } };
     } else {
         if (response.err.type === "SQL Error") {
-            logger.logInsert(
+            actionLogger.logInsert(
                 actionUsername,
                 tableName,
                 "-1",
@@ -1139,7 +1140,7 @@ async function insertQueryDatabase(sql, tableName, actionUsername, id = undefine
                 "<<."
             );
         } else {
-            logger.logInsert(
+            actionLogger.logInsert(
                 actionUsername,
                 tableName,
                 "-1",
@@ -1167,7 +1168,7 @@ async function requestEditing(table, id, actionUsername) {
     });
     // TODO: return token + expiration
     if (data.status == "OK") {
-        logger.logOther(
+        actionLogger.logOther(
             actionUsername,
             table,
             id,
@@ -1175,7 +1176,7 @@ async function requestEditing(table, id, actionUsername) {
         );
         return data.response.token;
     } else {
-        logger.logOther(
+        actionLogger.logOther(
             actionUsername,
             table,
             id,
@@ -1205,11 +1206,11 @@ async function updateQueryDatabase(table, id, sql, token, actionUsername) {
             token
         );
         if (response.status === "OK") {
-            logger.logUpdate(actionUsername, table, id, "Successful.");
+            actionLogger.logUpdate(actionUsername, table, id, "Successful.");
             return { success: true, response: response.response };
         } else {
             if (response.err.type === "SQL Error") {
-                logger.logUpdate(
+                actionLogger.logUpdate(
                     actionUsername,
                     table,
                     id,
@@ -1220,7 +1221,7 @@ async function updateQueryDatabase(table, id, sql, token, actionUsername) {
                     "<<."
                 );
             } else {
-                logger.logUpdate(
+                actionLogger.logUpdate(
                     actionUsername,
                     table,
                     id,
@@ -1268,7 +1269,7 @@ async function deleteQueryDatabase(table, id, sql, actionUsername) {
 
     const response = await databaseController.deleteQuery(sql, table, id);
     if (response.status === "OK") {
-        logger.logDelete(
+        actionLogger.logDelete(
             actionUsername,
             table,
             id,
@@ -1277,7 +1278,7 @@ async function deleteQueryDatabase(table, id, sql, actionUsername) {
         return { success: true, response: "Entry deleted" };
     } else {
         if (response.err.type === "SQL Error") {
-            logger.logDelete(
+            actionLogger.logDelete(
                 actionUsername,
                 table,
                 id,
@@ -1288,7 +1289,7 @@ async function deleteQueryDatabase(table, id, sql, actionUsername) {
                 "<<."
             );
         } else {
-            logger.logDelete(
+            actionLogger.logDelete(
                 actionUsername,
                 table,
                 id,
@@ -1330,7 +1331,7 @@ function prepareInsertSQL(table, object) {
         sql += `${values[values.length - 1]});`;
     }
     //For debug:
-    //console.log(sql);
+    //logger.debug(sql);
     return sql;
 }
 
@@ -1365,7 +1366,7 @@ function prepareUpdateSQL(table, object, idProperty) {
         sql += ` WHERE ${idProperty} = NULL;`;
     }
     //For debug:
-    //console.log(sql);
+    //logger.debug(sql);
     return sql;
 }
 
@@ -1395,11 +1396,11 @@ function prepareDeleteSQL(table, idProperty, id) {
 async function returnToken(table, id, token, actionUsername) {
     const response = await databaseController.cancelEditing(table, id, token);
     if (response.status === "OK") {
-        logger.logOther(actionUsername, table, id, "Successfully released token.");
+        actionLogger.logOther(actionUsername, table, id, "Successfully released token.");
         return { success: true, response: "Token cancelled" };
     } else {
         if (response.err.type === "SQL Error") {
-            logger.logOther(
+            actionLogger.logOther(
                 actionUsername,
                 table,
                 id,
@@ -1408,7 +1409,7 @@ async function returnToken(table, id, token, actionUsername) {
                 "<<."
             );
         } else {
-            logger.logOther(
+            actionLogger.logOther(
                 actionUsername,
                 table,
                 id,
