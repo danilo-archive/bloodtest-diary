@@ -478,44 +478,36 @@ async function changeTestDueDate(testId, newDate, actionUsername) {
 }
 
 /**
- * Update password of an user
+ * Update User in database
  * @param {JSON} json - user
  * @param {string} actionUsername The user who issued the request.
  * Obligatory properties:
- * @property username {String}
+ * @property username {String},
+ * One of optional properties
+ * Optional properties:
+ * @property recovery_email {String}
  * @property hashed_password {String}
  * @return {JSON} - {success:Boolean response:Array or Error}
  **/
-async function updatePassword(json, actionUsername) {
+async function editUser(json, actionUsername) {
     const response = await getUser(json.username);
     const token = await requestEditing("User", json.username, actionUsername);
     if (!response.success) {
         return response;
     }
-    const user = response.response[0];
-    if (user) {
-        const hash = authenticator.produceHash(json.hashed_password, user.iterations, user.salt);
-        const sql = `UPDATE User SET hashed_password='${hash}' WHERE username = ${mysql.escape(json.username)} LIMIT 1;`;
-        return await updateQueryDatabase("User", json.username, sql, token, actionUsername);
+    if(response.response.length!=1){
+      return {success: false, response: "No user found" }
     }
-    else {
-        return { success: false, response: "No user found" }
+    const user = {username: json.username}
+    if(json.hashed_password){
+      const hash = authenticator.produceHash(json.hashed_password, response.response[0].iterations, response.response[0].salt);
+      user["hashed_password"] = hash;
     }
-}
-
-/**
-* Update recovery email of an user
-* @param {JSON} json - user
-* @param {string} token - token to issue the request with
-* @param {string} actionUsername The user who issued the request.
-* Obligatory properties:
-* @property username {String}
-* @property recovery_email {String}
-* @return {JSON} - {success:Boolean response:Array or Error}
-**/
-async function updateUserEmail(json, token, actionUsername) {
-    const sql = prepareUpdateSQL("User", json, "username")
-    return await updateQueryDatabase("User", json.username, sql, token, actionUsername)
+    if(json.recovery_email){
+      user["recovery_email"] = json.recovery_email;
+    }
+    const sql = prepareUpdateSQL("User",user,"username");
+    return await updateQueryDatabase("User", json.username, sql, token, actionUsername);
 }
 
 /**
@@ -1434,8 +1426,7 @@ module.exports = {
     changeTestDueDate,
     changeTestColour,
     changePatientColour,
-    updateUserEmail,
-    updatePassword,
+    editUser,
     //DELETE
     deleteHospital,
     deletePatient,

@@ -797,16 +797,16 @@ describe("Update queries tests", function(){
         spy.calledOnce.should.equal(true);
       })
     })
-    context("Update password", function(){
+    context("Update User", function(){
       let spy;
       beforeEach(()=>{
-          spy = sinon.spy(queryController.updatePassword);
+          spy = sinon.spy(queryController.editUser);
       })
       it("Correctly update password (STUBBED)", async function()
       {
         const dbController = {
           selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000"}]}}
+            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
           },
           requestEditing: async function() {
             return {status: "OK", response:{token:"2000"}}
@@ -820,7 +820,43 @@ describe("Update queries tests", function(){
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
-      it("Fail due to password being edited (STUBBED)", async function() {
+      it("Correctly update email (STUBBED)", async function()
+      {
+        const dbController = {
+          selectQuery: async function() {
+            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
+          },
+          requestEditing: async function() {
+            return {status: "OK", response:{token:"2000"}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({username:testUsername,recovery_email:"gmail@gmail.com"}, testUsername);
+        response.success.should.equal(true);
+        response.response.affectedRows.should.equal(1);
+      })
+      it("Correctly update email (STUBBED)", async function()
+      {
+        const dbController = {
+          selectQuery: async function() {
+            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
+          },
+          requestEditing: async function() {
+            return {status: "OK", response:{token:"2000"}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({username:testUsername,recovery_email:"gmail@gmail.com",hashed_password:"dsjhdshdshjdshdhjdschjdsjsdhj"}, testUsername);
+        response.success.should.equal(true);
+        response.response.affectedRows.should.equal(1);
+      })
+      it("Fail due to user being edited (STUBBED)", async function() {
         const dbController = {
           selectQuery: async function() {
             return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000"}]}}
@@ -841,6 +877,23 @@ describe("Update queries tests", function(){
         const dbController = {
           selectQuery: async function() {
             return {status:"OK", response:{ rows:[]}}
+          },
+          requestEditing: async function() {
+            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
+        response.success.should.equal(false);
+        response.response.should.equal("No user found");
+      })
+      it("Fail due to too many users found (STUBBED)", async function() {
+        const dbController = {
+          selectQuery: async function() {
+            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000"},{username:testUsername,iterations:1000,salt:"30000"}]}}
           },
           requestEditing: async function() {
             return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
@@ -887,45 +940,6 @@ describe("Update queries tests", function(){
         queryController.__set__("databaseController",dbController);
         const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
         response.success.should.equal(false);
-      })
-    })
-    context("Update User's email", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.updateUserEmail);
-      })
-      it("Correctly update email (STUBBED)", async function()
-      {
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,recovery_email:"email123@gmail.com"},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Fail - no token (STUBBED)", async function() {
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"});
-        response.success.should.equal(false);
-      })
-      it("Fail - query error (STUBBED)", async function() {
-        const dbController = {
-          updateQuery: async function() {
-            return {status:"ERR", err: { error:"STUBBED ERROR"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
       })
     })
     context("Edit Patient", function(){
