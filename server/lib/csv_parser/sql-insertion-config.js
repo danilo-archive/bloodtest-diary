@@ -10,7 +10,8 @@ const fs = require('fs');
 const parser = require('./csv-reader');
 
 //The paths of the csv files to parse
-const dataToInsertAsCsv = ['./hospital.csv',
+const dataToInsertAsCsv = ['./user.csv',
+                           './hospital.csv',
                            './carer.csv',
                            './patient.csv',
                            './test.csv'];
