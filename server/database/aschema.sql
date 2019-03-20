@@ -4,8 +4,6 @@
 --
 -- N.B. This is the development schema only
 --      as it deletes all data before being recreated.
---
--- @author Luka Kralj
 -- ====================================================
 
 
@@ -23,15 +21,15 @@ DROP TABLE IF EXISTS Test;
 DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS Carer;
 DROP TABLE IF EXISTS Hospital;
-DROP TABLE IF EXISTS EditTokens;
-DROP TABLE IF EXISTS AccessTokens;
+DROP TABLE IF EXISTS TokenControl;
 DROP TABLE IF EXISTS ActionLog;
 DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS LoginCredentials;
 
 CREATE TABLE Hospital (
     hospital_id INTEGER AUTO_INCREMENT,
     hospital_name VARCHAR(255),
-    hospital_email VARCHAR(100),
+    hospital_email VARCHAR(100) NOT NULL,
     hospital_phone VARCHAR(15),
     PRIMARY KEY (hospital_id)
 );
@@ -40,7 +38,7 @@ CREATE TABLE Carer (
     carer_id INTEGER AUTO_INCREMENT,
     carer_name VARCHAR(100),
     carer_surname VARCHAR(100),
-    carer_email VARCHAR(100),
+    carer_email VARCHAR(100) NOT NULL,
     carer_phone VARCHAR(15),
     relationship VARCHAR(255),
     PRIMARY KEY (carer_id)
@@ -48,15 +46,13 @@ CREATE TABLE Carer (
 
 CREATE TABLE Patient (
     patient_no VARCHAR(20),
-    patient_name VARCHAR(100),
-    patient_surname VARCHAR(100),
+    patient_name VARCHAR(100) NOT NULL,
+    patient_surname VARCHAR(100) NOT NULL,
     patient_email VARCHAR(100),
     patient_phone VARCHAR(15),
     hospital_id INTEGER,
     carer_id INTEGER,
     additional_info TEXT,
-    patient_colour VARCHAR(10),
-    isAdult ENUM("yes", "no") NOT NULL DEFAULT "yes",
     PRIMARY KEY (patient_no),
     FOREIGN KEY (hospital_id) REFERENCES Hospital(hospital_id) ON DELETE SET NULL,
     FOREIGN KEY (carer_id) REFERENCES Carer(carer_id) ON DELETE SET NULL
@@ -71,17 +67,13 @@ CREATE TABLE Test (
     completed_status ENUM("yes", "no", "in review") NOT NULL DEFAULT "no",
     completed_date DATE,
     notes TEXT,
-    test_colour VARCHAR(10),
-    last_reminder DATE,
-    reminders_sent INTEGER DEFAULT 0,
     PRIMARY KEY (test_id),
-    FOREIGN KEY (patient_no) REFERENCES Patient(patient_no) ON DELETE CASCADE
+    FOREIGN KEY (patient_no) REFERENCES Patient(patient_no)
 );
 
 CREATE TABLE User (
     username VARCHAR(100),
     hashed_password VARCHAR(255) NOT NULL,
-    isAdmin ENUM("yes", "no") NOT NULL DEFAULT "no",
     salt VARCHAR(255) NOT NULL,
     iterations INTEGER NOT NULL,
     recovery_email VARCHAR(100) NOT NULL,
@@ -93,20 +85,12 @@ CREATE TABLE User (
 -- data. They only provide additional functionality.
 -- ================================
 
-CREATE TABLE EditTokens (
-    token VARCHAR(100),
+CREATE TABLE TokenControl (
+    token VARCHAR(50),
     table_name ENUM("Carer", "Hospital", "Patient", "Test", "User") NOT NULL,
     table_key VARCHAR(50) NOT NULL,
     expiration DATETIME NOT NULL,
     PRIMARY KEY (token)
-);
-
-CREATE TABLE AccessTokens (
-    token VARCHAR(255),
-    username VARCHAR(100) NOT NULL,
-    expiration DATETIME NOT NULL,
-    PRIMARY KEY (token),
-    FOREIGN KEY (username) REFERENCES User(username)
 );
 
 CREATE TABLE ActionLog (
