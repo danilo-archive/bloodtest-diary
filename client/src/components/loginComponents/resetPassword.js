@@ -15,8 +15,7 @@ const Container = styled.div`
 
   color: #646464;
 
-  .login_error {
-    width: 100%;
+  .hidden {
     visibility: hidden;
   }
 

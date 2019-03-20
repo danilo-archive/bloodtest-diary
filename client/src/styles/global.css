@@ -2,10 +2,10 @@
     --htmlFontSize: 100%;
     --bodyBackgroundColor: rgb(244,249,253);
     --bodyColor: #000000;
-    --bodyFontFamily: "Rajdhani";
+    --bodyFontFamily: "Open Sans";
     --bodyFontFamilyFallback: sans-serif;
-    --bodyFontSize: 0.875rem;
-    --bodyFontWeight: 400;
+    --bodyFontSize: 0.800rem;
+    --bodyFontWeight: 500;
     --bodyLineHeight: 1.5;
   }
 
@@ -40,16 +40,7 @@
     transition: background-color 0.3s;
   }
 
-  .hidden {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-  }
+
 
   ::selection {
     color: #0e4f54;

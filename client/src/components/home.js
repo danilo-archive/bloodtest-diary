@@ -31,11 +31,11 @@ import "../styles/global.css";
 
 const Dashboard = styled.div`
   border: blue 0px solid;
-  height: calc(100vh - 75px);
+  height: calc(100vh - 88px);
   width: auto;
   position: relative;
-  top: 30px;
-  margin: 1% 1% 1% 1%;
+  top: 20px;
+  padding: 1% 1% 1% 1%;
 
   display: flex;
   flex-direction: row;
