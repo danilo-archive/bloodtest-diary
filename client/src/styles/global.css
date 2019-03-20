@@ -47,3 +47,28 @@
   ::-webkit-scrollbar-corner {
     display: none;
   }
+
+@font-face {
+  font-family: "Rajdhani";
+  src: url("../resources/font/Rajdhani-Regular.ttf");
+}
+@font-face {
+  font-family: "Rajdhani";
+  src: url("../resources/font/Rajdhani-Bold.ttf");
+  font-weight: bold;
+}
+@font-face {
+  font-family: "Rajdhani";
+  src: url("../resources/font/Rajdhani-Medium.ttf");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Rajdhani";
+  src: url("../resources/font/Rajdhani-SemiBold.ttf");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Rajdhani";
+  src: url("../resources/font/Rajdhani-Light.ttf");
+  font-weight: 100;
+}
