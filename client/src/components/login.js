@@ -19,6 +19,15 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
 
+
+  @keyframes opac {
+      0% {
+          opacity: 0;
+      }
+      100% {
+          opacity: 1;
+      }
+  }
 `;
 class Login extends Component {
 
@@ -34,8 +43,11 @@ class Login extends Component {
   }
 
   changeForm = () => {
-    console.log("xd")
-    this.setState({ loginState: false})
+    if (this.state.loginState) {
+      this.setState({ loginState: false})
+    } else {
+      this.setState({ loginState: true})
+    }
   }
 
   render() {
@@ -44,7 +56,7 @@ class Login extends Component {
         {this.state.loginState ?
           <LoginForm serverConnect={this.serverConnect} onResetPassword={this.changeForm}/>
         :
-          <ResetPassword serverConnect={this.serverConnect}/>
+          <ResetPassword serverConnect={this.serverConnect} onCancel={this.changeForm}/>
         }
         <LoginBackgroundAnimation />
       </Container>

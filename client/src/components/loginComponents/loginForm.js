@@ -25,18 +25,34 @@ const Container = styled.div`
   }
 
 
+  animation: opac 0.5s linear 1;
 
 
-  @keyframes fadeOut {
-      0% {
-          opacity: 1;
-          transform: translate();
-      }
-      100% {
-          opacity: 0;
-          transform: translate(0, -70%);
-      }
+  .submitButton {
+    width: 100%
+    height: 50px;
+
+    font-family: "Open Sans", sans-serif;
+
+    background-color: #55cdd1;
+    color: #eee;
+    font-weight: 600;
+
+    border-radius: 0.25rem;
+    text-align: center;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &:focus,
+    &:hover {
+      background-color: #0b989d;
+    }
   }
+
 `;
 
 const Section = styled.div`
@@ -65,6 +81,10 @@ const InputSection = styled.div`
     width: 100%;
     height: 100%;
     color: #eee;
+  }
+
+  .hidden {
+    visibility: hidden;
   }
 
   :focus,
@@ -101,30 +121,6 @@ const Label = styled.div`
   }
 `;
 
-const SubmitButton = styled.div`
-    width: 100%
-    height: 50px;
-
-    font-family: "Open Sans", sans-serif;
-
-    background-color: #55cdd1;
-    color: #eee;
-    font-weight: 500;
-    text-transform: uppercase;
-
-    border-radius: 0.25rem;
-    text-align: center;
-    cursor: pointer;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    &:focus,
-    &:hover {
-      background-color: #0b989d;
-    }
-`;
 
 const RecoveryLabel = styled.p`
   width: auto;
@@ -156,8 +152,8 @@ class LoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
       wrongPassword: false
     };
 
@@ -191,7 +187,8 @@ class LoginForm extends Component {
   clearForm() {
     this.setState({
        username: '',
-       password: ''
+       password: '',
+       wrongPassword: false
    })
   }
 
@@ -210,21 +207,23 @@ class LoginForm extends Component {
   render(){
     return (
       <Container>
-        <Section>
-          <Label><svg className="loginIcon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"/></svg></Label>
-          <InputSection>
-            <input id="login__username" type="text" name="username" className="loginInput" value={this.state.username} onChange={this.handleChange} placeholder="Username" required/>
-          </InputSection>
-        </Section>
+          <form onSubmit={this.handleSubmit} style={{ width: "100%"}}>
+            <Section>
+              <Label><svg className="loginIcon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"/></svg></Label>
+              <InputSection>
+                <input id="login__username" type="text" name="username" className="loginInput" value={this.state.username} onChange={this.handleChange} placeholder="Username" required/>
+              </InputSection>
+            </Section>
 
-        <Section>
-          <Label><svg className="loginIcon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#lock"/></svg></Label>
-          <InputSection>
-            <input type="password" name="password" className="loginInput" value={this.state.password} onChange={this.handleChange} placeholder="Password" required/>
-          </InputSection>
-        </Section>
+            <Section>
+              <Label><svg className="loginIcon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#lock"/></svg></Label>
+              <InputSection>
+                <input type="password" name="password" className="loginInput" value={this.state.password} onChange={this.handleChange} placeholder="Password" required/>
+              </InputSection>
+            </Section>
 
-        <SubmitButton onClick={this.handleSubmit}>Sign In</SubmitButton>
+            <input type="submit" className="submitButton" value="Sign In"/>
+          </form>
 
         <RecoveryLabel onClick={this.onRecoverPassword}>Recover Password</RecoveryLabel>
 

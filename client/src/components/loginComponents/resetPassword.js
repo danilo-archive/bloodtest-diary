@@ -6,7 +6,7 @@ const crypto = require('crypto');
 
 const Container = styled.div`
   border: solid 0px red;
-  height: 300px;
+  height: 200px;
   width: 350px;
   display: flex;
   flex-direction: column;
@@ -24,19 +24,33 @@ const Container = styled.div`
     display: none;
   }
 
+  animation: opac 0.5s linear 1;
 
+  .submitButton {
+    width: 70%
+    height: 50px;
 
+    font-family: "Open Sans", sans-serif;
 
-  @keyframes fadeOut {
-      0% {
-          opacity: 1;
-          transform: translate();
-      }
-      100% {
-          opacity: 0;
-          transform: translate(0, -70%);
-      }
+    background-color: #55cdd1;
+    color: #eee;
+    font-weight: 500;
+
+    border-radius: 0.25rem;
+    text-align: center;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &:focus,
+    &:hover {
+      background-color: #0b989d;
+    }
   }
+
 `;
 
 const Section = styled.div`
@@ -67,6 +81,10 @@ const InputSection = styled.div`
     color: #eee;
   }
 
+  .hidden {
+    visibility: hidden;
+  }
+
   :focus,
   :hover {
     background-color: #abbdbd;
@@ -91,7 +109,7 @@ const Label = styled.div`
   justify-content: center;
   align-items: center;
 
-  .loginIcon {
+  .emailIcon {
     display: inline-block;
     fill: #f4f9fd;
     font-size: 1rem;
@@ -101,16 +119,26 @@ const Label = styled.div`
   }
 `;
 
-const SubmitButton = styled.div`
-    width: 100%
+const Buttons = styled.div`
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+
+const CancelButton = styled.div`
+    width: 25%
     height: 50px;
 
     font-family: "Open Sans", sans-serif;
 
-    background-color: #55cdd1;
+    background-color: #97a9a9;
     color: #eee;
     font-weight: 500;
-    text-transform: uppercase;
+
 
     border-radius: 0.25rem;
     text-align: center;
@@ -122,18 +150,19 @@ const SubmitButton = styled.div`
 
     &:focus,
     &:hover {
-      background-color: #0b989d;
+      background-color: #abbdbd;
     }
 `;
 
 const ErrorLabel = styled.p`
-  color: red;
-  margin: 0 auto;
+  width: auto;
+  color: #646464;
   white-space: nowrap;
   cursor: default;
   text-align: center;
 
   font-family: "Rajdhani", sans-serif;
+
 `;
 
 
@@ -162,10 +191,12 @@ class ResetPassword extends Component {
   handleSubmit = (event) => {
     this.serverConnect.recoverPassword(this.state.username, res => {
           if (res.success){
-            console.log(res)
             this.showEmailConfirmation();
+            setTimeout( () => {
+                this.props.onCancel()
+            }, 5000);
           }else{
-            console.log(res)
+            this.props.onCancel()
           }
     });
     this.clearForm();
@@ -174,26 +205,35 @@ class ResetPassword extends Component {
 
   clearForm() {
     this.setState({
-       username: ''
+       username: '',
+       emailConfimation: false
    })
-  }
+ }
 
   showEmailConfirmation = () => {
-      this.setState({emailConfimation: true})
+      this.setState({emailConfimation: true});
+      setTimeout( () => {
+          this.setState({emailConfimation: false});
+      }, 5000);
   }
 
 
   render(){
     return (
-      <Container id="test">
-        <Section>
-          <Label><svg className="loginIcon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"/></svg></Label>
-          <InputSection>
-            <input type="text" name="username" className="emailInput" value={this.state.username} onChange={this.handleChange} placeholder="Username" required/>
-          </InputSection>
-        </Section>
+      <Container>
+        <form onSubmit={this.handleSubmit} style={{ width: "100%"}}>
+          <Section>
+            <Label><svg className="emailIcon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"/></svg></Label>
+            <InputSection>
+              <input type="text" name="username" className="emailInput" value={this.state.username} onChange={this.handleChange} placeholder="Username" required/>
+            </InputSection>
+          </Section>
 
-        <SubmitButton onClick={this.handleSubmit}>Send Email</SubmitButton>
+          <Buttons>
+              <input type="submit" className="submitButton" value="Send Email"/>
+            <CancelButton onClick={this.props.onCancel}>Cancel</CancelButton>
+          </Buttons>
+        </form>
 
         <ErrorLabel className={this.state.emailConfimation ? null : 'hidden'}>Email Sent</ErrorLabel>
 
