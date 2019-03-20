@@ -77,6 +77,7 @@ input[type='submit'] {
   margin: calc(var(--formFieldMargin) * -1);
 }
 
+
 .form input[type='password'],
 .form input[type='text'],
 .form input[type='submit'] {

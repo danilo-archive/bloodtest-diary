@@ -62,7 +62,32 @@ const ConnectionLabel = styled.div`
   white-space: nowrap;
 `;
 
+const RestartLabel = styled.p`
+  width: auto;
+  color: #646464;
+  white-space: nowrap;
+  cursor: pointer;
 
+  animation: opac 0.4s linear 1;
+
+  &:hover {
+    color: #0b999d;
+  }
+
+  @keyframes opac {
+      0% {
+          opacity: 0;
+
+      }
+      100% {
+          opacity: 1;
+      }
+  }
+
+`;
+
+let oldIp;
+let oldPort;
 
 export default class ConnectionPanel extends Component {
 
@@ -73,7 +98,9 @@ export default class ConnectionPanel extends Component {
         port: cookies.get("port")
       };
 
-      this.handleChange = this.handleChange.bind(this);
+      oldIp = this.state.ip;
+      oldPort = this.state.port;
+
   }
 
   handleChange = (event) => {
@@ -106,6 +133,13 @@ export default class ConnectionPanel extends Component {
           <ConnectionLabel>Port:</ConnectionLabel>
           <input id="portInput" type="text" name="port" className="connectionInput" value={this.state.port} onChange={this.handleChange} onBlur={this.updatePort}/>
         </InputSection>
+
+      {(oldIp !== this.state.ip || oldPort !== this.state.port) ?
+          <RestartLabel id="restart-button">Restart Now</RestartLabel>
+        :
+          <>
+          </>
+      }
       </Container>
     )
   }

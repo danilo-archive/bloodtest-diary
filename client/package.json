@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "",
   "main": "public/electron.js",
+  "homepage": "./",
   "dependencies": {
     "components": "^0.1.0",
     "concurrently": "^4.1.0",
@@ -52,7 +53,8 @@
     "test": "nodemon --exec \"nyc --reporter=html --reporter=text mocha --recursive\"",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\""
+    "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron": "electron ."
   },
   "browserslist": [
     ">0.2%",
