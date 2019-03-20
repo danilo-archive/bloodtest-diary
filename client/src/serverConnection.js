@@ -18,12 +18,16 @@ const cookies = new Cookies();
 const host = "http://localhost";
 const port = 3265;
 
+const underTwelve = 0;
+const overTwelve = 1;
+
 class ServerConnect {
 
     constructor(){
         this.loginToken = cookies.get("accessToken");
         this.currentRoom = "";
         this.socket = openSocket(`${host}:${port}`);
+        this.currentMode = overTwelve;
 
 
         /**
@@ -60,6 +64,16 @@ class ServerConnect {
             this.onPatientEdit(patientId, newInfo);
         });
 
+    }
+
+    setUnderTwelve(){
+        this.currentMode = underTwelve;
+    }
+    setOverTwelve(){
+        this.currentMode = overTwelve;
+    }
+    isUnderTwelve(){
+        return this.currentMode == underTwelve;
     }
 
     /**
@@ -170,7 +184,8 @@ class ServerConnect {
      * @param {function} callback The callback function to be called on response
      */
     getAllPatients(callback){
-        this.socket.emit('getAllPatients', this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getAllPatients', this.loginToken, isAdult);
         this.socket.once("getAllPatientsResponse", res => {
             callback(res);
         });
@@ -205,7 +220,8 @@ class ServerConnect {
      * @param {function} callback
      */
     getOverdueTests(callback){
-        this.socket.emit('getOverdueTests', this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getOverdueTests', this.loginToken, isAdult);
         this.socket.once('getOverdueTestsResponse', res => {
             callback(res);
         });
@@ -217,10 +233,9 @@ class ServerConnect {
      * @param {boolean} anydayTestsOnly True if you only want the tests that are not scheduled on a particular day.
      * @param {function} callback
      */
-    getTestsInWeek(date, callback, anydayTestsOnly=false){
-        console.log("asking for tests");
-        console.log(this.loginToken);
-        this.socket.emit('getTestsInWeek', date, this.loginToken);
+    getTestsInWeek(date, callback){
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getTestsInWeek', date, this.loginToken, isAdult);
         this.socket.once('getTestsInWeekResponse', res => {
             console.log({res});
             callback(res);
@@ -398,7 +413,8 @@ class ServerConnect {
     }
 
     getOverdueReminderGroups(callback){
-        this.socket.emit("getOverdueReminderGroups", this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit("getOverdueReminderGroups", this.loginToken, isAdult);
         this.socket.once("getOverdueReminderGroupsResponse", res => {
             callback(res);
         });

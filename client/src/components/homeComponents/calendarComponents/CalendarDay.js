@@ -16,9 +16,9 @@ const CalendarContainer = styled.div`
   background-color: white;
   padding: 0;
   position: relative;
-  border: solid 1px rgb(131,149,149, 0.2);
+  border: solid 1px rgb(131, 149, 149, 0.2);
   min-width: 15rem;
-  overflow : hidden;
+  overflow: hidden;
 `;
 const monthNames = [
   "Jan",
@@ -35,24 +35,22 @@ const monthNames = [
   "Dec"
 ];
 
-function collect(connect, monitor){
+function collect(connect, monitor) {
   console.log(monitor.isOver());
   return {
     connectDropTarget: connect.dropTarget(),
     hovered: monitor.isOver(),
     hightlighted: monitor.canDrop(),
     item: monitor.getItem()
-  }
+  };
 }
 
 const spec = {
-  drop: function(props, monitor, component){
-    return {newDate: props.date}
+  drop: function(props, monitor, component) {
+    return { newDate: props.date };
   },
-  hover: function(props, monitor, component){
-  }
-}
-
+  hover: function(props, monitor, component) {}
+};
 
 class CalendarDay extends React.Component {
   constructor(props) {
@@ -60,10 +58,10 @@ class CalendarDay extends React.Component {
   }
 
   render() {
-    const { connectDropTarget, hovered, item} = this.props;
+    const { connectDropTarget, hovered, item } = this.props;
     const backgroundColor = hovered ? "#dbfffc" : "white";
     return connectDropTarget(
-      <div style={{height: "inherit"}}>
+      <div style={{ height: "inherit" }}>
         <CalendarContainer>
           <WeekDaySection
             notificationNumber={
@@ -79,7 +77,7 @@ class CalendarDay extends React.Component {
             monthName={monthNames[this.props.date.getMonth()]}
             openModal={date => this.props.openModal(date)}
           />
-          <ScrollBox style={{background: backgroundColor}}>
+          <ScrollBox style={{ background: backgroundColor }}>
             <AppointmentSection
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
@@ -87,7 +85,7 @@ class CalendarDay extends React.Component {
               handleError={this.props.handleError}
               section={"calendar"}
             />
-            <div style={{width:"100%",height:"130px"}}/>
+            <div style={{ width: "100%", height: "130px" }} />
           </ScrollBox>
         </CalendarContainer>
       </div>

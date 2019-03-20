@@ -101,7 +101,6 @@ io.on('connection',function(socket)
     // GETTERS
     // ==============
 
-    //TODO: PASS "isAdult" (BOOLEAN) VARIABLE FROM UI
     socket.on('getAllPatients', async (accessToken,isAdult=true) => {
         if (!accessToken) {
             socket.emit("getAllPatientsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
