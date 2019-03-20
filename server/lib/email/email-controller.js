@@ -17,6 +17,7 @@ const query_controller = require('./../query-controller');
 const email_sender = require('./email-sender');
 const authenticator = require('./../authenticator.js');
 const crypto = require("crypto");
+const logger = require('./../logger');
 
 /**
  * Send reminders for overdue tests.
@@ -116,7 +117,7 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction) 
             }
         }
         catch (err) {
-            console.log(err);
+            logger.error(err);
             failedBoth.push(testIDs[i]);
             continue;
         }
@@ -149,7 +150,7 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction) 
             // email for patient sent successfully
             query_controller.updateLastReminder(testIDs[i], token, actionUsername).then((res) => {
                 if (!res.success) {
-                    console.log("Error updating latest reminder. Response: " + JSON.stringify(res));
+                    logger.error("Error updating latest reminder. Response: " + JSON.stringify(res));
                 }
             });
         }
@@ -188,8 +189,7 @@ async function recoverPassword(username){
       return {success:false, response:"No user found!"}
     }
     const newPassword = authenticator.produceSalt();
-    //TODO: DELETE
-    console.log("PASSWORD HERE FOR TESTING: " + newPassword);
+
     const userToEmail = {
       user:{
         username:username,
