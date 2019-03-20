@@ -172,11 +172,11 @@ function createLog(messages, level) {
 
     //OUTPUT TO CONSOLE
 
-    let levelLabel = `\n<============ ${level} ============>\n`
+    let levelLabel = `<============ ${level} ============>\n`
     let logElementsSeparator = "\n";
 
     if (options.compact == true) {
-        levelLabel = "\n" + level + ": ";
+        levelLabel = level + ": ";
         logElementsSeparator = " ";
     }
 
@@ -209,8 +209,9 @@ function createLog(messages, level) {
         process.stdout.write(consoleOutputString);
         messages.forEach(msg => {
             process.stdout.write(logElementsSeparator);
-            typeof msg !== "string" ? console.log(msg) : process.stdout.write(msg)
+            typeof msg !== "string" ? process.stdout.write(JSON.stringify(msg)) : process.stdout.write(msg)
         });
+        process.stdout.write("\n");
     }
 }
 

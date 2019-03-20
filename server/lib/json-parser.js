@@ -16,7 +16,6 @@ module.exports = {
 }
 
 const fs = require('fs');
-const logger = require('./logger');
 
 /**
     * Returns the content of the JSON file
