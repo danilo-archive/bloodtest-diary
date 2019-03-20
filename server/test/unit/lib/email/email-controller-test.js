@@ -181,7 +181,7 @@ const emailController = rewire("./../../../../lib/email/email-controller");
           getUser: async function(){
             return {success: true, response:[{username:"admin", recovery_email:"admin123@gmail.com"}]}
           },
-          updatePassword: async function(){
+          editUser: async function(){
             return {success:false, response:{error:"STUBBED ERROR"}}
           }
         }
@@ -201,7 +201,7 @@ const emailController = rewire("./../../../../lib/email/email-controller");
           getUser: async function(){
             return {success: true, response:[{username:"admin", recovery_email:"admin123@gmail.com"}]}
           },
-          updatePassword: async function(){
+          editUser: async function(){
             return {success: true, response:{affectedRows:1, changedRows:1}}
           }
         }
@@ -220,7 +220,7 @@ const emailController = rewire("./../../../../lib/email/email-controller");
           getUser: async function(){
             return {success: true, response:[{username:"admin", recovery_email:"admin123@gmail.com"}]}
           },
-          updatePassword: async function(){
+          editUser: async function(){
             return {success: true, response:{affectedRows:1, changedRows:1}}
           }
         }

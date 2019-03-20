@@ -18,12 +18,16 @@ const cookies = new Cookies();
 const host = "http://localhost";
 const port = 3265;
 
+const underTwelve = 0;
+const overTwelve = 1;
+
 class ServerConnect {
 
     constructor(){
         this.loginToken = cookies.get("accessToken");
         this.currentRoom = "";
         this.socket = openSocket(`${host}:${port}`);
+        this.currentMode = overTwelve;
 
 
         /**
@@ -60,6 +64,16 @@ class ServerConnect {
             this.onPatientEdit(patientId, newInfo);
         });
 
+    }
+
+    setUnderTwelve(){
+        this.currentMode = underTwelve;
+    }
+    setOverTwelve(){
+        this.currentMode = overTwelve;
+    }
+    isUnderTwelve(){
+        return this.currentMode == underTwelve;
     }
 
     /**
@@ -170,7 +184,8 @@ class ServerConnect {
      * @param {function} callback The callback function to be called on response
      */
     getAllPatients(callback){
-        this.socket.emit('getAllPatients', this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getAllPatients', this.loginToken, isAdult);
         this.socket.once("getAllPatientsResponse", res => {
             callback(res);
         });
@@ -188,17 +203,6 @@ class ServerConnect {
     }
 
     /**
-     * Retrieves all tests in the database, calls the callback with the response
-     * @param {function} callback
-     */
-    getAllTests(callback){
-        this.socket.emit('getAllTests', this.loginToken);
-        this.socket.once('getAllTestsResponse', res => {
-            callback(res);
-        });
-    }
-
-    /**
      * Retrieves all the tests of a particular patient, calls the callback with the response
      * @param {String} patientId The id of the patient we want to retrieve the information of.
      * @param {function} callback
@@ -210,24 +214,14 @@ class ServerConnect {
         });
     }
 
-    /**
-     * Retrieves all the tests in a particular date, calls the callback with the response
-     * @param {Date} date The id of the patient we want to retrieve the information of.
-     * @param {function} callback
-     */
-    getTestsOnDate(date, callback){
-        this.socket.emit('getAllTestsOnDate', date, this.loginToken);
-        this.socket.once('getAllTestsOnDateResponse', res => {
-            callback(res);
-        });
-    }
 
     /**
      * Retrieves all overdue tests, calls the callback with the response.
      * @param {function} callback
      */
     getOverdueTests(callback){
-        this.socket.emit('getOverdueTests', this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getOverdueTests', this.loginToken, isAdult);
         this.socket.once('getOverdueTestsResponse', res => {
             callback(res);
         });
@@ -239,10 +233,9 @@ class ServerConnect {
      * @param {boolean} anydayTestsOnly True if you only want the tests that are not scheduled on a particular day.
      * @param {function} callback
      */
-    getTestsInWeek(date, callback, anydayTestsOnly=false){
-        console.log("asking for tests");
-        console.log(this.loginToken);
-        this.socket.emit('getTestsInWeek', date, this.loginToken);
+    getTestsInWeek(date, callback){
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getTestsInWeek', date, this.loginToken, isAdult);
         this.socket.once('getTestsInWeekResponse', res => {
             console.log({res});
             callback(res);
@@ -420,7 +413,8 @@ class ServerConnect {
     }
 
     getOverdueReminderGroups(callback){
-        this.socket.emit("getOverdueReminderGroups", this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit("getOverdueReminderGroups", this.loginToken, isAdult);
         this.socket.once("getOverdueReminderGroupsResponse", res => {
             callback(res);
         });
