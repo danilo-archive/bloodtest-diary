@@ -2,7 +2,7 @@ const chai = require('chai');
 const should = chai.should();
 const mock_fs = require('mock-fs');
 
-const json_controller = require('../../../lib/json-controller');
+const json_controller = require('../../../lib/json-parser');
 
 
 afterEach(() => mock_fs.restore());

@@ -11,11 +11,9 @@ const Container = styled.div`
   white-space: nowrap;
   align-items: center;
   margin: 0 1rem;
-  cursor: pointer;
 
   & > p {
     margin-left: 5px;
-    user-select: none;
   }
 `;
 const RadioLabel = styled(Label)`
