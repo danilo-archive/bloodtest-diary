@@ -1,4 +1,12 @@
+/**
+ * This module parses csv files into insertion queries
+ * @module csv-reader
+ * @author Alessandro Amantini
+ * @version 0.0.2
+ */
+
 const csv = require('csvtojson');
+const fs = require('fs');
 
 /**
  * Take a csv as JSON and return the title of the table and
@@ -66,23 +74,26 @@ function arrayToString(array, separator = ",", before = "'", after = "'"){
  * entries and covert them all into an insertion query.
  * @param {string} tableName: the name of the database table
  * @param {string} fields: the name of the database columns
- * @param {string[]} values: a collection of database entries as strings
- *  respecting the order dictated by 'records'
+ * @param {string} value: an entry as string respecting the order
+ *  dictated by 'records'
+ * @param {string} insertSqlFile: path of the insert sql file
  */
-function generateInsertionQuery(tableName, fields, values){
+function generateInsertionQuery(tableName, fields, value, insertSqlFile){
     let query = `INSERT INTO ${tableName} (${fields}) VALUES`;
-    for(const value of values){
-        query += ` (${value}),`;
-    }
-    query = `${query.slice(0,-1)};`;
-    console.log(query);
+    query += ` (${value});\n`;
+    fs.appendFileSync(insertSqlFile, query, (err) => {
+        if (err) throw err;
+    });
 }
 
+
 /**
- * Take the path of a csv and 
+ * Take the path of a csv file, parse it, and put into the insertion sql
+ * file passed as path
  * @param {string} csvFilePath: the path of the csv file 
+ * @param {string} insertSqlFile: path of the insert sql file
  */
-function convert(csvFilePath){
+function convert(csvFilePath, insertSqlFile){
     csv()
     .fromFile(csvFilePath)
     .then((data)=>{
@@ -97,13 +108,14 @@ function convert(csvFilePath){
         const recordNamesAsString = arrayToString(recordNames);
         const entriesAsString = [];
         for(const entry of entries){
-            entriesAsString.push(arrayToString(entry,",","'","'"));
+            entriesAsString.push(arrayToString(entry,",","",""));
         }
-        generateInsertionQuery(tableName, recordNamesAsString, entriesAsString);
+        for(let i = 0; i < entriesAsString.length; ++i){
+            generateInsertionQuery(tableName, recordNamesAsString, entriesAsString[i], insertSqlFile);
+        } 
     });
-}
- 
-convert('./patients.csv');
+};
 
-// Async / await usage
-//const jsonArray = await csv().fromFile(csvFilePath);
+module.exports = {
+    convert
+};
