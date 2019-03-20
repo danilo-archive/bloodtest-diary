@@ -55,7 +55,6 @@ class Home extends Component {
     this.initOverduePanel();
     this.updateDashboard();
     this.initCallbacks();
-    this.openEmailModal();
   };
 
   initCallbacks() {
