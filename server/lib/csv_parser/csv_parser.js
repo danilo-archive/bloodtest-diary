@@ -114,7 +114,7 @@ function convert(csvFilePath, insertSqlFile){
             generateInsertionQuery(tableName, recordNamesAsString, entriesAsString[i], insertSqlFile);
         } 
     });
-};
+}
 
 module.exports = {
     convert
