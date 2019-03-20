@@ -223,6 +223,12 @@ class Home extends Component {
               <div className={"rightSideDash"}>
                 <div className={"navbar"}>
                   <Navbar
+                    setUnder12={check => {
+                      check
+                        ? this.serverConnect.setUnderTwelve()
+                        : this.serverConnect.setOverTwelve();
+                      this.refresh();
+                    }}
                     page="Dashboard"
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}

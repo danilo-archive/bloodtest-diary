@@ -77,7 +77,7 @@ class Navbar extends React.Component {
             <BottomSide>
               <CalenderControls>
                 <OptionSwitch
-                  onChange={() => alert("TODO: ADD U-12s FILTER")}
+                  onChange={this.props.setUnder12}
                   option1="Show under 12"
                   option2="Show 12 or older"
                 />
