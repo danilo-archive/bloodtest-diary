@@ -20,7 +20,7 @@ module.exports = {
 const  mysql = require('mysql');
 const db_controller = require('./db_controller/db-controller');
 const dateFormat = require('dateformat');
-const logger = require('./logger')
+
 /** 
  * If true, it will output to the console, otherwise it will not output anything.
  * It's good to turn it off in testing to increase readability. Leave on for debugging.
@@ -128,22 +128,22 @@ function log(type, username, tableName, entryID, message = undefined, callback =
         if (showConsoleOutput) {
             message = (message === "NULL") ? "No message." : message;
             if (s.length > 0 && result.status === "OK") {
-                logger.info("Log: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message);
+                console.log("Log: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message);
             }
             else if (s.length > 0) {
-                logger.error("===========================");
-                logger.error("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message);
-                logger.error(result.err);
-                logger.error("===========================");
+                console.log("===========================");
+                console.log("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message);
+                console.log(result.err);
+                console.log("===========================");
             }
             else if (result.status === "OK") {
-                logger.info("Log: user " + username + " committed other action: " + message);
+                console.log("Log: user " + username + " committed other action: " + message);
             }
             else {
-                logger.error("===========================");
-                logger.error("ERROR logging: user " + username + " committed other action: " + message);
-                logger.error(result.err);
-                logger.error("===========================");
+                console.log("===========================");
+                console.log("ERROR logging: user " + username + " committed other action: " + message);
+                console.log(result.err);
+                console.log("===========================");
             }
         }
 
