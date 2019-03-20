@@ -17,7 +17,7 @@ const dataToInsertAsCsv = ['./user.csv',
                            './test.csv'];
 
 //The path of the insert.sql
-const insertSqlFile = './insert.sql';
+const insertSqlFile = '../insert.sql';
 const insertSqlHeader = `
 USE BloodTestDB;
 
