@@ -28,8 +28,11 @@ queryController.__set__("logger",logger);
 const testUsername = "admin"; // username that is used throughout the tests (also for action username)
 
 describe("Select queries tests", function(){
-  context("Get All patients", function(){
-    test(queryController.getAllPatients);
+  context("Get All patients (adults)", function(){
+    test(queryController.getAllPatients,true);
+  })
+  context("Get All patients (children)", function(){
+    test(queryController.getAllPatients,false);
   })
   context("Get Next Test of patient", function(){
     test(queryController.getNextTestsOfPatient,"400")
@@ -66,28 +69,53 @@ describe("Select queries tests", function(){
     beforeEach(()=>{
         spy = sinon.spy(queryController.getTestWithinWeek);
     })
-    it("Should return all days (STUBBED)", async function(){
+    it("Should return all days (adult) (STUBBED)", async function(){
       const dbController = {
         selectQuery: async function() {
           return {status:"OK", response:{ rows:[]}}
         }
       }
       queryController.__set__("databaseController",dbController);
-      const response = await spy("2018-04-03");
-      spy.calledWith("2018-04-03").should.equal(true);
+      const response = await spy("2018-04-03",true);
+      spy.calledWith("2018-04-03",true).should.equal(true);
       spy.calledOnce.should.equal(true);
       response.success.should.equal(true);
       response.response.length.should.equal(6);
     });
-    it("Should return error (STUBBED)", async function(){
+    it("Should return error (adult) (STUBBED)", async function(){
         const dbController = {
           selectQuery: async function() {
             return {status: "ERR", err:{ }}
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy("2018-04-03");
-        spy.calledWith("2018-04-03").should.equal(true);
+        const response = await spy("2018-04-03",true);
+        spy.calledWith("2018-04-03",true).should.equal(true);
+        spy.calledOnce.should.equal(true);
+        response.success.should.equal(false);
+    });
+    it("Should return all days (children) (STUBBED)", async function(){
+      const dbController = {
+        selectQuery: async function() {
+          return {status:"OK", response:{ rows:[]}}
+        }
+      }
+      queryController.__set__("databaseController",dbController);
+      const response = await spy("2018-04-04",false);
+      spy.calledWith("2018-04-04",false).should.equal(true);
+      spy.calledOnce.should.equal(true);
+      response.success.should.equal(true);
+      response.response.length.should.equal(6);
+    });
+    it("Should return error (children) (STUBBED)", async function(){
+        const dbController = {
+          selectQuery: async function() {
+            return {status: "ERR", err:{ }}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("2018-04-04",false);
+        spy.calledWith("2018-04-04",false).should.equal(true);
         spy.calledOnce.should.equal(true);
         response.success.should.equal(false);
     });
@@ -97,26 +125,43 @@ describe("Select queries tests", function(){
     beforeEach(()=>{
         spy = sinon.spy(queryController.getSortedOverdueWeeks);
     })
-    it("Should return all overdue weeks grouped (STUBBED)", async function(){
+    it("Should return all overdue weeks grouped (children) (STUBBED)", async function(){
       const dbController = {
         selectQuery: async function() {
           return {status:"OK", response:{ rows:[
-            {test_id:"100", Monday:"1"},
-            {test_id:"110", Monday:"1"},
-            {test_id:"200", Monday:"2"},
-            {test_id:"203", Monday:"2"},
-            {test_id:"201", Monday:"2"},
-            {test_id:"307", Monday:"3"},
+            {test_id:"110", Monday:"1", isAdult:"no"},
+            {test_id:"203", Monday:"2", isAdult:"no"},
+            {test_id:"201", Monday:"2", isAdult:"no"}
           ]}}
         }
       }
       queryController.__set__("databaseController",dbController);
-      const response = await spy();
+      const response = await spy(false);
+      spy.calledOnce.should.equal(true);
+      response.success.should.equal(true);
+      response.response.length.should.equal(2);
+      response.response[0].tests.length.should.equal(1);
+      response.response[1].tests.length.should.equal(2);
+      response.response[0].class.should.equal("1");
+      response.response[1].class.should.equal("2");
+    });
+    it("Should return all overdue weeks grouped (adult) (STUBBED)", async function(){
+      const dbController = {
+        selectQuery: async function() {
+          return {status:"OK", response:{ rows:[
+            {test_id:"100", Monday:"1", isAdult:"yes"},
+            {test_id:"200", Monday:"2", isAdult:"yes"},
+            {test_id:"307", Monday:"3", isAdult:"yes"},
+          ]}}
+        }
+      }
+      queryController.__set__("databaseController",dbController);
+      const response = await spy(true);
       spy.calledOnce.should.equal(true);
       response.success.should.equal(true);
       response.response.length.should.equal(3);
-      response.response[0].tests.length.should.equal(2);
-      response.response[1].tests.length.should.equal(3);
+      response.response[0].tests.length.should.equal(1);
+      response.response[1].tests.length.should.equal(1);
       response.response[2].tests.length.should.equal(1);
       response.response[0].class.should.equal("1");
       response.response[1].class.should.equal("2");
@@ -159,25 +204,50 @@ describe("Select queries tests", function(){
       const res = await queryController.getOverdueReminderGroups();
       expect(res.success).to.be.false;
     });
-    it ("Should return return correct groups.", async () => {
+    it ("Should return correct groups (adults).", async () => {
       const dbController = {
         selectQuery: async function() {
           return {status:"OK", response:{ rows:[
-            {test_id: 404, reminders_sent: 0},
-            {test_id: 200, reminders_sent: 1}
+            {test_id: 404, reminders_sent: 0, isAdult:"yes"},
+            {test_id: 200, reminders_sent: 1, isAdult:"yes"}
           ]}};
         }
       }
       queryController.__set__("databaseController",dbController);
-      const res = await queryController.getOverdueReminderGroups();
+      const res = await queryController.getOverdueReminderGroups(true);
       const shouldBe = {
         success:true,
         response: {
           notReminded: [
-            {test_id: 404, reminders_sent: 0}
+            {test_id: 404, reminders_sent: 0, isAdult:"yes"}
           ],
           reminded: [
-            {test_id: 200, reminders_sent: 1}
+            {test_id: 200, reminders_sent: 1, isAdult:"yes"}
+          ]
+        }
+      };
+      expect(res.success).to.be.true;
+      expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
+    });
+    it ("Should return correct groups (children).", async () => {
+      const dbController = {
+        selectQuery: async function() {
+          return {status:"OK", response:{ rows:[
+            {test_id: 40, reminders_sent: 0, isAdult:"no"},
+            {test_id: 390, reminders_sent: 3, isAdult:"no"}
+          ]}};
+        }
+      }
+      queryController.__set__("databaseController",dbController);
+      const res = await queryController.getOverdueReminderGroups(false);
+      const shouldBe = {
+        success:true,
+        response: {
+          notReminded: [
+            {test_id: 40, reminders_sent: 0, isAdult:"no"}
+          ],
+          reminded: [
+            {test_id: 390, reminders_sent: 3, isAdult:"no"}
           ]
         }
       };

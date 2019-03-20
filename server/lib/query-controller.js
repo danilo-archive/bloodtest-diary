@@ -35,7 +35,6 @@ async function getPatient(patient_no) {
  * @param {string} patient_no the patient number
  * @return {JSON} - {success:Boolean response:Array or Error}
  */
-// TODO to be tested
 async function getFullPatientInfo(patient_no) {
     const sql = `SELECT * FROM Patient LEFT OUTER JOIN Hospital ON Patient.hospital_id=Hospital.hospital_id LEFT OUTER JOIN Carer ON Patient.carer_id=Carer.carer_id WHERE Patient.patient_no = ${mysql.escape(
         patient_no
@@ -67,10 +66,12 @@ async function getHospital(hospital_id) {
 
 /**
  * Get all the patients from the database
+ * @param {Boolean} isAdult If the records should be displayed for adult users
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
-async function getAllPatients() {
-    const sql = "Select * From Patient;";
+async function getAllPatients(isAdult) {
+    const adult = isAdult ? "yes" : "no";
+    const sql = `Select * From Patient WHERE isAdult='${adult}'`;
     return await selectQueryDatabase(sql);
 }
 
@@ -148,15 +149,19 @@ async function getTestInfo(test_id) {
 
 /**
 * Get all the overdue tests from the database plus additional info about time difference
+* @param {Boolean} isAdult If the records should be displayed for adult users
 * @return {JSON} result of the query - {success:true/false response:Array{SortedWeek}/Error}
 * @typedef {SortedWeek}
 * @property  class {String} - monday of the week, format: 'Mon Mar 04 2019 00:00:00 GMT+0000 (GMT)'
 * @property  tests {Array[JSON]} - tests within week
 **/
-async function getSortedOverdueWeeks()
+async function getSortedOverdueWeeks(isAdult)
 {
+  const adult = isAdult ? "yes" : "no";
   const sql = `Select *, IF(((DAYOFWEEK(due_date)-2) = -1),DATE_ADD(due_date,Interval (-6) Day),DATE_ADD(due_date,Interval (-(DAYOFWEEK(due_date)-2)) Day)) AS Monday
-             From Test NATURAL JOIN Patient where (completed_date IS NULL AND due_date < CURDATE() AND completed_status='no') OR (completed_date = CURDATE() AND due_date < CURDATE()) ORDER BY due_date ASC;`;
+             From Test NATURAL JOIN Patient where
+             ((completed_date IS NULL AND due_date < CURDATE() AND completed_status='no') OR (completed_date = CURDATE() AND due_date < CURDATE()))
+             AND isAdult='${adult}' ORDER BY due_date ASC;`;
   const response = await selectQueryDatabase(sql);
   if(response.success == false)
   {
@@ -175,11 +180,12 @@ async function getSortedOverdueWeeks()
 /**
  * Get all tests within the week from the database
  * @param {String} date - any date (from Monday to Friday) within the week to retrieve (format: "YYYY-MM-DD")
+ * @param {Boolean} isAdult If the records should be displayed for adult users
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
-async function getTestWithinWeek(date) {
+async function getTestWithinWeek(date,isAdult) {
     const dateString = dateformat(date, "yyyy-mm-dd");
-    const response = await Promise.all(getTestsDuringTheWeek(dateString))
+    const response = await Promise.all(getTestsDuringTheWeek(dateString,isAdult))
         .then(days => {
             return checkMultipleQueriesStatus(days);
         })
@@ -194,7 +200,7 @@ async function getTestWithinWeek(date) {
  * sent a reminder. The other group are the tests that have already been sent a reminder.
  * Response includes some basic info about the test.
  *
- * @param {string} actionUsername The user who issued the request.
+ * @param {Boolean} isAdult If the records should be displayed for adult users
  * @returns {JSON} {
  *    success: true|false,
  *    response: {
@@ -217,10 +223,11 @@ async function getTestWithinWeek(date) {
  *    }
  *  }
  */
-async function getOverdueReminderGroups() {
-    const sql = `Select test_id, due_date, patient_no, patient_name, patient_surname, last_reminder, reminders_sent
+async function getOverdueReminderGroups(isAdult) {
+    const adult = isAdult ? "yes" : "no";
+    const sql = `Select test_id, due_date, patient_no, patient_name, patient_surname, last_reminder, reminders_sent, isAdult
             From Test NATURAL JOIN Patient
-            where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' ORDER BY last_reminder, due_date ASC;`;
+            where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' AND isAdult='${adult}' ORDER BY last_reminder, due_date ASC;`;
 
     const res = await selectQueryDatabase(sql);
 
@@ -549,7 +556,6 @@ async function changeTestStatus(test, actionUsername) {
     const token = await requestEditing("Test", test.testId, actionUsername);
     let status;
     let date;
-    // TODO: first check if it can edit. If edit successful then schedule a new one.
     let scheduleNew = false;
     const testInfo = await getTest(test.testId);
     if (!testInfo.success) {
@@ -1004,9 +1010,11 @@ async function checkIfPatientsTestsAreEdited(patientid) {
 /**
  * Produce multiple queries on the database to retrieve test within the week
  * @param {String} date - date in the week to retrieve tests (format: "YYYY-MM-DD")
+ * @param {Boolean} isAdult If the records should be displayed for adult users
  * @return {Array} array of queries to run
  **/
-function getTestsDuringTheWeek(date) {
+function getTestsDuringTheWeek(date,isAdult) {
+    const adult = isAdult ? "yes" : "no";
     const weekDay = new Date(date).getDay();
     const daysInWeek = [];
     let sql;
@@ -1015,16 +1023,16 @@ function getTestsDuringTheWeek(date) {
         const day = -1 * (weekDay - 1) + i;
         sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD(${mysql.escape(
             date
-        )}, INTERVAL ${mysql.escape(day)} DAY);`;
+        )}, INTERVAL ${mysql.escape(day)} DAY) AND isAdult='${adult}';`;
         daysInWeek.push(databaseController.selectQuery(sql));
         i++;
     }
     const day = -1 * (weekDay - 1) + i;
-    sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD(${mysql.escape(
+    sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where (due_date = DATE_ADD(${mysql.escape(
         date
     )}, INTERVAL ${mysql.escape(day)} DAY) OR due_date = DATE_ADD(${mysql.escape(
         date
-    )}, INTERVAL ${mysql.escape(day + 1)} DAY);`;
+    )}, INTERVAL ${mysql.escape(day + 1)} DAY)) AND isAdult='${adult}';`;
     daysInWeek.push(databaseController.selectQuery(sql));
     return daysInWeek;
 }
@@ -1377,7 +1385,6 @@ function prepareUpdateSQL(table, object, idProperty) {
  * @return {String} SQL query
  **/
 function prepareDeleteSQL(table, idProperty, id) {
-    // TODO: add logging in delete
     const sql = `DELETE FROM ${table} WHERE ${idProperty}=${mysql.escape(
         id
     )} LIMIT 1;`;
