@@ -48,11 +48,8 @@ const NavbarContainer = styled.div`
 `;
 
 const TableContainer = styled.div`
-    color: #ffffff;
-    border: green 0 solid;
     height: 80%;
     width: 100%;
-
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
