@@ -47,7 +47,7 @@ const defaultOptions = {   //default options for the use of the module
     consoleOutput: true,
     fileOutput: true,
     colorize: true,
-    outputFilePath: './../logs/'
+    outputFilePath: __dirname + "/logs/"
 }
 let options = initialise(CONFIG_FILE_PATH); //the options used by the logger
 
@@ -124,8 +124,8 @@ function initialise(configPath) {
         outputFilePath += '/';
     logPath = outputFilePath + dateformat(new Date(), "yyyymmdd_HHMMss") + "_server.log";
 
-    if (writeStream == null) {
-        if (!fs.existsSync(outputFilePath))
+    if (writeStream == null && json.fileOutput === true) {
+        if (!fs.existsSync(outputFilePath) )
             fs.mkdirSync(outputFilePath);
 
         writeStream = fs.createWriteStream(logPath, { 'flags': 'a' });
