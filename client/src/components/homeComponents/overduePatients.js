@@ -5,13 +5,7 @@ import WeekDaySection from "./calendarComponents/WeekDaySection";
 import ScrollBox from "./calendarComponents/ScrollBox";
 import AppointmentSection from "./calendarComponents/AppointmentSection";
 
-const Container = styled.div`
-  margin: 3px;
-  padding: 0%;
-  width: auto;
-  height: 100%;
-  overflow: hidden;
-
+const Wrapper = styled.div`
   border: #839595 0px solid;
 
   margin-right: 1%;
@@ -37,6 +31,14 @@ const Container = styled.div`
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 `;
 
+const Container = styled.div`
+  margin: 3px;
+  padding: 0%;
+  width: auto;
+  height: 100%;
+  overflow: hidden;
+`;
+
 class OverduePatients extends React.Component {
 
   constructor(props){
@@ -52,6 +54,7 @@ class OverduePatients extends React.Component {
     console.log(this.props.anytimeAppointments);
     return (
       <>
+      <Wrapper>
         <Container>
           <WeekDaySection
             notificationNumber={
@@ -80,6 +83,7 @@ class OverduePatients extends React.Component {
             <div style={{width:"100%",height:"45px"}}/>
           </ScrollBox>
         </Container>
+      </Wrapper>  
       </>
     );
   }
