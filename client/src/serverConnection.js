@@ -27,7 +27,7 @@ class ServerConnect {
         this.loginToken = cookies.get("accessToken");
         this.currentRoom = "";
         this.socket = openSocket(`${host}:${port}`);
-        this.currentMode = underTwelve;
+        this.currentMode = overTwelve;
 
 
         /**
