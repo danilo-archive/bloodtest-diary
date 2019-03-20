@@ -47,7 +47,7 @@ const defaultOptions = {   //default options for the use of the module
     consoleOutput: true,
     fileOutput: true,
     colorize: true,
-    outputFilePath: __dirname + "/logs/"
+    outputFilePath: "./logs/"
 }
 let options = initialise(CONFIG_FILE_PATH); //the options used by the logger
 
@@ -114,8 +114,12 @@ function log() {
  * @returns {JSON} the options for logging. 
  */
 function initialise(configPath) {
-    let json = jsonController.getJSON(configPath);
-
+    let json = null;
+    try {
+        json = jsonController.getJSON(configPath);
+    } catch (err) {
+        console.error(err)
+    }
     if (json == null)
         json = defaultOptions;
 
@@ -123,14 +127,16 @@ function initialise(configPath) {
     if (outputFilePath[outputFilePath.length - 1] !== '/')  //check if the output file path is formatted as a directory
         outputFilePath += '/';
     logPath = outputFilePath + dateformat(new Date(), "yyyymmdd_HHMMss") + "_server.log";
+    try {
+        if (writeStream == null && json.fileOutput == true) {
+            if (!fs.existsSync(outputFilePath))
+                fs.mkdirSync(outputFilePath);
 
-    if (writeStream == null && json.fileOutput === true) {
-        if (!fs.existsSync(outputFilePath) )
-            fs.mkdirSync(outputFilePath);
-
-        writeStream = fs.createWriteStream(logPath, { 'flags': 'a' });
-    }  //flag "a" allows for appending
-
+            writeStream = fs.createWriteStream(logPath, { 'flags': 'a' });
+        }  //flag "a" allows for appending
+    } catch (err) {
+        console.error(err)
+    }
     return json;
 }
 
@@ -318,7 +324,7 @@ function deleteFolderRecursive(path) {
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach(function (file) {
             const curPath = path + "/" + file;
-            if (fs.lstatSync(curPath).isDirectory()) { 
+            if (fs.lstatSync(curPath).isDirectory()) {
                 deleteFolderRecursive(curPath);
             } else { // delete file
                 fs.unlinkSync(curPath, function (err) {
