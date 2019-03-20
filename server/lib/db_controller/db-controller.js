@@ -33,7 +33,7 @@ const tokenGenerator = require("./token-generator");
 const dateformat = require("dateformat");
 const databaseConfig = require("../../config/database");
 const Database = require("./Database");
-
+const logger = require('./../logger')
 const TOKEN_VALIDITY_MINUTES = 30;
 
 // Needed to ensure that critical queries are never executed concurrently.
@@ -199,8 +199,7 @@ async function updateQuery(sql, entryTable, entryID, token) {
     deleteQuery = mysql.format(deleteQuery, [token]);
     await getResult(deleteQuery, database, async (result) => {
         if (result.affectedRows != 1) {
-            console.log(result);
-            console.log("ERROR WHEN DELETING A TOKEN (" + token + ")!");
+            logger.error(result, "ERROR WHEN DELETING A TOKEN (" + token + ")!");
         }
         return result;
     });
@@ -385,7 +384,7 @@ async function updateAccessToken(accessToken, newExpiration) {
     });
     database.close();
     if (res.status !== "OK") {
-        console.log("Could not update access token expiration in the DB.");
+        logger.error("Could not update access token expiration in the DB.");
     }
     return res;
 }
@@ -405,7 +404,7 @@ async function deleteAccessToken(accessToken) {
     });
     database.close();
     if (res.status !== "OK") {
-        console.log("Could not delete access token in the DB.");
+        logger.error("Could not delete access token in the DB.");
     }
     return res;
 }
@@ -555,10 +554,10 @@ async function editTokensEntryExists(database, entryTable, entryID, token) {
                 
                 await getResult(delQuery, database, async (result) => {
                     if (result.affectedRows != 1) {
-                        console.log("=====================");
-                        console.log(result);
-                        console.log("ERROR WHEN DELETING A TOKEN (" + entryTable + ", " + entryID + ")!");
-                        console.log("=====================");
+                        logger.error("=====================");
+                        logger.error(result);
+                        logger.error("ERROR WHEN DELETING A TOKEN (" + entryTable + ", " + entryID + ")!");
+                        logger.error("=====================");
                     }
                     return result;
                 });
