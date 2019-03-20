@@ -1214,19 +1214,20 @@ function prepareInsertSQL(table, object) {
     sql += `${properties[properties.length - 1]}) Values(`;
     const values = Object.values(object);
     for (let i = 0; i < values.length - 1; i++) {
-        if (!(values[i] === null || values[i].length === 0 || values[i] === "null" || values[i] === undefined)) {
-            sql += `${mysql.escape(values[i])},`;
-        } else {
+        if (values[i] === undefined || values[i] === null || values[i].length === 0 || 
+            values[i] === "null" || values[i] === "NULL") {
             sql += "NULL,";
+        } else {
+            sql += `${mysql.escape(values[i])},`;
         }
     }
-    if (!(values[values.length - 1] === null || values[values.length - 1].length === 0 ||values[values.length - 1] === "null" || values[values.length - 1] === undefined)) {
-        sql += `${mysql.escape(values[values.length - 1])});`;
-    } else {
+    if ( values[values.length - 1] === undefined || values[values.length - 1] === null || 
+        values[values.length - 1].length === 0 || values[values.length - 1] === "null" || values[values.length - 1] === "NULL") {
         sql += `NULL);`;
+    } else {
+        sql += `${mysql.escape(values[values.length - 1])});`;
     }
-    //For debug:
-    //console.log(sql);
+    
     return sql;
 }
 
@@ -1244,10 +1245,11 @@ function prepareUpdateSQL(table, object, idProperty) {
     let pos;
     for (let i = 0; i < properties.length; i++) {
         if (properties[i] != idProperty) {
-            if (!(values[i] === null || values[i].length === 0 || values[i] === "null" || values[i] === undefined)) {
-                sql += `${properties[i]} = ${mysql.escape(values[i])}, `;
-            } else {
+            if (values[i] === undefined || values[i] === null || values[i].length === 0 || 
+                values[i] === "null" || values[i] === "NULL") {
                 sql += `${properties[i]} = NULL, `;
+            } else {
+                sql += `${properties[i]} = ${mysql.escape(values[i])}, `;
             }
         } else {
             pos = i;
@@ -1255,10 +1257,11 @@ function prepareUpdateSQL(table, object, idProperty) {
     }
     //delete ", " from sql query
     sql = sql.substr(0, sql.length - 2);
-    if (!(values[pos] === null || values[pos].length === 0 || values[pos] === "null" || values[pos] === undefined)) {
-        sql += ` WHERE ${idProperty} = ${mysql.escape(values[pos])};`;
-    } else {
+    if (values[pos] === null || values[pos] === undefined || values[pos].length === 0 || 
+        values[pos] === "null" || values[pos] === "NULL") {
         sql += ` WHERE ${idProperty} = NULL;`;
+    } else {
+        sql += ` WHERE ${idProperty} = ${mysql.escape(values[pos])};`;
     }
     //For debug:
     //console.log(sql);
