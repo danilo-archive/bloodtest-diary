@@ -18,12 +18,16 @@ const cookies = new Cookies();
 const host = "http://localhost";
 const port = 3265;
 
+const underTwelve = 0;
+const overTwelve = 1;
+
 class ServerConnect {
 
     constructor(){
         this.loginToken = cookies.get("accessToken");
         this.currentRoom = "";
         this.socket = openSocket(`${host}:${port}`);
+        this.currentMode = underTwelve;
 
         this.onConnected = undefined;
         /**
@@ -70,6 +74,13 @@ class ServerConnect {
         this.socket.on("testEdited", (id, newInfo) => {
             this.onTestEdit(id, newInfo);
         });
+    }
+
+    setUnderTwelve(){
+        this.currentMode = underTwelve;
+    }
+    setOverTwelve(){
+        this.currentMode = overTwelve;
     }
 
     /**
