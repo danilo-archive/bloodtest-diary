@@ -23,8 +23,8 @@ module.exports = {
     deleteAllLogFiles
 }
 
-const jsonController = require('./json-controller.js');
-const CONFIG_FILE_PATH = './../config/logger.json'
+const jsonController = require('./json-parser.js');
+const CONFIG_FILE_PATH = __dirname + '/../config/logger.json'
 const fs = require('fs');
 const dateformat = require('dateformat');
 let writeStream = null;

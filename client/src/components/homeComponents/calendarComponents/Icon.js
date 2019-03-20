@@ -12,14 +12,18 @@ const Icon = styled.i`
   transition: opacity ease-in 250ms;
   opacity: 1;
   margin-left: 5px;
-  &:hover {
+  ${props =>
+    !props.asLabel
+      ? ` &:hover {
     opacity: 0.3;
-  }
+  }`
+      : ``}
 `;
 
 export default props => {
   return (
     <Icon
+      asLabel={props.asLabel}
       className={`fa fa-${props.icon}`}
       style={{
         color: combinations[props.icon].color,
