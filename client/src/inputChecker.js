@@ -7,9 +7,6 @@ const intRegex = /^\+?(0|[1-9]\d*)$/;
 const characterRegex = /^[a-zA-Z]+$/;
 //TODO : maybe add more sophisticated regular expression
 const emailRegex = /\S+@\S+\.\S+/;
-//TODO : maybe use external library
-const phoneRegex = /^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g;
-
 
 class InputChecker {
 
@@ -53,19 +50,6 @@ class InputChecker {
         }
         return emailRegex.test(input);
     }
-
-    /**
-     * Checks if input is a phone number or empty
-     * @param input String of some value
-     * @returns {boolean} Match with regular expression
-     */
-    //TODO : make this work
-    /*static phoneCheck(input) {
-        if (this.emptyCheck(input)) {
-            return true;
-        }
-        return phoneRegex.test(input);
-    }*/
 }
 
 export default InputChecker;

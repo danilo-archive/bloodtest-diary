@@ -205,9 +205,6 @@ class PatientProfile extends Component {
         if (!InputChecker.emailCheck(this.state.patientEmail)) {
             return {correct: false, message: "Wrong format of patient's email"};
         }
-        /*if (!InputChecker.phoneCheck(this.state.patientPhone)) {
-            return {correct: false, message: "Wrong format of patient's phone"}
-        }*/
         if (!this.state.noCarer) {
             if (InputChecker.emptyCheck(this.state.carerEmail)) {
                 return {correct: false, message: "Carer's email is compulsory"};
@@ -215,9 +212,7 @@ class PatientProfile extends Component {
             if (!InputChecker.emailCheck(this.state.carerEmail)) {
                 return {correct: false, message: "Wrong format of carer's email"};
             }
-            /*if (!InputChecker.phoneCheck(this.state.carerPhone)) {
-                return {correct: false, message: "Wrong format of carer's phone"}
-            }*/
+
         }
         if (!this.state.localHospital) {
             if (InputChecker.emptyCheck(this.state.hospitalEmail)){
@@ -226,9 +221,7 @@ class PatientProfile extends Component {
             if (!InputChecker.emailCheck(this.state.hospitalEmail)) {
                 return {correct: false, message: "Wrong format of hospital's email"};
             }
-            /*if (!InputChecker.phoneCheck(this.state.hospitalPhone)) {
-                return {correct: false, message: "Wrong format of hospital's phone"}
-            }*/
+            
         }
         return {correct : true};
     }
