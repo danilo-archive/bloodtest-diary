@@ -88,11 +88,11 @@ async function getUser(username) {
 }
 
 /**
- * Get all the tests from the database
+ * Get all users from database
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
-async function getAllTests() {
-    const sql = "Select * From Test ORDER BY due_date ASC;";
+async function getAllUsers() {
+    const sql = `Select * From User;`;
     return await selectQueryDatabase(sql);
 }
 
@@ -107,31 +107,14 @@ async function getTest(test_id) {
 }
 
 /**
- * Get all the tests from a specific patient from the database
- * @param {String} patientId - id of a patient
- * @return {JSON} result of the query - {success:true/false response:Array/Error}
- **/
-async function getTestsOfPatient(patientId) {
-    const sql = `Select * From Test Where patient_no = ${mysql.escape(
-        patientId
-    )};`;
-    return await selectQueryDatabase(sql);
-}
-
+* Get not completed tests from patient
+* @param {String} patientId - id of patient
+* @return {JSON} result of the query - {success:true/false response:Array/Error}
+**/
 async function getNextTestsOfPatient(patientId) {
     const sql = `SELECT * FROM Test WHERE patient_no = ${mysql.escape(
         patientId
     )} AND completed_status='no';`;
-    return await selectQueryDatabase(sql);
-}
-
-/**
- * Get all the tests on specific date from the database
- * @param {String} date - date (format: "YYYY-MM-DD")
- * @return {JSON} result of the query - {success:true/false response:Array/Error}
- **/
-async function getAllTestsOnDate(date) {
-    const sql = `Select * From Test Where due_date = ${mysql.escape(date)};`;
     return await selectQueryDatabase(sql);
 }
 
@@ -501,44 +484,36 @@ async function changeTestDueDate(testId, newDate, actionUsername) {
 }
 
 /**
- * Update password of an user
+ * Update User in database
  * @param {JSON} json - user
  * @param {string} actionUsername The user who issued the request.
  * Obligatory properties:
- * @property username {String}
+ * @property username {String},
+ * One of optional properties
+ * Optional properties:
+ * @property recovery_email {String}
  * @property hashed_password {String}
  * @return {JSON} - {success:Boolean response:Array or Error}
  **/
-async function updatePassword(json, actionUsername) {
+async function editUser(json, actionUsername) {
     const response = await getUser(json.username);
     const token = await requestEditing("User", json.username, actionUsername);
     if (!response.success) {
         return response;
     }
-    const user = response.response[0];
-    if (user) {
-        const hash = authenticator.produceHash(json.hashed_password, user.iterations, user.salt);
-        const sql = `UPDATE User SET hashed_password='${hash}' WHERE username = ${mysql.escape(json.username)} LIMIT 1;`;
-        return await updateQueryDatabase("User", json.username, sql, token, actionUsername);
+    if(response.response.length!=1){
+      return {success: false, response: "No user found" }
     }
-    else {
-        return { success: false, response: "No user found" }
+    const user = {username: json.username}
+    if(json.hashed_password){
+      const hash = authenticator.produceHash(json.hashed_password, response.response[0].iterations, response.response[0].salt);
+      user["hashed_password"] = hash;
     }
-}
-
-/**
-* Update recovery email of an user
-* @param {JSON} json - user
-* @param {string} token - token to issue the request with
-* @param {string} actionUsername The user who issued the request.
-* Obligatory properties:
-* @property username {String}
-* @property recovery_email {String}
-* @return {JSON} - {success:Boolean response:Array or Error}
-**/
-async function updateUserEmail(json, token, actionUsername) {
-    const sql = prepareUpdateSQL("User", json, "username")
-    return await updateQueryDatabase("User", json.username, sql, token, actionUsername)
+    if(json.recovery_email){
+      user["recovery_email"] = json.recovery_email;
+    }
+    const sql = prepareUpdateSQL("User",user,"username");
+    return await updateQueryDatabase("User", json.username, sql, token, actionUsername);
 }
 
 /**
@@ -1332,13 +1307,11 @@ module.exports = {
     getHospital,
     getCarer,
     getUser,
+    getAllUsers,
     getAllPatients,
     getFullPatientInfo,
-    getAllTests,
     getTestInfo,
-    getTestsOfPatient,
     getNextTestsOfPatient,
-    getAllTestsOnDate,
     getTestWithinWeek,
     getSortedOverdueWeeks,
     getOverdueReminderGroups,
@@ -1350,18 +1323,17 @@ module.exports = {
     addPatientExtended,
     addCarer,
     //UPDATES
-    updatePassword,
-    changeTestStatus,
-    changeTestDueDate,
     editTest,
-    editPatient,
-    editPatientExtended,
     editCarer,
     editHospital,
+    editPatient,
+    editPatientExtended,
     updateLastReminder,
+    changeTestStatus,
+    changeTestDueDate,
     changeTestColour,
     changePatientColour,
-    updateUserEmail,
+    editUser,
     //DELETE
     deleteHospital,
     deletePatient,
