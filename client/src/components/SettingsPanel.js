@@ -25,6 +25,10 @@ export default class SettingsPanel extends Component {
 
   getPanel() {
     switch(this.props.currentPage) {
+      case undefined:
+        return (
+          <ConnectionPanel/>
+        );
       case 'login_page':
         return (
           <ConnectionPanel/>

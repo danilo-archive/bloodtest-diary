@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
 
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
+
 const Container = styled.div`
   height: auto;
   width: 100%;
@@ -66,15 +69,14 @@ export default class ConnectionPanel extends Component {
   constructor(props){
       super(props);
       this.state = {
-        //TODO: Get current ip and port from client
-        ip: "192.168.1.1",
-        port: "5000"
+        ip: cookies.get("ip"),
+        port: cookies.get("port")
       };
 
       this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(event) {
+  handleChange = (event) => {
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -84,12 +86,12 @@ export default class ConnectionPanel extends Component {
     });
   }
 
-  updateIP() {
-    //Update client Ip wiith state.ip
+  updateIP = () => {
+    cookies.set("ip", this.state.ip, { path: '/' })
   }
 
-  updatePort() {
-    //Update client port wiith state.port
+  updatePort = () => {
+    cookies.set("port", this.state.port, { path: '/' })
   }
 
   render(){
