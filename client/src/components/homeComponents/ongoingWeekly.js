@@ -62,6 +62,7 @@ class OngoingWeekly extends React.Component {
               appointments={this.props.anytimeAppointments}
               section={"ongoing"}
               editTest={this.props.editTest}
+              editPatient={this.props.editPatient}
               handleError={this.props.handleError}
               section={"ongoing"}
             />

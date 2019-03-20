@@ -14,6 +14,7 @@ import EmailModal from "./homeComponents/emailModal/EmailModal.js";
 import ColorPicker from "./homeComponents/calendarComponents/ColorPicker.js";
 
 import EditTest from "./homeComponents/editTest/EditTestView";
+import PatientProfile from "./patientsComponents/PatientProfile.js";
 import {
   getNextDates,
   getMondayOfWeek,
@@ -83,10 +84,13 @@ class Home extends Component {
       openAddTestModal: false,
       openEditTestModal: false,
       openEmailModal: false,
+      openEditPatientModal: false,
       editTestId: undefined,
       editToken: undefined,
       notified: undefined,
-      notNotified: undefined
+      notNotified: undefined,
+      editPatientId: undefined,
+      editPatientToken: undefined
     };
   }
 
@@ -241,6 +245,22 @@ class Home extends Component {
     this.setState({ openEmailModal: false });
   };
 
+  openEditPatientModal = id => {
+    this.serverConnect.requestPatientEditing(id, res => {
+      if (res.token){
+          this.setState({editPatientId: id, openEditPatientModal: true, editPatientToken: res.token});
+      }else{
+          this.handleError(res, "Somebody is already editing this patient");
+      }
+    });
+  }
+
+  onCloseEditPatientModal = () => {
+    this.serverConnect.discardPatientEditing(this.state.editPatientId, this.state.editPatientToken, res => {
+      this.setState({editPatientId: undefined, openEditPatientModal: false, editPatientToken: undefined});
+    });
+  }
+
   render() {
     if (this.state.dashboardReady && this.state.overdueReady) {
       return (
@@ -253,6 +273,7 @@ class Home extends Component {
                   )}
                   anytimeAppointments={this.state.overdueTests}
                   editTest={this.onEditTestOpenModal}
+                  editPatient={this.openEditPatientModal}
                   handleError={this.handleInvalidResponseError}
               />
               <RightSideDash>
@@ -270,6 +291,7 @@ class Home extends Component {
                       weekDays={this.state.weekDays}
                       openModal={this.onAddTestOpenModal}
                       editTest={this.onEditTestOpenModal}
+                      editPatient={this.openEditPatientModal}
                       handleError={this.handleInvalidResponseError}
                     />
                     <OngoingWeekly
@@ -278,6 +300,7 @@ class Home extends Component {
                       notificationNumber={this.state.ongoingTests.length}
                       anytimeAppointments={this.state.ongoingTests}
                       editTest={this.onEditTestOpenModal}
+                      editPatient={this.openEditPatientModal}
                       handleError={this.handleInvalidResponseError}
                     />
                 </BottomSideDash>
@@ -319,6 +342,21 @@ class Home extends Component {
                   notNotified={this.state.notNotified}
                   notified={this.state.notified}
                   handleError={this.handleInvalidResponseError}
+                />
+              </Modal>
+              <Modal
+                  open={this.state.openEditPatientModal}
+                  onClose={this.onCloseEditPatientModal}
+                  showCloseIcon={false}
+                  style={modalStyles}
+                  center
+              >
+                <PatientProfile
+                    patientId={this.state.editPatientId}
+                    closeModal={this.onCloseEditPatientModal}
+                    editToken={this.state.editPatientToken}
+                    purpose={"Edit patient"}
+                    handleError={this.handleInvalidResponseError}
                 />
               </Modal>
             </Dashboard>

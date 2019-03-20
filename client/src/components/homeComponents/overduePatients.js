@@ -75,6 +75,7 @@ class OverduePatients extends React.Component {
                               color = {"rgb(255,226,102, 0.8)"}
                               appointments = {group.tests}
                               editTest={this.props.editTest}
+                              editPatient={this.props.editPatient}
                               handleError={this.props.handleError}
                           />
                       )
