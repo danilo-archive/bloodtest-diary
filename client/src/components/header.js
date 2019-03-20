@@ -14,14 +14,6 @@ import {getServerConnect} from "../serverConnection.js";
 import Alert from "./Alert.js"
 
 
-const navbarIcons = styled.div`
-    .icon {
-    max-width:100%;
-    max-height:100%;
-    }
-`;
-
-
 class Header extends Component {
   constructor(props){
       super(props);
@@ -60,27 +52,25 @@ class Header extends Component {
           <div id="window-title">
             <span>Kings College London NHS</span>
           </div>
-          <div className={navbarIcons}>
            <div id="window-controls">
                <div className="dropdown">
                    <div className="button" id="settings-button">
-                       <img className={"icon"} src={settings} alt={"Settings Button"}/>
+                       <img className={"headerIcon"} src={settings} alt={"Settings Button"}/>
                    </div>
                    <div className="dropdown-content">
                     <SettingsPanel currentPage={this.state.currentPage}/>
                   </div>
                </div>
                <div className="button" id="min-button">
-                   <img className={"icon"} src={minimize} alt={"Minimize Button"}/>
+                   <img className={"headerIcon"} src={minimize} alt={"Minimize Button"}/>
                </div>
               <div className="button" id="max-button">
-                  <img className={"icon"} src={maximize} alt={"Maximize Button"}/>
+                  <img className={"headerIcon"} src={maximize} alt={"Maximize Button"}/>
               </div>
               <div className="button" id="close-button">
-                  <img onClick={this.safeClose} className={"icon"} src={close} alt={"Close Button"}/>
+                  <img onClick={this.safeClose} className={"headerIcon"} src={close} alt={"Close Button"}/>
               </div>
           </div>
-        </div>
       </header>
       <OfflineScreen disabled = {this.state.disabled}/>
       <Alert/>

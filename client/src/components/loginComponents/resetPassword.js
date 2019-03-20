@@ -161,7 +161,6 @@ class LoginForm extends Component {
       wrongPassword: false
     };
 
-    this.onResetPassword = props.onResetPassword;
     this.serverConnect = props.serverConnect;
   }
 
@@ -198,7 +197,6 @@ class LoginForm extends Component {
 
   onRecoverPassword = () => {
       document.getElementById("test").style.animation = "fadeOut 0.7s linear 1";
-
   }
 
   showLoginErrorMessage = () => {
@@ -215,20 +213,13 @@ class LoginForm extends Component {
         <Section>
           <LoginLabel><svg className="loginIcon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#user"/></svg></LoginLabel>
           <InputSection>
-            <input id="login__username" type="text" name="username" className="loginInput" value={this.state.username} onChange={this.handleChange} placeholder="Username" required/>
+            <input id="login__username" type="text" name="username" className="loginInput" value={this.state.username} onChange={this.handleChange} placeholder="Email" required/>
           </InputSection>
         </Section>
 
-        <Section>
-          <LoginLabel><svg className="loginIcon"><use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#lock"/></svg></LoginLabel>
-          <InputSection>
-            <input id="login__password" type="password" name="password" className="loginInput" value={this.state.password} onChange={this.handleChange} placeholder="Password" required/>
-          </InputSection>
-        </Section>
+        <SignInButton onClick={this.handleSubmit}>Send Email</SignInButton>
 
-        <SignInButton onClick={this.handleSubmit}>Sign In</SignInButton>
-
-        <RecoveryLabel onClick={() => props.onResetPassword}>Recover Password</RecoveryLabel>
+        <RecoveryLabel onClick={this.onRecoverPassword}>Recover Password</RecoveryLabel>
 
         <LoginErrorLabel className={this.state.wrongPassword ? null : 'hidden'}>Username or password is invalid</LoginErrorLabel>
 

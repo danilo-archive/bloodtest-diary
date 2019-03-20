@@ -67,6 +67,17 @@
   background: #e81123;
 }
 
+.headerIcon {
+  max-width:100%;
+  max-height:100%;
+  display: inline-block;
+  fill: #f4f9fd;
+  font-size: 1rem;
+  height: 1em;
+  vertical-align: middle;
+  width: 1em;
+}
+
 .dropdown:hover .dropdown-content {
   display: block;
 }
