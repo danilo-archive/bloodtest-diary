@@ -101,7 +101,8 @@ io.on('connection',function(socket)
     // GETTERS
     // ==============
 
-    socket.on('getAllPatients', async (accessToken) => {
+    //TODO: PASS "isAdult" (BOOLEAN) VARIABLE FROM UI
+    socket.on('getAllPatients', async (accessToken,isAdult=true) => {
         if (!accessToken) {
             socket.emit("getAllPatientsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
@@ -112,7 +113,7 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.getAllPatients();
+        const response = await queryController.getAllPatients(isAdult);
         socket.emit("getAllPatientsResponse", {success: true, response: response.response});
     });
 
@@ -131,20 +132,6 @@ io.on('connection',function(socket)
         socket.emit("getFullPatientInfoResponse", {success: true, response: response.response});
     });
 
-    socket.on('getAllTests', async (accessToken) => {
-        if (!accessToken) {
-            socket.emit("getAllTestsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getAllTestsResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
-
-        const response = await queryController.getAllTests();
-        socket.emit("getAllTestsResponse", response);
-    });
 
     socket.on('getNextTestsOfPatient', async (patientId, accessToken) => {
         if (!accessToken) {
@@ -163,27 +150,10 @@ io.on('connection',function(socket)
 
     /**
     *@param {String} date of type "yyyy-mm-dd"
-    **/
-    socket.on('getAllTestsOnDate', async (date, accessToken) => {
-        if (!accessToken) {
-            socket.emit("getAllTestsOnDateResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getAllTestsOnDateResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
-
-        const response = await queryController.getAllTestsOnDate(date);
-        socket.emit('getAllTestsOnDateResponse',response);
-    });
-
-    /**
-    *@param {String} date of type "yyyy-mm-dd"
     *@param {Boolean} anydayTestsOnly - if unscheduled test to return
     **/
-    socket.on('getTestsInWeek',async (date, accessToken) => {
+    //TODO: PASS "isAdult" VARIABLE (BOOLEAN) FROM THE UI
+    socket.on('getTestsInWeek',async (date, accessToken,isAdult=true) => {
         if (!accessToken) {
             socket.emit("getTestsInWeekResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
@@ -194,11 +164,12 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.getTestWithinWeek(date);
+        const response = await queryController.getTestWithinWeek(date,isAdult);
         socket.emit('getTestsInWeekResponse', {success: true, response: response.response});
     });
 
-    socket.on('getOverdueTests', async (accessToken) => {
+    //TODO: PASS "isAdult" VARIABLE (BOOLEAN) FROM THE UI
+    socket.on('getOverdueTests', async (accessToken,isAdult=true) => {
         if (!accessToken) {
             socket.emit("getOverdueTestsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
@@ -210,7 +181,7 @@ io.on('connection',function(socket)
         }
 
         //const response = await queryController.getOverdueGroups();
-        const response = await queryController.getSortedOverdueWeeks();
+        const response = await queryController.getSortedOverdueWeeks(isAdult);
         socket.emit('getOverdueTestsResponse', {success: true, response: response.response});
     });
 
@@ -229,7 +200,8 @@ io.on('connection',function(socket)
         socket.emit("getTestInfoResponse", response);
     });
 
-    socket.on('getOverdueReminderGroups', async (accessToken) => {
+    //TODO: PASS "isAdult" VARIABLE (BOOLEAN) FROM THE UI
+    socket.on('getOverdueReminderGroups', async (accessToken,isAdult=true) => {
         if (!accessToken) {
             socket.emit("getOverdueReminderGroupsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
@@ -240,7 +212,7 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.getOverdueReminderGroups();
+        const response = await queryController.getOverdueReminderGroups(isAdult);
         socket.emit("getOverdueReminderGroupsResponse", response);
     });
 
@@ -523,7 +495,7 @@ io.on('connection',function(socket)
     // ==============
 
      //TODO: ADD CLIENT CONNECTION HERE
-    //PARAMETER - (STRING) USERNAME TO CHANGE PASSWORD  
+    //PARAMETER - (STRING) USERNAME TO CHANGE PASSWORD
     socket.on('passwordRecoverRequest', async (username) => {
         const passwordResponse = await email_controller.recoverPassword(username);
         socket.emit('passwordRecoverResponse', passwordResponse);

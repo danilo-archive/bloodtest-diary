@@ -199,17 +199,6 @@ class ServerConnect {
     }
 
     /**
-     * Retrieves all tests in the database, calls the callback with the response
-     * @param {function} callback
-     */
-    getAllTests(callback){
-        this.socket.emit('getAllTests', this.loginToken);
-        this.socket.once('getAllTestsResponse', res => {
-            callback(res);
-        });
-    }
-
-    /**
      * Retrieves all the tests of a particular patient, calls the callback with the response
      * @param {String} patientId The id of the patient we want to retrieve the information of.
      * @param {function} callback
@@ -221,17 +210,6 @@ class ServerConnect {
         });
     }
 
-    /**
-     * Retrieves all the tests in a particular date, calls the callback with the response
-     * @param {Date} date The id of the patient we want to retrieve the information of.
-     * @param {function} callback
-     */
-    getTestsOnDate(date, callback){
-        this.socket.emit('getAllTestsOnDate', date, this.loginToken);
-        this.socket.once('getAllTestsOnDateResponse', res => {
-            callback(res);
-        });
-    }
 
     /**
      * Retrieves all overdue tests, calls the callback with the response.
