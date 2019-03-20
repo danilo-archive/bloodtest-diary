@@ -6,7 +6,7 @@ import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import {getServerConnect} from "../../serverConnection";
 import { openAlert } from "../Alert"
-import {emptyCheck, emailCheck} from "../../inputChecker";
+import {emptyCheck, emailCheck} from "../../lib/inputChecker";
 
 
 const Container = styled.div`

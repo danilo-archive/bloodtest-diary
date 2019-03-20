@@ -1,7 +1,7 @@
 const chai = require('chai');
 const should = chai.should();
 
-const InputChecker= require("../../../src/inputChecker");
+const InputChecker= require("../../../src/lib/inputChecker");
 
 describe("Test empty check", function () {
     it("should return true", function () {

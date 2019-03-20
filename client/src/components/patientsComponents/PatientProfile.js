@@ -6,7 +6,7 @@ import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import TestSection from "./profileSections/TestSection";
 import {getServerConnect} from "../../serverConnection";
-import {emptyCheck, emailCheck} from "../../inputChecker";
+import {emptyCheck, emailCheck} from "../../lib/inputChecker";
 import {openAlert} from "../Alert";
 
 

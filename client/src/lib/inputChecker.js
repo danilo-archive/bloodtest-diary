@@ -1,5 +1,5 @@
 /**
- * This class purpose is to verify if given string matches some criteria.
+ * Purpose of functions below is to verify if given input matches some criteria.
  * For instance if email has valid type such as "anystring@anystring.anystring".
  * 
  * @author Jakub Cerven
