@@ -55,6 +55,7 @@ class WeeklyCalendar extends React.Component {
             anytimeAppointments={this.props.calendar[0]}
             openModal={this.props.openModal}
             editTest={this.props.editTest}
+            editPatient={this.props.editPatient}
             handleError={this.props.handleError}
           />
           <CalendarDay
@@ -66,6 +67,7 @@ class WeeklyCalendar extends React.Component {
             anytimeAppointments={this.props.calendar[1]}
             openModal={this.props.openModal}
             editTest={this.props.editTest}
+            editPatient={this.props.editPatient}
             handleError={this.props.handleError}
           />
           <CalendarDay
@@ -77,6 +79,7 @@ class WeeklyCalendar extends React.Component {
             anytimeAppointments={this.props.calendar[2]}
             openModal={this.props.openModal}
             editTest={this.props.editTest}
+            editPatient={this.props.editPatient}
             handleError={this.props.handleError}
           />
           <CalendarDay
@@ -88,6 +91,7 @@ class WeeklyCalendar extends React.Component {
             anytimeAppointments={this.props.calendar[3]}
             openModal={this.props.openModal}
             editTest={this.props.editTest}
+            editPatient={this.props.editPatient}
             handleError={this.props.handleError}
           />
           <CalendarDay
@@ -99,6 +103,7 @@ class WeeklyCalendar extends React.Component {
             anytimeAppointments={this.props.calendar[4]}
             openModal={this.props.openModal}
             editTest={this.props.editTest}
+            editPatient={this.props.editPatient}
             handleError={this.props.handleError}
           />
 
