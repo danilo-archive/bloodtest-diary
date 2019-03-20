@@ -155,26 +155,23 @@ async function getTestInfo(test_id) {
 * @property  class {String} - monday of the week, format: 'Mon Mar 04 2019 00:00:00 GMT+0000 (GMT)'
 * @property  tests {Array[JSON]} - tests within week
 **/
-async function getSortedOverdueWeeks(isAdult)
-{
-  const adult = isAdult ? "yes" : "no";
-  const sql = `Select *, IF(((DAYOFWEEK(due_date)-2) = -1),DATE_ADD(due_date,Interval (-6) Day),DATE_ADD(due_date,Interval (-(DAYOFWEEK(due_date)-2)) Day)) AS Monday
+async function getSortedOverdueWeeks(isAdult) {
+    const adult = isAdult ? "yes" : "no";
+    const sql = `Select *, IF(((DAYOFWEEK(due_date)-2) = -1),DATE_ADD(due_date,Interval (-6) Day),DATE_ADD(due_date,Interval (-(DAYOFWEEK(due_date)-2)) Day)) AS Monday
              From Test NATURAL JOIN Patient where
              ((completed_date IS NULL AND due_date < CURDATE() AND completed_status='no') OR (completed_date = CURDATE() AND due_date < CURDATE()))
              AND isAdult='${adult}' ORDER BY due_date ASC;`;
-  const response = await selectQueryDatabase(sql);
-  if(response.success == false)
-  {
-    return response;
-  }
-  const groupedTests = _.groupBy(response.response,"Monday");
-  const keys = Object.keys(groupedTests);
-  let classedTests = [];
-  for(let i=0; i<keys.length; i++)
-  {
-      classedTests=classedTests.concat({class:keys[i], tests:groupedTests[keys[i]]});
-  }
-  return {success: true , response: classedTests};
+    const response = await selectQueryDatabase(sql);
+    if (response.success == false) {
+        return response;
+    }
+    const groupedTests = _.groupBy(response.response, "Monday");
+    const keys = Object.keys(groupedTests);
+    let classedTests = [];
+    for (let i = 0; i < keys.length; i++) {
+        classedTests = classedTests.concat({ class: keys[i], tests: groupedTests[keys[i]] });
+    }
+    return { success: true, response: classedTests };
 }
 
 /**
@@ -183,9 +180,9 @@ async function getSortedOverdueWeeks(isAdult)
  * @param {Boolean} isAdult If the records should be displayed for adult users
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
-async function getTestWithinWeek(date,isAdult) {
+async function getTestWithinWeek(date, isAdult) {
     const dateString = dateformat(date, "yyyy-mm-dd");
-    const response = await Promise.all(getTestsDuringTheWeek(dateString,isAdult))
+    const response = await Promise.all(getTestsDuringTheWeek(dateString, isAdult))
         .then(days => {
             return checkMultipleQueriesStatus(days);
         })
@@ -596,8 +593,7 @@ async function changeTestStatus(test, actionUsername) {
         actionUsername
     );
 
-    if (
-        res.success &&
+    if (res.success &&
         scheduleNew &&
         testInfo.response[0].completed_status == "no"
     ) {
@@ -1013,7 +1009,7 @@ async function checkIfPatientsTestsAreEdited(patientid) {
  * @param {Boolean} isAdult If the records should be displayed for adult users
  * @return {Array} array of queries to run
  **/
-function getTestsDuringTheWeek(date,isAdult) {
+function getTestsDuringTheWeek(date, isAdult) {
     const adult = isAdult ? "yes" : "no";
     const weekDay = new Date(date).getDay();
     const daysInWeek = [];
@@ -1067,8 +1063,8 @@ async function scheduleNextTest(testId, actionUsername) {
         const newTest = {
             patient_no: test.patient_no,
             frequency: test.frequency,
-            due_date: getNextDueDate(test.frequency, test.completed_date), // use completed_date that is stored in the DB instead of creating a new one on the go
-            occurrences: test.occurrences - 1, // newInfo.occurrences shouldn't be decremented by 1 as it is decided in advance
+            due_date: getNextDueDate(test.frequency, test.completed_date),
+            occurrences: test.occurrences - 1,
             notes: test.notes,
             test_colour: test.test_colour
         };
@@ -1134,32 +1130,12 @@ async function insertQueryDatabase(sql, tableName, actionUsername, id = undefine
         id = id === undefined ? response.response.insertId : id;
         logger.logInsert(actionUsername, tableName, id, "Successful.");
         return { success: true, response: { insertId: id } };
+    }else if (response.err.type === "SQL Error") {
+        logger.logInsert(actionUsername,tableName,"-1","Unsuccessfully tried to execute query: >>" +sql +"<<. SQL Error message: >>" +response.err.sqlMessage +"<<.");
     } else {
-        if (response.err.type === "SQL Error") {
-            logger.logInsert(
-                actionUsername,
-                tableName,
-                "-1",
-                "Unsuccessfully tried to execute query: >>" +
-                sql +
-                "<<. SQL Error message: >>" +
-                response.err.sqlMessage +
-                "<<."
-            );
-        } else {
-            logger.logInsert(
-                actionUsername,
-                tableName,
-                "-1",
-                "Unsuccessfully tried to execute query: >>" +
-                sql +
-                "<<. Invalid request error message: >>" +
-                response.err.cause +
-                "<<."
-            );
-        }
-        return { success: false };
+        logger.logInsert(actionUsername,tableName,"-1","Unsuccessfully tried to execute query: >>" +sql +"<<. Invalid request error message: >>" +response.err.cause +"<<.");
     }
+    return { success: false };
 }
 
 /**
@@ -1175,22 +1151,10 @@ async function requestEditing(table, id, actionUsername) {
     });
     // TODO: return token + expiration
     if (data.status == "OK") {
-        logger.logOther(
-            actionUsername,
-            table,
-            id,
-            "Request for editing was approved."
-        );
+        logger.logOther(actionUsername,table,id,"Request for editing was approved.");
         return data.response.token;
     } else {
-        logger.logOther(
-            actionUsername,
-            table,
-            id,
-            "Request for editing was rejected with message: >>" +
-            data.err.cause +
-            "<<."
-        );
+        logger.logOther(actionUsername,table,id,"Request for editing was rejected with message: >>" +data.err.cause +"<<.");
         return undefined;
     }
 }
@@ -1206,47 +1170,21 @@ async function requestEditing(table, id, actionUsername) {
  **/
 async function updateQueryDatabase(table, id, sql, token, actionUsername) {
     if (token) {
-        const response = await databaseController.updateQuery(
-            sql,
-            table,
-            id,
-            token
-        );
+        const response = await databaseController.updateQuery(sql,table,id,token);
         if (response.status === "OK") {
             logger.logUpdate(actionUsername, table, id, "Successful.");
             return { success: true, response: response.response };
+        } else if (response.err.type === "SQL Error") {
+            logger.logUpdate(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. SQL Error message: >>" +response.err.sqlMessage +"<<.");
         } else {
-            if (response.err.type === "SQL Error") {
-                logger.logUpdate(
-                    actionUsername,
-                    table,
-                    id,
-                    "Unsuccessfully tried to execute query: >>" +
-                    sql +
-                    "<<. SQL Error message: >>" +
-                    response.err.sqlMessage +
-                    "<<."
-                );
-            } else {
-                logger.logUpdate(
-                    actionUsername,
-                    table,
-                    id,
-                    "Unsuccessfully tried to execute query: >>" +
-                    sql +
-                    "<<. Invalid request error message: >>" +
-                    response.err.cause +
-                    "<<."
-                );
-            }
-            return { success: false, response: response.err };
+            logger.logUpdate(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. Invalid request error message: >>" +response.err.cause +"<<.");
         }
-    } else {
-        return {
-            success: false,
-            response: { problem: "Token in use/No token defined" }
-        };
+        return { success: false, response: response.err };
     }
+    return {
+        success: false,
+        response: { problem: "Token in use/No token defined" }
+    };
 }
 
 /**
@@ -1276,39 +1214,14 @@ async function deleteQueryDatabase(table, id, sql, actionUsername) {
 
     const response = await databaseController.deleteQuery(sql, table, id);
     if (response.status === "OK") {
-        logger.logDelete(
-            actionUsername,
-            table,
-            id,
-            "Successful. Deleted data: >>" + JSON.stringify(deletedInfo) + "<<."
-        );
+        logger.logDelete(actionUsername,table,id,"Successful. Deleted data: >>" + JSON.stringify(deletedInfo) + "<<.");
         return { success: true, response: "Entry deleted" };
+    } else if (response.err.type === "SQL Error") {
+        logger.logDelete(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. SQL Error message: >>" +response.err.sqlMessage +"<<.");
     } else {
-        if (response.err.type === "SQL Error") {
-            logger.logDelete(
-                actionUsername,
-                table,
-                id,
-                "Unsuccessfully tried to execute query: >>" +
-                sql +
-                "<<. SQL Error message: >>" +
-                response.err.sqlMessage +
-                "<<."
-            );
-        } else {
-            logger.logDelete(
-                actionUsername,
-                table,
-                id,
-                "Unsuccessfully tried to execute query: >>" +
-                sql +
-                "<<. Invalid request error message: >>" +
-                response.err.cause +
-                "<<."
-            );
-        }
-        return { success: false, response: response.err };
+        logger.logDelete(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. Invalid request error message: >>" +response.err.cause +"<<.");
     }
+    return { success: false, response: response.err };
 }
 
 /**
@@ -1326,16 +1239,16 @@ function prepareInsertSQL(table, object) {
     sql += `${properties[properties.length - 1]}) Values(`;
     const values = Object.values(object);
     for (let i = 0; i < values.length - 1; i++) {
-        if (values[i] != "NULL") {
+        if (!(values[i] === null || values[i].length === 0 || values[i] === "null" || values[i] === undefined)) {
             sql += `${mysql.escape(values[i])},`;
         } else {
-            sql += `${values[i]},`;
+            sql += "NULL,";
         }
     }
-    if (values[values.length - 1] != "NULL") {
+    if (!(values[values.length - 1] === null || values[values.length - 1].length === 0 ||values[values.length - 1] === "null" || values[values.length - 1] === undefined)) {
         sql += `${mysql.escape(values[values.length - 1])});`;
     } else {
-        sql += `${values[values.length - 1]});`;
+        sql += `NULL);`;
     }
     //For debug:
     //console.log(sql);
@@ -1356,7 +1269,7 @@ function prepareUpdateSQL(table, object, idProperty) {
     let pos;
     for (let i = 0; i < properties.length; i++) {
         if (properties[i] != idProperty) {
-            if (values[i] != "NULL") {
+            if (!(values[i] === null || values[i].length === 0 || values[i] === "null" || values[i] === undefined)) {
                 sql += `${properties[i]} = ${mysql.escape(values[i])}, `;
             } else {
                 sql += `${properties[i]} = NULL, `;
@@ -1367,7 +1280,7 @@ function prepareUpdateSQL(table, object, idProperty) {
     }
     //delete ", " from sql query
     sql = sql.substr(0, sql.length - 2);
-    if (values[pos] != "NULL") {
+    if (!(values[pos] === null || values[pos].length === 0 || values[pos] === "null" || values[pos] === undefined)) {
         sql += ` WHERE ${idProperty} = ${mysql.escape(values[pos])};`;
     } else {
         sql += ` WHERE ${idProperty} = NULL;`;
@@ -1404,28 +1317,12 @@ async function returnToken(table, id, token, actionUsername) {
     if (response.status === "OK") {
         logger.logOther(actionUsername, table, id, "Successfully released token.");
         return { success: true, response: "Token cancelled" };
+    } else if (response.err.type === "SQL Error") {
+        logger.logOther(actionUsername,table,id,"Unsuccessfully tried to release token. SQL Error message: >>" +response.err.sqlMessage +"<<.");
     } else {
-        if (response.err.type === "SQL Error") {
-            logger.logOther(
-                actionUsername,
-                table,
-                id,
-                "Unsuccessfully tried to release token. SQL Error message: >>" +
-                response.err.sqlMessage +
-                "<<."
-            );
-        } else {
-            logger.logOther(
-                actionUsername,
-                table,
-                id,
-                "Unsuccessfully tried to release token. Invalid request error message: >>" +
-                response.err.cause +
-                "<<."
-            );
-        }
-        return { success: false, response: response.err };
+        logger.logOther(actionUsername,table,id,"Unsuccessfully tried to release token. Invalid request error message: >>" +response.err.cause +"<<.");
     }
+    return { success: false, response: response.err };
 }
 
 module.exports = {

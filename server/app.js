@@ -533,7 +533,7 @@ io.on('connection',function(socket)
         socket.emit('passwordRecoverResponse', passwordResponse);
     });
 
-    socket.on('sendOverdueReminders', async (testIDs, accessToken) => {
+    socket.on('sendOverdueReminders', async (testID, accessToken) => {
         if (!accessToken) {
             socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
@@ -543,8 +543,10 @@ io.on('connection',function(socket)
             socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
             return;
         }
-
-        const response = await email_controller.sendOverdueReminders(testIDs, username);
+        if (!Array.isArray(testID)) {
+            testID = [testID];
+        }
+        const response = await email_controller.sendOverdueReminders(testID, username);
         socket.emit("sendOverdueRemindersResponse", response);
     });
 
