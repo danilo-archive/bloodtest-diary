@@ -456,6 +456,13 @@ class ServerConnect {
             callback(res);
         });
     }
+
+    recoverPassword(username, callback){
+        this.socket.emit("passwordRecoverRequest", username);
+        this.socket.once("passwordRecoverResponse", res => {
+            callback(res);
+        });
+    }
 }
 
 
