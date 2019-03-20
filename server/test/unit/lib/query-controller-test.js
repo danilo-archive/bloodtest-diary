@@ -49,6 +49,9 @@ describe("Select queries tests", function(){
   context("Get User", function(){
     test(queryController.getUser,testUsername);
   });
+  context("Get All Users", function(){
+    test(queryController.getAllUsers,);
+  });
   context("Get Full Patient Info", function(){
     test(queryController.getFullPatientInfo,"P400");
   });

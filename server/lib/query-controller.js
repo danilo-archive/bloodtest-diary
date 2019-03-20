@@ -88,6 +88,15 @@ async function getUser(username) {
 }
 
 /**
+ * Get all users from database
+ * @return {JSON} result of the query - {success:true/false response:Array/Error}
+ **/
+async function getAllUsers() {
+    const sql = `Select * From User;`;
+    return await selectQueryDatabase(sql);
+}
+
+/**
  * Get test from the database
  * @param {String} test_id - id of test
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
@@ -1401,6 +1410,7 @@ module.exports = {
     getHospital,
     getCarer,
     getUser,
+    getAllUsers,
     getAllPatients,
     getFullPatientInfo,
     getTestInfo,
