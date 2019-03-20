@@ -504,7 +504,6 @@ io.on('connection',function(socket)
     });
 
     socket.on('sendOverdueReminders', async (testID, accessToken) => {
-        logger.debug("ovedue called");
         if (!accessToken) {
             socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
