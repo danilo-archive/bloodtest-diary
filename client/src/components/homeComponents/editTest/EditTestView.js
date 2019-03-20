@@ -25,9 +25,20 @@ const SetterValues = [
 
 
 const TextArea = styled.textarea`
-  width: 40%;
-  height: 10rem;
+  width: 100%;
+  height: 7rem;
   outline: none;
+  resize: none;
+  overflow: scroll;
+`;
+
+const ButtonsContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+  margin-top: 1%;
 `;
 
 export default class EditTestView extends React.Component {
@@ -246,7 +257,7 @@ export default class EditTestView extends React.Component {
               }}
             />
             <hr />
-            <div style={{ display: "flex" }}>
+            <div >
               <TextArea
                 value={this.state.test.notes}
                 onChange={event =>
@@ -258,18 +269,11 @@ export default class EditTestView extends React.Component {
                   })
                 }
               />
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-end"
-                }}
-              >
-                <Button save onClick={this.saveTest}>
-                  Save Changes
-                </Button>
-                <Button onClick={this.unscheduleTest}>Unschedule test</Button>
-              </div>
+              <ButtonsContainer>
+                <Button backgroundColor={"#0b999d"} hoverColor={"#018589"} onClick={this.saveTest}>Save Changes</Button>
+                <Button backgroundColor={"#f44336"} hoverColor={"#dc2836"} onClick={this.unscheduleTest}>Unschedule test</Button>
+                <Button backgroundColor={"#aaaaaa"} hoverColor={"#c8c8c8"} onClick={this.props.closeModal}>Close</Button>
+              </ButtonsContainer>
             </div>
           </div>
         </div>
