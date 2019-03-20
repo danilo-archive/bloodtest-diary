@@ -1,15 +1,14 @@
 const chai = require('chai');
 const should = chai.should();
 
-
-import InputChecker from "../../../src/inputChecker";
+const InputChecker= require("../../../src/inputChecker");
 
 describe("Test empty check", function () {
     it("should return true", function () {
        InputChecker.emptyCheck("").should.equal(true);
        InputChecker.emptyCheck(undefined).should.equal(true);
        InputChecker.emptyCheck(null).should.equal(true);
-        InputChecker.emptyCheck().should.equal(true);
+       InputChecker.emptyCheck().should.equal(true);
     });
 
     it("should return false", function () {
@@ -36,13 +35,13 @@ describe("Test integer check", function () {
 
 describe("Test character check", function () {
     it("should return true", function () {
-        InputChecker.characterCheck("").should.equal(true);
         InputChecker.characterCheck("abc").should.equal(true);
-        InputChecker.characterCheck("a b c").should.equal(true);
+        InputChecker.characterCheck("RandomText").should.equal(true);
     });
     it("should return false", function () {
         InputChecker.characterCheck("423").should.equal(false);
         InputChecker.characterCheck("*-/*a").should.equal(false);
+        InputChecker.characterCheck("Test with spaces").should.equal(false);
     });
 });
 
