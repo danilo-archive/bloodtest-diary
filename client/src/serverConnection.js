@@ -259,27 +259,6 @@ class ServerConnect {
         });
     }
 
-    // TODO: what is this???
-    getMockTest(testId, callback){
-        const duedate = new Date(2019, 3, 4);
-        const mockedTest = {
-            patient_name: "John Doe",
-            patient_no: "P123890",
-            test_id: 123,
-            due_date: "2019-3-3",
-            frequency: "2-W",
-            occurrences: 3,
-            completed_status: "no",
-            notes: "This guys is basically just an idiot",
-            completedDate: null,
-            hospitalId: 3
-
-        }
-        setTimeout( () => {
-            callback(mockedTest);
-        }, 3000);
-    }
-
     /**
      * Retrieves the information regarding a test, calls the callback with the response.
      * @param {int} testId The id of the test
