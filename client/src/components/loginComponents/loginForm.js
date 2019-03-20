@@ -15,14 +15,15 @@ const Container = styled.div`
 
   color: #646464;
 
+  .login_error {
+    width: 100%;
+    visibility: hidden;
+  }
 
   .icons {
     display: none;
   }
 
-  .hidden {
-    visibility: hidden;
-  }
 
   animation: opac 0.5s linear 1;
 

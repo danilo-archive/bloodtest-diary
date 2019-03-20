@@ -5,6 +5,7 @@ import TextRadioButton from "./TextRadioButton";
 const Container = styled.div`
   display: flex;
   justify-content: center;
+  margin: 0 0 1rem 0;
 `;
 
 const status = ["completed", "in review", "pending"];

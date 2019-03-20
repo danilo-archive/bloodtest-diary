@@ -26,7 +26,7 @@ const SetterValues = [
 
 const TextArea = styled.textarea`
   width: 100%;
-  height: 7rem;
+  height: 8rem;
   outline: none;
   resize: none;
   overflow: scroll;
