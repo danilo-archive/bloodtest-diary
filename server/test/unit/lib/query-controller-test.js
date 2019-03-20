@@ -671,6 +671,7 @@ describe("Update queries tests", function(){
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"completed"}, testUsername);
+        console.log(response)
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         response.response.new_date.should.equal("20201114");

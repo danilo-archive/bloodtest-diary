@@ -1214,13 +1214,13 @@ function prepareInsertSQL(table, object) {
     sql += `${properties[properties.length - 1]}) Values(`;
     const values = Object.values(object);
     for (let i = 0; i < values.length - 1; i++) {
-        if (!(values[i] === null || values[i].length === 0 || values[i] === "null" || values[i] === undefined)) {
+        if (!(values[i] === null || values[i].length === 0 || values[i] === "null" || values[i] === "NULL" || values[i] === undefined)) {
             sql += `${mysql.escape(values[i])},`;
         } else {
             sql += "NULL,";
         }
     }
-    if (!(values[values.length - 1] === null || values[values.length - 1].length === 0 ||values[values.length - 1] === "null" || values[values.length - 1] === undefined)) {
+    if (!(values[values.length - 1] === null || values[values.length - 1].length === 0 ||values[values.length - 1] === "null" || values[values.length - 1] === "NULL" || values[values.length - 1] === undefined)) {
         sql += `${mysql.escape(values[values.length - 1])});`;
     } else {
         sql += `NULL);`;
@@ -1244,7 +1244,7 @@ function prepareUpdateSQL(table, object, idProperty) {
     let pos;
     for (let i = 0; i < properties.length; i++) {
         if (properties[i] != idProperty) {
-            if (!(values[i] === null || values[i].length === 0 || values[i] === "null" || values[i] === undefined)) {
+            if (!(values[i] === null || values[i].length === 0 || values[i] === "null" || values[i] === "NULL" || values[i] === undefined)) {
                 sql += `${properties[i]} = ${mysql.escape(values[i])}, `;
             } else {
                 sql += `${properties[i]} = NULL, `;
@@ -1255,7 +1255,7 @@ function prepareUpdateSQL(table, object, idProperty) {
     }
     //delete ", " from sql query
     sql = sql.substr(0, sql.length - 2);
-    if (!(values[pos] === null || values[pos].length === 0 || values[pos] === "null" || values[pos] === undefined)) {
+    if (!(values[pos] === null || values[pos].length === 0 || values[pos] === "null" || values[pos] === "NULL" || values[pos] === undefined)) {
         sql += ` WHERE ${idProperty} = ${mysql.escape(values[pos])};`;
     } else {
         sql += ` WHERE ${idProperty} = NULL;`;
