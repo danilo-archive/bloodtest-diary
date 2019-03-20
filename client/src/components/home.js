@@ -26,7 +26,46 @@ import { group, getNumberOfTestsInGroup } from "../lib/overdue-controller.js";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DragDropContext } from "react-dnd";
 import CustomDragLayer from "./homeComponents/CustomDragLayer.js";
-import "./home.css";
+import "../styles/global.css";
+
+const Dashboard = styled.div`
+  border: blue 0px solid;
+  height: calc(100vh - 75px);
+  width: auto;
+  position: relative;
+  top: 30px;
+  margin: 1% 1% 1% 1%;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+`;
+const RightSideDash = styled.div`
+  border: red 0 solid;
+  height: 100%;
+  width: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+
+  flex-grow: 5;
+  flex-shrink: 1;
+`;
+const BottomSideDash = styled.div`
+  border: green 0 solid;
+  height: auto;
+  width: auto;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+
+
+  flex-grow: 1;
+  flex-shrink: 1;
+`;
 
 class Home extends Component {
   constructor(props) {
@@ -206,21 +245,17 @@ class Home extends Component {
     if (this.state.dashboardReady && this.state.overdueReady) {
       return (
         <ModalProvider>
-          <div className={"home"}>
             <CustomDragLayer snapToGrid={true} />
-            <div className={"dashboard"}>
-              <div className={"overduePatients"}>
-                <OverduePatients
+            <Dashboard>
+               <OverduePatients
                   notificationNumber={getNumberOfTestsInGroup(
                     this.state.overdueTests
                   )}
                   anytimeAppointments={this.state.overdueTests}
                   editTest={this.onEditTestOpenModal}
                   handleError={this.handleInvalidResponseError}
-                />
-              </div>
-              <div className={"rightSideDash"}>
-                <div className={"navbar"}>
+              />
+              <RightSideDash>
                   <Navbar
                     page="Dashboard"
                     onPrev={this.handlePrevious}
@@ -229,9 +264,7 @@ class Home extends Component {
                     onSignoutClick={this.logout}
                     refresh={this.refresh}
                   />
-                </div>
-                <div className={"bottomSideDash"}>
-                  <div className={"homecalendar"}>
+                <BottomSideDash>
                     <WeeklyCalendar
                       calendar={this.state.calendar}
                       weekDays={this.state.weekDays}
@@ -239,8 +272,6 @@ class Home extends Component {
                       editTest={this.onEditTestOpenModal}
                       handleError={this.handleInvalidResponseError}
                     />
-                  </div>
-                  <div className={"ongoingWeekly"}>
                     <OngoingWeekly
                       currentMonday={this.currentMonday}
                       date={this.state.weekDays[5]}
@@ -249,9 +280,8 @@ class Home extends Component {
                       editTest={this.onEditTestOpenModal}
                       handleError={this.handleInvalidResponseError}
                     />
-                  </div>
-                </div>
-              </div>
+                </BottomSideDash>
+              </RightSideDash>
               <Modal
                 open={this.state.openAddTestModal}
                 onClose={this.onAddTestCloseModal}
@@ -291,8 +321,7 @@ class Home extends Component {
                   handleError={this.handleInvalidResponseError}
                 />
               </Modal>
-            </div>
-          </div>
+            </Dashboard>
         </ModalProvider>
       );
     } else {

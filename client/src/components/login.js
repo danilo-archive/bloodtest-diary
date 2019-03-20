@@ -3,8 +3,7 @@ import React, { Component } from 'react';
 import LoginForm from './loginComponents/loginForm.js';
 import LoginBackgroundAnimation from './loginComponents/loginBackgroundAnimation.js';
 import {getServerConnect} from "./../serverConnection.js";
-import './login.css';
-
+import '../styles/login.css';
 
 class Login extends Component {
 

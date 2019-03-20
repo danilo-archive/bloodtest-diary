@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-responsive-modal";
-import "./Modal.css";
+import "../styles/Modal.css";
 export default props => {
   return (
     <Modal

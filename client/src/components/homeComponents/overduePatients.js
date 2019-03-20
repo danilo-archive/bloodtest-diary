@@ -11,6 +11,30 @@ const Container = styled.div`
   width: auto;
   height: 100%;
   overflow: hidden;
+
+  border: #839595 0px solid;
+
+  margin-right: 1%;
+
+  padding-top: 10px;
+  padding-bottom: 0.5%;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
+
+
+  background-color: white;
+
+  min-width: 15rem;
+  width: 20vw;
+  max-width: 320px;
+
+  overflow: hidden;
+
+  flex-grow: 1;
+  flex-shrink: 2;
+  align-self: stretch;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 `;
 
 class OverduePatients extends React.Component {

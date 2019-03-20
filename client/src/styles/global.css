@@ -1,0 +1,48 @@
+:root {
+    --htmlFontSize: 100%;
+    --bodyBackgroundColor: rgb(244,249,253);
+    --bodyColor: #000000;
+    --bodyFontFamily: 'Open Sans';
+    --bodyFontFamilyFallback: sans-serif;
+    --bodyFontSize: 0.875rem;
+    --bodyFontWeight: 400;
+    --bodyLineHeight: 1.5;
+  }
+  
+  html {
+    box-sizing: border-box;
+    font-size: var(--htmlFontSize);
+    height: 100%;
+  }
+  
+  body {
+    background-color: var(--bodyBackgroundColor);
+    color: var(--bodyColor);
+    font-family: var(--bodyFontFamily), var(--bodyFontFamilyFallback);
+    font-size: var(--bodyFontSize);
+    font-weight: var(--bodyFontWeight);
+    height: auto;
+    line-height: var(--bodyLineHeight);
+    overflow: hidden;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  
+  ::-webkit-scrollbar-track:vertical {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb  {
+    background: #0b989d;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-track  {
+    background: #eee;
+  }
+  
+  ::-webkit-scrollbar-corner {
+    display: none;
+  }

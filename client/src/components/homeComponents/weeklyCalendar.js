@@ -2,7 +2,25 @@ import React from "react";
 import styled from "styled-components";
 import CalendarDay from "./calendarComponents/CalendarDay";
 
+const Container = styled.div`
+    
+  border: #839595 0px solid;
+
+  background-color: white;
+
+  padding: 0.5%;
+  margin-right: 0.5%;
+
+  width: 200px;
+  overflow: hidden;
+  flex-grow: 10;
+  flex-shrink: 1;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+`;
+
 const WeekContainer = styled.div`
+  
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -13,6 +31,7 @@ const WeekContainer = styled.div`
 
   overflow-x: scroll;
   overflow-y: hidden;
+
 `;
 
 class WeeklyCalendar extends React.Component {
@@ -25,6 +44,7 @@ class WeeklyCalendar extends React.Component {
 
   render() {
       return (
+        <Container>
         <WeekContainer>
           <CalendarDay
             notificationNumber={
@@ -84,6 +104,7 @@ class WeeklyCalendar extends React.Component {
 
 
         </WeekContainer>
+      </Container>  
     );
   }
 }

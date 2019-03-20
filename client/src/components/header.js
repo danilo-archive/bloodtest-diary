@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
 
-import './header.css';
+import '../styles/header.css';
 
 import minimize from "../images/minimize.png"
 import maximize from "../images/maximize.png"

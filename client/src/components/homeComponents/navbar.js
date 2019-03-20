@@ -8,7 +8,28 @@ import NavHeader from "./../navbarComponents/navHeader.js"
 
 import { openAlert } from "./../Alert.js"
 
+const Wrapper = styled.div`
+  border: #839595 0px solid;
 
+  background-color: white;
+
+  margin-bottom: 1%;
+
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
+
+  min-height: 150px;
+  max-height: 150px;
+
+  flex-grow: 1;
+  flex-shrink: 2;
+
+  overflow: hidden;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+`;
 const Container = styled.div`
   border: red 0px solid;
   padding: 0%;
@@ -99,9 +120,11 @@ class Navbar extends React.Component {
   render() {
     const content = this.getNavbar();
     return (
-      <Container>
-        {content}
-      </Container>
+      <Wrapper>
+        <Container>
+          {content}
+        </Container>
+      </Wrapper>
     );
   }
 }

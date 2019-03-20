@@ -33,26 +33,6 @@ const Container = styled.div`
 
 `;
 
-const NavbarContainer = styled.div`
-    border: #839595 0 solid;
-
-    background-color: white;
-
-    margin-bottom: 1%;
-
-    padding: 10px 1%;
-
-    min-height: 150px;
-    max-height: 150px;
-
-    flex-grow: 1;
-    flex-shrink: 2;
-
-    overflow: hidden;
-
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-`;
-
 const TableContainer = styled.div`
     color: #ffffff;
     border: green 0 solid;
@@ -243,14 +223,12 @@ class Patients extends React.Component {
             return (
                 <ModalProvider>
                     <Container>
-                        <NavbarContainer>
                           <Navbar
                             page="Patients"
                             onHomeClick={this.onHomeClick}
                             onSignoutClick={this.logout}
                             refresh={this.refresh}
                           />
-                        </NavbarContainer>
                         <Button onClick={this.openAddModal}>Add patient</Button>
                         <TableContainer>
                             <PatientsTable
