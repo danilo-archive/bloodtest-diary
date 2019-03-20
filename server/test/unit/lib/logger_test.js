@@ -3,7 +3,7 @@ const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
 const rewire = require('rewire');
-
+const c = require('./../../../config/logger.json')
 let logger = rewire('./../../../lib/logger', false);
 beforeEach(() => {
     logger = rewire('./../../../lib/logger', false);

@@ -199,7 +199,8 @@ async function updateQuery(sql, entryTable, entryID, token) {
     deleteQuery = mysql.format(deleteQuery, [token]);
     await getResult(deleteQuery, database, async (result) => {
         if (result.affectedRows != 1) {
-            logger.error(result, "ERROR WHEN DELETING A TOKEN (" + token + ")!");
+            logger.error("ERROR WHEN DELETING A TOKEN (" + 
+                            token + ")! Database response: >>" + JSON.stringify(result) + "<<.");
         }
         return result;
     });
@@ -554,10 +555,9 @@ async function editTokensEntryExists(database, entryTable, entryID, token) {
                 
                 await getResult(delQuery, database, async (result) => {
                     if (result.affectedRows != 1) {
-                        logger.error("=====================");
-                        logger.error(result);
-                        logger.error("ERROR WHEN DELETING A TOKEN (" + entryTable + ", " + entryID + ")!");
-                        logger.error("=====================");
+                        logger.error("ERROR WHEN DELETING A TOKEN (" + 
+                            entryTable + ", " + 
+                            entryID + ")! Database response: >>" + JSON.stringify(result) + "<<.");
                     }
                     return result;
                 });
