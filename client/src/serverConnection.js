@@ -29,51 +29,41 @@ class ServerConnect {
         this.socket = openSocket(`${host}:${port}`);
         this.currentMode = underTwelve;
 
-        this.onConnected = undefined;
+
         /**
         *   Triggered when a connection is established.
         */
+        this.onConnected = undefined;
         this.socket.on("connected", () => {
             console.log("connected successfully");
             this.socket.emit("join", "", this.currentRoom, true);
             this.onConnected();
         });
 
-        this.onDisconnect = undefined;
         /**
         *   Triggered when the connection is lost.
         */
+        this.onDisconnect = undefined;
         this.socket.on("disconnect", () => {
             this.onDisconnect();
         });
 
-        this.onTestAdded = undefined;
-        this.onTestStatusChange = undefined;
-        this.onTestEdit = undefined;
-        this.onPatientEdit = undefined;
-
         /**
         *   Triggered when a new test is added.
         */
+        this.onTestAdded = undefined;
         this.socket.on("testAdded", newTest => {
             this.onTestAdded(newTest);
         });
-        /**
-        *   Triggered when a test status changes.
-        */
-        this.socket.on("testStatusChange", (id, status) => {
-            this.onTestStatusChange(id, status);
-        });
+
         /**
         *   Triggered when a patient is edited.
         */
+        this.onPatientEdit = undefined;
         this.socket.on("patientEdited", (patientId, newInfo) => {
             this.onPatientEdit(patientId, newInfo);
         });
 
-        this.socket.on("testEdited", (id, newInfo) => {
-            this.onTestEdit(id, newInfo);
-        });
     }
 
     setUnderTwelve(){
@@ -147,24 +137,6 @@ class ServerConnect {
         this.onTestAdded = callback;
     }
 
-    /**
-    * Sets the callback to be called when a test status is changed
-    * (when socket.on("testStatusChange") is triggered)
-    * @param {function} callback
-    */
-    setOnTestStatusChange(callback){
-        console.log("set");
-        this.onTestStatusChange = callback;
-    }
-    /**
-    * Sets the callback to be called when a test is edited
-    * -- no current action triggers this specific callback
-    * -- current version calls socket.on("testAdded") callback
-    * @param {function} callback
-    */
-    setOnTestEdit(callback){
-        this.onTestEdit = callback;
-    }
     /**
     * Sets the callback to be called when a patient is edited
     * (when socket.on("patientEdited") is triggered)
@@ -454,6 +426,34 @@ class ServerConnect {
     unscheduleTest(testId, token, callback){
         this.socket.emit("unscheduleTest", testId, token, this.loginToken);
         this.socket.once("unscheduleTestResponse", res => {
+            callback(res);
+        });
+    }
+
+    getOverdueReminderGroups(callback){
+        this.socket.emit("getOverdueReminderGroups", this.loginToken);
+        this.socket.once("getOverdueReminderGroupsResponse", res => {
+            callback(res);
+        });
+    }
+
+    sendReminders(testIds, callback){
+        this.socket.emit("sendOverdueReminders", testIds, this.loginToken);
+        this.socket.once("sendOverdueRemindersResponse", res => {
+            callback(res);
+        });
+    }
+
+    changePatientColour(patientId, newColor, callback){
+        this.socket.emit("changePatientColour", patientId, newColor, this.loginToken);
+        this.socket.once("changePatientColourResponse", res => {
+            callback(res);
+        });
+    }
+
+    changeTestColour(testId, newColor, callback){
+        this.socket.emit("changeTestColour", testId, newColor, this.loginToken);
+        this.socket.once("changeTestColourResponse", res => {
             callback(res);
         });
     }

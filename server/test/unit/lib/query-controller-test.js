@@ -1372,137 +1372,6 @@ describe("Update queries tests", function(){
         response.response.affectedRows.should.equal(1)
       })
     })
-
-    describe("Send overdue reminders:", () => {
-      beforeEach(() => {
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{ token: "TOKEN"}};
-          },
-          updateQuery: async function() {
-            return {status: "OK"};
-          },
-          cancelEditing: async function() {
-            return {status: "OK"};
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-      });
-
-      it("Should return false.", async () => {
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "ERR", err: {cause: "stubbed error"}};
-          },
-          cancelEditing: async function() {
-            return {status: "OK"};
-          }
-        };
-        queryController.__set__("databaseController", dbController);
-        const res = await queryController.sendOverdueReminders([1], testUsername);
-        const shouldBe = {
-          success: false,
-          response : {
-            failedBoth: [1],
-            failedPatient: [],
-            failedHospital: []
-          }
-        };
-        expect(JSON.stringify(res)).to.be.equal(JSON.stringify(shouldBe));
-      });
-
-      it("Should return both failed.", async () => {
-        const email_sender = {
-          sendOverdueTestReminderToPatient: async function() {
-            return [1];
-          },
-          sendOverdueTestReminderToHospital: async function() {
-            return [1];
-          }
-        };
-        queryController.__set__("email_sender", email_sender);
-        const res = await queryController.sendOverdueReminders([1], testUsername);
-        const shouldBe = {
-          success: false,
-          response : {
-            failedBoth: [1],
-            failedPatient: [],
-            failedHospital: []
-          }
-        };
-        expect(JSON.stringify(res)).to.be.equal(JSON.stringify(shouldBe));
-      });
-
-      it("Should return patient failed.", async () => {
-        const email_sender = {
-          sendOverdueTestReminderToPatient: async function() {
-            return [1];
-          },
-          sendOverdueTestReminderToHospital: async function() {
-            return [];
-          }
-        };
-        queryController.__set__("email_sender", email_sender);
-        const res = await queryController.sendOverdueReminders([1], testUsername);
-        const shouldBe = {
-          success: false,
-          response : {
-            failedBoth: [],
-            failedPatient: [1],
-            failedHospital: []
-          }
-        };
-        expect(JSON.stringify(res)).to.be.equal(JSON.stringify(shouldBe));
-      });
-
-      it("Should return hospital failed.", async () => {
-        const email_sender = {
-          sendOverdueTestReminderToPatient: async function() {
-            return [];
-          },
-          sendOverdueTestReminderToHospital: async function() {
-            return [1];
-          }
-        };
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{ token: "TOKEN"}};
-          },
-          updateQuery: async function() {
-            return {status: "ERR", err: {cause: "stubbed error"}};
-          },
-          cancelEditing: async function() {
-            return {status: "OK"};
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        queryController.__set__("email_sender", email_sender);
-        const res = await queryController.sendOverdueReminders([1], testUsername);
-        const shouldBe = {
-          success: false,
-          response : {
-            failedBoth: [],
-            failedPatient: [],
-            failedHospital: [1]
-          }
-        };
-        expect(JSON.stringify(res)).to.be.equal(JSON.stringify(shouldBe));
-      });
-
-      it("Should return success.", async () => {
-        const email_sender = {
-          sendOverdueTestReminderToPatient: async function() {
-            return [];
-          },
-          sendOverdueTestReminderToHospital: async function() {
-            return [];
-          }
-        };
-        queryController.__set__("email_sender", email_sender);
-        const res = await queryController.sendOverdueReminders([1], testUsername);
-        expect(res.success).to.be.true;
-      });
-    });
 })
 
 describe("Delete queries tests", function(){
@@ -1513,10 +1382,13 @@ describe("Delete queries tests", function(){
       })
       it("Fail deletion due to an error (STUBBED)", async function(){
         const dbController = {
+          selectQuery: async function() {
+            return {status: "OK", response: { rows: [{data: "test data"}]}}
+          },
           deleteQuery: async function() {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}
+            return {status: "ERR", err: {error:"STUBBED ERROR"}}
           }
-        }}
+        }
         queryController.__set__("databaseController",dbController);
         const response = await spy("400");
         response.success.should.equal(false);
@@ -1524,6 +1396,9 @@ describe("Delete queries tests", function(){
       })
       it("Accept delete request (STUBBED)", async function(){
         const dbController = {
+          selectQuery: async function() {
+            return {status: "OK", response: { rows: [{data: "test data"}]}}
+          },
           deleteQuery: async function() {
             return {status: "OK", err: {query:"OK", affectedRows:1}
           }
@@ -1541,6 +1416,9 @@ describe("Delete queries tests", function(){
       })
       it("Fail deletion due to an error (STUBBED)", async function(){
         const dbController = {
+          selectQuery: async function() {
+            return {status: "OK", response: { rows: [{data: "test data"}]}}
+          },
           deleteQuery: async function() {
             return {status: "ERR", err: {error:"STUBBED ERROR"}
           }
@@ -1552,6 +1430,9 @@ describe("Delete queries tests", function(){
       })
       it("Accept delete request (STUBBED)", async function(){
         const dbController = {
+          selectQuery: async function() {
+            return {status: "OK", response: { rows: [{data: "test data"}]}}
+          },
           deleteQuery: async function() {
             return {status: "OK", err: {query:"OK", affectedRows:1}
           }
@@ -1569,6 +1450,9 @@ describe("Delete queries tests", function(){
       })
       it("Fail deletion due to an error (STUBBED)", async function(){
         const dbController = {
+          selectQuery: async function() {
+            return {status: "OK", response: { rows: [{data: "test data"}]}}
+          },
           deleteQuery: async function() {
             return {status: "ERR", err: {error:"STUBBED ERROR"}
           }
@@ -1580,6 +1464,9 @@ describe("Delete queries tests", function(){
       })
       it("Accept delete request (STUBBED)", async function(){
         const dbController = {
+          selectQuery: async function() {
+            return {status: "OK", response: { rows: [{data: "test data"}]}}
+          },
           deleteQuery: async function() {
             return {status: "OK", err: {query:"OK", affectedRows:1}
           }
@@ -1597,6 +1484,9 @@ describe("Delete queries tests", function(){
       })
       it("Fail unscheduling due to a deletion error (STUBBED)", async function(){
         const dbController = {
+          selectQuery: async function() {
+            return {status: "OK", response: { rows: [{data: "test data"}]}}
+          },
           deleteQuery: async function() {
             return {status: "ERR", err: {error:"STUBBED ERROR"}}
           },
@@ -1611,6 +1501,9 @@ describe("Delete queries tests", function(){
       })
       it("Fail unscheduling due to a token return error (STUBBED)", async function(){
         const dbController = {
+          selectQuery: async function() {
+            return {status: "OK", response: { rows: [{data: "test data"}]}}
+          },
           deleteQuery: async function() {
             return {status: "ERR", err: {error:"STUBBED ERROR"}}
           },
@@ -1625,6 +1518,9 @@ describe("Delete queries tests", function(){
       })
       it("Accept unscheduling request (STUBBED)", async function(){
         const dbController = {
+          selectQuery: async function() {
+            return {status: "OK", response: { rows: [{data: "test data"}]}}
+          },
           deleteQuery: async function() {
             return {status: "OK", err: {query:"OK", affectedRows:1}}
           },

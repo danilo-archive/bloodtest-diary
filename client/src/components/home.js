@@ -10,6 +10,8 @@ import AddTest from "./homeComponents/addTest/AddTestView";
 import VerticalLine from "./homeComponents/calendarComponents/VerticalLine";
 import LoadingAnimation from "./loadingScreen/loadingAnimation";
 import { openAlert } from "./Alert.js";
+import EmailModal from "./homeComponents/emailModal/EmailModal.js";
+import ColorPicker from "./homeComponents/calendarComponents/ColorPicker.js";
 
 import EditTest from "./homeComponents/editTest/EditTestView";
 import {
@@ -41,8 +43,11 @@ class Home extends Component {
       calendar: {},
       openAddTestModal: false,
       openEditTestModal: false,
+      openEmailModal: false,
       editTestId: undefined,
-      editToken: undefined
+      editToken: undefined,
+      notified: undefined,
+      notNotified: undefined
     };
   }
 
@@ -50,46 +55,17 @@ class Home extends Component {
     this.initOverduePanel();
     this.updateDashboard();
     this.initCallbacks();
-
-    this.logout = this.logout.bind(this);
-    this.refresh = this.refresh.bind(this);
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrevious = this.handlePrevious.bind(this);
-    this.onPatientsClick = this.onPatientsClick.bind(this);
-
-    this.onAddTestOpenModal = this.onAddTestOpenModal.bind(this);
-    this.onAddTestCloseModal = this.onAddTestCloseModal.bind(this);
+    this.openEmailModal();
   };
 
   initCallbacks() {
     this.initOnTestAdded();
-    this.initOnTestEdit();
-    this.initOnTestStatusChange();
   }
 
   initOnTestAdded() {
     this.serverConnect.setOnTestAdded(newTest => {
       this.updateDashboard();
-    });
-  }
-
-  initOnTestStatusChange() {
-    this.serverConnect.setOnTestStatusChange((id, status) => {
-      this.updateDashboard();
-      this.modifyOverdueTest(id, test => {
-        test.completed_status = status;
-        return test;
-      });
-    });
-  }
-
-  initOnTestEdit() {
-    this.serverConnect.setOnTestEdit((id, newTest) => {
-      this.updateDashboard();
-      this.modifyOverdueTest(id, test => {
-        let modified = newTest;
-        return modified;
-      });
+      this.initOverduePanel();
     });
   }
 
@@ -143,24 +119,6 @@ class Home extends Component {
         this.handleInvalidResponseError(res);
       }
     });
-  };
-
-  modifyOverdueTest = (id, modificationFunction) => {
-    for (var i = 0; i < this.state.overdueTests.length; ++i) {
-      let group = this.state.overdueTests[i];
-      for (var j = 0; j < group.tests.length; ++j) {
-        var test = group.tests[j];
-        if (test.test_id === id) {
-          let newOverdueTests = [...this.state.overdueTests];
-          let testToModify = newOverdueTests[i].tests[j];
-          console.log({ testToModify });
-          let modifiedTest = modificationFunction(testToModify);
-          console.log({ modifiedTest });
-          newOverdueTests[i].tests[j] = modifiedTest;
-          this.setState({ overdueTests: newOverdueTests });
-        }
-      }
-    }
   };
 
   refresh = event => {
@@ -222,6 +180,26 @@ class Home extends Component {
         editToken: undefined
       });
     });
+  };
+
+  openEmailModal = () => {
+    this.serverConnect.getOverdueReminderGroups(res => {
+      console.log(res);
+      if (res.success) {
+        this.setState({
+          openEmailModal: true,
+          notNotified: res.response.notReminded,
+          notified: res.response.reminded
+        });
+      } else {
+        this.handleInvalidResponseError(res);
+      }
+      //this.setState({openEmailModal: true});
+    });
+  };
+
+  onEmailCloseModal = () => {
+    this.setState({ openEmailModal: false });
   };
 
   render() {
@@ -299,6 +277,19 @@ class Home extends Component {
                   closeModal={this.onEditTestCloseModal}
                   openModal={this.onEditTestOpenModal}
                   token={this.state.editToken}
+                />
+              </Modal>
+              <Modal
+                open={this.state.openEmailModal}
+                onClose={this.onEmailCloseModal}
+                showCloseIcon={false}
+                center
+              >
+                <EmailModal
+                  closeModal={this.onEmailCloseModal}
+                  notNotified={this.state.notNotified}
+                  notified={this.state.notified}
+                  handleError={this.handleInvalidResponseError}
                 />
               </Modal>
             </div>

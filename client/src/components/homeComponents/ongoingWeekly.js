@@ -62,6 +62,7 @@ class OngoingWeekly extends React.Component {
               section={"ongoing"}
               editTest={this.props.editTest}
               handleError={this.props.handleError}
+              section={"ongoing"}
             />
             <div style={{width:"100%",height:"45px"}}/>
           </ScrollBox>
