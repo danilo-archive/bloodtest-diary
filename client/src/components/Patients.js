@@ -99,7 +99,7 @@ class Patients extends React.Component {
     this.serverConnect.joinPatientsPage();
 
     this.state = {
-      under12: false,
+      under12: this.serverConnect.isUnderTwelve(),
       allPatientsReady: false,
       allPatients: {},
       shownPatients: {},
@@ -282,12 +282,12 @@ class Patients extends React.Component {
           <Container>
             <NavbarContainer>
               <Navbar
-                under12={this.state.under12}
+                over12={!this.state.under12}
                 setUnder12={check => {
                   check
                     ? this.serverConnect.setUnderTwelve()
                     : this.serverConnect.setOverTwelve();
-                  this.setState({ under12: check });
+                  this.setState({ under12: !check });
                   this.refresh();
                 }}
                 page="Patients"

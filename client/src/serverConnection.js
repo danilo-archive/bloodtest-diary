@@ -72,6 +72,9 @@ class ServerConnect {
     setOverTwelve(){
         this.currentMode = overTwelve;
     }
+    isUnderTwelve(){
+        return this.currentMode == underTwelve;
+    }
 
     /**
     *   Protocol to delete the current authentication token.
