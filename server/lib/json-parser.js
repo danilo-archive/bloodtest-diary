@@ -16,6 +16,7 @@ module.exports = {
 }
 
 const fs = require('fs');
+const logger = require('./logger');
 
 /**
     * Returns the content of the JSON file
@@ -29,7 +30,7 @@ function getJSON(path) {
         const data = fs.readFileSync(path);
         return isJSON(data)
     } else {
-        console.error(`There is no JSON file at ${path}`)
+        logger.error(`There is no JSON file at ${path}`)
         return null;
     }
 }
@@ -44,7 +45,7 @@ function isJSON(data) {
         const json = JSON.parse(data);
         return json;
     } catch (e) {
-        console.error(`The file is not in JSON format`);
+        logger.error(`The file is not in JSON format`);
         return null;
     }
 }
