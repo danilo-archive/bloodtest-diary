@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from "styled-components";
 
 import Label from "./../Label";
-import refresh from "../../images/refresh.png"
+import refresh from "../../resources/images/refresh.png"
 
 const Container = styled.div`
   width: auto;

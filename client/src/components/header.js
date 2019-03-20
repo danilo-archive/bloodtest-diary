@@ -3,10 +3,10 @@ import styled from "styled-components";
 
 import '../styles/header.css';
 
-import minimize from "../images/minimize.png"
-import maximize from "../images/maximize.png"
-import close from "../images/close.png"
-import settings from "../images/settings.png"
+import minimize from "../resources/images/minimize.png"
+import maximize from "../resources/images/maximize.png"
+import close from "../resources/images/close.png"
+import settings from "../resources/images/settings.png"
 import OfflineScreen from "./OfflineScreen.js";
 import SettingsPanel from "./SettingsPanel.js";
 import {getServerConnect} from "../serverConnection.js";

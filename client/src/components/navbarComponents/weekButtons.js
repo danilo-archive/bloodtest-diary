@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
 
-import arrow from "./../../images/arrow.png";
+import arrow from "../../resources/images/arrow.png";
 
 const Container = styled.div`
   border: green 0px solid;
