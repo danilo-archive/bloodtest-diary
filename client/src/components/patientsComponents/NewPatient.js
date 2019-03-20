@@ -6,7 +6,7 @@ import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import {getServerConnect} from "../../serverConnection";
 import { openAlert } from "../Alert"
-import InputChecker from "../../inputChecker";
+import {emptyCheck, emailCheck} from "../../inputChecker";
 
 
 const Container = styled.div`
@@ -88,39 +88,33 @@ class NewPatient extends Component {
     }
 
     checkValues () {
-        if (InputChecker.emptyCheck(this.state.patientId)) {
+        if (emptyCheck(this.state.patientId)) {
             return {correct: false, message: "Patient Id is compulsory"};
         }
-        if (InputChecker.emptyCheck(this.state.patientName) || InputChecker.emptyCheck(this.state.patientSurname)) {
+        if (emptyCheck(this.state.patientName) || emptyCheck(this.state.patientSurname)) {
             return {correct: false, message: "Patient name and surname are compulsory"};
         }
-        if (!InputChecker.emailCheck(this.state.patientEmail)) {
+        if (!emailCheck(this.state.patientEmail)) {
             return {correct: false, message: "Wrong format of patient's email"};
         }
-        /*if (!InputChecker.phoneCheck(this.state.patientPhone)) {
-            return {correct: false, message: "Wrong format of patient's phone"}
-        }*/
+
         if (!this.state.noCarer) {
-            if (InputChecker.emptyCheck(this.state.carerEmail)) {
+            if (emptyCheck(this.state.carerEmail)) {
                 return {correct: false, message: "Carer's email is compulsory"};
             }
-            if (!InputChecker.emailCheck(this.state.carerEmail)) {
+            if (!emailCheck(this.state.carerEmail)) {
                 return {correct: false, message: "Wrong format of carer's email"};
             }
-            /*if (!InputChecker.phoneCheck(this.state.carerPhone)) {
-                return {correct: false, message: "Wrong format of carer's phone"}
-            }*/
+
         }
         if (!this.state.localHospital) {
-            if (InputChecker.emptyCheck(this.state.hospitalEmail)){
+            if (emptyCheck(this.state.hospitalEmail)){
                 return {correct: false, message: "Hospital's email is compulsory"};
             }
-            if (!InputChecker.emailCheck(this.state.hospitalEmail)) {
+            if (!emailCheck(this.state.hospitalEmail)) {
                 return {correct: false, message: "Wrong format of hospital's email"};
             }
-            /*if (!InputChecker.phoneCheck(this.state.hospitalPhone)) {
-                return {correct: false, message: "Wrong format of hospital's phone"}
-            }*/
+
         }
         return {correct : true};
     }
