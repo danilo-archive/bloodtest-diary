@@ -7,9 +7,9 @@ const rewire = require("rewire");
 chai.use(sinonChai);
 const queryController = rewire("../../../lib/query-controller");
 
-//Tests for query controller do NOT depend on action-logger
+//Tests for query controller do NOT depend on action-actionLogger
 //We can safely assume the function do not disturb execution of the program
-const logger = {
+const actionLogger = {
   logInsert:function() {
     return 4;
   },
@@ -23,7 +23,7 @@ const logger = {
     return 1;
   }
 };
-queryController.__set__("logger",logger);
+queryController.__set__("actionLogger",actionLogger);
 
 const testUsername = "admin"; // username that is used throughout the tests (also for action username)
 
