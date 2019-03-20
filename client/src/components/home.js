@@ -35,6 +35,7 @@ class Home extends Component {
     this.serverConnect.joinMainPage();
 
     this.state = {
+      under12: false,
       dashboardReady: false,
       overdueReady: false,
       weekDays: getCurrentWeek(),
@@ -55,7 +56,7 @@ class Home extends Component {
     this.initOverduePanel();
     this.updateDashboard();
     this.initCallbacks();
-    this.openEmailModal();
+    //this.openEmailModal();
   };
 
   initCallbacks() {
@@ -223,10 +224,12 @@ class Home extends Component {
               <div className={"rightSideDash"}>
                 <div className={"navbar"}>
                   <Navbar
+                    under12={this.state.under12}
                     setUnder12={check => {
                       check
                         ? this.serverConnect.setUnderTwelve()
                         : this.serverConnect.setOverTwelve();
+                      this.setState({ under12: check });
                       this.refresh();
                     }}
                     page="Dashboard"

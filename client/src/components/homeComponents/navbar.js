@@ -77,6 +77,7 @@ class Navbar extends React.Component {
             <BottomSide>
               <CalenderControls>
                 <OptionSwitch
+                  checked={this.props.under12}
                   onChange={this.props.setUnder12}
                   option1="Show under 12"
                   option2="Show 12 or older"
@@ -104,6 +105,12 @@ class Navbar extends React.Component {
               onRefreshClick={this.props.refresh}
             />
             <BottomSide>
+              <OptionSwitch
+                checked={this.props.under12}
+                onChange={this.props.setUnder12}
+                option1="Show under 12"
+                option2="Show 12 or older"
+              />
               <ControlButtons
                 page={this.props.page}
                 onPatientsClick={this.props.onPatientsClick}
