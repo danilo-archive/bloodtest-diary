@@ -6,7 +6,7 @@ import CalendarHeader from "./CalendarHeader.js";
 import dateformat from "dateformat";
 
 const HALF_MONTH = 15;
-const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const weekDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
 let dayBelongsToCurrentMonth = false;
 
@@ -84,6 +84,7 @@ class CalendarTable extends Component {
 
 
       
+
       this.props.hideCalendar();
     };
     this.returnDate = () => {
