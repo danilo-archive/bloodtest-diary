@@ -203,6 +203,59 @@ const MessageLabel = styled.p`
   animation: opac 1s linear 1;
 `;
 
+const AdminCheckContainer = styled.div`
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-right: 30px;
+
+  .adminLabel {
+    white-space: nowrap;
+    cursor: default;
+    font-size: 110%;
+    margin: 0;
+    margin-top: 2px;
+    margin-right: 35px;
+  }
+`;
+
+const AdminCheck = styled.input.attrs({ type: "checkbox" })`
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  appearance: none;
+  outline: none;
+  border: solid 3px #646464;
+  padding: 0;
+  transition: 100ms;
+  cursor: pointer;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background: #0b999d;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0;
+    transition: 100ms;
+  }
+  &:checked {
+    border: solid 3px #0b999d;
+  }
+
+  &:checked::before {
+    opacity: 1;
+  }
+`;
+
 const colourStyles = {
   control: (styles, { data, isDisabled, isFocused, isSelected }) => ({ ...styles, backgroundColor: isDisabled ? '#ddd' : 'white'}),
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
@@ -247,6 +300,7 @@ export default class UsersPanel extends Component {
          confirmPassword: "",
          passwordMatch: true,
          mainState: false,
+         AdminChecked: true,
       };
 
   }
@@ -278,6 +332,14 @@ export default class UsersPanel extends Component {
    }
   }
 
+  onAdminCheck = () => {
+    if (this.state.AdminChecked) {
+      this.setState({AdminChecked: false});
+    } else {
+      this.setState({AdminChecked: true});
+    }
+   }
+
  clearForm = () => {
    this.setState({
      selectedOption: null,
@@ -287,7 +349,8 @@ export default class UsersPanel extends Component {
      email: "",
      password: "",
      confirmPassword: "",
-     passwordMatch: true
+     passwordMatch: true,
+     AdminChecked: false,
   })
  }
 
@@ -369,7 +432,7 @@ export default class UsersPanel extends Component {
 
         {this.state.selectedOption ?
           <>
-            <form onSubmit={this.onSaveEditUser} style={{ "margin-top": "10px", display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+            <form onSubmit={this.onSaveEditUser} style={{ "margin-top": "15px", display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
               <div className="inputSection">
                 <div className="usersLabel">Email:</div>
                 <input id="emailInput" type="text" name="email" className="usersInput" value={this.state.email} onChange={this.handleCredentialUpdate} required/>
@@ -382,6 +445,13 @@ export default class UsersPanel extends Component {
                 <div className="usersLabel">Confirm Password:</div>
                 <input id="confrimPasswordInput" type="password" name="confirmPassword" className="usersInput" value={this.state.confirmPassword} onChange={this.handleCredentialUpdate} required/>
               </div>
+              <AdminCheckContainer>
+                <p className="adminLabel">Admin:</p>
+                <AdminCheck
+                  checked={this.AdminChecked}
+                  onClick={this.onAdminCheck}
+                />
+              </AdminCheckContainer>
               <ErrorLabel className={this.state.passwordMatch ? 'hidden' : null}>Passwords Don't Match</ErrorLabel>
               <ButtonContainer>
                   <CancelButton onClick={this.clearForm}>Cancel</CancelButton>
@@ -396,7 +466,7 @@ export default class UsersPanel extends Component {
 
         {this.state.newUser ?
           <>
-            <form onSubmit={this.onSaveAddUser} style={{ "margin-top": "10px", display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+            <form onSubmit={this.onSaveAddUser} style={{ "margin-top": "15px", display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
             <div className="inputSection">
               <div className="usersLabel">Username:</div>
               <input id="usernameInput" type="text" name="username" className="usersInput" value={this.state.username} onChange={this.handleCredentialUpdate} required/>

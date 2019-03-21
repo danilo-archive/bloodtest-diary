@@ -88,12 +88,20 @@ const Container = styled.div`
         margin-left: 7px;
         margin-right: 7px;
       }
+
+`;
+
+
+const Test = styled.div`
+  &:hover {
+    background-color: red;
+  }
 `;
 
 function sendReminder(test){
   let text = test.last_reminder ? `This patient was contacted on the ${test.last_reminder}, do you want to send another reminder email?`
                                  : `This patient was never contacted about this test, do you want to send an email?`;
-  openAlert(text, "optionAlert", 
+  openAlert(text, "optionAlert",
             "No", () => {return},
             "Yes", () => {console.log("sending email")});
 }
@@ -101,7 +109,9 @@ function sendReminder(test){
 const RightClickMenu = props => {
     return(
         <Menu id={props.id} style={{position: "absolute", zIndex: "4"}}>
+        <Test>
            <Item onClick={() => {props.editTest(props.testId)}}>Edit</Item>
+           </Test>
            <Item onClick={() => {props.editPatient(props.patientNo)}}>Open patient profile</Item>
            <Separator />
            <Item disabled={!props.completed}>Schedule next</Item>
