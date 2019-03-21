@@ -75,27 +75,10 @@ const Container = styled.div`
     visibility: hidden;
   }
 
-  .disabled {
-    border: 1px solid #999999;
-    background-color: #e7e7e7;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 120%;
-    margin-right: 10px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    height: 38px;
-    min-width: 70px;
-    outline: none;
-  }
-
   .addUser {
-    border: 1px solid transparent;
+    border: 2px solid transparent;
     background-color: #0b999d;
+    transition: all 0.14s linear;
     color: #eee;
     font-size: 120%;
     text-align: center;
@@ -104,19 +87,46 @@ const Container = styled.div`
 
     margin-right: 10px;
 
-    height: 37px;
+    height: 33.5px;
     min-width: 70px;
+    width: 70px;
+    max-width: 70px;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
 
     :hover {
-      background-color: #018589;
       color: #eee;
+      border: 2px solid transparent;
+      background-color: #018589;
     }
     outline: none;
     cursor: pointer;
+  }
+
+  .disabled {
+    border: 2px solid #ddd;
+    background-color: #d5d5d5;
+    transition: all 0.14s linear;
+    color: #646464;
+    font-size: 120%;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+
+    margin-right: 10px;
+
+    height: 34px;
+    min-width: 70px;
+    width: 70px;
+    max-width: 70px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    outline: none;
   }
 
   .saveButton {
@@ -135,8 +145,8 @@ const Container = styled.div`
       color: #eee;
     }
     outline: none;
+    cursor: pointer;
   }
-
 `;
 
 const MenuContainer = styled.div`
@@ -173,6 +183,7 @@ const CancelButton = styled.button`
     color: black;
   }
   outline: none;
+  cursor: pointer;
 `;
 
 const ErrorLabel = styled.p`
@@ -186,9 +197,28 @@ const ErrorLabel = styled.p`
   animation: opac 1s linear 1;
 `;
 
+const colourStyles = {
+  control: (styles, { data, isDisabled, isFocused, isSelected }) => ({ ...styles, backgroundColor: isDisabled ? '#ddd' : 'white'}),
+  option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+    return {
+      ...styles,
+      backgroundColor: isFocused ? isSelected ? '#c8c8c8' :  '#eee' : 'white',
+    };
+  },
+  input: (styles, { data, isDisabled, isFocused, isSelected }) => ({ ...styles,}),
+  placeholder: (styles, { data, isDisabled, isFocused, isSelected }) => ({ ...styles, color: '#646464'}),
+  singleValue: (styles, { data, isDisabled, isFocused, isSelected }) => ({ ...styles, color: '#646464'}),
+};
+
+
 
 const users = [
   { label: "Jonny Boy", value: 1 },
+  { label: "John Snow", value: 2 },
+  { label: "Sansa Stark", value: 3 },
+  { label: "Little Finger", value: 4 },
+  { label: "The Mountain", value: 5 },
+  { label: "Sam", value: 6 },
   { label: "John Snow", value: 2 },
   { label: "Sansa Stark", value: 3 },
   { label: "Little Finger", value: 4 },
@@ -225,8 +255,11 @@ export default class UsersPanel extends Component {
   }
 
   handleChange = (selectedOption) => {
-   this.setState({ selectedOption });
-   this.setState({disabled: true});
+    if (this.state.disabled) {
+      return
+    } else {
+     this.setState({selectedOption , disabled: true});
+   }
  }
 
  onAddUser = (selectedOption) => {
@@ -298,11 +331,24 @@ export default class UsersPanel extends Component {
 
           <Select
             className="userSelect"
+            styles={colourStyles}
             placeholder="Edit User..."
             value={this.state.selectedOption}
             options={users}
             onChange={this.handleChange}
             isDisabled={this.state.disabled}
+
+            theme={(theme) => ({
+              ...theme,
+              borderRadius: 5,
+              border: 1,
+              colors: {
+              ...theme.colors,
+                primary: '#ddd',
+                primary50: '#ddd',
+
+              },
+            })}
           />
         </MenuContainer>
 
