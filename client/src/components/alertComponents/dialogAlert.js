@@ -13,7 +13,7 @@ const Alert = styled.div`
 
   font-family: "Rajdhani", sans-serif;
   color: #646464;
-  font-size: 150%;
+  font-size: 130%;
 
   .alertMessageContainer {
     border: solid 0 blue;
