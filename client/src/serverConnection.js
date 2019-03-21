@@ -72,6 +72,10 @@ class ServerConnect {
 
     }
 
+    isAdmin(){
+        return this.currentUser.isAdmin === "yes";
+    }
+
     setUnderTwelve(){
         this.currentMode = underTwelve;
     }
@@ -89,6 +93,11 @@ class ServerConnect {
         this.loginToken = undefined;
         cookies.set('accessToken', "", { path: '/' });
     }
+
+    initSession(token, callback){
+        this.setLoginToken(token);
+        callback();
+    }
     /**
     * Set the current authentication token.
     * @param {String} token the new token
@@ -97,6 +106,7 @@ class ServerConnect {
         this.loginToken = token;
         cookies.set('accessToken', token, { path: '/' });
     }
+
 
     /**
     * Joins the main page room in the server.
@@ -184,6 +194,20 @@ class ServerConnect {
             if (res.success){
                 this.deleteLoginToken();
             }
+            callback(res);
+        });
+    }
+
+    getCurrentUser(callback){
+        this.socket.emit("getUser", this.loginToken);
+        this.socket.once("getUserResponse", res => {
+            callback(res);
+        });
+    }
+
+    getAllUsers(callback){
+        this.socket.emit("getAllUsers", this.loginToken);
+        this.socket.once("getAllUsersResponse", res => {
             callback(res);
         });
     }
@@ -285,6 +309,15 @@ class ServerConnect {
             callback(res);
         });
     }
+
+    requestUserEditing(username, callback){
+        this.socket.emit("requestUserEditToken", username, this.loginToken);
+        this.socket.once("requestUserEditTokenResponse", res => {
+            callback(res);
+        });
+    }
+
+
     /**
      * Requests the distruction of the token previously received to edit a test, calls the callback with the response.
      * @param {int} testId The id of the test
@@ -309,6 +342,21 @@ class ServerConnect {
             callback(res);
         });
     }
+
+    discardUserEditing(username, token, callback){
+        this.socket.emit("discardEditing", "User", username, token, this.loginToken);
+        this.socket.once("discardEditingResponse", res => {
+            callback(res);
+        })
+    }
+
+    addUser(newUser, callback){
+        this.socket.emit("addUser", newUser, this.loginToken);
+        this.socket.once("addUserResponse", res => {
+            callback(res);
+        });
+    }
+
 
     addPatient(newPatient, callback){
         this.socket.emit("addPatient", newPatient, this.loginToken);
@@ -390,6 +438,13 @@ class ServerConnect {
     editPatient(patientId, newData, token, callback){
         this.socket.emit("editPatient", patientId, newData, token, this.loginToken);
         this.socket.once("editPatientResponse", res => {
+            callback(res);
+        });
+    }
+
+    editUser(newData, token, callback){
+        this.socket.emit("editUser", newData, token, this.loginToken);
+        this.socket.once("editUserResponse", res => {
             callback(res);
         });
     }

@@ -667,6 +667,7 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.editUser(newData, token, username);
+        logger.info(response);
         if (response.success){
             socket.emit("editUserResponse", {success: true, response: response.response});
             // TODO: do we need this?

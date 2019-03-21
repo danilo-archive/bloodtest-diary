@@ -169,8 +169,10 @@ class LoginForm extends Component {
     let credentials = {username: this.state.username, password: crypto.createHash('sha256').update(this.state.password).digest('hex')};
     this.serverConnect.login(credentials, res => {
           if (res.success){
-              this.serverConnect.setLoginToken(res.accessToken);
-              this.props.history.push("home");
+              this.serverConnect.initSession(res.accessToken, () => {
+                this.props.history.push("home");
+              });
+              
           }else{
               this.showLoginErrorMessage();
           }

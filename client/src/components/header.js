@@ -20,7 +20,8 @@ class Header extends Component {
       this.serverConnect = getServerConnect();
       this.state = {
           disabled: true,
-          currentPage: undefined
+          currentPage: undefined,
+          admin: undefined,
       }
       this.serverConnect.setOnConnect( () => {
          this.setState({disabled: false});
@@ -31,15 +32,32 @@ class Header extends Component {
       this.serverConnect.setOnRoomJoin(room => {
          this.setPage(room);
       });
-
   }
+
+
 
   /**
   * @param {String} room : possible rooms: login_page, main_page, patients_page
   */
   setPage = room => {
      this.setState({currentPage: room});
+     if (room !== "login_page"){
+        this.initUserInfo();
+     }
   }
+
+  initUserInfo = () => {
+    this.serverConnect.getCurrentUser(res => {
+        if (res.success){
+          if(res.response[0].isAdmin === "yes"){
+            this.setState({admin: true});
+          }else{
+            this.setState({admin: false});
+          }
+        }
+      });
+  }
+
 
   safeClose = event => {
       this.serverConnect.logout(res=>{return});
@@ -58,7 +76,7 @@ class Header extends Component {
                        <img className={"headerIcon"} src={settings} alt={"Settings Button"}/>
                    </div>
                    <div className="dropdown-content">
-                    <SettingsPanel currentPage={this.state.currentPage}/>
+                    <SettingsPanel isAdmin={this.state.admin} currentPage={this.state.currentPage}/>
                   </div>
                </div>
                <div className="button" id="min-button">

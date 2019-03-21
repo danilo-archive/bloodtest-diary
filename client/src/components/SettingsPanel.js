@@ -34,13 +34,19 @@ export default class SettingsPanel extends Component {
           <ConnectionPanel/>
         );
       default:
-        return (
-          <>
-            <UsersPanel/>
-            <divider />
+        if (this.props.isAdmin){
+          return (
+            <>
+              <UsersPanel/>
+              <divider />
+              <PrefrencesPanel/>
+            </>
+          );
+        }else{
+          return (
             <PrefrencesPanel/>
-          </>
-        );
+          )
+        }
     }
   }
 

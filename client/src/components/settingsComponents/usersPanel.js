@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
-
+import {getServerConnect} from "../../serverConnection.js";
 import Select from 'react-select';
+
+const crypto = require('crypto');
 
 const Container = styled.div`
   height: auto;
@@ -292,7 +294,9 @@ export default class UsersPanel extends Component {
   constructor(props){
       super(props);
       this.state = {
-         selectedOption: null,
+         allUsers: undefined,
+         selectedOption: undefined,
+         editToken: undefined,
          disabled: false,
          username: "",
          email: "",
@@ -300,9 +304,26 @@ export default class UsersPanel extends Component {
          confirmPassword: "",
          passwordMatch: true,
          mainState: false,
-         AdminChecked: false,
-      };
+         adminChecked: false,
+      }; 
+      this.serverConnect = getServerConnect();
+      this.init();
 
+  }
+
+  init(){
+    this.serverConnect.getAllUsers(res => {
+      if (res.success){
+        let users = res.response.map(user => ({
+          label: user.username,
+          value: user.recovery_email,
+          isAdmin: user.isAdmin === "yes"
+        }));
+        this.setState({allUsers: users});
+      }else{
+        //TODO error check
+      }  
+    });
   }
 
   handleCredentialUpdate = (event) => {
@@ -319,8 +340,14 @@ export default class UsersPanel extends Component {
     if (this.state.disabled) {
       return
     } else {
-      this.state.email = ""; //TODO GET CURRENT EMAIL OF USER
-      this.setState({selectedOption , disabled: true});
+      this.serverConnect.requestUserEditing(selectedOption.label, res => {
+        if (res.success){
+          this.setState({selectedOption , username: selectedOption.label, editToken: res.token, disabled: true, email: selectedOption.value, adminChecked: selectedOption.isAdmin});
+        }else{
+          alert("Somebody is editing this user already");
+        }
+      });
+      
    }
  }
 
@@ -333,34 +360,46 @@ export default class UsersPanel extends Component {
   }
 
   onAdminCheck = () => {
-    console.log(this.state.AdminChecked)
-    if (this.state.AdminChecked) {
-      this.setState({AdminChecked: false}, () => console.log(this.state.AdminChecked));
+    console.log(this.state.adminChecked)
+    if (this.state.adminChecked) {
+      this.setState({adminChecked: false}, () => console.log(this.state.adminChecked));
     } else {
-      this.setState({AdminChecked: true}, () => console.log(this.state.AdminChecked));
+      this.setState({adminChecked: true}, () => console.log(this.state.adminChecked));
     }
 
    }
 
  clearForm = () => {
-   this.setState({
-     selectedOption: null,
-     newUser: false,
-     disabled: false,
-     username: "",
-     email: "",
-     password: "",
-     confirmPassword: "",
-     passwordMatch: true,
-     AdminChecked: false,
-  })
+   this.serverConnect.discardUserEditing(this.state.username, this.state.editToken, res => {
+    this.setState({
+      selectedOption: null,
+      editToken: undefined,
+      disabled: false,
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      passwordMatch: true,
+      mainState: false,
+      adminChecked: false,
+    });
+   });   
  }
 
  onSaveEditUser = (event) => {
+   event.preventDefault();
    if (this.state.password == this.state.confirmPassword) {
-     //Update Database with new email and password
-     this.showInfoMessage()
-     this.clearForm()
+     let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
+     let newData = {username: this.state.username, hashed_password: hash, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
+     this.serverConnect.editUser(newData, this.state.editToken, res => {
+       if (res.success){
+        this.showInfoMessage();
+        this.clearForm();
+       }else{
+         alert("lmao something went wrong");
+       }
+     });
+     
    } else {
      this.setState({
        password: "",
@@ -371,14 +410,22 @@ export default class UsersPanel extends Component {
          this.setState({passwordMatch: true})
      }, 5000);
    }
-   event.preventDefault();
+   
  }
 
  onSaveAddUser = (event) => {
-   if (this.state.password == this.state.confirmPassword) {
-     //Update Database with new user Details, username, email, password
-     this.showInfoMessage()
-     this.clearForm()
+   event.preventDefault();
+   if (this.state.password === this.state.confirmPassword) {
+     let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
+     let user = {username: this.state.username, hashed_password: hash, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
+     this.serverConnect.addUser(user, res => {
+        if (res.success){
+          this.showInfoMessage()
+          this.clerForm()
+        }else{
+          // TODO error message
+        }
+     });   
    } else {
      this.setState({
        password: "",
@@ -389,7 +436,7 @@ export default class UsersPanel extends Component {
          this.setState({passwordMatch: true})
      }, 5000);
    }
-   event.preventDefault();
+   
  }
 
  showInfoMessage = () => {
@@ -414,7 +461,7 @@ export default class UsersPanel extends Component {
             styles={colourStyles}
             placeholder="Edit User..."
             value={this.state.selectedOption}
-            options={users}
+            options={this.state.allUsers}
             onChange={this.handleChange}
             isDisabled={this.state.disabled}
 
@@ -450,7 +497,7 @@ export default class UsersPanel extends Component {
               <AdminCheckContainer>
                 <p className="adminLabel">Admin:</p>
                 <AdminCheck
-                  checked={this.AdminChecked}
+                  checked={this.state.adminChecked}
                   onClick={this.onAdminCheck}
                 />
               </AdminCheckContainer>
