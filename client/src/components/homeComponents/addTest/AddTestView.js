@@ -6,7 +6,7 @@ import PatientSelect from "./PatientSelect";
 import DateSelectorSection from "./DateSelectorSection";
 import { getServerConnect } from "../../../serverConnection.js";
 import dateformat from "dateformat";
-import {openAlert} from "../../Alert";
+import { openAlert } from "../../Alert";
 const DataContainer = styled.div`
   position: relative;
   width: 100%;
@@ -16,13 +16,17 @@ const DataContainer = styled.div`
 export default class AddTestView extends React.Component {
   state = {
     open: true,
+    tooltips: {
+      frequency: false,
+      occurrences: false
+    },
     showCalendar: false,
     selectedID: "",
     selectedDate: dateformat(new Date(this.props.selectedDate), "d mmm yyyy"),
     observations: "",
     allPatients: "",
     frequency: {
-      timeAmount: null,
+      timeAmount: "",
       timeUnits: ["Days", "Weeks", "Months", "Years"],
       timeUnit: "Days",
       occurrences: 1,
@@ -36,32 +40,43 @@ export default class AddTestView extends React.Component {
   }
 
   handleError = (res, error) => {
-      if (res.errorType === "authentication"){
-          openAlert("Authentication error", "confirmationAlert",
-          "Go back to login", () => {
-              this.props.closeModal();
-              this.props.logout();
-            });
-      }else{
-          openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
-      }
-  }
+    if (res.errorType === "authentication") {
+      openAlert(
+        "Authentication error",
+        "confirmationAlert",
+        "Go back to login",
+        () => {
+          this.props.closeModal();
+          this.props.logout();
+        }
+      );
+    } else {
+      openAlert(
+        `${error ? error : "Unknown error occurred"}`,
+        "confirmationAlert",
+        "Ok",
+        () => {
+          return;
+        }
+      );
+    }
+  };
 
   getAllPatients = () => {
     this.serverConnect.getAllPatients(res => {
-      if (res.success){
-          let patients = res.response.map(patient => {
-            return {
-              name: `${patient.patient_name} ${patient.patient_surname}`,
-              id: `${patient.patient_no}`
-            };
-          });
-          this.setState({ allPatients: patients });
-        }else{
-            this.handleError(res);
-        }
+      if (res.success) {
+        let patients = res.response.map(patient => {
+          return {
+            name: `${patient.patient_name} ${patient.patient_surname}`,
+            id: `${patient.patient_no}`
+          };
+        });
+        this.setState({ allPatients: patients });
+      } else {
+        this.handleError(res);
+      }
     });
-  }
+  };
 
   close = () => {
     this.setState({ open: false });
@@ -122,6 +137,22 @@ export default class AddTestView extends React.Component {
             />
 
             <DateSelectorSection
+              frequency={this.state.frequency.timeAmount}
+              occurrences={this.state.frequency.occurrences}
+              tooltips={{
+                frequency: this.state.tooltips.frequency,
+                occurrences: this.state.tooltips.occurrences
+              }}
+              setFrequencyTooltip={state =>
+                this.setState({
+                  tooltips: { ...this.state.tooltips, frequency: state }
+                })
+              }
+              setOcurrencesTooltip={state =>
+                this.setState({
+                  tooltips: { ...this.state.tooltips, occurrences: state }
+                })
+              }
               showCalendar={this.state.showCalendar}
               noRepeat={this.state.frequency.noRepeat}
               occurrences={this.state.frequency.occurrences}
