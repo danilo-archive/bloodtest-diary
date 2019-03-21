@@ -297,6 +297,7 @@ export default class UsersPanel extends Component {
          allUsers: undefined,
          selectedOption: undefined,
          editToken: undefined,
+         newUser: false,
          disabled: false,
          username: "",
          email: "",
@@ -375,6 +376,7 @@ export default class UsersPanel extends Component {
       selectedOption: null,
       editToken: undefined,
       disabled: false,
+      newUser: false,
       username: "",
       email: "",
       password: "",
@@ -395,6 +397,7 @@ export default class UsersPanel extends Component {
        if (res.success){
         this.showInfoMessage();
         this.clearForm();
+        this.init();
        }else{
          alert("lmao something went wrong");
        }
@@ -420,8 +423,9 @@ export default class UsersPanel extends Component {
      let user = {username: this.state.username, hashed_password: hash, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
      this.serverConnect.addUser(user, res => {
         if (res.success){
-          this.showInfoMessage()
-          this.clerForm()
+          this.showInfoMessage();
+          this.clearForm();
+          this.init();
         }else{
           // TODO error message
         }
