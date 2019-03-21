@@ -47,7 +47,7 @@ function characterCheck(input) {
  */
 
 function emailCheck(input) {
-    if (this.emptyCheck(input)) {
+    if (emptyCheck(input)) {
         return true;
     }
     return emailRegex.test(input);

@@ -117,6 +117,7 @@ class Patients extends React.Component {
 
     initAllPatients(){
         this.serverConnect.getAllPatients(res => {
+            console.log(res.response.map(a => a.patient_no));
             if (res.success){
                 this.setState({
                     allPatients: res.response,
@@ -281,6 +282,7 @@ class Patients extends React.Component {
                                 closeModal={this.onCloseAddModal}
                                 purpose={"Add patient"}
                                 handleError={this.handleError}
+                                allPatientsId={this.state.allPatients.map(patient => patient.patient_no)}
                             />
                         </Modal>
 

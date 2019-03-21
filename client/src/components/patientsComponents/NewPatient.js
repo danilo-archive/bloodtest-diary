@@ -91,6 +91,9 @@ class NewPatient extends Component {
         if (emptyCheck(this.state.patientId)) {
             return {correct: false, message: "Patient Id is compulsory"};
         }
+        if (this.props.allPatientsId.indexOf(this.state.patientId) > -1) {
+            return {correct: false, message: "Patient with this Id already exists"}
+        }
         if (emptyCheck(this.state.patientName) || emptyCheck(this.state.patientSurname)) {
             return {correct: false, message: "Patient name and surname are compulsory"};
         }
