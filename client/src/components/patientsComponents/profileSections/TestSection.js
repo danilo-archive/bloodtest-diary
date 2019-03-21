@@ -3,6 +3,10 @@ import styled from "styled-components";
 import TestCell from "./profileCells/TestCell";
 import SectionContainer from "./SectionContainer"
 
+const Container = styled.div`
+  width: 100%;
+`;
+
 const EmptyContainer = styled.div`
   width: 100%;
   text-align: center;
@@ -44,7 +48,7 @@ export default class PatientSection extends React.Component {
 
     render() {
         const content = (
-          <>
+          <Container>
                   <Horizontal>
                       <Field>Due</Field>
                       <Field>Notes</Field>
@@ -60,7 +64,7 @@ export default class PatientSection extends React.Component {
                           />
                       ))}
                   </CellContainer>
-          </>
+          </Container>
         );
         const emptyTest = (
             <>
