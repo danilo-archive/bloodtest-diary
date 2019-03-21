@@ -40,21 +40,26 @@ const DoneButton = styled.button`
 export default class PatientSelect extends React.Component {
   state = {
     showID: true,
-    patients: this.props.patients,
+    patients: this.props.patients.slice(0, 30),
     selectedPatientID: "",
     update: false
   };
 
   filter = value => {
     this.setState({
-      patients: this.props.patients.filter(
-        patient => patient.name.includes(value) || patient.id.includes(value)
-      )
+      patients: this.props.patients
+        .filter(
+          patient => patient.name.includes(value) || patient.id.includes(value)
+        )
+        .slice(0, 30)
     });
   };
   render() {
     if (!this.state.updated && this.props.patients) {
-      this.setState({ updated: true, patients: this.props.patients });
+      this.setState({
+        updated: true,
+        patients: this.props.patients.slice(0, 30)
+      });
     }
     return (
       <Container>
@@ -86,18 +91,24 @@ export default class PatientSelect extends React.Component {
         >
           <br />
           {this.props.patients && this.state.updated ? (
-            this.state.patients.map(patient => (
-              <PatientBox
-                patientName={patient.name}
-                patientID={patient.id}
-                showID={this.state.showID}
-                selected={this.state.selectedPatientID === patient.id}
-                onSelectClick={id => {
-                  this.setState({ selectedPatientID: id });
-                  this.props.onSelectClick(id);
-                }}
-              />
-            ))
+            <>
+              {this.state.patients.map(patient => (
+                <PatientBox
+                  key={patient.id}
+                  patientName={patient.name}
+                  patientID={patient.id}
+                  showID={this.state.showID}
+                  selected={this.state.selectedPatientID === patient.id}
+                  onSelectClick={id => {
+                    this.setState({ selectedPatientID: id });
+                    this.props.onSelectClick(id);
+                  }}
+                />
+              ))}
+              <div style={{ textAlign: "center", opacity: "0.4" }}>
+                To see more patients, use the search functionality
+              </div>
+            </>
           ) : (
             <div
               style={{
