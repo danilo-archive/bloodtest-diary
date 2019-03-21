@@ -199,7 +199,7 @@ class Home extends Component {
 
   onEditTestOpenModal = testId => {
     this.serverConnect.requestTestEditing(testId, res => {
-      if (res.token != undefined) {
+      if (res.success) {
         this.setState({
           openEditTestModal: true,
           editTestId: testId,

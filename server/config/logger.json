@@ -1,8 +1,8 @@
 { 
     "compact" : true,
-    "timeStamp": true,
+    "timeStamp": false,
     "consoleOutput": true,
     "fileOutput": true,
     "colorize" : true,
-    "outputFilePath": "./../logs"
+    "outputFilePath": "./logs"
 }

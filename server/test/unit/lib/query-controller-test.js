@@ -7,9 +7,9 @@ const rewire = require("rewire");
 chai.use(sinonChai);
 const queryController = rewire("../../../lib/query-controller");
 
-//Tests for query controller do NOT depend on action-logger
+//Tests for query controller do NOT depend on action-actionLogger
 //We can safely assume the function do not disturb execution of the program
-const logger = {
+const actionLogger = {
   logInsert:function() {
     return 4;
   },
@@ -23,7 +23,7 @@ const logger = {
     return 1;
   }
 };
-queryController.__set__("logger",logger);
+queryController.__set__("actionLogger",actionLogger);
 
 const testUsername = "admin"; // username that is used throughout the tests (also for action username)
 
@@ -869,11 +869,11 @@ describe("Update queries tests", function(){
             return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
           },
           updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
+            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
+        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, undefined, testUsername);
         response.success.should.equal(false);
         response.response.problem.should.equal("Token in use/No token defined");
       })

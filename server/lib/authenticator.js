@@ -10,7 +10,7 @@ const crypto = require("crypto");
 const tokenGenerator = require('./db_controller/token-generator');
 const db_controller = require('./db_controller/db-controller');
 const mysql = require('mysql');
-
+const logger = require('./logger')
 module.exports = {
   canLogin,
   produceIterations,
@@ -64,7 +64,7 @@ function produceHash(password, iterations, salt) {
 async function initTokens() {
   const res = await db_controller.selectQuery("SELECT * FROM AccessTokens");
   if (res.status !== "OK") {
-    console.log("Could not initialise tokens from the DB. Response: " + JSON.stringify(res));
+    logger.error("Could not initialise tokens from the DB. Response: " + JSON.stringify(res));
     return;
   }
   const rows = res.response.rows;
@@ -74,7 +74,7 @@ async function initTokens() {
       expires: rows[i].expiration
     }
   }
-  console.log("Successfully loaded " + rows.length + " token(s) from the DB.");
+  logger.info("Successfully loaded " + rows.length + " token(s) from the DB.");
 }
 
 
@@ -94,10 +94,10 @@ async function verifyToken(accessToken) {
     db_controller.deleteAccessToken(accessToken)
       .then((res) => {
         if (res.status === "OK") {
-          console.log("Access token successfully deleted.")
+          logger.info("Access token successfully deleted.")
         }
         else {
-          console.log("Error deleting access token. Response: " + JSON.stringify(res));
+          logger.error("Error deleting access token. Response: " + JSON.stringify(res));
         }
       });
     return undefined;
@@ -108,7 +108,7 @@ async function verifyToken(accessToken) {
   db_controller.updateAccessToken(accessToken, newExpiry)
     .then((res) => {
       if (res.status !== "OK") {
-        console.log("Error updating access token. Response: " + JSON.stringify(res));
+        logger.error("Error updating access token. Response: " + JSON.stringify(res));
       }
     });
 
@@ -132,10 +132,10 @@ async function registerNewUsername(username) {
   db_controller.insertQuery(sql)
     .then((res) => {
       if (res.status === "OK") {
-        console.log("Access token successfully stored.")
+        logger.info("Access token successfully stored.")
       }
       else {
-        console.log("Error storing access token. Response: " + JSON.stringify(res));
+        logger.error("Error storing access token. Response: " + JSON.stringify(res));
       }
     });
   return token;
@@ -153,10 +153,10 @@ async function logoutUser(accessToken) {
     db_controller.deleteAccessToken(accessToken)
       .then((res) => {
         if (res.status === "OK") {
-          console.log("Access token successfully deleted.")
+          logger.info("Access token successfully deleted.")
         }
         else {
-          console.log("Error deleting access token. Response: " + JSON.stringify(res));
+          logger.error("Error deleting access token. Response: " + JSON.stringify(res));
         }
       });
     return true;

@@ -37,6 +37,8 @@ const nodeMailer = require("nodemailer");
 const jsonController = require("../json-parser");
 const CONFIG_ABSOLUTE_PATH = __dirname + "/../../config/email_config.json"; //the absolute path of the email_config.json file
 const email_config = jsonController.getJSON(CONFIG_ABSOLUTE_PATH);
+const logger = require('./../logger');
+
 /*
 |--------------------------------------------------------------------------
 | MAIN EMAIL SENDING FUNCTIONS
@@ -167,10 +169,10 @@ async function sendEmail(transporter, receiverOptions) {
     let finished = false;
     await transporter.sendMail(receiverOptions, (err, info) => {
         if (err) {
-            console.log(err);
+            logger.error(err);
             successful = false;
         } else {
-            console.log("Email sent successfully");
+            logger.info("Email sent successfully to: " + receiverOptions.to + ".");
             successful = true;
         }
         transporter.close();

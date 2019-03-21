@@ -6,6 +6,9 @@
  * @version 0.0.1
  */
 
+//the logger has to be required before anything else so that the right output file path is specified 
+const logger = require('./lib/logger')
+logger.changeOption("outputFilePath", __dirname + "/logs")
 
 const app = require('express')();
 const http = require('http').Server(app);
@@ -30,11 +33,11 @@ io.on('connection',function(socket)
     // CONNECTIVITY
     // ==============
 
-    console.log(`Socket ${socket.id} connected`);
+    logger.info(`Socket ${socket.id} connected`);
     socket.emit("connected");
 
     socket.on("disconnect", () => {
-        console.log(`Socket ${socket.id} disconnected`);
+        logger.info(`Socket ${socket.id} disconnected`);
     });
 
     socket.on("join", (oldRoom, room, reconnecting=false) => {
@@ -46,11 +49,11 @@ io.on('connection',function(socket)
         if (oldRoom !== room){
             if (oldRoom !== ""){
                 socket.leave(oldRoom);
-                console.log(`Socket ${socket.id} left ${oldRoom}`);
+                logger.info(`Socket ${socket.id} left ${oldRoom}`);
             }
             socket.join(room);
-            console.log(`Socket ${socket.id} joined ${room}`);
-            socket.emit("joined", room);
+            logger.info(`Socket ${socket.id} joined ${room}`);
+            socket.emit("joined", room);          
         }
     });
 
@@ -64,15 +67,15 @@ io.on('connection',function(socket)
     * @return {Boolean} True if credentials are correct
     */
     socket.on('authenticate', async (credentials) => {
-        console.log(`Authentication request from ${socket.id}`);
+        logger.info(`Authentication request from ${socket.id}`);
         const user = await queryController.getUser(credentials.username);
         let res = authenticator.canLogin(credentials,user.response);
         let accessToken = undefined;
         if (res) {
             accessToken = await authenticator.registerNewUsername(credentials.username);
         }
-        console.log("access token: " + accessToken); // TODO: return to user
-        console.log(`Authentication ${res ? "successful" : "unsuccessful"}`);
+        logger.info("access token: " + accessToken); // TODO: return to user
+        logger.info(`Authentication ${res ? "successful" : "unsuccessful"}`);
         if (res) {
             res = {success:true, accessToken: accessToken};
         }
@@ -216,6 +219,71 @@ io.on('connection',function(socket)
         socket.emit("getOverdueReminderGroupsResponse", response);
     });
 
+    socket.on('getUser', async (accessToken, user=undefined) => {
+        if (!accessToken) {
+            socket.emit("getUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("getUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        if (user === undefined) {
+            // User can retrieve their info.
+            const response = await queryController.getUser(username);
+            socket.emit("getUserResponse", response);
+            return;
+        }
+
+        let canRetrieve = false;
+        try {
+            const admin = (await queryController.getUser(username)).response[0];
+            if (admin.isAdmin === "yes") {
+                canRetrieve = true;
+            }
+        }
+        catch(err) {
+            logger.error(err);
+        }
+        if (!canRetrieve) {
+            socket.emit("getUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+        const response = await queryController.getUser(user);
+        socket.emit("getUserResponse", response);
+    });
+
+    socket.on('getAllUsers', async (accessToken) => {
+        if (!accessToken) {
+            socket.emit("getAllUsersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("getAllUsersResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        let canRetrieve = false;
+        try {
+            const admin = (await queryController.getUser(username)).response[0];
+            if (admin.isAdmin === "yes") {
+                canRetrieve = true;
+            }
+        }
+        catch(err) {
+            logger.error(err);
+        }
+        if (!canRetrieve) {
+            socket.emit("getAllUsersResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+        const response = await queryController.getAllUsers();
+        socket.emit("getAllUsersResponse", response);
+    });
+
     // ==============
     // ADDING
     // ==============
@@ -238,7 +306,7 @@ io.on('connection',function(socket)
             io.in("main_page").emit("testAdded")
         }else{
             socket.emit("addTestResponse", {success: false});
-            console.log("error in insert");
+            logger.info("error in insert");
         }
     });
 
@@ -262,6 +330,41 @@ io.on('connection',function(socket)
         }
     });
 
+    socket.on("addUser", async (newUser, accessToken) => {
+        if (!accessToken) {
+            socket.emit("addUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("addUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+        let canInsert = false;
+        try {
+            const admin = (await queryController.getUser(username)).response[0];
+            if (admin.isAdmin === "yes") {
+                canInsert = true;
+            }
+        }
+        catch(err) {
+            logger.error(err);
+        }
+        if (!canInsert) {
+            socket.emit("addUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await queryController.addUser(newUser, username);
+        if (response.success){
+            socket.emit("addUserResponse", {success: true, response: response.response});
+            // TODO: do we need this?
+            //io.in("patients_page").emit("patientEdited", newPatient.patient_no, newPatient);
+        }else{
+            socket.emit("addUserResponse", {success: false});
+        }
+    });
+
     // ==============
     // EDIT TOKEN EXCHANGE
     // ==============
@@ -277,8 +380,14 @@ io.on('connection',function(socket)
             return;
         }
 
-        const response = await queryController.requestEditing("Test", testId, username);
-        socket.emit("requestTestEditTokenResponse", {success: true, token: response});
+        let response = await queryController.requestEditing("Test", testId, username);
+        if (response) {
+            response = {success: true, token: response}
+        }
+        else {
+            response = {success: false}
+        }
+        socket.emit("requestTestEditTokenResponse", response);
 
     });
 
@@ -293,8 +402,50 @@ io.on('connection',function(socket)
             return;
         }
 
-        const token = await queryController.requestEditing("Patient", patientId, username);
-        socket.emit("requestPatientEditTokenResponse", {success: true, token: token});
+        let response = await queryController.requestEditing("Patient", patientId, username);
+        if (response) {
+            response = {success: true, token: response}
+        }
+        else {
+            response = {success: false}
+        }
+        socket.emit("requestPatientEditTokenResponse", response);
+    });
+
+    socket.on("requestUserEditToken", async (user, accessToken) => {
+        if (!accessToken) {
+            socket.emit("requestUserEditTokenResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("requestUserEditTokenResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        let canRequest = false;
+        try {
+            const admin = (await queryController.getUser(username)).response[0];
+            if (user === username || admin.isAdmin === "yes") {
+                canRequest = true;
+            }
+        }
+        catch(err) {
+            logger.error(err);
+        }
+        if (!canRequest) {
+            socket.emit("requestUserEditTokenResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        let response = await queryController.requestEditing("User", user, username);
+        if (response) {
+            response = {success: true, token: response}
+        }
+        else {
+            response = {success: false}
+        }
+        socket.emit("requestUserEditTokenResponse", response);
     });
 
     socket.on("discardEditing", async (table, id, token, accessToken) => {
@@ -394,7 +545,7 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.editTest(testId, newInfo, token, username);
-        console.log({response});
+        logger.info({response});
 
         if (response.success){
             socket.emit("editTestResponse", {success: true, response: response.response});
@@ -436,9 +587,9 @@ io.on('connection',function(socket)
             return;
         }
 
-        console.log(token);
+        logger.info(token);
         const response = await queryController.editPatientExtended(newInfo, token, username);
-        console.log(response);
+        logger.info(response);
         if (response.success){
             socket.emit("editPatientResponse", {success: true});
         } else {
@@ -481,12 +632,47 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.changePatientColour(patientNo, newColour, username);
-        console.log(response)
+        logger.info(response)
         if (response.success){
             socket.emit("changePatientColourResponse", {success: true});
             io.in("main_page").emit("testAdded");
         }else{
             socket.emit("changePatientColourResponse", {success: false});
+        }
+    });
+
+    socket.on("editUser", async (newData, token, accessToken) => {
+        if (!accessToken) {
+            socket.emit("editUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("editUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+        let canEdit = false;
+        try {
+            const admin = (await queryController.getUser(username)).response[0];
+            if (newData.username === username || admin.isAdmin === "yes") {
+                canEdit = true;
+            }
+        }
+        catch(err) {
+            logger.error(err);
+        }
+        if (!canEdit) {
+            socket.emit("editUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await queryController.editUser(newData, token, username);
+        if (response.success){
+            socket.emit("editUserResponse", {success: true, response: response.response});
+            // TODO: do we need this?
+            //io.in("patients_page").emit("patientEdited", newPatient.patient_no, newPatient);
+        }else{
+            socket.emit("editUserResponse", {success: false});
         }
     });
 

@@ -166,7 +166,7 @@ class PatientProfile extends Component {
 
   deleteTest = testId => {
     this.serverConnect.requestTestEditing(testId, res => {
-      if (res.token) {
+      if (res.success) {
         this.serverConnect.unscheduleTest(testId, res.token, res2 => {
           if (res2.success) {
             this.loadTests();

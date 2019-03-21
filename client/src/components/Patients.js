@@ -219,7 +219,7 @@ class Patients extends React.Component {
   openEditModal = id => {
     this.serverConnect.requestPatientEditing(id, res => {
       console.log(`id in openEditModal: ${id}`);
-      if (res.token) {
+      if (res.success) {
         this.setState({
           selectedId: id,
           openEditModal: true,
