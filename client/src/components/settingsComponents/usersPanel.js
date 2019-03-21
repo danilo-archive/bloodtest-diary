@@ -270,7 +270,8 @@ export default class UsersPanel extends Component {
     if (this.state.disabled) {
       return
     } else {
-     this.setState({selectedOption , disabled: true});
+      this.state.email = ""; //TODO GET CURRENT EMAIL OF USER
+      this.setState({selectedOption , disabled: true});
    }
  }
 
@@ -376,7 +377,7 @@ export default class UsersPanel extends Component {
 
         {this.state.selectedOption ?
           <>
-            <form onSubmit={this.onSaveEditUser} style={{display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+            <form onSubmit={this.onSaveEditUser} style={{ "margin-top": "5px", display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
               <div className="inputSection">
                 <div className="usersLabel">Email:</div>
                 <input id="emailInput" type="text" name="email" className="usersInput" value={this.state.email} onChange={this.handleCredentialUpdate} required/>
@@ -403,7 +404,7 @@ export default class UsersPanel extends Component {
 
         {this.state.newUser ?
           <>
-            <form onSubmit={this.onSaveAddUser} style={{display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+            <form onSubmit={this.onSaveAddUser} style={{ "margin-top": "5px", display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
             <div className="inputSection">
               <div className="usersLabel">Username:</div>
               <input id="usernameInput" type="text" name="username" className="usersInput" value={this.state.username} onChange={this.handleCredentialUpdate} required/>
