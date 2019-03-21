@@ -18,54 +18,62 @@ const cookies = new Cookies();
 const host = "http://localhost";
 const port = 3265;
 
+const underTwelve = 0;
+const overTwelve = 1;
+
 class ServerConnect {
 
     constructor(){
         this.loginToken = cookies.get("accessToken");
         this.currentRoom = "";
         this.socket = openSocket(`${host}:${port}`);
+        this.currentMode = overTwelve;
 
-        this.onConnected = undefined;
+
         /**
         *   Triggered when a connection is established.
         */
+        this.onConnected = undefined;
         this.socket.on("connected", () => {
             console.log("connected successfully");
             this.socket.emit("join", "", this.currentRoom, true);
             this.onConnected();
         });
 
-        this.onDisconnect = undefined;
         /**
         *   Triggered when the connection is lost.
         */
+        this.onDisconnect = undefined;
         this.socket.on("disconnect", () => {
             this.onDisconnect();
         });
 
-        this.onTestAdded = undefined;
-        this.onTestStatusChange = undefined;
-        this.onTestEdit = undefined;
-        this.onPatientEdit = undefined;
-
         /**
         *   Triggered when a new test is added.
         */
+        this.onTestAdded = undefined;
         this.socket.on("testAdded", newTest => {
             this.onTestAdded(newTest);
         });
-        /**
-        *   Triggered when a test status changes.
-        */
-        this.socket.on("testStatusChange", (id, status) => {
-            this.onTestStatusChange(id, status);
-        });
+
         /**
         *   Triggered when a patient is edited.
         */
+        this.onPatientEdit = undefined;
         this.socket.on("patientEdited", (patientId, newInfo) => {
             this.onPatientEdit(patientId, newInfo);
         });
+
+    }
+
+    setUnderTwelve(){
+        this.currentMode = underTwelve;
+    }
+    setOverTwelve(){
+        this.currentMode = overTwelve;
+    }
+    isUnderTwelve(){
+        return this.currentMode == underTwelve;
     }
 
     /**
@@ -133,24 +141,6 @@ class ServerConnect {
     }
 
     /**
-    * Sets the callback to be called when a test status is changed
-    * (when socket.on("testStatusChange") is triggered)
-    * @param {function} callback
-    */
-    setOnTestStatusChange(callback){
-        console.log("set");
-        this.onTestStatusChange = callback;
-    }
-    /**
-    * Sets the callback to be called when a test is edited
-    * -- no current action triggers this specific callback
-    * -- current version calls socket.on("testAdded") callback
-    * @param {function} callback
-    */
-    setOnTestEdit(callback){
-        this.onTestEdit = callback;
-    }
-    /**
     * Sets the callback to be called when a patient is edited
     * (when socket.on("patientEdited") is triggered)
     * @param {function} callback
@@ -194,7 +184,8 @@ class ServerConnect {
      * @param {function} callback The callback function to be called on response
      */
     getAllPatients(callback){
-        this.socket.emit('getAllPatients', this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getAllPatients', this.loginToken, isAdult);
         this.socket.once("getAllPatientsResponse", res => {
             callback(res);
         });
@@ -212,17 +203,6 @@ class ServerConnect {
     }
 
     /**
-     * Retrieves all tests in the database, calls the callback with the response
-     * @param {function} callback
-     */
-    getAllTests(callback){
-        this.socket.emit('getAllTests', this.loginToken);
-        this.socket.once('getAllTestsResponse', res => {
-            callback(res);
-        });
-    }
-
-    /**
      * Retrieves all the tests of a particular patient, calls the callback with the response
      * @param {String} patientId The id of the patient we want to retrieve the information of.
      * @param {function} callback
@@ -234,24 +214,14 @@ class ServerConnect {
         });
     }
 
-    /**
-     * Retrieves all the tests in a particular date, calls the callback with the response
-     * @param {Date} date The id of the patient we want to retrieve the information of.
-     * @param {function} callback
-     */
-    getTestsOnDate(date, callback){
-        this.socket.emit('getAllTestsOnDate', date, this.loginToken);
-        this.socket.once('getAllTestsOnDateResponse', res => {
-            callback(res);
-        });
-    }
 
     /**
      * Retrieves all overdue tests, calls the callback with the response.
      * @param {function} callback
      */
     getOverdueTests(callback){
-        this.socket.emit('getOverdueTests', this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getOverdueTests', this.loginToken, isAdult);
         this.socket.once('getOverdueTestsResponse', res => {
             callback(res);
         });
@@ -263,10 +233,9 @@ class ServerConnect {
      * @param {boolean} anydayTestsOnly True if you only want the tests that are not scheduled on a particular day.
      * @param {function} callback
      */
-    getTestsInWeek(date, callback, anydayTestsOnly=false){
-        console.log("asking for tests");
-        console.log(this.loginToken);
-        this.socket.emit('getTestsInWeek', date, this.loginToken);
+    getTestsInWeek(date, callback){
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getTestsInWeek', date, this.loginToken, isAdult);
         this.socket.once('getTestsInWeekResponse', res => {
             console.log({res});
             callback(res);
@@ -439,6 +408,35 @@ class ServerConnect {
     unscheduleTest(testId, token, callback){
         this.socket.emit("unscheduleTest", testId, token, this.loginToken);
         this.socket.once("unscheduleTestResponse", res => {
+            callback(res);
+        });
+    }
+
+    getOverdueReminderGroups(callback){
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit("getOverdueReminderGroups", this.loginToken, isAdult);
+        this.socket.once("getOverdueReminderGroupsResponse", res => {
+            callback(res);
+        });
+    }
+
+    sendReminders(testIds, callback){
+        this.socket.emit("sendOverdueReminders", testIds, this.loginToken);
+        this.socket.once("sendOverdueRemindersResponse", res => {
+            callback(res);
+        });
+    }
+
+    changePatientColour(patientId, newColor, callback){
+        this.socket.emit("changePatientColour", patientId, newColor, this.loginToken);
+        this.socket.once("changePatientColourResponse", res => {
+            callback(res);
+        });
+    }
+
+    changeTestColour(testId, newColor, callback){
+        this.socket.emit("changeTestColour", testId, newColor, this.loginToken);
+        this.socket.once("changeTestColourResponse", res => {
             callback(res);
         });
     }

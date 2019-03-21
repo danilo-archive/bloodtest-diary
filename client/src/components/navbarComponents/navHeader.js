@@ -73,18 +73,16 @@ const RefreshButton = styled.div`
 export default class NavHeader extends Component {
     constructor(props){
         super(props);
-        this.onHomeClick = props.onHomeClick;
-        this.onRefreshClick = props.onRefreshClick;
     }
 
     render(){
       return (
       <Container>
-          <div>Dashboard</div>
+          <div>{this.props.title}</div>
           <ButtonContainer>
-            <div className={"homeButton"} onClick={this.onHomeClick}>Home</div>
+            <div className={"homeButton"} onClick={this.props.onHomeClick}>Home</div>
           </ButtonContainer>
-          <RefreshButton onClick={this.onRefreshClick}>
+          <RefreshButton onClick={this.props.onRefreshClick}>
              <img className={"refreshIcon"} src={refresh} alt={"Refresh Button"}/>
           </RefreshButton>
       </Container>

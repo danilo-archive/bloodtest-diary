@@ -9,7 +9,6 @@ import {getServerConnect} from "../../serverConnection";
 import {emptyCheck, emailCheck} from "../../lib/inputChecker";
 import {openAlert} from "../Alert";
 
-
 const Container = styled.div`
   display: flex;
   width: 100%;

@@ -11,7 +11,7 @@
 const chai = require("chai")
 const expect = chai.expect;
 const rewire = require('rewire');
-const logger = rewire("../../../lib/action-logger");
+const action_logger = rewire("../../../lib/action-logger");
 const sinonChai = require('sinon-chai')
 const Database = require("../../../lib/db_controller/Database");
 const databaseConfig = require("../../../config/database");
@@ -20,17 +20,17 @@ const sinon = require('sinon');
 chai.use(sinonChai);
 
 before(() => {
-    logger.disableConsoleOutput();
+    action_logger.disableConsoleOutput();
 });
 
 after(() => {
-    logger.enableConsoleOutput();
+    action_logger.enableConsoleOutput();
 });
 describe("Test action logger:", () => {
 
     before(() => {
         const database = new Database(databaseConfig);
-        database.query("INSERT INTO User VALUES ('logger_test','password','','1','logger_test@gmail')")
+        database.query("INSERT INTO User VALUES ('logger_test','password','no','','1','logger_test@gmail')")
             .catch((err) => {
                 printSetupError(err);
             })
@@ -65,7 +65,7 @@ describe("Test action logger:", () => {
         it("Should throw an error for invalid arguments.", async () => {
             let error = undefined;
             try {
-                await logger.logInsert("", "");
+                await action_logger.logInsert("", "");
             }
             catch(err) {
                 error = err;
@@ -76,7 +76,7 @@ describe("Test action logger:", () => {
         it("Should add a new entry to the database.", async () => { 
             let error = undefined;                  
             let finished = false;
-            logger.logInsert("logger_test", "Patient", "P123", undefined, (res) => {
+            action_logger.logInsert("logger_test", "Patient", "P123", undefined, (res) => {
                 try {
                     expect(res.status).to.equal("OK");
                     expect(res.response.insertId).to.not.equal(0);
@@ -95,7 +95,7 @@ describe("Test action logger:", () => {
         it("Should reject the log.", async () => { 
             let error = undefined;                  
             let finished = false;
-            logger.logInsert("invalid_user", "Patient", "P123", "message", (res) => {
+            action_logger.logInsert("invalid_user", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("ERR");
                     expect(res.err.type).to.equal("SQL Error");
@@ -116,7 +116,7 @@ describe("Test action logger:", () => {
         it("Should throw an error for invalid arguments.", async () => {
             let error = undefined;
             try {
-                await logger.logUpdate("", "");
+                await action_logger.logUpdate("", "");
             }
             catch(err) {
                 error = err;
@@ -127,7 +127,7 @@ describe("Test action logger:", () => {
         it("Should add a new entry to the database.", async () => { 
             let error = undefined;                  
             let finished = false;
-            logger.logUpdate("logger_test", "Patient", "P123", "message", (res) => {
+            action_logger.logUpdate("logger_test", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("OK");
                     expect(res.response.insertId).to.not.equal(0);
@@ -146,7 +146,7 @@ describe("Test action logger:", () => {
         it("Should reject the log.", async () => { 
             let error = undefined;                  
             let finished = false;
-            logger.logUpdate("invalid_user", "Patient", "P123", "message", (res) => {
+            action_logger.logUpdate("invalid_user", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("ERR");
                     expect(res.err.type).to.equal("SQL Error");
@@ -167,7 +167,7 @@ describe("Test action logger:", () => {
         it("Should throw an error for invalid arguments.", async () => {
             let error = undefined;
             try {
-                await logger.logDelete("", "");
+                await action_logger.logDelete("", "");
             }
             catch(err) {
                 error = err;
@@ -178,7 +178,7 @@ describe("Test action logger:", () => {
         it("Should add a new entry to the database.", async () => { 
             let error = undefined;                  
             let finished = false;
-            logger.logDelete("logger_test", "Patient", "P123", "message", (res) => {
+            action_logger.logDelete("logger_test", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("OK");
                     expect(res.response.insertId).to.not.equal(0);
@@ -197,7 +197,7 @@ describe("Test action logger:", () => {
         it("Should reject the log.", async () => { 
             let error = undefined;                  
             let finished = false;
-            logger.logDelete("invalid_user", "Patient", "P123", "message", (res) => {
+            action_logger.logDelete("invalid_user", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("ERR");
                     expect(res.err.type).to.equal("SQL Error");
@@ -218,7 +218,7 @@ describe("Test action logger:", () => {
         it("Should throw an error for invalid arguments.", async () => {
             let error = undefined;
             try {
-                await logger.logOther("logger_test", "Patient", "P123"); // message is compulsory
+                await action_logger.logOther("logger_test", "Patient", "P123"); // message is compulsory
             }
             catch(err) {
                 error = err;
@@ -229,7 +229,7 @@ describe("Test action logger:", () => {
         it("Should add a new entry to the database.", async () => { 
             let error = undefined;                  
             let finished = false;
-            logger.logOther("logger_test", "Patient", "P123", "message", (res) => {
+            action_logger.logOther("logger_test", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("OK");
                     expect(res.response.insertId).to.not.equal(0);
@@ -248,7 +248,7 @@ describe("Test action logger:", () => {
         it("Should reject the log.", async () => { 
             let error = undefined;                  
             let finished = false;
-            logger.logOther("invalid_user", "Patient", "P123", "message", (res) => {
+            action_logger.logOther("invalid_user", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("ERR");
                     expect(res.err.type).to.equal("SQL Error");
@@ -266,26 +266,36 @@ describe("Test action logger:", () => {
     });
 
     describe("> Test console output:", () => {
-        
+        let infoCalls = 0;
+        let errorCalls = 0;
+        const stub_logger = {
+            info: function() {
+                infoCalls++;
+            },
+            error: function() {
+                errorCalls++;
+            }
+        }
+        action_logger.__set__("logger", stub_logger);
         beforeEach(() => {
-            logger.enableConsoleOutput();
-            sinon.spy(console, 'log');
+            infoCalls = 0;
+            errorCalls = 0;
+            action_logger.enableConsoleOutput();
         });
 
         afterEach(function() {
-            console.log.restore();
-            logger.disableConsoleOutput();
+            action_logger.disableConsoleOutput();
         });
 
         it("Should reject the log (other + invalid username).", async () => { 
             let error = undefined;                  
             let finished = false;
             
-            logger.logOther("invalid_user", "Patient", "P123", "message", (res) => {
+            action_logger.logOther("invalid_user", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("ERR");
                     expect(res.err.type).to.equal("SQL Error");
-                    expect(console.log.callCount).to.equal(4);
+
                 }
                 catch(err) {
                     error = err;
@@ -294,7 +304,9 @@ describe("Test action logger:", () => {
             });
             while (!finished) {
                 await sleep(1);
-            }          
+            }   
+            expect(infoCalls).to.equal(0);
+            expect(errorCalls).to.equal(1);       
 
             if (error) throw error;
         });
@@ -302,11 +314,10 @@ describe("Test action logger:", () => {
             let error = undefined;                  
             let finished = false;
             
-            logger.logOther("logger_test", "Patient", "P123", "message", (res) => {
+            action_logger.logOther("logger_test", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("OK");
                     expect(res.response.insertId).to.not.equal(0);
-                    expect(console.log.callCount).to.equal(1);
                 }
                 catch(err) {
                     error = err;
@@ -316,6 +327,8 @@ describe("Test action logger:", () => {
             while (!finished) {
                 await sleep(1);
             }          
+            expect(infoCalls).to.equal(1);
+            expect(errorCalls).to.equal(0);
 
             if (error) throw error;
         });
@@ -323,11 +336,10 @@ describe("Test action logger:", () => {
             let error = undefined;                  
             let finished = false;
             
-            logger.logInsert("invalid_user", "Patient", "P123", "message", (res) => {
+            action_logger.logInsert("invalid_user", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("ERR");
                     expect(res.err.type).to.equal("SQL Error");
-                    expect(console.log.callCount).to.equal(4);
                 }
                 catch(err) {
                     error = err;
@@ -337,6 +349,8 @@ describe("Test action logger:", () => {
             while (!finished) {
                 await sleep(1);
             }          
+            expect(infoCalls).to.equal(0);
+            expect(errorCalls).to.equal(1);
 
             if (error) throw error;
         });
@@ -344,11 +358,10 @@ describe("Test action logger:", () => {
             let error = undefined;                  
             let finished = false;
             
-            logger.logInsert("logger_test", "Patient", "P123", "message", (res) => {
+            action_logger.logInsert("logger_test", "Patient", "P123", "message", (res) => {
                 try {
                     expect(res.status).to.equal("OK");
                     expect(res.response.insertId).to.not.equal(0);
-                    expect(console.log.callCount).to.equal(1);
                 }
                 catch(err) {
                     error = err;
@@ -358,6 +371,8 @@ describe("Test action logger:", () => {
             while (!finished) {
                 await sleep(1);
             }          
+            expect(infoCalls).to.equal(1);
+            expect(errorCalls).to.equal(0);
 
             if (error) throw error;
         });
