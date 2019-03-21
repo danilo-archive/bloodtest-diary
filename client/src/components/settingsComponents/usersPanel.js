@@ -300,7 +300,7 @@ export default class UsersPanel extends Component {
          confirmPassword: "",
          passwordMatch: true,
          mainState: false,
-         AdminChecked: true,
+         AdminChecked: false,
       };
 
   }
@@ -333,11 +333,13 @@ export default class UsersPanel extends Component {
   }
 
   onAdminCheck = () => {
+    console.log(this.state.AdminChecked)
     if (this.state.AdminChecked) {
-      this.setState({AdminChecked: false});
+      this.setState({AdminChecked: false}, () => console.log(this.state.AdminChecked));
     } else {
-      this.setState({AdminChecked: true});
+      this.setState({AdminChecked: true}, () => console.log(this.state.AdminChecked));
     }
+
    }
 
  clearForm = () => {
