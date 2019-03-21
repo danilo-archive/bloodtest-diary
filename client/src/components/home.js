@@ -268,6 +268,7 @@ class Home extends Component {
             <CustomDragLayer snapToGrid={true} />
             <Dashboard>
                <OverduePatients
+                  openEmailModal={this.openEmailModal}
                   notificationNumber={getNumberOfTestsInGroup(
                     this.state.overdueTests
                   )}
@@ -275,6 +276,7 @@ class Home extends Component {
                   editTest={this.onEditTestOpenModal}
                   editPatient={this.openEditPatientModal}
                   handleError={this.handleInvalidResponseError}
+                  openEmailModal={this.openEmailModal}
               />
               <RightSideDash>
                   <Navbar

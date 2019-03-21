@@ -99,8 +99,8 @@ class Navbar extends React.Component {
                 <OptionSwitch
                   checked={this.props.over12}
                   onChange={this.props.setUnder12}
-                  option1="Show under 12"
-                  option2="Show 12 or older"
+                  option1="Under 12"
+                  option2="12 or older"
                 />
                 <SearchBar />
                 <WeekButtons
@@ -128,8 +128,8 @@ class Navbar extends React.Component {
               <OptionSwitch
                 checked={this.props.over12}
                 onChange={this.props.setUnder12}
-                option1="Show under 12"
-                option2="Show 12 or older"
+                option1="Under 12"
+                option2="12 or older"
               />
               <ControlButtons
                 page={this.props.page}

@@ -5,17 +5,18 @@ const combinations = {
   check: { color: "#5BC714", status: "completed" },
   times: { color: "#D10505", status: "late" },
   edit: { color: "#FFD907", status: "edit" },
-  envelope: { color: "#FFD907" }
+  envelope: {color: "rgb(255,226,102, 1)"}
 };
 
 const Icon = styled.i`
   transition: opacity ease-in 250ms;
   opacity: 1;
   margin-left: 5px;
+  cursor: pointer;
   ${props =>
     !props.asLabel
       ? ` &:hover {
-    opacity: 0.3;
+    opacity: 0.5;
   }`
       : ``}
 `;
