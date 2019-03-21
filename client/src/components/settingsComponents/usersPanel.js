@@ -27,10 +27,7 @@ const Container = styled.div`
     font-size: 120%;
     width: 75%;
     margin: 0;
-
-
   }
-
 
   .inputSection {
 
@@ -48,7 +45,6 @@ const Container = styled.div`
     padding-bottom: 8px;
     margin-top: 8px;
     margin-bottom: 8px;
-
   }
 
   .usersLabel {
@@ -58,7 +54,6 @@ const Container = styled.div`
     margin-left: 8px;
     color: #646464;
     white-space: nowrap;
-
   }
 
   .usersInput {
@@ -312,7 +307,6 @@ export default class UsersPanel extends Component {
      }, 5000);
    }
    event.preventDefault();
-
  }
 
  onSaveAddUser = (event) => {
@@ -331,7 +325,6 @@ export default class UsersPanel extends Component {
      }, 5000);
    }
    event.preventDefault();
-
  }
 
  showInfoMessage = () => {
@@ -368,7 +361,6 @@ export default class UsersPanel extends Component {
               ...theme.colors,
                 primary: '#ddd',
                 primary50: '#ddd',
-
               },
             })}
           />
