@@ -98,9 +98,15 @@ describe("Test authentication", function() {
 
             accessTokens = {};
 
+            const db_controller = {
+                insertQuery: async function() {
+                    return { status: "OK" };
+                }
+            };
+
             authenticator.__set__("tokenGenerator", tokenGenerator);
             authenticator.__set__("accessTokens", accessTokens);
-
+            authenticator.__set__("db_controller", db_controller);
         });
 
         describe("> Test if correct token is stored with the correct username:", () => {
@@ -136,8 +142,18 @@ describe("Test authentication", function() {
                 }
             };
 
-            authenticator.__set__("accessTokens", accessTokens);
+            const db_controller = {
+                deleteAccessToken: async function() {
+                    return { status: "OK" };
+                },
+                updateAccessToken: async function() {
+                    return { status: "OK" };
+                }
+            };
+                
 
+            authenticator.__set__("accessTokens", accessTokens);
+            authenticator.__set__("db_controller", db_controller);
         });
 
         describe("> Test with invalid token:", () => {
@@ -189,8 +205,17 @@ describe("Test authentication", function() {
                 }
             };
 
-            authenticator.__set__("accessTokens", accessTokens);
+            const db_controller = {
+                deleteAccessToken: async function() {
+                    return { status: "OK" };
+                },
+                updateAccessToken: async function() {
+                    return { status: "OK" };
+                }
+            };
 
+            authenticator.__set__("accessTokens", accessTokens);
+            authenticator.__set__("db_controller", db_controller);
         });
 
         describe("> Test with invalid token:", () => {

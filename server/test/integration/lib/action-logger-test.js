@@ -30,7 +30,7 @@ describe("Test action logger:", () => {
 
     before(() => {
         const database = new Database(databaseConfig);
-        database.query("INSERT INTO User VALUES ('logger_test','password','','1','logger_test@gmail')")
+        database.query("INSERT INTO User VALUES ('logger_test','password','no','','1','logger_test@gmail')")
             .catch((err) => {
                 printSetupError(err);
             })

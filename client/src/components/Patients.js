@@ -48,11 +48,8 @@ const NavbarContainer = styled.div`
 `;
 
 const TableContainer = styled.div`
-    color: #ffffff;
-    border: green 0 solid;
     height: 80%;
     width: 100%;
-
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -198,9 +195,11 @@ class Patients extends React.Component {
     };
 
     logout = event => {
-        this.serverConnect.deleteLoginToken();
-        this.props.history.replace("");
-    };
+      this.serverConnect.logout(res => {
+          this.props.history.replace("");
+      });
+    }
+
 
     openEditModal = id => {
         this.serverConnect.requestPatientEditing(id, res => {
@@ -267,6 +266,7 @@ class Patients extends React.Component {
                                 closeModal={this.onCloseEditModal}
                                 editToken={this.state.editToken}
                                 purpose={"Edit patient"}
+                                handleError={this.handleError}
                             />
                         </Modal>
 
@@ -280,6 +280,7 @@ class Patients extends React.Component {
                             <NewPatient
                                 closeModal={this.onCloseAddModal}
                                 purpose={"Add patient"}
+                                handleError={this.handleError}
                             />
                         </Modal>
 

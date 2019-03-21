@@ -6,6 +6,7 @@ import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import TestSection from "./profileSections/TestSection";
 import {getServerConnect} from "../../serverConnection";
+import {emptyCheck, emailCheck} from "../../lib/inputChecker";
 import {openAlert} from "../Alert";
 
 
@@ -42,7 +43,7 @@ const DeleteButton = styled.button`
   text-decoration: none;
   border-radius: 10px;
   margin: 4%;
-  
+
   height: 44px;
   min-width: 100px;
 
@@ -105,18 +106,10 @@ class PatientProfile extends Component {
         ready: false
       };
       this.serverConnect = getServerConnect();
-
       this.loadPatient();
       this.loadTests();
-    }
 
-    handleError = res => {
-        if (res.errorType === "authentication"){
-            openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
-        }else{
-            openAlert("Unknown error occurred", "confirmationAlert", "Ok", () => {return});
-        }
-    };
+    }
 
     deletePatient = () => {
         console.log("deleting");
@@ -141,12 +134,10 @@ class PatientProfile extends Component {
     };
 
     deleteTest = testId => {
-        this.serverConnect.requestTestEditing(testId, token => {
-            console.log(testId);
-            console.log(token);
-            if (token){
-                this.serverConnect.unscheduleTest(testId, token, res => {
-                    if (res.success){
+        this.serverConnect.requestTestEditing(testId, res => {
+            if (res.token){
+                this.serverConnect.unscheduleTest(testId, res.token, res2 => {
+                    if (res2.success){
                         this.loadTests();
                         openAlert("Test successfully deleted", "confirmationAlert", "Ok", () => {return});
                     }else{
@@ -154,40 +145,43 @@ class PatientProfile extends Component {
                     }
                 });
             }else{
-                openAlert("This test is currently being edited", "confirmationAlert", "Ok", () => {return});
+                this.props.handleError(res, "This test is currently being edited")
             }
         });
     };
 
     loadPatient() {
-        this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
-           if (res.success){
-               const info = res.response[0];
-               this.setState({
-                   patientName : info.patient_name,
-                   patientSurname : info.patient_surname,
-                   patientEmail : info.patient_email,
-                   patientPhone : info.patient_phone,
-                   carerId : info.carer_id,
-                   carerRelationship: info.relationship,
-                   carerName: info.carer_name,
-                   carerSurname: info.carer_surname,
-                   carerEmail: info.carer_email,
-                   carerPhone: info.carer_phone,
-                   hospitalId: info.hospital_id,
-                   hospitalName: info.hospital_name,
-                   hospitalEmail: info.hospital_email,
-                   hospitalPhone: info.hospital_phone,
+        if (this.state.patientId === "") {
 
-                   noCarer: info.carer_id ? false : true,
-                   localHospital: info.hospital_id ? false : true,
-                   ready: true
-                   //TODO : store patients tests
-               });
-           }else{
-              this.handleError(res);
-           }
-        });
+        } else {
+            this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
+                if (res.success) {
+                    const info = res.response[0];
+                    this.setState({
+                        patientName: info.patient_name,
+                        patientSurname: info.patient_surname,
+                        patientEmail: info.patient_email,
+                        patientPhone: info.patient_phone,
+                        carerId: info.carer_id,
+                        carerRelationship: info.relationship,
+                        carerName: info.carer_name,
+                        carerSurname: info.carer_surname,
+                        carerEmail: info.carer_email,
+                        carerPhone: info.carer_phone,
+                        hospitalId: info.hospital_id,
+                        hospitalName: info.hospital_name,
+                        hospitalEmail: info.hospital_email,
+                        hospitalPhone: info.hospital_phone,
+
+                        noCarer: info.carer_id ? false : true,
+                        localHospital: info.hospital_id ? false : true,
+                        ready: true
+                    });
+                } else {
+                    this.props.handleError(res);
+                }
+            });
+        }
     }
 
     loadTests() {
@@ -199,20 +193,50 @@ class PatientProfile extends Component {
                     readyTest: true
                 })
             }else{
-                this.handleError(res);
+                this.props.handleError(res);
             }
         });
     }
 
+    checkValues () {
+        if (emptyCheck(this.state.patientName) || emptyCheck(this.state.patientSurname)) {
+            return {correct: false, message: "Patient name and surname are compulsory"};
+        }
+        if (!emailCheck(this.state.patientEmail)) {
+            return {correct: false, message: "Wrong format of patient's email"};
+        }
+        if (!this.state.noCarer) {
+            if (emptyCheck(this.state.carerEmail)) {
+                return {correct: false, message: "Carer's email is compulsory"};
+            }
+            if (!emailCheck(this.state.carerEmail)) {
+                return {correct: false, message: "Wrong format of carer's email"};
+            }
+
+        }
+        if (!this.state.localHospital) {
+            if (emptyCheck(this.state.hospitalEmail)){
+                return {correct: false, message: "Hospital's email is compulsory"};
+            }
+            if (!emailCheck(this.state.hospitalEmail)) {
+                return {correct: false, message: "Wrong format of hospital's email"};
+            }
+
+        }
+        return {correct : true};
+    }
+
     onSaveClick = () => {
+        const result = this.checkValues();
+        if (!result.correct) {
+            openAlert(result.message, "confirmationAlert", "Ok");
+            return;
+        }
+
         let carerInfo = undefined;
         let hospitalInfo = undefined;
-        if (!this.state.noCarer){
-            if (this.state.carerEmail === "" || this.state.carerEmail === undefined){
-                // TODO add UI alert
-                openAlert("Carer's email is compulsory", "confirmationAlert", "Ok");
-                return;
-            }
+
+        if (!this.state.noCarer) {
             carerInfo = {
                 carerId: this.state.carerId,
                 carerRelationship: this.state.carerRelationship,
@@ -221,16 +245,12 @@ class PatientProfile extends Component {
                 carerEmail: this.state.carerEmail,
                 carerPhone: this.state.carerPhone
             }
-        }else{
+        } else {
             carerInfo = {
                 carerId: undefined
             }
         }
         if (!this.state.localHospital){
-            if (this.state.hospitalEmail === "" || this.state.hospitalEmail === undefined){
-                openAlert("Hospital's email is compulsory","confirmationAlert", "Ok");
-                return;
-            }
             hospitalInfo = {
                 hospitalId: this.state.hospitalId,
                 hospitalName: this.state.hospitalName,
@@ -242,6 +262,7 @@ class PatientProfile extends Component {
                 hospitalId: undefined
             }
         }
+
 
         const {patientId, editToken, patientName, patientSurname, patientEmail, patientPhone} = this.state;
         let newInfo = {

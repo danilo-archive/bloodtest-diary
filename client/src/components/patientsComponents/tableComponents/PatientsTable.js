@@ -8,6 +8,7 @@ const TableContainer = styled.div`
   padding: 0.5%;
   width: 100%;
   height: 80%;
+  background: #ffffff;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 `;
 
@@ -25,7 +26,7 @@ const TableHeader = styled.thead`
 
 const TableBody = styled.tbody`
     display: block;
-    max-height: 80%; //change this to increase height of table
+    max-height: 87%; //change this to increase height of table
     overflow-y: scroll;
 `;
 

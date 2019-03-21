@@ -1,12 +1,10 @@
 /**
- * Calendar functions
  * @module calendar-functions
- * @author Amantini Alessandro
- * @version 0.0.1
+ * @author Alessandro Amantini
+ * @version 0.0.2
  */
 
-//-----------------Calendar component functions---------------------
-
+//-----------------Calendar functions---------------------
 
 const DAYS_IN_A_WEEK = 7;
 
@@ -32,10 +30,10 @@ function getDateOfFirstDayOf(year, month) {
 }
 
 /**
- * Take a date as parameter and generate an array of days so that all the 
+ * Take a date as parameter and generate an array of days so that all the
  *  days from the current month are contained, plus last (prevMonthLastDay - daysFromPrevMonth)
- *  days from the previous month at the beginning of the array, and the 
- *  first ones from the next at the bottom to make the array size % (#days in a week) = 0.  
+ *  days from the previous month at the beginning of the array, and the
+ *  first ones from the next at the bottom to make the array size % (#days in a week) = 0.
  * @param {integer} daysFromPrevMonth: number of days from the previous month to be put
  *  at the beginning of the array.
  * @param {integer} prevMonthLastDay: last day of the previous month (eg. January last day = 31).
@@ -67,7 +65,7 @@ function generateCalendarArr(daysFromPrevMonth, prevMonthLastDay, daysInCurrentM
  *  into a matrix of x columns
  * @param {Object[]} array: array of any types
  * @param {integer} cols: number of columns in the matrix
- * @return {Object[Object[]]}: array converted into matrix with 
+ * @return {Object[Object[]]}: array converted into matrix with
  *  number of columns equal to cols
  */
 function convertArrayIntoMatrix(array, cols){
@@ -89,9 +87,9 @@ function convertArrayIntoMatrix(array, cols){
  *  as the day (0 -> Sunday, 1 -> Monday etc.) and no cell is ever empty,
  *  so in case a month starts from Friday and ends on Monday, the remaining
  *  cells are filled in with, respectively, the last days from the previous
- *  month and the first ones from the next.  
- * @param {Date} date: date to be converted into a matrix 
- * @return {integer[integer[]]}: matrix of all the days from and 
+ *  month and the first ones from the next.
+ * @param {Date} date: date to be converted into a matrix
+ * @return {integer[integer[]]}: matrix of all the days from and
  *  surrounding the month.
  */
 function getCalendar(date) {
@@ -132,7 +130,7 @@ function selectedDayIsFromCurrentMonth(selectedDate, currentDate){
  */
 function selectedDayIsFromPreviousMonth(selectedDate, currentDate, day){
   return currentDate.getMonth() === (selectedDate.getMonth()+1)%12 &&      //
-         day > 15 && 
+         day > 15 &&
          ((currentDate.getFullYear() === selectedDate.getFullYear() &&
           selectedDate.getMonth() !== 11) ||
          (currentDate.getFullYear()-1 === selectedDate.getFullYear() &&
@@ -149,7 +147,7 @@ function selectedDayIsFromPreviousMonth(selectedDate, currentDate, day){
  *  and belongs to the next month, otherwise False
  */
 function selectedDayIsFromNextMonth(selectedDate, currentDate, day){
-  return (currentDate.getMonth()+1)%12 === selectedDate.getMonth() && 
+  return (currentDate.getMonth()+1)%12 === selectedDate.getMonth() &&
           day < 15 &&
           ((currentDate.getFullYear() === selectedDate.getFullYear() &&
            selectedDate.getMonth() !== 0) ||
@@ -170,7 +168,7 @@ function isSelected(isFromThisMonth, selectedDay, currentDate, day){
   const selectedDate = new Date(selectedDay);
   return selectedDate.getDate() === day &&
           //current month
-          ((isFromThisMonth && selectedDayIsFromCurrentMonth(selectedDate, currentDate)) || 
+          ((isFromThisMonth && selectedDayIsFromCurrentMonth(selectedDate, currentDate)) ||
           //adjacent months
           (!isFromThisMonth &&
             (selectedDayIsFromPreviousMonth(selectedDate, currentDate, day) ||

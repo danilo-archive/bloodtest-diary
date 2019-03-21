@@ -1,7 +1,11 @@
 
 /**
- * The logic that works as back-end for the app's UI.
- * It communicates with an external server, queries and sends update requests.
+ * This file establishes a socket connection with the server and provides every single
+ * protocol need by every component of the UI
+ * The socket connection can be created by using the only method available to the public (getServerConnect())
+ * which will return a ServerConnect object. That object represent a socket connection and will be
+ * univoque and shared between all client components.
+ * Every protocol will be available through this object.
  * @module serverConnection
  * @author Danilo Del Busso, Mateusz Nowak, Jacopo Madaluni
  * @version 0.0.2
@@ -21,6 +25,10 @@ class ServerConnect {
         this.currentRoom = "";
         this.socket = openSocket(`${host}:${port}`);
 
+
+        /**
+        *   Triggered when a connection is established.
+        */
         this.onConnected = undefined;
         this.socket.on("connected", () => {
             console.log("connected successfully");
@@ -28,41 +36,43 @@ class ServerConnect {
             this.onConnected();
         });
 
+        /**
+        *   Triggered when the connection is lost.
+        */
         this.onDisconnect = undefined;
-
         this.socket.on("disconnect", () => {
             this.onDisconnect();
         });
 
-        this.socket.on("disconnect", () => {
-            console.log("Server lost...");
-            console.log("Trying reconnecting");
-        });
-
+        /**
+        *   Triggered when a new test is added.
+        */
         this.onTestAdded = undefined;
-        this.onTestStatusChange = undefined;
-        this.onTestEdit = undefined;
-        this.onPatientEdit = undefined;
-
         this.socket.on("testAdded", newTest => {
             this.onTestAdded(newTest);
         });
 
-        this.socket.on("testStatusChange", (id, status) => {
-            this.onTestStatusChange(id, status);
-        });
-
-        // TODO get ad hoc record and change it
+        /**
+        *   Triggered when a patient is edited.
+        */
+        this.onPatientEdit = undefined;
         this.socket.on("patientEdited", (patientId, newInfo) => {
             this.onPatientEdit(patientId, newInfo);
         });
+
     }
 
+    /**
+    *   Protocol to delete the current authentication token.
+    */
     deleteLoginToken(){
         this.loginToken = undefined;
         cookies.set('accessToken', "", { path: '/' });
     }
-
+    /**
+    * Set the current authentication token.
+    * @param {String} token the new token
+    */
     setLoginToken(token){
         this.loginToken = token;
         cookies.set('accessToken', token, { path: '/' });
@@ -83,15 +93,9 @@ class ServerConnect {
         this.socket.emit("join", this.currentRoom, "login_page");
         this.currentRoom = "login_page";
     }
-
-    setOnConnect(callback){
-        this.onConnected = callback;
-    }
-
-    setOnDisconnect(callback){
-        this.onDisconnect = callback;
-    }
-
+    /**
+    * Joins the patients page room in the server.
+    */
     joinPatientsPage(){
         this.socket.emit("join", this.currentRoom, "patients_page");
         this.currentRoom = "patients_page";
@@ -99,35 +103,43 @@ class ServerConnect {
     }
 
     /**
-    * Sets the callback to call when a new test is added.
-    * @callback callback "On test added" callback
+    * Sets the callback to be called when socket.on("connected") is triggered.
+    * @param {function} callback
+    */
+    setOnConnect(callback){
+        this.onConnected = callback;
+    }
+    /**
+    * Sets the callback to be called when socket.on("disconnect") is triggered.
+    * @param {function} callback
+    */
+    setOnDisconnect(callback){
+        this.onDisconnect = callback;
+    }
+
+    /**
+    * Sets the callback to be called when a new test is added
+    * (when socket.on("testAdded")) is triggered
+    * @param {function} callback
     */
     setOnTestAdded(callback){
         this.onTestAdded = callback;
     }
 
     /**
-    * Sets the callback to call when a test status is changed
-    * @callback callback "On test status change" callback
+    * Sets the callback to be called when a patient is edited
+    * (when socket.on("patientEdited") is triggered)
+    * @param {function} callback
     */
-    setOnTestStatusChange(callback){
-        console.log("set");
-        this.onTestStatusChange = callback;
-    }
-
-    setOnTestEdit(callback){
-        this.onTestEdit = callback;
-    }
-
     setOnPatientEdited(callback){
         this.onPatientEdit = callback;
     }
 
     /**
      * Function to be called when user needs to be authenticated
-     * @param {username: username, password: password} credentials
-     * @param callback The callback function to be called on response
-     * TODO eventually change name of the callback.
+     * @param {JSON} credentials
+     * @param {function} callback The callback function to be called on response
+     * @example login({username: "exampleUsername", password: "examplePassword"})
      */
     login(credentials, callback){
         console.log("trying to log in");
@@ -137,12 +149,25 @@ class ServerConnect {
         });
     }
 
+    /**
+     * Function to be called before logout.
+     * Asks the server to get rid of the authentication token stored in the db
+     * @param callback The callback function to be called on response
+     */
+    logout(callback){
+        this.socket.emit("logout", this.loginToken);
+        this.socket.once("logoutResponse", res => {
+            if (res.success){
+                this.deleteLoginToken();
+            }
+            callback(res);
+        });
+    }
+
 
     /**
      * Function to be called when all patients have to be retrieved.
-     * @param callback The callback function to be called on response
-     * TODO eventually change name of the function.
-     * TODO eventually change name of the callback.
+     * @param {function} callback The callback function to be called on response
      */
     getAllPatients(callback){
         this.socket.emit('getAllPatients', this.loginToken);
@@ -150,7 +175,11 @@ class ServerConnect {
             callback(res);
         });
     }
-
+    /**
+     * Retrieves all information regarding a patient, calls the callback with the response.
+     * @param {String} patientId The id of the patient
+     * @param {function} callback
+     */
     getFullPatientInfo(patientId, callback){
         this.socket.emit("getFullPatientInfo", patientId, this.loginToken);
         this.socket.once("getFullPatientInfoResponse", res => {
@@ -159,10 +188,8 @@ class ServerConnect {
     }
 
     /**
-     * Function to be called when all tests have to be retrieved.
-     * @param callback The callback function to be called on response
-     * TODO eventually change name of the function.
-     * TODO eventually change name of the callback.
+     * Retrieves all tests in the database, calls the callback with the response
+     * @param {function} callback
      */
     getAllTests(callback){
         this.socket.emit('getAllTests', this.loginToken);
@@ -172,11 +199,9 @@ class ServerConnect {
     }
 
     /**
-     * Function to be called when all tests of a patient are needed.
-     * @param patientId The id of the patient we want to retrieve the information of.
-     * @param callback The callback function to be called on response
-     * TODO eventually change name of the function.
-     * TODO eventually change name of the callback.
+     * Retrieves all the tests of a particular patient, calls the callback with the response
+     * @param {String} patientId The id of the patient we want to retrieve the information of.
+     * @param {function} callback
      */
     getNextTestsOfPatient(patientId, callback){
         this.socket.emit('getNextTestsOfPatient', patientId, this.loginToken);
@@ -186,11 +211,9 @@ class ServerConnect {
     }
 
     /**
-     * Function to be called when all tests on a date are needed.
-     * @param date The id of the patient we want to retrieve the information of.
-     * @param callback The callback function to be called on response
-     * TODO eventually change name of the function.
-     * TODO eventually change name of the callback.
+     * Retrieves all the tests in a particular date, calls the callback with the response
+     * @param {Date} date The id of the patient we want to retrieve the information of.
+     * @param {function} callback
      */
     getTestsOnDate(date, callback){
         this.socket.emit('getAllTestsOnDate', date, this.loginToken);
@@ -200,10 +223,8 @@ class ServerConnect {
     }
 
     /**
-     * Function to be called when all overdue tests are needed.
-     * @param callback The callback function to be called on response
-     * TODO eventually change name of the function.
-     * TODO eventually change name of the callback.
+     * Retrieves all overdue tests, calls the callback with the response.
+     * @param {function} callback
      */
     getOverdueTests(callback){
         this.socket.emit('getOverdueTests', this.loginToken);
@@ -213,12 +234,10 @@ class ServerConnect {
     }
 
     /**
-     * Function to be called when all tests in a week are needed.
-     * @param date Any date on the week we want to select
-     * @param anydayTestsOnly True if you only want the tests that are not scheduled on a particular day.
-     * @param callback The callback function to be called on response
-     * TODO eventually change name of the function.
-     * TODO eventually change name of the callback.
+     * Retrieves all tests in a week, calls the callback with the response.
+     * @param {Date} date Any date on the week we want to select
+     * @param {boolean} anydayTestsOnly True if you only want the tests that are not scheduled on a particular day.
+     * @param {function} callback
      */
     getTestsInWeek(date, callback, anydayTestsOnly=false){
         console.log("asking for tests");
@@ -251,35 +270,59 @@ class ServerConnect {
         }, 3000);
     }
 
+    /**
+     * Retrieves the information regarding a test, calls the callback with the response.
+     * @param {int} testId The id of the test
+     * @param {function} callback
+     */
     getTestInfo(testId, callback){
         this.socket.emit("getTestInfo", testId, this.loginToken);
         this.socket.once("getTestInfoResponse", res => {
             callback(res.response[0]);
         });
     }
-
+    /**
+     * Requests a token to edit the choosen test, calls the callback with the response.
+     * @param {int} testId The id of the test
+     * @param {function} callback
+     */
     requestTestEditing(testId, callback){
         this.socket.emit("requestTestEditToken", testId, this.loginToken);
-        this.socket.once("requestTestEditTokenResponse", token => {
-            callback(token);
+        this.socket.once("requestTestEditTokenResponse", res => {
+            callback(res);
         });
     }
-
+    /**
+     * Requests a token to edit the choosen patient, calls the callback with the response.
+     * @param {String} patientId The id of the patient
+     * @param {function} callback
+     */
     requestPatientEditing(patientId, callback){
         this.socket.emit("requestPatientEditToken", patientId, this.loginToken);
         this.socket.once("requestPatientEditTokenResponse", res => {
             callback(res);
         });
     }
-
-    discardTestEditing(id, token, callback){
-        this.socket.emit("discardEditing", "Test", id, token, this.loginToken);
+    /**
+     * Requests the distruction of the token previously received to edit a test, calls the callback with the response.
+     * @param {int} testId The id of the test
+     * @param {String} token The token to destroy.
+     * @param {function} callback
+     */
+    discardTestEditing(testId, token, callback){
+        this.socket.emit("discardEditing", "Test", testId, token, this.loginToken);
         this.socket.once("discardEditingResponse", res => {
             callback(res);
         });
     }
-    discardPatientEditing(id, token, callback){
-        this.socket.emit("discardEditing", "Patient", id, token, this.loginToken);
+    /**
+     * Requests the distruction of the token previously received to edit a patient, calls the callback with the response.
+     * @param {int} patientId The id of the patient
+     * @param {String} token The token to destroy.
+     * @param {function} callback
+     */
+    discardPatientEditing(patientId, token, callback){
+        this.socket.emit("discardEditing", "Patient", patientId, token, this.loginToken);
         this.socket.once("discardEditingResponse", res => {
             callback(res);
         });
@@ -300,11 +343,14 @@ class ServerConnect {
     }
 
     /**
-    * Thim method emits a request to add a test into the database
-    * @param patientId The number of the patient that has to take the test.
-    * @param date The first due date of the test
-    * @param notes Additional info about the test
-    * @param frequency The frequency of the test
+    * Thim method emits a request to add a test into the database, calls the callback with the response
+    * @param {String} patientId The number of the patient that has to take the test.
+    * @param {Date} date The first due date of the test
+    * @param {String} notes Additional info about the test
+    * @param {String} frequency The frequency of the test
+    * @example var frequencyExample = "3:W"; // Read db manual for more info
+    * @param {int} occurrences The number of times to repeat the test
+    * @param {function} callback
     */
     addTest(patientId, date, notes, frequency, occurrences, callback){
         this.socket.emit("addTest", patientId, date, notes, frequency, occurrences, this.loginToken);
@@ -314,9 +360,11 @@ class ServerConnect {
     }
 
     /**
-    * Thim method emits a request to add a test into the database
-    * @param testId The id of the test to be changed.
-    * @param newStatus The new status of the test
+    * Thim method emits a request to add a test into the database, calls the callback with the response
+    * @param {int} testId The id of the test to be changed.
+    * @param {String} newStatus The new status of the test
+    * @example var statusExample = "completed" // Read db manual for more info
+    * @param {function} callback
     */
     changeTestStatus(testId, newStatus, callback){
         this.socket.emit('testStatusChange', testId, newStatus, this.loginToken);
@@ -324,6 +372,12 @@ class ServerConnect {
             callback(res);
         });
     }
+    /**
+    * Thim method emits a request to change a test due date, calls the callback with the response
+    * @param {int} testId The id of the test to be changed.
+    * @param {Date} newDate The new status of the test
+    * @param {function} callback
+    */
     changeTestDueDate(testId, newDate, callback){
         this.socket.emit("changeTestDueDate", testId, newDate, this.loginToken);
         this.socket.once("changeTestDueDateResponse", res => {
@@ -332,21 +386,25 @@ class ServerConnect {
     }
 
     /**
-    * Thim method emits a request to edit a test into the database.
-    * Response can be either success or failure.
-    * @param testId The id of the test to be changed.
+    * Thim method emits a request to edit a test into the database, calls the callback with the response.
+    * @param {int} testId The id of the test to be changed.
     * @param {JSON} newData All the information about the test
-    * @param token The token that grants editing priviledges.
-    * @callback callback Protocol to be called on response
+    * @param {String} token The token that grants editing priviledges.
+    * @param {function} callback
     */
     editTest(testId, newData, token, callback){
-        console.log({newData});
         this.socket.emit("editTest", testId, newData, token, this.loginToken);
         this.socket.once("editTestResponse", response => {
             callback(response);
         });
     }
-
+    /**
+    * Thim method emits a request to edit a patient into the database, calls the callback with the response.
+    * @param {String} patientId The id of the patient to be changed.
+    * @param {JSON} newData All the information about the patient
+    * @param {String} token The token that grants editing priviledges.
+    * @param {function} callback
+    */
     editPatient(patientId, newData, token, callback){
         this.socket.emit("editPatient", patientId, newData, token, this.loginToken);
         this.socket.once("editPatientResponse", res => {
@@ -360,10 +418,42 @@ class ServerConnect {
             callback(res);
         });
     }
+
+    getOverdueReminderGroups(callback){
+        this.socket.emit("getOverdueReminderGroups", this.loginToken);
+        this.socket.once("getOverdueReminderGroupsResponse", res => {
+            callback(res);
+        });
+    }
+
+    sendReminders(testIds, callback){
+        this.socket.emit("sendOverdueReminders", testIds, this.loginToken);
+        this.socket.once("sendOverdueRemindersResponse", res => {
+            callback(res);
+        });
+    }
+
+    changePatientColour(patientId, newColor, callback){
+        this.socket.emit("changePatientColour", patientId, newColor, this.loginToken);
+        this.socket.once("changePatientColourResponse", res => {
+            callback(res);
+        });
+    }
+
+    changeTestColour(testId, newColor, callback){
+        this.socket.emit("changeTestColour", testId, newColor, this.loginToken);
+        this.socket.once("changeTestColourResponse", res => {
+            callback(res);
+        });
+    }
 }
 
 
 let serverConnect = new ServerConnect();
+/**
+* Function to get the unique instance of the server connection
+* @returns {ServerConnect}
+*/
 function getServerConnect(){
     if (typeof serverConnect === undefined){
         serverConnect = new ServerConnect();
