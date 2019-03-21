@@ -117,8 +117,9 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction) 
             }
         }
         catch (err) {
-            logger.error(err);
             failedBoth.push(testIDs[i]);
+            // release token
+            query_controller.returnToken("Test", testIDs[i], token, actionUsername);
             continue;
         }
 
