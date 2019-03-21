@@ -11,7 +11,7 @@ const Animation = styled.div`
   width: 100%;
   padding-top: 20px;
   padding-bottom: 5px;
-  font-family: "Rajdhani", sans-serif;
+  
   font-size: 150%;
   display: flex;
   flex-direction: row;

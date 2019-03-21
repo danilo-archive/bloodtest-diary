@@ -10,7 +10,7 @@ const Alert = styled.div`
   flex-direction: column;
   justify-content: flex-end;
 
-  font-family: "Rajdhani", sans-serif;
+  
   color: #646464;
   font-size: 150%;
 
@@ -47,7 +47,7 @@ const Alert = styled.div`
   }
   .optionButton {
 
-    font-family: "Rajdhani", sans-serif;
+    
 
     border: solid 1.5px #0b999d;
     border-radius: 4px;

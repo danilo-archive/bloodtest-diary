@@ -4,14 +4,14 @@ import LoadingAnimation from "./loadingAnimation";
 import "./loadingScreen.css";
 
 const Title = styled.p`
-  font-family: "Rajdhani", sans-serif;
+  
   font-size: 130%;
   font-weight: 600;
   margin: 0;
 `;
 
 const Message = styled.p`
-  font-family: "Rajdhani", sans-serif;
+  
   font-size: 110%;
   margin: 0;
 `;

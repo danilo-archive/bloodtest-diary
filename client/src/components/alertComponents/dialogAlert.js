@@ -11,7 +11,7 @@ const Alert = styled.div`
   justify-content: center;
   align-content: stretch;
 
-  font-family: "Rajdhani", sans-serif;
+  
   color: #646464;
   font-size: 150%;
 

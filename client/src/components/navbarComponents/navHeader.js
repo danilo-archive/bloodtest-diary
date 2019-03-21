@@ -20,7 +20,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  font-family: "Rajdhani", sans-serif;
+  
   color: #e2e2d9;
   font-size: 150%;
 

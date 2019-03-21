@@ -19,7 +19,7 @@ const Input = styled.input.attrs({ spellCheck: "false"})`
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  font-family: "Rajdhani", sans-serif;
+  
 `;
 
 

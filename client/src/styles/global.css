@@ -13,12 +13,12 @@
     box-sizing: border-box;
     font-size: var(--htmlFontSize);
     height: 100%;
+    font-family: Rajdhani, serif;
   }
 
   body {
     background-color: var(--bodyBackgroundColor);
     color: var(--bodyColor);
-    font-family: var(--bodyFontFamily), var(--bodyFontFamilyFallback);
     font-size: var(--bodyFontSize);
     font-weight: var(--bodyFontWeight);
     height: auto;
@@ -48,6 +48,9 @@
 
   input:disabled {
     background: rgb(235, 235, 228);
+  }
+  button {
+      font-family: Rajdhani, sans-serif;
   }
 
 

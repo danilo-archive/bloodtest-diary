@@ -13,7 +13,7 @@ const Container = styled.div`
   height: 98px;
   border: solid 0px #97a9a9;
   text-align: center;
-  font-family: "Rajdhani", sans-serif;
+  
   color: #646464;
   font-size: 150%;
 

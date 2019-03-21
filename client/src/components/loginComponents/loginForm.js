@@ -28,10 +28,8 @@ const Container = styled.div`
 
 
   .submitButton {
-    width: 100%
+    width: 100%;
     height: 50px;
-
-    font-family: "Open Sans", sans-serif;
 
     background-color: #55cdd1;
     color: #eee;
@@ -60,8 +58,6 @@ const Section = styled.div`
 
   width: 100%;
   height: 50px;
-  font-family: "Open Sans", sans-serif;
-
   margin-bottom: 15px;
 `;
 
@@ -128,7 +124,7 @@ const RecoveryLabel = styled.p`
   cursor: pointer;
   text-align: center;
 
-  font-family: "Rajdhani", sans-serif;
+  
 
   &:hover {
     color: #0b999d;
@@ -142,7 +138,7 @@ const ErrorLabel = styled.p`
   cursor: default;
   text-align: center;
 
-  font-family: "Rajdhani", sans-serif;
+  
 `;
 
 

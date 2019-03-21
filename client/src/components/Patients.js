@@ -60,7 +60,7 @@ const Button = styled.button`
   font-weight: 200;
   background-color: #0b989d;
   word-break: break-word;
-  font-family: "Rajdhani", sans-serif;
+  
   outline: none;
   :hover {
     background: #018589;

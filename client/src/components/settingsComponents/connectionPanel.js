@@ -15,7 +15,7 @@ const Container = styled.div`
   justify-content: flex-start;
   align-items: center;
 
-  font-family: "Rajdhani", sans-serif;
+  
   color: #646464;
 
 

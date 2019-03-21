@@ -7,7 +7,7 @@ export default styled.div`
   min-width: 10%;
   height: 100%;
   color: inherit;
-  font-family: "Rajdhani", sans-serif;
+  
   font-size: 200%;
   overflow: hidden;
   display: flex;

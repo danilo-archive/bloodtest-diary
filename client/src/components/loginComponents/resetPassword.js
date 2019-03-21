@@ -26,10 +26,9 @@ const Container = styled.div`
   animation: opac 0.5s linear 1;
 
   .submitButton {
-    width: 70%
+    width: 70%;
     height: 50px;
 
-    font-family: "Open Sans", sans-serif;
 
     background-color: #55cdd1;
     color: #eee;
@@ -58,7 +57,6 @@ const Section = styled.div`
 
   width: 100%;
   height: 50px;
-  font-family: "Open Sans", sans-serif;
 
   margin-bottom: 15px;
 `;
@@ -129,10 +127,9 @@ const Buttons = styled.div`
 
 
 const CancelButton = styled.div`
-    width: 25%
+    width: 25%;
     height: 50px;
 
-    font-family: "Open Sans", sans-serif;
 
     background-color: #97a9a9;
     color: #eee;
@@ -160,7 +157,7 @@ const ErrorLabel = styled.p`
   cursor: default;
   text-align: center;
 
-  font-family: "Rajdhani", sans-serif;
+  
 
 `;
 

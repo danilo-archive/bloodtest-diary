@@ -14,7 +14,7 @@ const Container = styled.div`
   justify-content: flex-start;
   align-items: center;
 
-  font-family: "Rajdhani", sans-serif;
+  
   color: #646464;
 
   .userTitle {
@@ -193,7 +193,7 @@ const ErrorLabel = styled.p`
   cursor: default;
   text-align: center;
 
-  font-family: "Rajdhani", sans-serif;
+  
   animation: opac 1s linear 1;
 `;
 
@@ -204,7 +204,7 @@ const MessageLabel = styled.p`
   text-align: center;
   font-size: 105%;
 
-  font-family: "Rajdhani", sans-serif;
+  
   animation: opac 1s linear 1;
 `;
 
