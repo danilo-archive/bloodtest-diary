@@ -674,10 +674,17 @@ async function addUser(json, actionUsername) {
     const salt = authenticator.produceSalt();
     //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
     const hash = authenticator.produceHash(json.hashed_password, iterations, salt);
-    const sql = `INSERT INTO User(username,hashed_password,isAdmin,salt,iterations,recovery_email) VALUES(${mysql.escape(json.username)},${hash},${mysql.escape(json.isAdmin)},${salt},${iterations},${mysql.escape(json.email)});`;
+    const user = {
+      username: json.username,
+      isAdmin: json.isAdmin,
+      salt: salt,
+      iterations: iterations,
+      hashed_password: hash,
+      recovery_email: json.recovery_email
+    }
+    const sql = prepareInsertSQL("User",user)
     return await insertQueryDatabase(sql, "User", actionUsername, json.username);
 }
-
 /**
  * Add new test to the database
  * @param {JSON} - entry to add
