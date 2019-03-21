@@ -264,6 +264,41 @@ io.on('connection',function(socket)
         }
     });
 
+    socket.on("addUser", async (newUser, accessToken) => {
+        if (!accessToken) {
+            socket.emit("addUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("addUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+        let canInsert = false;
+        try {
+            const admin = await queryController.getUser(username);
+            if (admin.isAdmin === "yes") {
+                canInsert = true;
+            }
+        }
+        catch(err) {
+            logger.error(err);
+        }
+        if (!canInsert) {
+            socket.emit("addUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await queryController.addUser(newUser, username);
+        if (response.success){
+            socket.emit("addUserResponse", {success: true, response: response.response});
+            // TODO: do we need this?
+            //io.in("patients_page").emit("patientEdited", newPatient.patient_no, newPatient);
+        }else{
+            socket.emit("addUserResponse", {success: false});
+        }
+    });
+
     // ==============
     // EDIT TOKEN EXCHANGE
     // ==============
@@ -489,6 +524,41 @@ io.on('connection',function(socket)
             io.in("main_page").emit("testAdded");
         }else{
             socket.emit("changePatientColourResponse", {success: false});
+        }
+    });
+
+    socket.on("editUser", async (newData, accessToken) => {
+        if (!accessToken) {
+            socket.emit("editUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("editUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+        let canInsert = false;
+        try {
+            const admin = await queryController.getUser(username);
+            if (newData.username === username || admin.isAdmin === "yes") {
+                canInsert = true;
+            }
+        }
+        catch(err) {
+            logger.error(err);
+        }
+        if (!canInsert) {
+            socket.emit("editUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await queryController.editUser(newData, username);
+        if (response.success){
+            socket.emit("editUserResponse", {success: true, response: response.response});
+            // TODO: do we need this?
+            //io.in("patients_page").emit("patientEdited", newPatient.patient_no, newPatient);
+        }else{
+            socket.emit("editUserResponse", {success: false});
         }
     });
 
