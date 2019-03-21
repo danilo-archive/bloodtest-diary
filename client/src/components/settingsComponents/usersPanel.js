@@ -210,7 +210,7 @@ const AdminCheckContainer = styled.div`
   justify-content: flex-end;
   align-items: center;
   margin-bottom: 10px;
-  margin-right: 30px;
+  margin-right: 20px;
 
   .adminLabel {
     white-space: nowrap;
