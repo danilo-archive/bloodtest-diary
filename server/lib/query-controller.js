@@ -496,9 +496,8 @@ async function changeTestDueDate(testId, newDate, actionUsername) {
  * @property hashed_password {String}
  * @return {JSON} - {success:Boolean response:Array or Error}
  **/
-async function editUser(json, actionUsername) {
+async function editUser(json, token, actionUsername) {
     const response = await getUser(json.username);
-    const token = await requestEditing("User", json.username, actionUsername);
     if (!response.success) {
         return response;
     }
