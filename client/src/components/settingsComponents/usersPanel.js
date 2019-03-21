@@ -14,7 +14,7 @@ const Container = styled.div`
   justify-content: flex-start;
   align-items: center;
 
-  
+
   color: #646464;
 
   .userTitle {
@@ -82,7 +82,7 @@ const Container = styled.div`
 
     margin-right: 10px;
 
-    height: 33.5px;
+    height: 34.5px;
     min-width: 70px;
     width: 70px;
     max-width: 70px;
@@ -112,7 +112,7 @@ const Container = styled.div`
 
     margin-right: 10px;
 
-    height: 34px;
+    height: 34.5px;
     min-width: 70px;
     width: 70px;
     max-width: 70px;
@@ -188,7 +188,7 @@ const ErrorLabel = styled.p`
   cursor: default;
   text-align: center;
 
-  
+
   animation: opac 1s linear 1;
 `;
 
@@ -199,7 +199,7 @@ const MessageLabel = styled.p`
   text-align: center;
   font-size: 105%;
 
-  
+
   animation: opac 1s linear 1;
 `;
 
@@ -369,7 +369,7 @@ export default class UsersPanel extends Component {
 
         {this.state.selectedOption ?
           <>
-            <form onSubmit={this.onSaveEditUser} style={{display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+            <form onSubmit={this.onSaveEditUser} style={{ "margin-top": "10px", display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
               <div className="inputSection">
                 <div className="usersLabel">Email:</div>
                 <input id="emailInput" type="text" name="email" className="usersInput" value={this.state.email} onChange={this.handleCredentialUpdate} required/>
@@ -396,7 +396,7 @@ export default class UsersPanel extends Component {
 
         {this.state.newUser ?
           <>
-            <form onSubmit={this.onSaveAddUser} style={{display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+            <form onSubmit={this.onSaveAddUser} style={{ "margin-top": "10px", display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
             <div className="inputSection">
               <div className="usersLabel">Username:</div>
               <input id="usernameInput" type="text" name="username" className="usersInput" value={this.state.username} onChange={this.handleCredentialUpdate} required/>
