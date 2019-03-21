@@ -275,6 +275,7 @@ class Home extends Component {
                   editTest={this.onEditTestOpenModal}
                   editPatient={this.openEditPatientModal}
                   handleError={this.handleInvalidResponseError}
+                  openEmailModal={this.openEmailModal}
               />
               <RightSideDash>
                   <Navbar

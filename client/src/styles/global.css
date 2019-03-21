@@ -46,6 +46,10 @@
     transition: background-color 0.3s;
   }
 
+  input:disabled {
+    background: rgb(235, 235, 228);
+  }
+
 
 
   ::selection {
