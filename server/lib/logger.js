@@ -209,7 +209,7 @@ function createLog(messages, level) {
         process.stdout.write(consoleOutputString);
         messages.forEach(msg => {
             process.stdout.write(logElementsSeparator);
-            typeof msg !== "string" ? process.stdout.write(JSON.stringify(msg)) : process.stdout.write(msg)
+            process.stdout.write(convertToString(msg))
         });
         process.stdout.write("\n");
     }
@@ -288,7 +288,7 @@ function convertToString(obj) {
     if (typeof obj !== "string") {
         try {
             const temp = JSON.stringify(obj);
-            if (temp == undefined)
+            if (temp == undefined || temp === JSON.stringify({}))
                 throw "Not a valid JSON object";
             return temp;
         }
