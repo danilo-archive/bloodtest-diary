@@ -68,7 +68,7 @@ const RestartLabel = styled.p`
   white-space: nowrap;
   cursor: pointer;
 
-  animation: opac 0.4s linear 1;
+  animation: opac 0.6s linear 1;
 
   &:hover {
     color: #0b999d;

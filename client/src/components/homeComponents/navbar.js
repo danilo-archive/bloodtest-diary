@@ -1,12 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
-import SearchBar from "./../navbarComponents/searchBar.js"
-import ControlButtons from "./../navbarComponents/controlButtons.js"
-import WeekButtons from "./../navbarComponents/weekButtons.js"
-import NavHeader from "./../navbarComponents/navHeader.js"
-
-import { openAlert } from "./../Alert.js"
+import SearchBar from "./../navbarComponents/searchBar.js";
+import ControlButtons from "./../navbarComponents/controlButtons.js";
+import WeekButtons from "./../navbarComponents/weekButtons.js";
+import NavHeader from "./../navbarComponents/navHeader.js";
+import OptionSwitch from "../switch/OptionSwitch";
 
 const Wrapper = styled.div`
   border: #839595 0px solid;
@@ -74,7 +73,6 @@ const CalenderControls = styled.div`
 
   overflow: hidden;
 
-
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -82,40 +80,69 @@ const CalenderControls = styled.div`
 `;
 
 class Navbar extends React.Component {
-
-  constructor(props){
-      super(props);
+  constructor(props) {
+    super(props);
   }
 
   getNavbar() {
-      switch(this.props.page) {
-        case 'Dashboard':
-          return (
-            <>
-              <NavHeader title={this.props.page} onHomeClick={this.props.onHomeClick} onRefreshClick={this.props.refresh}/>
-              <BottomSide>
-                <CalenderControls>
-                  <SearchBar/>
-                  <WeekButtons onPrev = {this.props.onPrev} onNext = {this.props.onNext}/>
-                </CalenderControls>
-                <ControlButtons page={this.props.page} onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
-              </BottomSide>
-            </>
-          );
-        case 'Patients':
-          return (
-            <>
-              <NavHeader title={this.props.page} onHomeClick = {this.props.onHomeClick} onRefreshClick = {this.props.refresh}/>
-              <BottomSide>
-                <ControlButtons page={this.props.page} onPatientsClick = {this.props.onPatientsClick} onSignoutClick = {this.props.onSignoutClick}/>
-              </BottomSide>
-            </>
-          );
-        default:
-          return null;
-      }
+    switch (this.props.page) {
+      case "Dashboard":
+        return (
+          <>
+            <NavHeader
+              title={this.props.page}
+              onHomeClick={this.props.onHomeClick}
+              onRefreshClick={this.props.refresh}
+            />
+            <BottomSide>
+              <CalenderControls>
+                <OptionSwitch
+                  checked={this.props.over12}
+                  onChange={this.props.setUnder12}
+                  option1="Show under 12"
+                  option2="Show 12 or older"
+                />
+                <SearchBar />
+                <WeekButtons
+                  onPrev={this.props.onPrev}
+                  onNext={this.props.onNext}
+                />
+              </CalenderControls>
+              <ControlButtons
+                page={this.props.page}
+                onPatientsClick={this.props.onPatientsClick}
+                onSignoutClick={this.props.onSignoutClick}
+              />
+            </BottomSide>
+          </>
+        );
+      case "Patients":
+        return (
+          <>
+            <NavHeader
+              title={this.props.page}
+              onHomeClick={this.props.onHomeClick}
+              onRefreshClick={this.props.refresh}
+            />
+            <BottomSide>
+              <OptionSwitch
+                checked={this.props.over12}
+                onChange={this.props.setUnder12}
+                option1="Show under 12"
+                option2="Show 12 or older"
+              />
+              <ControlButtons
+                page={this.props.page}
+                onPatientsClick={this.props.onPatientsClick}
+                onSignoutClick={this.props.onSignoutClick}
+              />
+            </BottomSide>
+          </>
+        );
+      default:
+        return null;
+    }
   }
-
 
   render() {
     const content = this.getNavbar();

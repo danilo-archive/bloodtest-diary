@@ -10,9 +10,11 @@ const Container = styled.div`
 
 const Input = styled.input`
   margin: 0 0.5rem;
-  width: 10%;
-  font-size: 2rem;
-  height: 50%;
+  width: 15%;
+  font-size:  1.3rem;
+  height: 70%;
+  background-color: white;
+  border: solid 1px #aaaaaa;
 `;
 const Label = styled(TextLabel)`
   color: ${props => (props.noRepeat ? `#c9c9c9` : `#0d4e56`)};
@@ -38,13 +40,13 @@ export default props => {
           }
           onChange={event => props.onFrequencyChange(event.target.value)}
         />
-        <select
+        <select style={{height: "30px"}}
           defaultValue={props.frequencyUnit}
           disabled={props.noRepeat}
           onChange={event => props.onUnitChange(event.target.value)}
         >
           <option value="" disabled className="text-hide">
-            Please select a month
+            select
           </option>
           {props.values.map(value => {
             return <option value={value.value}>{value.name}</option>;
@@ -53,7 +55,7 @@ export default props => {
         <Label noRepeat={props.noRepeat} style={{ margin: "0 0 0 1rem" }}>
           For
         </Label>
-        <Input
+        <Input 
           disabled={props.noRepeat}
           value={
             props.occurrences === "null" || props.noRepeat

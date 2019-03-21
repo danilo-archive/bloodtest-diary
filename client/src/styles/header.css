@@ -10,11 +10,6 @@
   color: #f4f9fd;
   z-index: 1050;
   -webkit-app-region: drag;
-  user-select: none;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -o-user-select: none;
 }
 
 #window-title {
@@ -45,6 +40,7 @@
   top: 0;
   right: 0;
   height: 100%;
+
 }
 #window-controls .button{
 
@@ -65,6 +61,17 @@
 
 #window-controls #close-button:hover {
   background: #e81123;
+}
+
+.headerIcon {
+  max-width:100%;
+  max-height:100%;
+  display: inline-block;
+  fill: #f4f9fd;
+  font-size: 1rem;
+  height: 1em;
+  vertical-align: middle;
+  width: 1em;
 }
 
 .dropdown:hover .dropdown-content {

@@ -23,9 +23,9 @@ let port;
 
 app.on('ready', () => {
   // Register a 'CommandOrControl+X' shortcut listener.
-  const ret = globalShortcut.register('CommandOrControl+R', () => {
-    return;
-  });
+ // const ret = globalShortcut.register('CommandOrControl+R', () => {
+   // return;
+  //});
 });
 
 function getWindowSize(axis) {

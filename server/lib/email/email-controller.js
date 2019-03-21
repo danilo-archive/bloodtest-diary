@@ -1,7 +1,7 @@
-/** 
- * This module processes mailing requests and organises the data that 
+/**
+ * This module processes mailing requests and organises the data that
  * is then used in email sender. It also updates the DB accordingly.
- * 
+ *
  * @author Luka Kralj
  * @version 1.0
  * @module email-controller
@@ -28,7 +28,7 @@ const crypto = require("crypto");
  *            an email but the hospital was not or vice versa, or maybe both emails failed to send.
  *            Response format:
  *            {success: true, response: "All emails sent successfully."}
- * 
+ *
  *            The three "failed" lists are disjoint.
  *            {success: false,
  *             response: {
@@ -52,7 +52,7 @@ async function sendOverdueReminders(testIDs, actionUsername) {
  *            an email but the hospital was not or vice versa, or maybe both emails failed to send.
  *            Response format:
  *            {success: true, response: "All emails sent successfully."}
- * 
+ *
  *            The three "failed" lists are disjoint.
  *            {success: false,
  *             response: {
@@ -76,7 +76,7 @@ async function sendNormalReminders(testIDs, actionUsername) {
  *            an email but the hospital was not or vice versa, or maybe both emails failed to send.
  *            Response format:
  *            {success: true, response: "All emails sent successfully."}
- * 
+ *
  *            The three "failed" lists are disjoint.
  *            {success: false,
  *             response: {
@@ -129,7 +129,7 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction) 
         };
 
         const pat_ok = await patientFunction(emailInfo);
-        
+
         let hos_ok = true;
         if (hospital !== null) {
             hos_ok = await hospitalFunction(emailInfo);
@@ -202,5 +202,5 @@ async function recoverPassword(username){
       return {success:false, response:"Could not send an email."};
     }
     const hash = crypto.createHash('sha256').update(newPassword).digest('hex');
-    return await query_controller.updatePassword({username:username, hashed_password:hash},username);
+    return await query_controller.editUser({username:username, hashed_password:hash},username);
   }

@@ -32,6 +32,7 @@ export default props => {
         <VerticalLine style={{ 'margin-left': padding}}/>
         {props.appointments.map(appointment => (
           <AppointmentBox
+            test={appointment}
             key={appointment.test_id}
             id = {appointment.test_id}
             type={appointment.completed_status}
@@ -39,6 +40,7 @@ export default props => {
             time={appointment.time}
             dueDate={appointment.due_date}
             editTest={props.editTest}
+            editPatient={props.editPatient}
             section={props.section}
             handleError={props.handleError}
             patient_colour={appointment.patient_colour}

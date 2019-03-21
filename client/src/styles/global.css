@@ -2,19 +2,19 @@
     --htmlFontSize: 100%;
     --bodyBackgroundColor: rgb(244,249,253);
     --bodyColor: #000000;
-    --bodyFontFamily: 'Open Sans';
+    --bodyFontFamily: "Open Sans";
     --bodyFontFamilyFallback: sans-serif;
-    --bodyFontSize: 0.875rem;
-    --bodyFontWeight: 400;
+    --bodyFontSize: 0.850rem;
+    --bodyFontWeight: 500;
     --bodyLineHeight: 1.5;
   }
-  
+
   html {
     box-sizing: border-box;
     font-size: var(--htmlFontSize);
     height: 100%;
   }
-  
+
   body {
     background-color: var(--bodyBackgroundColor);
     color: var(--bodyColor);
@@ -24,6 +24,32 @@
     height: auto;
     line-height: var(--bodyLineHeight);
     overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+  }
+
+  input {
+    background-image: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    margin: 0;
+    outline: 0;
+    padding: 0;
+    background: transparent;
+    transition: background-color 0.3s;
+  }
+
+
+
+  ::selection {
+    color: #0e4f54;
   }
   
   ::-webkit-scrollbar {
@@ -49,26 +75,26 @@
   }
 
 @font-face {
-  font-family: "Rajdhani";
-  src: url("../resources/font/Rajdhani-Regular.ttf");
+    font-family: "Rajdhani";
+    src: url("../resources/font/Rajdhani-Regular.ttf");
 }
 @font-face {
-  font-family: "Rajdhani";
-  src: url("../resources/font/Rajdhani-Bold.ttf");
-  font-weight: bold;
+    font-family: "Rajdhani";
+    src: url("../resources/font/Rajdhani-Bold.ttf");
+    font-weight: bold;
 }
 @font-face {
-  font-family: "Rajdhani";
-  src: url("../resources/font/Rajdhani-Medium.ttf");
-  font-weight: 600;
+    font-family: "Rajdhani";
+    src: url("../resources/font/Rajdhani-Medium.ttf");
+    font-weight: 600;
 }
 @font-face {
-  font-family: "Rajdhani";
-  src: url("../resources/font/Rajdhani-SemiBold.ttf");
-  font-weight: 700;
+    font-family: "Rajdhani";
+    src: url("../resources/font/Rajdhani-SemiBold.ttf");
+    font-weight: 700;
 }
 @font-face {
-  font-family: "Rajdhani";
-  src: url("../resources/font/Rajdhani-Light.ttf");
-  font-weight: 100;
+    font-family: "Rajdhani";
+    src: url("../resources/font/Rajdhani-Light.ttf");
+    font-weight: 100;
 }

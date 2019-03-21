@@ -18,12 +18,16 @@ const cookies = new Cookies();
 const host = cookies.get("ip");
 const port = cookies.get("port");
 
+const underTwelve = 0;
+const overTwelve = 1;
+
 class ServerConnect {
 
     constructor(){
         this.loginToken = cookies.get("accessToken");
         this.currentRoom = "";
         this.socket = openSocket(`${host}:${port}`);
+        this.currentMode = overTwelve;
 
 
         /**
@@ -66,6 +70,16 @@ class ServerConnect {
             this.onPatientEdit(patientId, newInfo);
         });
 
+    }
+
+    setUnderTwelve(){
+        this.currentMode = underTwelve;
+    }
+    setOverTwelve(){
+        this.currentMode = overTwelve;
+    }
+    isUnderTwelve(){
+        return this.currentMode == underTwelve;
     }
 
     /**
@@ -180,7 +194,8 @@ class ServerConnect {
      * @param {function} callback The callback function to be called on response
      */
     getAllPatients(callback){
-        this.socket.emit('getAllPatients', this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getAllPatients', this.loginToken, isAdult);
         this.socket.once("getAllPatientsResponse", res => {
             callback(res);
         });
@@ -198,17 +213,6 @@ class ServerConnect {
     }
 
     /**
-     * Retrieves all tests in the database, calls the callback with the response
-     * @param {function} callback
-     */
-    getAllTests(callback){
-        this.socket.emit('getAllTests', this.loginToken);
-        this.socket.once('getAllTestsResponse', res => {
-            callback(res);
-        });
-    }
-
-    /**
      * Retrieves all the tests of a particular patient, calls the callback with the response
      * @param {String} patientId The id of the patient we want to retrieve the information of.
      * @param {function} callback
@@ -220,24 +224,14 @@ class ServerConnect {
         });
     }
 
-    /**
-     * Retrieves all the tests in a particular date, calls the callback with the response
-     * @param {Date} date The id of the patient we want to retrieve the information of.
-     * @param {function} callback
-     */
-    getTestsOnDate(date, callback){
-        this.socket.emit('getAllTestsOnDate', date, this.loginToken);
-        this.socket.once('getAllTestsOnDateResponse', res => {
-            callback(res);
-        });
-    }
 
     /**
      * Retrieves all overdue tests, calls the callback with the response.
      * @param {function} callback
      */
     getOverdueTests(callback){
-        this.socket.emit('getOverdueTests', this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getOverdueTests', this.loginToken, isAdult);
         this.socket.once('getOverdueTestsResponse', res => {
             callback(res);
         });
@@ -249,35 +243,13 @@ class ServerConnect {
      * @param {boolean} anydayTestsOnly True if you only want the tests that are not scheduled on a particular day.
      * @param {function} callback
      */
-    getTestsInWeek(date, callback, anydayTestsOnly=false){
-        console.log("asking for tests");
-        console.log(this.loginToken);
-        this.socket.emit('getTestsInWeek', date, this.loginToken);
+    getTestsInWeek(date, callback){
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit('getTestsInWeek', date, this.loginToken, isAdult);
         this.socket.once('getTestsInWeekResponse', res => {
             console.log({res});
             callback(res);
         });
-    }
-
-    // TODO: what is this???
-    getMockTest(testId, callback){
-        const duedate = new Date(2019, 3, 4);
-        const mockedTest = {
-            patient_name: "John Doe",
-            patient_no: "P123890",
-            test_id: 123,
-            due_date: "2019-3-3",
-            frequency: "2-W",
-            occurrences: 3,
-            completed_status: "no",
-            notes: "This guys is basically just an idiot",
-            completedDate: null,
-            hospitalId: 3
-
-        }
-        setTimeout( () => {
-            callback(mockedTest);
-        }, 3000);
     }
 
     /**
@@ -430,7 +402,8 @@ class ServerConnect {
     }
 
     getOverdueReminderGroups(callback){
-        this.socket.emit("getOverdueReminderGroups", this.loginToken);
+        let isAdult = this.currentMode == overTwelve;
+        this.socket.emit("getOverdueReminderGroups", this.loginToken, isAdult);
         this.socket.once("getOverdueReminderGroupsResponse", res => {
             callback(res);
         });
@@ -453,6 +426,13 @@ class ServerConnect {
     changeTestColour(testId, newColor, callback){
         this.socket.emit("changeTestColour", testId, newColor, this.loginToken);
         this.socket.once("changeTestColourResponse", res => {
+            callback(res);
+        });
+    }
+
+    recoverPassword(username, callback){
+        this.socket.emit("passwordRecoverRequest", username);
+        this.socket.once("passwordRecoverResponse", res => {
             callback(res);
         });
     }
