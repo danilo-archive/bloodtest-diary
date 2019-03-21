@@ -6,7 +6,7 @@ import Select from 'react-select';
 const Container = styled.div`
   height: auto;
   width: 100%;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
   background: white;
 
   display: flex;
@@ -151,7 +151,7 @@ const Container = styled.div`
 
 const MenuContainer = styled.div`
   width: 90%;
-  margin-top: 5px;
+  margin-top: 10px;
   margin-bottom: 10px;
   display: flex;
   flex-direction: row;
@@ -192,6 +192,17 @@ const ErrorLabel = styled.p`
   white-space: nowrap;
   cursor: default;
   text-align: center;
+
+  font-family: "Rajdhani", sans-serif;
+  animation: opac 1s linear 1;
+`;
+
+const MessageLabel = styled.p`
+  margin: 0 auto;
+  white-space: nowrap;
+  cursor: default;
+  text-align: center;
+  font-size: 105%;
 
   font-family: "Rajdhani", sans-serif;
   animation: opac 1s linear 1;
@@ -239,7 +250,8 @@ export default class UsersPanel extends Component {
          email: "",
          password: "",
          confirmPassword: "",
-         passwordMatch: true
+         passwordMatch: true,
+         mainState: false,
       };
 
   }
@@ -286,6 +298,7 @@ export default class UsersPanel extends Component {
  onSaveEditUser = (event) => {
    if (this.state.password == this.state.confirmPassword) {
      //Update Database with new email and password
+     this.showInfoMessage()
      this.clearForm()
    } else {
      this.setState({
@@ -304,6 +317,7 @@ export default class UsersPanel extends Component {
  onSaveAddUser = (event) => {
    if (this.state.password == this.state.confirmPassword) {
      //Update Database with new user Details, username, email, password
+     this.showInfoMessage()
      this.clearForm()
    } else {
      this.setState({
@@ -317,6 +331,13 @@ export default class UsersPanel extends Component {
    }
    event.preventDefault();
 
+ }
+
+ showInfoMessage = () => {
+     this.setState({mainState: true})
+     setTimeout( () => {
+         this.setState({mainState: false})
+     }, 5000);
  }
 
 
@@ -351,6 +372,7 @@ export default class UsersPanel extends Component {
             })}
           />
         </MenuContainer>
+
 
         {this.state.selectedOption ?
           <>
@@ -410,7 +432,7 @@ export default class UsersPanel extends Component {
           </>
         }
 
-
+        <MessageLabel className={this.state.mainState ? null : 'hidden'}>Database Updated</MessageLabel>
       </Container>
     )
   }
