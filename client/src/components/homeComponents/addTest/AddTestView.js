@@ -109,12 +109,22 @@ export default class AddTestView extends React.Component {
             this.setState({ open: false });
             this.props.closeModal();
           } else {
-            alert("something went wrong, test was not added");
+            openAlert(
+              "something went wrong, test was not added",
+              "confirmationAlert",
+              "OK",
+              () => {}
+            );
           }
         }
       );
     } else {
-      alert("Please ensure you have selected all the relevant fields");
+      openAlert(
+        "Please ensure you have selected all the relevant fields",
+        "confirmationAlert",
+        "OK",
+        () => {}
+      );
     }
   };
   render() {
