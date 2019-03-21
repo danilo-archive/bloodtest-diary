@@ -10,7 +10,8 @@ const databaseController = require("./db_controller/db-controller.js");
 const authenticator = require("./authenticator.js");
 const calendarController = require("./calendar-functions.js");
 const _ = require("lodash");
-const logger = require("./action-logger");
+const actionLogger = require("./action-logger");
+const logger = require('./logger');
 const dateformat = require("dateformat");
 const mysql = require("mysql");
 
@@ -1103,12 +1104,12 @@ async function insertQueryDatabase(sql, tableName, actionUsername, id = undefine
     const response = await databaseController.insertQuery(sql);
     if (response.status == "OK") {
         id = id === undefined ? response.response.insertId : id;
-        logger.logInsert(actionUsername, tableName, id, "Successful.");
+        actionLogger.logInsert(actionUsername, tableName, id, "Successful.");
         return { success: true, response: { insertId: id } };
     }else if (response.err.type === "SQL Error") {
-        logger.logInsert(actionUsername,tableName,"-1","Unsuccessfully tried to execute query: >>" +sql +"<<. SQL Error message: >>" +response.err.sqlMessage +"<<.");
+        actionLogger.logInsert(actionUsername,tableName,"-1","Unsuccessfully tried to execute query: >>" +sql +"<<. SQL Error message: >>" +response.err.sqlMessage +"<<.");
     } else {
-        logger.logInsert(actionUsername,tableName,"-1","Unsuccessfully tried to execute query: >>" +sql +"<<. Invalid request error message: >>" +response.err.cause +"<<.");
+        actionLogger.logInsert(actionUsername,tableName,"-1","Unsuccessfully tried to execute query: >>" +sql +"<<. Invalid request error message: >>" +response.err.cause +"<<.");
     }
     return { success: false };
 }
@@ -1126,10 +1127,10 @@ async function requestEditing(table, id, actionUsername) {
     });
     // TODO: return token + expiration
     if (data.status == "OK") {
-        logger.logOther(actionUsername,table,id,"Request for editing was approved.");
+        actionLogger.logOther(actionUsername,table,id,"Request for editing was approved.");
         return data.response.token;
     } else {
-        logger.logOther(actionUsername,table,id,"Request for editing was rejected with message: >>" +data.err.cause +"<<.");
+        actionLogger.logOther(actionUsername,table,id,"Request for editing was rejected with message: >>" +data.err.cause +"<<.");
         return undefined;
     }
 }
@@ -1147,12 +1148,12 @@ async function updateQueryDatabase(table, id, sql, token, actionUsername) {
     if (token) {
         const response = await databaseController.updateQuery(sql,table,id,token);
         if (response.status === "OK") {
-            logger.logUpdate(actionUsername, table, id, "Successful.");
+            actionLogger.logUpdate(actionUsername, table, id, "Successful.");
             return { success: true, response: response.response };
         } else if (response.err.type === "SQL Error") {
-            logger.logUpdate(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. SQL Error message: >>" +response.err.sqlMessage +"<<.");
+            actionLogger.logUpdate(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. SQL Error message: >>" +response.err.sqlMessage +"<<.");
         } else {
-            logger.logUpdate(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. Invalid request error message: >>" +response.err.cause +"<<.");
+            actionLogger.logUpdate(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. Invalid request error message: >>" +response.err.cause +"<<.");
         }
         return { success: false, response: response.err };
     }
@@ -1189,12 +1190,12 @@ async function deleteQueryDatabase(table, id, sql, actionUsername) {
 
     const response = await databaseController.deleteQuery(sql, table, id);
     if (response.status === "OK") {
-        logger.logDelete(actionUsername,table,id,"Successful. Deleted data: >>" + JSON.stringify(deletedInfo) + "<<.");
+        actionLogger.logDelete(actionUsername,table,id,"Successful. Deleted data: >>" + JSON.stringify(deletedInfo) + "<<.");
         return { success: true, response: "Entry deleted" };
     } else if (response.err.type === "SQL Error") {
-        logger.logDelete(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. SQL Error message: >>" +response.err.sqlMessage +"<<.");
+        actionLogger.logDelete(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. SQL Error message: >>" +response.err.sqlMessage +"<<.");
     } else {
-        logger.logDelete(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. Invalid request error message: >>" +response.err.cause +"<<.");
+        actionLogger.logDelete(actionUsername,table,id,"Unsuccessfully tried to execute query: >>" +sql +"<<. Invalid request error message: >>" +response.err.cause +"<<.");
     }
     return { success: false, response: response.err };
 }
@@ -1264,7 +1265,7 @@ function prepareUpdateSQL(table, object, idProperty) {
         sql += ` WHERE ${idProperty} = ${mysql.escape(values[pos])};`;
     }
     //For debug:
-    //console.log(sql);
+    //logger.debug(sql);
     return sql;
 }
 
@@ -1293,12 +1294,12 @@ function prepareDeleteSQL(table, idProperty, id) {
 async function returnToken(table, id, token, actionUsername) {
     const response = await databaseController.cancelEditing(table, id, token);
     if (response.status === "OK") {
-        logger.logOther(actionUsername, table, id, "Successfully released token.");
+        actionLogger.logOther(actionUsername, table, id, "Successfully released token.");
         return { success: true, response: "Token cancelled" };
     } else if (response.err.type === "SQL Error") {
-        logger.logOther(actionUsername,table,id,"Unsuccessfully tried to release token. SQL Error message: >>" +response.err.sqlMessage +"<<.");
+        actionLogger.logOther(actionUsername,table,id,"Unsuccessfully tried to release token. SQL Error message: >>" +response.err.sqlMessage +"<<.");
     } else {
-        logger.logOther(actionUsername,table,id,"Unsuccessfully tried to release token. Invalid request error message: >>" +response.err.cause +"<<.");
+        actionLogger.logOther(actionUsername,table,id,"Unsuccessfully tried to release token. Invalid request error message: >>" +response.err.cause +"<<.");
     }
     return { success: false, response: response.err };
 }

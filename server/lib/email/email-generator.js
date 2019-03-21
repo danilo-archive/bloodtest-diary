@@ -96,15 +96,15 @@ async function overdueTestReminderForHospital(email_info, email_config) {
  */
 async function overdueTestReminderForPatient(email_info, email_config) {
     if (email_info.patient.patient_email === null ||
+        email_info.patient.patient_email === undefined ||
         email_info.patient.patient_email.length === 0 ||
-        email_info.patient.patient_email === "null" ||
-        email_info.patient.patient_email === undefined) {
+        email_info.patient.patient_email === "null") {
         return await overdueTestReminderForCarer(email_info, email_config);
     }
     let name = email_info.patient.patient_name;
     let surname = email_info.patient.patient_surname;
-    name = (name === null || name.length === 0 || name === "null" || name === undefined) ? undefined : name;
-    surname = (surname === null || surname.length === 0 || surname === "null" || surname === undefined) ? undefined : surname;
+    name = (name === null  || name === undefined|| name.length === 0 || name === "null") ? undefined : name;
+    surname = (surname === null || surname === undefined || surname.length === 0 || surname === "null") ? undefined : surname;
 
     let greeting = "Dear ";
     if (name && surname) {
@@ -120,6 +120,7 @@ async function overdueTestReminderForPatient(email_info, email_config) {
     if (email_config.content.overduePatient.subject.appendDate) {
         subject += (subject.endsWith(" ")) ? due_date : " " + due_date;
     }
+
     if (computed_html.errors.length === 0) {
         return {
             to: email_info.patient.patient_email,
@@ -136,13 +137,13 @@ async function overdueTestReminderForPatient(email_info, email_config) {
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
 async function overdueTestReminderForCarer(email_info, email_config) {
-    if (email_config.carer === null || email_config.carer === undefined) {
+    if (email_info.carer === null || email_info.carer === undefined) {
         return null;
     }
     let name = email_info.carer.carer_name;
     let surname = email_info.carer.carer_surname;
-    name = (name === null || name.length === 0 || name === "null" || name === undefined) ? undefined : name;
-    surname = (surname === null || surname.length === 0 || surname === "null" || surname === undefined) ? undefined : surname;
+    name = (name === null || name === undefined || name.length === 0 || name === "null") ? undefined : name;
+    surname = (surname === null || surname === undefined || surname.length === 0 || surname === "null") ? undefined : surname;
 
     let greeting = "Dear ";
     if (name && surname) {
@@ -195,15 +196,15 @@ async function passwordRecoveryEmail(email_info, email_config) {
  */
 async function testReminderForPatient(email_info, email_config) {
     if (email_info.patient.patient_email === null ||
+        email_info.patient.patient_email === undefined ||
         email_info.patient.patient_email.length === 0 ||
-        email_info.patient.patient_email === "null" ||
-        email_info.patient.patient_email === undefined) {
-        return await testReminderForCarer(email_info);
+        email_info.patient.patient_email === "null") {
+        return await testReminderForCarer(email_info, email_config);
     }
     let name = email_info.patient.patient_name;
     let surname = email_info.patient.patient_surname;
-    name = (name === null || name.length === 0 || name === "null" || name === undefined) ? undefined : name;
-    surname = (surname === null || surname.length === 0 || surname === "null" || surname === undefined) ? undefined : surname;
+    name = (name === null || name === undefined || name.length === 0 || name === "null") ? undefined : name;
+    surname = (surname === null || surname === undefined || surname.length === 0 || surname === "null") ? undefined : surname;
 
     let greeting = "Dear ";
     if (name && surname) {
@@ -257,13 +258,13 @@ async function testReminderForHospital(email_info, email_config) {
  * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
 */
 async function testReminderForCarer(email_info, email_config) {
-    if (email_config.carer === null || email_config.carer === undefined) {
+    if (email_info.carer === null || email_info.carer === undefined) {
         return null;
     }
     let name = email_info.carer.carer_name;
     let surname = email_info.carer.carer_surname;
-    name = (name === null || name.length === 0 || name === undefined) ? undefined : name;
-    surname = (surname === null || surname.length === 0 || surname === undefined) ? undefined : surname;
+    name = (name === null || name === undefined || name.length === 0 || name === "null") ? undefined : name;
+    surname = (surname === null || surname === undefined || surname.length === 0 || surname === "null") ? undefined : surname;
 
     let greeting = "Dear ";
     if (name && surname) {
@@ -344,8 +345,8 @@ async function generateReminderBody(emailInfo, contentConfiguration, greeting, i
     if (contentConfiguration.details.includePatientName) {
         let name = patient.patient_name;
         let surname = patient.patient_surname;
-        name = (name === null || name.length === 0 || name === "null" || name === undefined) ? undefined : name;
-        surname = (surname === null || surname.length === 0 || surname === "null" || surname === undefined) ? undefined : surname;
+        name = (name === null || name === undefined || name.length === 0 || name === "null") ? undefined : name;
+        surname = (surname === null || surname === undefined || surname.length === 0 || surname === "null") ? undefined : surname;
 
         if (name && surname) {
             rows += `<i>Full name:    </i>
@@ -363,16 +364,16 @@ async function generateReminderBody(emailInfo, contentConfiguration, greeting, i
     }
     if (contentConfiguration.details.includePatientContact) {
         if (!(patient.patient_email === null ||
+            patient.patient_email === undefined ||
             patient.patient_email.length === 0 ||
-            patient.patient_email === "null" ||
-            patient.patient_email === undefined)) {
+            patient.patient_email === "null")) {
             rows += `<i>Email:    </i>
                 ${patient.patient_email}--br--`;
         }
         if (!(patient.patient_phone === null ||
+            patient.patient_phone === undefined ||
             patient.patient_phone.length === 0 ||
-            patient.patient_phone === "null" ||
-            patient.patient_phone === undefined)) {
+            patient.patient_phone === "null")) {
             rows += `<i>Phone number:    </i>
                 ${patient.patient_phone}--br--`;
         }
