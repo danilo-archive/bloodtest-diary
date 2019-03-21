@@ -268,6 +268,7 @@ class Home extends Component {
             <CustomDragLayer snapToGrid={true} />
             <Dashboard>
                <OverduePatients
+                  openEmailModal={this.openEmailModal}
                   notificationNumber={getNumberOfTestsInGroup(
                     this.state.overdueTests
                   )}
