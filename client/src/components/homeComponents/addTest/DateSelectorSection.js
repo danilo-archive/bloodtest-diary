@@ -47,6 +47,7 @@ export default props => {
           <></>
         )}
         <FrequencySetter
+          noRepeat={props.noRepeat}
           setFrequencyTooltip={props.setFrequencyTooltip}
           setOcurrencesTooltip={props.setOcurrencesTooltip}
           tooltips={{

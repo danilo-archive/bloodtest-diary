@@ -29,8 +29,8 @@ export default class AddTestView extends React.Component {
       timeAmount: "",
       timeUnits: ["Days", "Weeks", "Months", "Years"],
       timeUnit: "Days",
-      occurrences: 1,
-      noRepeat: false
+      occurrences: "",
+      noRepeat: true
     }
   };
   constructor(props) {
@@ -87,8 +87,9 @@ export default class AddTestView extends React.Component {
   onDoneClick = () => {
     if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
       let frequency = undefined;
-      if (this.state.frequency.timeAmount) {
+      if (parseInt(this.state.frequency.timeAmount)) {
         let { timeUnit, timeAmount } = this.state.frequency;
+        timeAmount = parseInt(this.state.frequency.timeAmount);
         timeAmount = timeUnit === "Months" ? timeAmount * 4 : timeAmount;
         timeUnit = timeUnit === "Months" ? "W" : timeUnit;
         timeUnit = timeUnit.charAt(0);
@@ -159,8 +160,8 @@ export default class AddTestView extends React.Component {
               timeAmount={this.state.frequency.timeAmount}
               timeUnit={this.state.frequency.timeUnit}
               unitOptions={this.state.frequency.timeUnits}
+              noRepeat={this.state.frequency.noRepeat}
               onTimeAmountChange={timeAmount => {
-                timeAmount = parseInt(timeAmount);
                 this.setState({
                   frequency: { ...this.state.frequency, timeAmount }
                 });
@@ -185,7 +186,7 @@ export default class AddTestView extends React.Component {
                 this.setState({
                   frequency: {
                     ...this.state.frequency,
-                    occurrences: value ? parseInt(value) : 1
+                    occurrences: value
                   }
                 })
               }
