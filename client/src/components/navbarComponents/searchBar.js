@@ -51,6 +51,9 @@ export default class SearchBar extends Component {
         this.state = {
           showCalender: false,
         };
+        this.hideCalendar = () => {
+          this.setState({showCalendar:false})
+        };
     }
 
     render(){
@@ -64,7 +67,7 @@ export default class SearchBar extends Component {
               Date picker
 
         {this.state.showCalendar ? (
-          <CalendarTable />
+          <CalendarTable hideCalendar={this.hideCalendar}/>
         ) : (
           <></>
         )}
