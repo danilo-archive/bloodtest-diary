@@ -42,6 +42,7 @@ class CalendarTable extends Component {
       });
     };
     this.selectDay = (day, isFromThisMonth) => {
+      props.closeCalendar();
       const date = this.state.date;
       //  the month returned by Date class is always smaller by 1
       //  then it should be, for the date to be useable by the database
@@ -67,6 +68,9 @@ class CalendarTable extends Component {
       this.setState({ selected: dateformat(new Date(`${year}-${month}-${day}`), "d mmm yyyy") });
       if (this.props.onDaySelected) {
         this.props.onDaySelected(dateformat(new Date(`${year}-${month}-${day}`), "d mmm yyyy"));
+      }
+      if(this.props.closeCalendar) {
+        this.props.closeCalendar();
       }
     };
     this.returnDate = () => {
