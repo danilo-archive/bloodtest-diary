@@ -31,7 +31,7 @@ import "../styles/global.css";
 
 const Dashboard = styled.div`
   border: blue 0px solid;
-  height: calc(100vh - 88px);
+  height: calc(103vh - 88px);
   width: auto;
   position: relative;
   top: 20px;
