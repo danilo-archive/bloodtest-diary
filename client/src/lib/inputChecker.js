@@ -1,7 +1,7 @@
 /**
  * Purpose of functions below is to verify if given input matches some criteria.
  * For instance if email has valid type such as "anystring@anystring.anystring".
- *
+ * 
  * @author Jakub Cerven
  */
 
@@ -10,13 +10,15 @@ const characterRegex = /^[a-zA-Z]+$/;
 //TODO : maybe add more sophisticated regular expression
 const emailRegex = /\S+@\S+\.\S+/;
 
+
+
 /**
  * Checks if input is empty or undefined
  * @param input Some string value
  * @returns {boolean}
  */
 function emptyCheck(input) {
-  return input === "" || input === undefined || input === null;
+    return input === "" || input === undefined || input === null;
 }
 
 /**
@@ -25,7 +27,7 @@ function emptyCheck(input) {
  * @returns {boolean} Match with regular expression
  */
 function integerCheck(input) {
-  return intRegex.test(input);
+    return intRegex.test(input);
 }
 
 /**
@@ -34,7 +36,7 @@ function integerCheck(input) {
  * @returns {boolean} Match with regular expression
  */
 function characterCheck(input) {
-  return characterRegex.test(input);
+    return characterRegex.test(input);
 }
 
 /**
@@ -45,10 +47,10 @@ function characterCheck(input) {
  */
 
 function emailCheck(input) {
-  if (this.emptyCheck(input)) {
-    return true;
-  }
-  return emailRegex.test(input);
+    if (emptyCheck(input)) {
+        return true;
+    }
+    return emailRegex.test(input);
 }
 
-module.exports = { emptyCheck, integerCheck, characterCheck, emailCheck };
+module.exports = {emptyCheck, integerCheck, characterCheck, emailCheck};
