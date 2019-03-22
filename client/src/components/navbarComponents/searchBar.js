@@ -62,7 +62,6 @@ export default class SearchBar extends Component {
         this.setSelectedDate = (selectedDate) => {
           this.setState({selectedDate: selectedDate});
         }
-        this.onDayPick = this.props.onDayPick;
     }
 
     render(){
@@ -77,7 +76,7 @@ export default class SearchBar extends Component {
           <div className={"calendar-table"}>{this.state.showCalendar ? (
             <CalendarTable
               hideCalendar={this.hideCalendar}
-              onDayPick={this.onDayPick}
+              onDayPick={this.props.onDayPick}
             />
           ) : (
             <></>

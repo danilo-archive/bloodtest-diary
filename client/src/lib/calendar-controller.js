@@ -35,9 +35,10 @@ function getMondayOfWeek(date){
     return toReturn;
 }
 
-function getWeekDays(monday){
+function getWeekDays(day){
+    let monday = getMondayOfWeek(day);
     monday.setHours(0, 0, 0, 0);
-    let restOfWeek = getNextDates("1-D5", monday);
+    let restOfWeek = getNextDates("1-D:5", monday);
     return [monday].concat(restOfWeek);
 }
 

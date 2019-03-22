@@ -138,7 +138,8 @@ class Home extends Component {
   };
 
   jumpToWeek = day => {
-    this.setState({weekDays: getWeekDays(day)});
+    console.log(getWeekDays(day));
+    this.updateDashboard(getWeekDays(day));
   }
 
   handleNext = event => {
