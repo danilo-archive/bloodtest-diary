@@ -1,5 +1,5 @@
 const actionLogger = require("../action-logger");
-const selecter = require("./selecter");
+const selector = require("./selector");
 const databaseController = require("../db_controller/db-controller.js");
 const mysql = require("mysql");
 
@@ -59,16 +59,16 @@ async function deleteQueryDatabase(table, id, sql, actionUsername) {
     let deletedInfo;
     switch (table) {
         case "Test":
-            deletedInfo = (await selecter.getTest(id)).response[0];
+            deletedInfo = (await selector.getTest(id)).response[0];
             break;
         case "Patient":
-            deletedInfo = (await selecter.getFullPatientInfo(id)).response[0];
+            deletedInfo = (await selector.getFullPatientInfo(id)).response[0];
             break;
         case "Hospital":
-            deletedInfo = (await selecter.getHospital(id)).response[0];
+            deletedInfo = (await selector.getHospital(id)).response[0];
             break;
         case "Carer":
-            deletedInfo = (await selecter.getCarer(id)).response[0];
+            deletedInfo = (await selector.getCarer(id)).response[0];
             break;
     }
 

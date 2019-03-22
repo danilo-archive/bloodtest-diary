@@ -5,17 +5,14 @@
  * @module query-controller
  * @version 1.0
  */
-
-const databaseController = require("./db_controller/db-controller.js");
 const calendarController = require("./calendar-functions.js");
-const actionLogger = require("./action-logger");
 const authenticator = require("./authenticator.js");
 const dateformat = require("dateformat");
-const selecter = require('./query-modules/selecter')
+const selector = require('./query-modules/selector')
 const inserter = require('./query-modules/inserter')
 const deleter = require('./query-modules/deleter')
 const updater = require('./query-modules/updater')
-
+const tokenConroller = require('./query-modules/token-controller')
 
 /*===============================*
           SELECT QUERIES
@@ -27,7 +24,7 @@ const updater = require('./query-modules/updater')
  * @return {JSON} - {success:Boolean response:Array or Error}
  */
 async function getPatient(patient_no) {
-    return await selecter.getPatient(patient_no);
+    return await selector.getPatient(patient_no);
 }
 
 /**
@@ -36,7 +33,7 @@ async function getPatient(patient_no) {
  * @return {JSON} - {success:Boolean response:Array or Error}
  */
 async function getFullPatientInfo(patient_no) {
-    return await selecter.getFullPatientInfo(patient_no);
+    return await selector.getFullPatientInfo(patient_no);
 }
 
 /**
@@ -45,7 +42,7 @@ async function getFullPatientInfo(patient_no) {
  * @return {JSON} - {success:Boolean response:Array or Error}
  */
 async function getCarer(carerID) {
-    return await selecter.getCarer(carerID);
+    return await selector.getCarer(carerID);
 }
 
 /**
@@ -54,7 +51,7 @@ async function getCarer(carerID) {
  * @return {JSON} - {success:Boolean response:Array or Error}
  */
 async function getHospital(hospital_id) {
-    return await selecter.getHospital(hospital_id);
+    return await selector.getHospital(hospital_id);
 }
 
 /**
@@ -63,7 +60,7 @@ async function getHospital(hospital_id) {
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
 async function getAllPatients(isAdult) {
-    return await selecter.getAllPatients(isAdult);
+    return await selector.getAllPatients(isAdult);
 }
 
 /**
@@ -72,7 +69,7 @@ async function getAllPatients(isAdult) {
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
 async function getUser(username) {
-    return await selecter.getUser(username);
+    return await selector.getUser(username);
 }
 
 /**
@@ -80,7 +77,7 @@ async function getUser(username) {
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
 async function getAllUsers() {
-    return await selecter.getAllUsers();
+    return await selector.getAllUsers();
 }
 
 /**
@@ -89,7 +86,7 @@ async function getAllUsers() {
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
 async function getTest(test_id) {
-    return await selecter.getTest(test_id);
+    return await selector.getTest(test_id);
 }
 
 /**
@@ -98,7 +95,7 @@ async function getTest(test_id) {
 * @return {JSON} result of the query - {success:true/false response:Array/Error}
 **/
 async function getNextTestsOfPatient(patientId) {
-    return await selecter.getNextTestsOfPatient(patientId)
+    return await selector.getNextTestsOfPatient(patientId)
 }
 
 /**
@@ -107,7 +104,7 @@ async function getNextTestsOfPatient(patientId) {
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
 async function getTestInfo(test_id) {
-    return await selecter.getTestInfo(test_id);
+    return await selector.getTestInfo(test_id);
 }
 
 /**
@@ -119,7 +116,7 @@ async function getTestInfo(test_id) {
 * @property  tests {Array[JSON]} - tests within week
 **/
 async function getSortedOverdueWeeks(isAdult) {
-    return await selecter.getSortedOverdueWeeks(isAdult)
+    return await selector.getSortedOverdueWeeks(isAdult)
 }
 
 /**
@@ -129,7 +126,7 @@ async function getSortedOverdueWeeks(isAdult) {
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
 async function getTestWithinWeek(date, isAdult) {
-    return await selecter.getTestWithinWeek(date, isAdult);
+    return await selector.getTestWithinWeek(date, isAdult);
 }
 
 /**
@@ -161,7 +158,7 @@ async function getTestWithinWeek(date, isAdult) {
  *  }
  */
 async function getOverdueReminderGroups(isAdult) {
-    return await selecter.getOverdueReminderGroups(isAdult);
+    return await selector.getOverdueReminderGroups(isAdult);
 }
 
 /*===============================*
@@ -227,28 +224,12 @@ async function editPatientExtended(newInfo, token, actionUsername) {
     const patient = patientResponse.response[0];
 
     //Separate into carer hospital and patient info
-    const updateProperties = Object.keys(newInfo);
-    const carer = {};
-    const hospital = {};
-    const patientNewInfo = {};
+    const updateProperties = sortPatinetProperties(newInfo)
+    const carer = updateProperties.carer;
+    const hospital = updateProperties.hospital;
+    const patientNewInfo = updateProperties.patient;
+
     let querySuccess = true;
-    for (let i = 0; i < updateProperties.length; i++) {
-        if (
-            updateProperties[i].startsWith("carer") ||
-            updateProperties[i] == "relationship"
-        ) {
-            carer[updateProperties[i]] = newInfo[updateProperties[i]];
-        }
-        if (updateProperties[i].startsWith("hospital")) {
-            hospital[updateProperties[i]] = newInfo[updateProperties[i]];
-        }
-        if (
-            updateProperties[i].startsWith("patient") ||
-            updateProperties[i] == "additional_info"
-        ) {
-            patientNewInfo[updateProperties[i]] = newInfo[updateProperties[i]];
-        }
-    }
     let carerQueryResponse = {};
     if (Object.keys(carer).length > 0 && token) {
         //Carer added with patient update
@@ -258,11 +239,7 @@ async function editPatientExtended(newInfo, token, actionUsername) {
         }
         //Database has info on this carer
         else {
-            const carerToken = await requestEditing(
-                "Carer",
-                patient.carer_id,
-                actionUsername
-            );
+            const carerToken = await requestEditing("Carer",patient.carer_id,actionUsername);
             carer["carer_id"] = patient.carer_id;
             carerQueryResponse = await editCarer(carer, carerToken, actionUsername);
         }
@@ -279,54 +256,28 @@ async function editPatientExtended(newInfo, token, actionUsername) {
         }
         //Database has info on the hospital
         else {
-            const hospitalToken = await requestEditing(
-                "Hospital",
-                patient.hospital_id,
-                actionUsername
-            );
+            const hospitalToken = await requestEditing("Hospital",patient.hospital_id,actionUsername);
             hospital["hospital_id"] = patient.hospital_id;
-            hospitalQueryResponse = await editHospital(
-                hospital,
-                hospitalToken,
-                actionUsername
-            );
+            hospitalQueryResponse = await editHospital(hospital,hospitalToken,actionUsername);
         }
-    } else if (
-        Object.keys(hospital).length == 0 &&
-        token &&
-        patient.hospital_id
-    ) {
-        hospitalQueryResponse = await deleteHospital(
-            patient.hospital_id,
-            actionUsername
-        );
+    } else if (Object.keys(hospital).length == 0 &&token && patient.hospital_id) {
+        hospitalQueryResponse = await deleteHospital(patient.hospital_id,actionUsername);
     }
 
-    const patientUpdateResponse = await editPatient(
-        patientNewInfo,
-        token,
-        actionUsername
-    );
+    const patientUpdateResponse = await editPatient(patientNewInfo,token,actionUsername);
 
-    if (
-        (patientUpdateResponse.success === false &&
-            typeof patientUpdateResponse.success != "undefined") ||
-        (hospitalQueryResponse.success === false &&
-            typeof hospitalQueryResponse.success != "undefined") ||
-        (carerQueryResponse.success === false &&
-            typeof carerQueryResponse.success != "undefined")
-    ) {
+    if ((patientUpdateResponse.success === false && typeof patientUpdateResponse.success != "undefined") ||
+        (hospitalQueryResponse.success === false && typeof hospitalQueryResponse.success != "undefined") ||
+        (carerQueryResponse.success === false && typeof carerQueryResponse.success != "undefined")){
         querySuccess = false;
     }
 
-    return {
-        success: querySuccess,
-        response: {
-            patientQuery: patientUpdateResponse,
-            hospitalQuery: hospitalQueryResponse,
-            carerQuery: carerQueryResponse
-        }
-    };
+    return { success: querySuccess,
+            response: {
+              patientQuery: patientUpdateResponse,
+              hospitalQuery: hospitalQueryResponse,
+              carerQuery: carerQueryResponse}
+          };
 }
 
 /**
@@ -380,7 +331,7 @@ async function changeTestDueDate(testId, newDate, actionUsername) {
  * @return {JSON} - {success:Boolean response:Array or Error}
  **/
 async function editUser(json, token, actionUsername) {
-    const response = await selecter.getUser(json.username);
+    const response = await selector.getUser(json.username);
     if (!response.success) {
         return response;
     }
@@ -560,27 +511,10 @@ async function addCarer(json, actionUsername) {
  * @return {JSON} result of the query - {success:Boolean response:{insertedId/problem (+ optional fields)}}
  **/
 async function addPatientExtended(patientInfo, actionUsername) {
-    const insertProperties = Object.keys(patientInfo);
-    const carer = {};
-    const hospital = {};
-    const patient = {};
-    for (let i = 0; i < insertProperties.length; i++) {
-        if (
-            insertProperties[i].startsWith("carer") ||
-            insertProperties[i] == "relationship"
-        ) {
-            carer[insertProperties[i]] = patientInfo[insertProperties[i]];
-        }
-        if (insertProperties[i].startsWith("hospital")) {
-            hospital[insertProperties[i]] = patientInfo[insertProperties[i]];
-        }
-        if (
-            insertProperties[i].startsWith("patient") ||
-            insertProperties[i] == "additional_info"
-        ) {
-            patient[insertProperties[i]] = patientInfo[insertProperties[i]];
-        }
-    }
+    const properties = sortPatinetProperties(patientInfo)
+    const carer = properties.carer;
+    const hospital = properties.hospital;
+    const patient = properties.patient;
 
     let carerInsertResponse = {};
     //Try to add any data
@@ -607,36 +541,24 @@ async function addPatientExtended(patientInfo, actionUsername) {
     if (patient.carer_id && !patient.hospital_id) {
         let success = true;
         if (patient.carer_id != "NULL") {
-            const deleteResponse = await deleteCarer(
-                patient.carer_id,
-                actionUsername
-            );
+            const deleteResponse = await deleteCarer(patient.carer_id,actionUsername);
             if (!deleteResponse.success) {
                 success = false;
             }
         }
-        return {
-            success: false,
-            response: { problem: "Incorrect data for hospital", delete: success }
-        };
+        return { success: false, response: { problem: "Incorrect data for hospital", delete:success}};
     }
 
     //Carer query failed but hospital was inserted
     if (patient.hospital_id && !patient.carer_id) {
         let success = true;
         if (patient.hospital_id != "NULL") {
-            const deleteResponse = await deleteHospital(
-                patient.hospital_id,
-                actionUsername
-            );
+            const deleteResponse = await deleteHospital(patient.hospital_id,actionUsername);
             if (!deleteResponse.success) {
                 success = false;
             }
         }
-        return {
-            success: false,
-            response: { problem: "Incorrect data for carer", delete: success }
-        };
+        return { success: false, response: { problem: "Incorrect data for carer", delete: success}};
     }
 
     //Both added correctly
@@ -650,37 +572,22 @@ async function addPatientExtended(patientInfo, actionUsername) {
             let carer = true;
             let hospital = true;
             if (patient.carer_id != "NULL") {
-                const deleteResponse = await deleteCarer(
-                    patient.carer_id,
-                    actionUsername
-                );
+                const deleteResponse = await deleteCarer(patient.carer_id,actionUsername);
                 if (!deleteResponse.success) {
                     carer = false;
                 }
             }
             if (patient.hospital_id != "NULL") {
-                const deleteResponse = await deleteHospital(
-                    patient.hospital_id,
-                    actionUsername
-                );
+                const deleteResponse = await deleteHospital(patient.hospital_id,actionUsername);
                 if (!deleteResponse.success) {
                     hospital = false;
                 }
             }
-            return {
-                success: false,
-                response: {
-                    problem: "Problem on patient insert",
-                    carer: carer,
-                    hospital: hospital
-                }
-            };
+            return {success: false, response: {problem: "Problem on patient insert",carer: carer,hospital: hospital}};
         }
-    } else {
-        return {
-            success: false,
-            response: { problem: "Incorrect data for carer and hospital" }
-        };
+    }
+    else {
+        return {success: false, response: { problem: "Incorrect data for carer and hospital"}};
     }
 }
 /*===============================*
@@ -766,7 +673,7 @@ async function unscheduleTest(testid, token, actionUsername) {
  * @return {JSON} {Error response}
  **/
 async function checkIfPatientsTestsAreEdited(patientid) {
-    const response = await selecter.getPatientEditedTests(patientid);
+    const response = await selector.getPatientEditedTests(patientid);
     if (response.success && response.response.length == 0) {
         return false;
     }
@@ -797,8 +704,6 @@ function getNextDueDate(frequency, completed_date) {
 async function scheduleNextTest(testId, actionUsername) {
     const response = await getTest(testId);
     const test = response.response[0];
-    // occurrences needs to be more than 1. if there is only one occurrence it does not need to be repeated.
-    // also frequency needs to be defined (not null)
     if (test.frequency !== null && test.occurrences > 1) {
         const newTest = {
             patient_no: test.patient_no,
@@ -825,17 +730,7 @@ async function scheduleNextTest(testId, actionUsername) {
  * @return {String} token
  **/
 async function requestEditing(table, id, actionUsername) {
-    const data = await databaseController.requestEditing(table, id).then(data => {
-        return data;
-    });
-    // TODO: return token + expiration
-    if (data.status == "OK") {
-        actionLogger.logOther(actionUsername,table,id,"Request for editing was approved.");
-        return data.response.token;
-    } else {
-        actionLogger.logOther(actionUsername,table,id,"Request for editing was rejected with message: >>" +data.err.cause +"<<.");
-        return undefined;
-    }
+    return await tokenConroller.requestEditing(table, id, actionUsername);
 }
 
 /**
@@ -847,16 +742,32 @@ async function requestEditing(table, id, actionUsername) {
  * @return {JSON} result - {success:Boolean response:"Token cancelled"/Error}
  **/
 async function returnToken(table, id, token, actionUsername) {
-    const response = await databaseController.cancelEditing(table, id, token);
-    if (response.status === "OK") {
-        actionLogger.logOther(actionUsername, table, id, "Successfully released token.");
-        return { success: true, response: "Token cancelled" };
-    } else if (response.err.type === "SQL Error") {
-        actionLogger.logOther(actionUsername,table,id,"Unsuccessfully tried to release token. SQL Error message: >>" +response.err.sqlMessage +"<<.");
-    } else {
-        actionLogger.logOther(actionUsername,table,id,"Unsuccessfully tried to release token. Invalid request error message: >>" +response.err.cause +"<<.");
-    }
-    return { success: false, response: response.err };
+    return await tokenConroller.returnToken(table, id, token, actionUsername)
+}
+
+/**
+* Sort patient properties into patient,carer and hospital information
+* @param {JSON} patientInfo - information to be sorted
+* @return {JSON} Sorted information: {patient: hospital: carer:}
+**/
+function sortPatinetProperties(patientInfo)
+{
+  const objectProperties = Object.keys(patientInfo);
+  const patient = {};
+  const carer = {};
+  const hospital = {};
+  for (let i = 0; i < objectProperties.length; i++){
+      if (objectProperties[i].startsWith("carer") || objectProperties[i] == "relationship") {
+          carer[objectProperties[i]] = patientInfo[objectProperties[i]];
+      }
+      if (objectProperties[i].startsWith("hospital")) {
+          hospital[objectProperties[i]] = patientInfo[objectProperties[i]];
+      }
+      if (objectProperties[i].startsWith("patient") ||objectProperties[i] == "additional_info") {
+          patient[objectProperties[i]] = patientInfo[objectProperties[i]];
+      }
+  }
+  return {patient: patient, carer:carer, hospital:hospital}
 }
 
 module.exports = {
