@@ -58,12 +58,6 @@ export default class Switch extends React.Component {
     this.props.onToggleClick(this.state.checked);
   };
   render() {
-    console.log("====================================");
-    console.log(this.state);
-    console.log("====================================");
-    console.log("====================================");
-    console.log(this.props);
-    console.log("====================================");
     return (
       <Toggle onChange={this.onToggleClick} checked={this.state.checked} />
     );
