@@ -1,9 +1,5 @@
 :root {
     --htmlFontSize: 100%;
-    --bodyBackgroundColor: rgb(244,249,253);
-    --bodyColor: #000000;
-    --bodyFontFamily: "Open Sans";
-    --bodyFontFamilyFallback: sans-serif;
     --bodyFontSize: 0.850rem;
     --bodyFontWeight: 500;
     --bodyLineHeight: 1.5;
@@ -23,6 +19,7 @@
     font-weight: var(--bodyFontWeight);
     height: auto;
     line-height: var(--bodyLineHeight);
+    min-height: 100vh;
     overflow: hidden;
     margin-left: auto;
     margin-right: auto;

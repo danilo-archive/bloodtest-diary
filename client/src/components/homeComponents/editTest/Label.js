@@ -3,7 +3,8 @@ import styled from "styled-components";
 export default styled.div`
   position: relative;
   padding-left: 1%;
-  width: auto;
+  margin-right: 0;
+  width: ${props => props.width ? props.width : "100%"};
   min-width: 10%;
   height: 100%;
   color: inherit;
