@@ -23,7 +23,6 @@ class CalendarTable extends Component {
     this.nextMonth = this.nextMonth;
     this.prevMonth = this.prevMonth;
     this.returnDate = this.returnDate;
-    this.onDayPick = this.props.onDayPick;
 
     this.prevMonth = () => {
       const date = this.state.date;
@@ -65,28 +64,18 @@ class CalendarTable extends Component {
         month = 12;
       }
 
-
-
-
-
-      // ---------------- HERE THE DATE IS PRINTED CORRECTLY
-
-      console.log(`${year}-${month}-${day}`)
-      const dateFormatted = dateformat(new Date(`${year}-${month}-${day}`), "d mmm yyyy");
-
+      const selectedDay = new Date(`${year}-${month}-${day}`);
+      const dateFormatted = dateformat(selectedDay, "d mmm yyyy");
       this.setState({ selected: dateFormatted});
-      if (this.props.onDaySelected) {
-        this.props.onDaySelected(dateFormatted);
+      // if (this.props.onDaySelected) {
+      //   this.props.onDaySelected(dateFormatted);
+      // }
+
+      console.log("here",selectedDay,dateFormatted);
+      if (this.props.onDayPick){
+        this.props.onDayPick(selectedDay);
       }
-      // ---------------- HERE IS NOT SINCE THE PARSING IS NOT WORKING CORRECTLY
-      console.log(this.state.selected)
-      this.onDayPick(dateFormatted);
-
-
-
-
       
-
       this.props.hideCalendar();
     };
     this.returnDate = () => {
