@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import styled from "styled-components";
 import {getServerConnect} from "../../serverConnection.js";
 import Select from 'react-select';
+import InfoMessage from './infoMessage';
+import refresh from "../../resources/images/refresh.png"
 
 const crypto = require('crypto');
 
@@ -15,7 +17,6 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-
 
   color: #646464;
 
@@ -47,6 +48,10 @@ const Container = styled.div`
     padding-bottom: 8px;
     margin-top: 8px;
     margin-bottom: 8px;
+
+    :placeholder {
+
+    }
   }
 
   .usersLabel {
@@ -75,7 +80,6 @@ const Container = styled.div`
   .addUser {
     border: 2px solid transparent;
     background-color: #0b999d;
-    transition: all 0.14s linear;
     color: #eee;
     font-size: 120%;
     text-align: center;
@@ -84,7 +88,7 @@ const Container = styled.div`
 
     margin-right: 10px;
 
-    height: 34.5px;
+    height: 33.5px;
     min-width: 70px;
     width: 70px;
     max-width: 70px;
@@ -105,7 +109,6 @@ const Container = styled.div`
   .disabled {
     border: 2px solid #ddd;
     background-color: #d5d5d5;
-    transition: all 0.14s linear;
     color: #646464;
     font-size: 120%;
     text-align: center;
@@ -159,6 +162,7 @@ const MenuContainer = styled.div`
 const ButtonContainer = styled.div`
   width: 90%;
   margin-top:10px;
+  margin-bottom:15px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -181,28 +185,6 @@ const CancelButton = styled.button`
   }
   outline: none;
   cursor: pointer;
-`;
-
-const ErrorLabel = styled.p`
-  color: red;
-  margin: 0 auto;
-  white-space: nowrap;
-  cursor: default;
-  text-align: center;
-
-
-  animation: opac 1s linear 1;
-`;
-
-const MessageLabel = styled.p`
-  margin: 0 auto;
-  white-space: nowrap;
-  cursor: default;
-  text-align: center;
-  font-size: 105%;
-
-
-  animation: opac 1s linear 1;
 `;
 
 const AdminCheckContainer = styled.div`
@@ -258,8 +240,31 @@ const AdminCheck = styled.input.attrs({ type: "checkbox" })`
   }
 `;
 
+const RefreshButton = styled.div`
+    background-color: #0b999d;
+    height: 36px;
+    width: 50px;
+    border-radius: 20%;
+    margin-left: 10px;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    :hover {
+      background-color: #018589;
+    }
+
+    .refreshIcon {
+    width: 60%;
+    height: 60%;
+    }
+`;
+
 const colourStyles = {
-  control: (styles, { data, isDisabled, isFocused, isSelected }) => ({ ...styles, backgroundColor: isDisabled ? '#ddd' : 'white'}),
+  control: (styles, { data, isDisabled, isFocused, isSelected }) => ({ ...styles, backgroundColor: isDisabled ? '#ddd' : 'white', cursor: 'text'}),
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
     return {
       ...styles,
@@ -271,48 +276,31 @@ const colourStyles = {
   singleValue: (styles, { data, isDisabled, isFocused, isSelected }) => ({ ...styles, color: '#646464'}),
 };
 
-
-
-const users = [
-  { label: "Jonny Boy", value: 1 },
-  { label: "John Snow", value: 2 },
-  { label: "Sansa Stark", value: 3 },
-  { label: "Little Finger", value: 4 },
-  { label: "The Mountain", value: 5 },
-  { label: "Sam", value: 6 },
-  { label: "John Snow", value: 2 },
-  { label: "Sansa Stark", value: 3 },
-  { label: "Little Finger", value: 4 },
-  { label: "The Mountain", value: 5 },
-  { label: "Sam", value: 6 },
-];
-
-//someArrayOfStrings.map(opt => ({ label: opt, value: opt }));
-
 export default class UsersPanel extends Component {
 
   constructor(props){
       super(props);
       this.state = {
          allUsers: undefined,
-         selectedOption: undefined,
+         selectedOption: null,
          editToken: undefined,
-         newUser: false,
+         newUserState: false,
          disabled: false,
          username: "",
          email: "",
          password: "",
          confirmPassword: "",
-         passwordMatch: true,
-         mainState: false,
          adminChecked: false,
-      }; 
-      this.serverConnect = getServerConnect();
-      this.init();
 
+         showErrorMessage: false,
+         showConfirmationMessage: false,
+         showReloadMessage: false,
+      };
+      this.serverConnect = getServerConnect();
+      this.getUsers();
   }
 
-  init(){
+  getUsers() {
     this.serverConnect.getAllUsers(res => {
       if (res.success){
         let users = res.response.map(user => ({
@@ -323,7 +311,7 @@ export default class UsersPanel extends Component {
         this.setState({allUsers: users});
       }else{
         //TODO error check
-      }  
+      }
     });
   }
 
@@ -337,7 +325,7 @@ export default class UsersPanel extends Component {
     });
   }
 
-  handleChange = (selectedOption) => {
+  handleSelectChange = (selectedOption) => {
     if (this.state.disabled) {
       return
     } else {
@@ -348,7 +336,7 @@ export default class UsersPanel extends Component {
           alert("Somebody is editing this user already");
         }
       });
-      
+
    }
  }
 
@@ -356,37 +344,9 @@ export default class UsersPanel extends Component {
    if (this.state.disabled) {
      return
    } else {
-     this.setState({newUser: true, disabled: true});
+     this.setState({newUserState: true, disabled: true});
    }
   }
-
-  onAdminCheck = () => {
-    console.log(this.state.adminChecked)
-    if (this.state.adminChecked) {
-      this.setState({adminChecked: false}, () => console.log(this.state.adminChecked));
-    } else {
-      this.setState({adminChecked: true}, () => console.log(this.state.adminChecked));
-    }
-
-   }
-
- clearForm = () => {
-   this.serverConnect.discardUserEditing(this.state.username, this.state.editToken, res => {
-    this.setState({
-      selectedOption: null,
-      editToken: undefined,
-      disabled: false,
-      newUser: false,
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      passwordMatch: true,
-      mainState: false,
-      adminChecked: false,
-    });
-   });   
- }
 
  onSaveEditUser = (event) => {
    event.preventDefault();
@@ -395,61 +355,95 @@ export default class UsersPanel extends Component {
      let newData = {username: this.state.username, hashed_password: hash, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
      this.serverConnect.editUser(newData, this.state.editToken, res => {
        if (res.success){
-        this.showInfoMessage();
         this.clearForm();
-        this.init();
+        this.showConfirmationMessage();
        }else{
+         // TODO error message
          alert("lmao something went wrong");
        }
      });
-     
+
    } else {
      this.setState({
        password: "",
        confirmPassword: "",
-       passwordMatch: false
      })
-     setTimeout( () => {
-         this.setState({passwordMatch: true})
-     }, 5000);
+     this.showErrorMessage();
    }
-   
+
  }
 
  onSaveAddUser = (event) => {
    event.preventDefault();
    if (this.state.password === this.state.confirmPassword) {
-     let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
-     let user = {username: this.state.username, hashed_password: hash, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
-     this.serverConnect.addUser(user, res => {
-        if (res.success){
-          this.showInfoMessage();
-          this.clearForm();
-          this.init();
-        }else{
-          // TODO error message
-        }
-     });   
+       let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
+       let user = {username: this.state.username, hashed_password: hash, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
+       this.serverConnect.addUser(user, res => {
+          if (res.success){
+            this.clearForm();
+            this.showConfirmationMessage();
+          }else{
+            // TODO error message
+          }
+       });
    } else {
      this.setState({
        password: "",
        confirmPassword: "",
-       passwordMatch: false
      })
-     setTimeout( () => {
-         this.setState({passwordMatch: true})
-     }, 5000);
+     this.showErrorMessage();
    }
-   
  }
 
- showInfoMessage = () => {
-     this.setState({mainState: true})
+  clearForm = () => {
+    this.serverConnect.discardUserEditing(this.state.username, this.state.editToken, res => {
+     this.setState({
+       selectedOption: null,
+       editToken: undefined,
+       disabled: false,
+       newUserState: false,
+       username: "",
+       email: "",
+       password: "",
+       confirmPassword: "",
+       adminChecked: false,
+     });
+    });
+  }
+
+ onAdminCheck = () => {
+   if (this.state.adminChecked) {
+     this.setState({adminChecked: false});
+   } else {
+     this.setState({adminChecked: true});
+   }
+  }
+
+ updateUsers = () => {
+   this.getUsers();
+   this.showReloadMessage();
+ }
+
+ showErrorMessage = () => {
+     this.setState({showErrorMessage: true})
      setTimeout( () => {
-         this.setState({mainState: false})
-     }, 5000);
+         this.setState({showErrorMessage: false})
+     }, 4000);
  }
 
+ showConfirmationMessage = () => {
+     this.setState({showConfirmationMessage: true})
+     setTimeout( () => {
+         this.setState({showConfirmationMessage: false})
+     }, 4000);
+ }
+
+ showReloadMessage = () => {
+     this.setState({showReloadMessage: true})
+     setTimeout( () => {
+         this.setState({showReloadMessage: false})
+     }, 4000);
+ }
 
   render(){
     return (
@@ -466,7 +460,7 @@ export default class UsersPanel extends Component {
             placeholder="Edit User..."
             value={this.state.selectedOption}
             options={this.state.allUsers}
-            onChange={this.handleChange}
+            onChange={this.handleSelectChange}
             isDisabled={this.state.disabled}
 
             theme={(theme) => ({
@@ -480,23 +474,32 @@ export default class UsersPanel extends Component {
               },
             })}
           />
+
+          <RefreshButton onClick={this.updateUsers} title="Reload Users">
+             <img className={"refreshIcon"} src={refresh} alt={"Refresh Button"}/>
+          </RefreshButton>
         </MenuContainer>
 
+        <InfoMessage className={""} message={this.state.showReloadMessage ?  "User Reload Complete" : "Database Updated Successfully" } show={this.state.showReloadMessage || this.state.showConfirmationMessage}/>
 
         {this.state.selectedOption ?
           <>
-            <form onSubmit={this.onSaveEditUser} style={{ "margin-top": "15px", display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+            <form onSubmit={this.onSaveEditUser} style={{ display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+              <div className="inputSection">
+                <div className="usersLabel">Username:</div>
+                <input id="usernameInput" type="text" name="username" className="usersInput" value={this.state.username} onChange={this.handleCredentialUpdate} required/>
+              </div>
               <div className="inputSection">
                 <div className="usersLabel">Email:</div>
                 <input id="emailInput" type="text" name="email" className="usersInput" value={this.state.email} onChange={this.handleCredentialUpdate} required/>
               </div>
               <div className="inputSection">
                 <div className="usersLabel">New Password:</div>
-                <input id="passwordInput" type="password" name="password" className="usersInput" value={this.state.password} onChange={this.handleCredentialUpdate} required/>
+                <input id="passwordInput" type="password" name="password" className="usersInput" value={this.state.password} onChange={this.handleCredentialUpdate} placeholder="Optional"/>
               </div>
               <div className="inputSection">
                 <div className="usersLabel">Confirm Password:</div>
-                <input id="confrimPasswordInput" type="password" name="confirmPassword" className="usersInput" value={this.state.confirmPassword} onChange={this.handleCredentialUpdate} required/>
+                <input id="confrimPasswordInput" type="password" name="confirmPassword" className="usersInput" value={this.state.confirmPassword} onChange={this.handleCredentialUpdate} placeholder="Optional"/>
               </div>
               <AdminCheckContainer>
                 <p className="adminLabel">Admin:</p>
@@ -505,7 +508,7 @@ export default class UsersPanel extends Component {
                   onClick={this.onAdminCheck}
                 />
               </AdminCheckContainer>
-              <ErrorLabel className={this.state.passwordMatch ? 'hidden' : null}>Passwords Don't Match</ErrorLabel>
+              <InfoMessage type={"error"} message={"Passwords Don't Match"} show={this.state.showErrorMessage}/>
               <ButtonContainer>
                   <CancelButton onClick={this.clearForm}>Cancel</CancelButton>
                   <input type="submit" className="saveButton" value="Save"/>
@@ -517,13 +520,13 @@ export default class UsersPanel extends Component {
           </>
         }
 
-        {this.state.newUser ?
+        {this.state.newUserState ?
           <>
-            <form onSubmit={this.onSaveAddUser} style={{ "margin-top": "15px", display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
-            <div className="inputSection">
-              <div className="usersLabel">Username:</div>
-              <input id="usernameInput" type="text" name="username" className="usersInput" value={this.state.username} onChange={this.handleCredentialUpdate} required/>
-            </div>
+            <form onSubmit={this.onSaveAddUser} style={{ display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+              <div className="inputSection">
+                <div className="usersLabel">Username:</div>
+                <input id="usernameInput" type="text" name="username" className="usersInput" value={this.state.username} onChange={this.handleCredentialUpdate} required/>
+              </div>
               <div className="inputSection">
                 <div className="usersLabel">Email:</div>
                 <input id="emailInput" type="text" name="email" className="usersInput" value={this.state.email} onChange={this.handleCredentialUpdate} required/>
@@ -536,7 +539,7 @@ export default class UsersPanel extends Component {
                 <div className="usersLabel">Confirm Password:</div>
                 <input id="confrimPasswordInput" type="password" name="confirmPassword" className="usersInput" value={this.state.confirmPassword} onChange={this.handleCredentialUpdate} required/>
               </div>
-              <ErrorLabel className={this.state.passwordMatch ? 'hidden' : null}>Passwords Don't Match</ErrorLabel>
+              <InfoMessage type={"error"} message={"Passwords Don't Match"} show={this.state.showErrorMessage}/>
               <ButtonContainer>
                   <CancelButton onClick={this.clearForm}>Cancel</CancelButton>
                   <input type="submit" className="saveButton" value="Save"/>
@@ -547,8 +550,6 @@ export default class UsersPanel extends Component {
           <>
           </>
         }
-
-        <MessageLabel className={this.state.mainState ? null : 'hidden'}>Database Updated</MessageLabel>
       </Container>
     )
   }

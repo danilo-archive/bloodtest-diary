@@ -11,7 +11,7 @@ const Alert = styled.div`
   justify-content: center;
   align-content: stretch;
 
-  
+
   color: #646464;
   font-size: 130%;
 
@@ -39,7 +39,14 @@ const Alert = styled.div`
 
 export default class DialogAlert extends Component {
 
+    startTimer = () => {
+      setTimeout( () => {
+            this.props.closeAlert();
+      }, 5000);
+    }
+
     render(){
+      this.startTimer();
       return (
           <>
             <Alert>
