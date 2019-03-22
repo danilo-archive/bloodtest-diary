@@ -12,7 +12,7 @@ const Container = styled.div`
     justify-content: flex-start;
     align-items: center;
 
-    
+
     color: #646464;
 
 
@@ -20,6 +20,10 @@ const Container = styled.div`
       margin: 15px;
       margin-bottom: 5px;
       font-size: 140%;
+    }
+
+    .message {
+      font-size: 110%;
     }
 `;
 
@@ -35,6 +39,7 @@ export default class PrefrencesPanel extends Component {
     return (
       <Container>
         <p className="prefrencesTitle">Prefrences</p>
+        <p className="message">Nothing to Show here.. D:</p>
       </Container>
     )
   }

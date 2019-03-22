@@ -4,10 +4,13 @@ import styled from "styled-components";
 import ConnectionPanel from './settingsComponents/connectionPanel.js';
 import UsersPanel from './settingsComponents/usersPanel.js';
 import PrefrencesPanel from './settingsComponents/prefrencesPanel.js';
+import Credentials from './settingsComponents/credentials.js';
 
 
 const Container = styled.div`
   height: auto;
+  max-height: calc(100vh - 100px);
+  overflow: scroll;
   width: 300px;
 
   divider {
@@ -39,12 +42,18 @@ export default class SettingsPanel extends Component {
             <>
               <UsersPanel/>
               <divider />
+              <Credentials/>
+              <divider />
               <PrefrencesPanel/>
             </>
           );
         }else{
           return (
-            <PrefrencesPanel/>
+            <>
+              <Credentials/>
+              <divider />
+              <PrefrencesPanel/>
+            </>
           )
         }
     }

@@ -449,7 +449,7 @@ export default class UsersPanel extends Component {
     return (
       <Container>
 
-        <p className="userTitle">Users</p>
+        <p className="userTitle">Users - Admin</p>
 
         <MenuContainer>
           <div className={this.state.disabled ? 'disabled' : 'addUser'} onClick={this.onAddUser}>Add User</div>
@@ -480,7 +480,7 @@ export default class UsersPanel extends Component {
           </RefreshButton>
         </MenuContainer>
 
-        <InfoMessage className={""} message={this.state.showReloadMessage ?  "User Reload Complete" : "Database Updated Successfully" } show={this.state.showReloadMessage || this.state.showConfirmationMessage}/>
+        <InfoMessage className={""} message={this.state.showReloadMessage ?  "Users Reload Complete" : "Database Updated Successfully" } show={this.state.showReloadMessage || this.state.showConfirmationMessage}/>
 
         {this.state.selectedOption ?
           <>
@@ -541,7 +541,7 @@ export default class UsersPanel extends Component {
               </div>
               <InfoMessage type={"error"} message={"Passwords Don't Match"} show={this.state.showErrorMessage}/>
               <ButtonContainer>
-                  <CancelButton onClick={this.clearForm}>Cancel</CancelButton>
+                  <CancelButton type="button" onClick={this.clearForm}>Cancel</CancelButton>
                   <input type="submit" className="saveButton" value="Save"/>
               </ButtonContainer>
             </form>
