@@ -60,6 +60,10 @@ export default class SearchBar extends Component {
         };
     }
 
+    onDayPick = day => {
+      this.props.onDayPick(day);
+    }
+
     render(){
       return (
         <Container>
