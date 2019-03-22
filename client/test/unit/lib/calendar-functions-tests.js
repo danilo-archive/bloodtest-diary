@@ -7,33 +7,34 @@ describe("getCalendar()", () => {
     const DATE = 1;
     const CALENDAR = 2;
     const mockDatesAndCalendars = [
-        ["May should be represented correctly","2019-3",
-            [[24,25,26,27,28,1,2],
+        ["June should be represented correctly","2019-6",
+            [[27,28,29,30,31,1,2],
             [3,4,5,6,7,8,9],
             [10,11,12,13,14,15,16],
             [17,18,19,20,21,22,23],
             [24,25,26,27,28,29,30],
-            [31,1,2,3,4,5,6]]],
-        ["A month with date ending on Saturday should include one more line\n"+
-         "entirely dedicated to the next month","2016-12",
-            [[27,28,29,30,1,2,3],
+            [1,2,3,4,5,6,7]]],
+        ["A month with date ending on Sunday should include one more line\n"+
+         "entirely dedicated to the next month","2019-3",
+            [[25,26,27,28,1,2,3],
             [4,5,6,7,8,9,10],
             [11,12,13,14,15,16,17],
             [18,19,20,21,22,23,24],
             [25,26,27,28,29,30,31],
             [1,2,3,4,5,6,7]]],
         ["January should be represented correctly","2017-1",
+            [[26,27,28,29,30,31,1],
+            [2,3,4,5,6,7,8],
+            [9,10,11,12,13,14,15],
+            [16,17,18,19,20,21,22],
+            [23,24,25,26,27,28,29],
+            [30,31,1,2,3,4,5]]],
+        ["February from a leap year should be represented correctly","2016-2",
             [[1,2,3,4,5,6,7],
             [8,9,10,11,12,13,14],
             [15,16,17,18,19,20,21],
             [22,23,24,25,26,27,28],
-            [29,30,31,1,2,3,4]]],
-        ["February from a leap year should be represented correctly","2016-2",
-            [[31,1,2,3,4,5,6],
-            [7,8,9,10,11,12,13],
-            [14,15,16,17,18,19,20],
-            [21,22,23,24,25,26,27],
-            [28,29,1,2,3,4,5]]]
+            [29,1,2,3,4,5,6]]]
     ];
     mockDatesAndCalendars.forEach(test => {
         it(test[DESCRIPTION], () => {
@@ -51,11 +52,11 @@ describe("getCalendar()", () => {
     const CALENDAR = 2;
     const mockDatesAndCalendars = [
         ["Leap year respect the 400years rule","2000-2",
-            [[30,31,1,2,3,4,5],
-            [6,7,8,9,10,11,12],
-            [13,14,15,16,17,18,19],
-            [20,21,22,23,24,25,26],
-            [27,28,30,31,1,2,3]]],
+            [[31,1,2,3,4,5,6],
+            [7,8,9,10,11,12,13],
+            [14,15,16,17,18,19,20],
+            [21,22,23,24,25,26,27],
+            [28,30,31,1,2,3,4]]],
         ["A month with date starting on Sunday should include \n"+
          "the previous days up to Sunday","1998-12",
             [[1,2,3,4,5],
