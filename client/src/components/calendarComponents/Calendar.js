@@ -23,6 +23,7 @@ class CalendarTable extends Component {
     this.nextMonth = this.nextMonth;
     this.prevMonth = this.prevMonth;
     this.returnDate = this.returnDate;
+    this.setSelectedDate = this.props.setSelectedDate;
 
     this.prevMonth = () => {
       const date = this.state.date;
@@ -79,6 +80,7 @@ class CalendarTable extends Component {
       }
       // ---------------- HERE IS NOT SINCE THE PARSING IS NOT WORKING CORRECTLY
       console.log(this.state.selected)
+      this.setSelectedDate(dateFormatted);
 
 
 
