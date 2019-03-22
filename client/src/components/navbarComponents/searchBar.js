@@ -13,7 +13,7 @@ display: flex;
 margin-left: 10px;
 font-family: "Rajdhani", sans-serif;
 color: black;
-align-items: bottom;
+align-items: center;
 
 .calendar-icon {
   border: none;
@@ -23,7 +23,7 @@ align-items: bottom;
   outline: none;
   margin-left: 20px;
   margin-right: 10px;
-  margin-top: -17px;
+  margin-top: -7px;
 }
 
 .calendar-icon:not(:placeholder-shown) + .label {
