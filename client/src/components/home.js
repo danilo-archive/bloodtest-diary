@@ -237,7 +237,7 @@ class Home extends Component {
                       this.refresh();
                     }}
                     page="Dashboard"
-                    onDayPicked={this.jumpToWeek}
+                    onDayPick={this.jumpToWeek}
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
