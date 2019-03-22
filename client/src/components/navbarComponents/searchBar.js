@@ -53,7 +53,7 @@ export default class SearchBar extends Component {
     constructor(props){
         super(props);
         this.state = {
-          showCalender: false,
+          showCalendar: false,
           selectedDate: null,
         };
         this.hideCalendar = () => {
@@ -68,15 +68,17 @@ export default class SearchBar extends Component {
       return (
         <Container>
           <img className={"calendar-icon"}
-                alt={"Calendar"} 
+                alt={"Calendar"} selectedDate
                 src={calendarIcon}
                 onClick= {() => this.setState({ showCalendar: !this.state.showCalendar })}
           />
           Date picker
           <div className={"calendar-table"}>{this.state.showCalendar ? (
             <CalendarTable
-              hideCalendar={this.hideCalendar}
               onDayPick={this.props.onDayPick}
+              hideCalendar={this.hideCalendar}
+              setSelectedDate={this.setSelectedDate}
+              selectedDate={this.state.selectedDate}
             />
           ) : (
             <></>

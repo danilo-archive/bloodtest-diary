@@ -3,7 +3,6 @@ import "./Calendar.css";
 import { getCalendar } from "../../lib/calendar-functions.js";
 import DayCell from "./DayCell.js";
 import CalendarHeader from "./CalendarHeader.js";
-import dateformat from "dateformat";
 
 const HALF_MONTH = 15;
 const weekDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
@@ -11,13 +10,14 @@ const weekDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 let dayBelongsToCurrentMonth = false;
 
 class CalendarTable extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    const currentDate = new Date();
+    const currentDate = (props.selectedDate) ? props.selectedDate : new Date();
+    alert(currentDate);
     this.state = {
       date: currentDate,
       calendar: getCalendar(currentDate),
-      selected: null
+      isVisible: true,
     };
     this.select = this.select;
     this.nextMonth = this.nextMonth;
@@ -32,6 +32,7 @@ class CalendarTable extends Component {
         calendar: getCalendar(newDate)
       });
     };
+
     this.nextMonth = () => {
       const date = this.state.date;
       const newDate = new Date(date.setMonth(date.getMonth() + 1));
@@ -40,6 +41,7 @@ class CalendarTable extends Component {
         calendar: getCalendar(newDate)
       });
     };
+
     this.selectDay = (day, isFromThisMonth) => {
       const date = this.state.date;
       //  the month returned by Date class is always smaller by 1
@@ -65,73 +67,74 @@ class CalendarTable extends Component {
       }
 
       const selectedDay = new Date(`${year}-${month}-${day}`);
-      const dateFormatted = dateformat(selectedDay, "d mmm yyyy");
-      this.setState({ selected: dateFormatted});
-      // if (this.props.onDaySelected) {
-      //   this.props.onDaySelected(dateFormatted);
-      // }
 
-      console.log("here",selectedDay,dateFormatted);
-      if (this.props.onDayPick){
+      if (this.props.setSelectedDate){
+        this.props.setSelectedDate(selectedDay);
+      }
+      if (this.props.onDayPick) {
         this.props.onDayPick(selectedDay);
       }
-      
-      this.props.hideCalendar();
+      // if(this.props.hideCalendar){
+      //   this.props.hideCalendar();
+      // }
     };
+
     this.returnDate = () => {
       return this.state.selected;
-    }
+    };
   }
 
   render() {
     return (
-      <table
-        style={this.props.style}
-        className={'calendar'}
-        cellPadding={0}
-        cellSpacing={0}
-      >
-        <thead>
-          <CalendarHeader
-            currentDate={this.state.date}
-            prevMonth={this.prevMonth}
-            nextMonth={this.nextMonth}
-          />
-          <tr>
-            {weekDays.map(day => {
+      this.state.isVisible && (
+        <table
+          style={this.props.style}
+          className={'calendar'}
+          cellPadding={0}
+          cellSpacing={0}
+        >
+          <thead>
+            <CalendarHeader
+              currentDate={this.state.date}
+              prevMonth={this.prevMonth}
+              nextMonth={this.nextMonth}
+            />
+            <tr>
+              {weekDays.map(day => {
+                return (
+                  <th key={day} className={'day-of-the-week'}>
+                    {day}
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.calendar.map((row, trIndex) => {
               return (
-                <th key={day} className={'day-of-the-week'}>
-                  {day}
-                </th>
-              );
-            })}
-          </tr>
-        </thead>
-        <tbody>
-          {this.state.calendar.map((row, trIndex) => {
-            return (
-              <tr key={trIndex}>
-                {row.map((day, tdIndex) => {
-                  if (day === 1) {
-                    dayBelongsToCurrentMonth = !dayBelongsToCurrentMonth;
-                  }
-                  return (
-                    <td key={tdIndex}>
-                      {<DayCell
+                <tr key={trIndex}>
+                  {row.map((day, tdIndex) => {
+                    if (day === 1) {
+                      dayBelongsToCurrentMonth = !dayBelongsToCurrentMonth;
+                    }
+                    return (
+                      <td key={tdIndex}>
+                        {<DayCell
                           selectDay={this.selectDay}
                           selectedDay={this.state.selected}
                           date={this.state.date}
                           dayOfMonth={day}
                           isFromThisMonth={dayBelongsToCurrentMonth}
                         />}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )
     );
   }
 }
