@@ -5,44 +5,44 @@ const sinonChai = require('sinon-chai');
 const sinon = require("sinon");
 const rewire = require("rewire");
 chai.use(sinonChai);
-const selecter = rewire("../../../../lib/query-modules/selecter.js");
+const selector = rewire("../../../../lib/query-modules/selector.js");
 const testUsername = "admin";
 
 describe("Select queries tests", function(){
   context("Get All patients (adults)", function(){
-    test(selecter.getAllPatients,true);
+    test(selector.getAllPatients,true);
   })
   context("Get All patients (children)", function(){
-    test(selecter.getAllPatients,false);
+    test(selector.getAllPatients,false);
   })
   context("Get Next Test of patient", function(){
-    test(selecter.getNextTestsOfPatient,"400")
+    test(selector.getNextTestsOfPatient,"400")
   })
   context("Get Patient", function(){
-    test(selecter.getPatient, "4000");
+    test(selector.getPatient, "4000");
   })
   context("Get Carer", function(){
-    test(selecter.getCarer, "4000");
+    test(selector.getCarer, "4000");
   })
   context("Get Hospital", function(){
-    test(selecter.getHospital, "300");
+    test(selector.getHospital, "300");
   })
   context("Get User", function(){
-    test(selecter.getUser,testUsername);
+    test(selector.getUser,testUsername);
   });
   context("Get All Users", function(){
-    test(selecter.getAllUsers,);
+    test(selector.getAllUsers,);
   });
   context("Get Full Patient Info", function(){
-    test(selecter.getFullPatientInfo,"P400");
+    test(selector.getFullPatientInfo,"P400");
   });
   context("Get Full Test Info", function(){
-    test(selecter.getTestInfo,"400");
+    test(selector.getTestInfo,"400");
   });
   context("Get Tests Within week", function(){
     let spy;
     beforeEach(()=>{
-        spy = sinon.spy(selecter.getTestWithinWeek);
+        spy = sinon.spy(selector.getTestWithinWeek);
     })
     it("Should return all days (adult) (STUBBED)", async function(){
       const dbController = {
@@ -50,7 +50,7 @@ describe("Select queries tests", function(){
           return {status:"OK", response:{ rows:[]}}
         }
       }
-      selecter.__set__("databaseController",dbController);
+      selector.__set__("databaseController",dbController);
       const response = await spy("2018-04-03",true);
       spy.calledWith("2018-04-03",true).should.equal(true);
       spy.calledOnce.should.equal(true);
@@ -63,7 +63,7 @@ describe("Select queries tests", function(){
             return {status: "ERR", err:{ }}
           }
         }
-        selecter.__set__("databaseController",dbController);
+        selector.__set__("databaseController",dbController);
         const response = await spy("2018-04-03",true);
         spy.calledWith("2018-04-03",true).should.equal(true);
         spy.calledOnce.should.equal(true);
@@ -75,7 +75,7 @@ describe("Select queries tests", function(){
           return {status:"OK", response:{ rows:[]}}
         }
       }
-      selecter.__set__("databaseController",dbController);
+      selector.__set__("databaseController",dbController);
       const response = await spy("2018-04-04",false);
       spy.calledWith("2018-04-04",false).should.equal(true);
       spy.calledOnce.should.equal(true);
@@ -88,7 +88,7 @@ describe("Select queries tests", function(){
             return {status: "ERR", err:{ }}
           }
         }
-        selecter.__set__("databaseController",dbController);
+        selector.__set__("databaseController",dbController);
         const response = await spy("2018-04-04",false);
         spy.calledWith("2018-04-04",false).should.equal(true);
         spy.calledOnce.should.equal(true);
@@ -98,7 +98,7 @@ describe("Select queries tests", function(){
   context("Get Sorted Overdue Weeks", function(){
     let spy;
     beforeEach(()=>{
-        spy = sinon.spy(selecter.getSortedOverdueWeeks);
+        spy = sinon.spy(selector.getSortedOverdueWeeks);
     })
     it("Should return all overdue weeks grouped (children) (STUBBED)", async function(){
       const dbController = {
@@ -110,7 +110,7 @@ describe("Select queries tests", function(){
           ]}}
         }
       }
-      selecter.__set__("databaseController",dbController);
+      selector.__set__("databaseController",dbController);
       const response = await spy(false);
       spy.calledOnce.should.equal(true);
       response.success.should.equal(true);
@@ -130,7 +130,7 @@ describe("Select queries tests", function(){
           ]}}
         }
       }
-      selecter.__set__("databaseController",dbController);
+      selector.__set__("databaseController",dbController);
       const response = await spy(true);
       spy.calledOnce.should.equal(true);
       response.success.should.equal(true);
@@ -148,7 +148,7 @@ describe("Select queries tests", function(){
           return {status:"OK", response:{ rows:[]}}
         }
       }
-      selecter.__set__("databaseController",dbController);
+      selector.__set__("databaseController",dbController);
       const response = await spy();
       spy.calledOnce.should.equal(true);
       response.success.should.equal(true);
@@ -160,7 +160,7 @@ describe("Select queries tests", function(){
           return {status: "ERR", err: {error:"stubbed error"}}
         }
       }
-      selecter.__set__("databaseController",dbController);
+      selector.__set__("databaseController",dbController);
       const response = await spy();
       spy.calledOnce.should.equal(true);
       response.success.should.equal(false);
@@ -175,8 +175,8 @@ describe("Select queries tests", function(){
           return {status:"ERR"}
         }
       }
-      selecter.__set__("databaseController",dbController);
-      const res = await selecter.getOverdueReminderGroups();
+      selector.__set__("databaseController",dbController);
+      const res = await selector.getOverdueReminderGroups();
       expect(res.success).to.be.false;
     });
     it ("Should return correct groups (adults).", async () => {
@@ -188,8 +188,8 @@ describe("Select queries tests", function(){
           ]}};
         }
       }
-      selecter.__set__("databaseController",dbController);
-      const res = await selecter.getOverdueReminderGroups(true);
+      selector.__set__("databaseController",dbController);
+      const res = await selector.getOverdueReminderGroups(true);
       const shouldBe = {
         success:true,
         response: {
@@ -213,8 +213,8 @@ describe("Select queries tests", function(){
           ]}};
         }
       }
-      selecter.__set__("databaseController",dbController);
-      const res = await selecter.getOverdueReminderGroups(false);
+      selector.__set__("databaseController",dbController);
+      const res = await selector.getOverdueReminderGroups(false);
       const shouldBe = {
         success:true,
         response: {
@@ -235,7 +235,7 @@ describe("Other functionality tests", function(){
   context("Execute select query", function(){
     let spy;
     beforeEach(()=>{
-        spy = sinon.spy(selecter.selectQueryDatabase);
+        spy = sinon.spy(selector.selectQueryDatabase);
     })
     it("Correctly execute select query (STUBBED)", async function(){
       const dbController = {
@@ -243,7 +243,7 @@ describe("Other functionality tests", function(){
           return {status: "OK", response:{rows:[1,2,3]}}
         }
       }
-      selecter.__set__("databaseController",dbController);
+      selector.__set__("databaseController",dbController);
       const response = await spy("SQL");
       response.success.should.equal(true);
       response.response[0].should.equal(1);
@@ -256,7 +256,7 @@ describe("Other functionality tests", function(){
           return {status: "ERR", err:{error:"STUBBED ERROR"}}
         }
       }
-      selecter.__set__("databaseController",dbController);
+      selector.__set__("databaseController",dbController);
       const response = await spy("SQL");
       response.success.should.equal(false);
       response.response.error.should.equal("STUBBED ERROR")
@@ -283,7 +283,7 @@ async function stubbedErrorSelectTest(spy,data=null){
       return {status: "ERR", error:{ }}
     }
   }
-  selecter.__set__("databaseController",dbController);
+  selector.__set__("databaseController",dbController);
   const response = await spy(data);
   if(data)
   {
@@ -299,7 +299,7 @@ async function stubbedPositiveSelectTest(spy,data=null){
       return {status:"OK", response:{ rows:[]}}
     }
   }
-  selecter.__set__("databaseController",dbController);
+  selector.__set__("databaseController",dbController);
   const response = await spy(data);
   if(data)
   {
