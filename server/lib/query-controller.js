@@ -233,9 +233,11 @@ async function editPatientExtended(newInfo, token, actionUsername) {
     let carerQueryResponse = {};
     if (Object.keys(carer).length > 0 && token) {
         //Carer added with patient update
-        if (patient.carer_id == null) {
+        if (patient.carer_id == undefined ||patient.carer_id == null || patient.carer_id == "NULL") {
             carerQueryResponse = await addCarer(carer, actionUsername);
-            patientNewInfo["carer_id"] = carerQueryResponse.response.insertId;
+            if(carerQueryResponse.success){
+              patientNewInfo["carer_id"] = carerQueryResponse.response.insertId;
+            }
         }
         //Database has info on this carer
         else {
@@ -250,9 +252,11 @@ async function editPatientExtended(newInfo, token, actionUsername) {
     let hospitalQueryResponse = {};
     if (Object.keys(hospital).length > 0 && token) {
         //Hospital added with update
-        if (patient.hospital_id == null) {
+        if (patient.hospital_id == undefined || patient.hospital_id == null || patient.hospital_id == "NULL") {
             hospitalQueryResponse = await addHospital(hospital, actionUsername);
-            patientNewInfo["hospital_id"] = hospitalQueryResponse.response.insertId;
+            if(hospitalQueryResponse.success){
+              patientNewInfo["hospital_id"] = hospitalQueryResponse.response.insertId;
+            }
         }
         //Database has info on the hospital
         else {
@@ -813,4 +817,6 @@ module.exports = {
     //TOKEN CONTROL
     requestEditing,
     returnToken,
+    //Helper functions - for tests only
+    sortPatinetProperties,
 };
