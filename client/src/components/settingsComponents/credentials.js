@@ -126,6 +126,7 @@ export default class Credentials extends Component {
       super(props);
       this.state = {
          editToken: undefined,
+         username: "",
          email: "",
          password: "",
          confirmPassword: "",
@@ -134,14 +135,15 @@ export default class Credentials extends Component {
          showConfirmationMessage: false,
       };
       this.serverConnect = getServerConnect();
+      this.init();
   }
 
-  componentDidMount(){
-    this.setState({
-      email: "" //Set Current Users email
+  init = () => {
+    this.serverConnect.getCurrentUser( res => {
+      this.setState({ username: res.username});
     });
-
   }
+
 
   handleCredentialUpdate = (event) => {
     const target = event.target;
@@ -155,33 +157,48 @@ export default class Credentials extends Component {
 
   onSaveEditUser = (event) => {
     event.preventDefault();
-    if (this.state.password == this.state.confirmPassword) {
-      let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
-      let newData = {username: this.state.username, hashed_password: hash, isAdmin: this.state.isAdmin, recovery_email: this.state.email};
-      this.serverConnect.editUser(newData, this.state.editToken, res => {
-        if (res.success){
-         this.clearForm();
-         this.showConfirmationMessage();
-        }else{
-          // TODO error message
-          alert("lmao something went wrong");
-        }
-      });
-
-    } else {
-      this.setState({
-        password: "",
-        confirmPassword: "",
-      })
-      this.showErrorMessage();
-    }
+    this.serverConnect.requestUserEditing(this.state.username, res => {
+      if (res.success){
+          this.setState({ editToken: res.token});
+          if (this.state.password == this.state.confirmPassword) {
+            let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
+            let newData = {hashed_password: hash, recovery_email: this.state.email};
+            this.updateDatabase(newData);
+          } else if (this.state.password === "" && this.state.confirmPassword === "") {
+              let newData = {recovery_email: this.state.email};
+              this.updateDatabase(newData);
+          } else {
+            this.setState({
+              password: "",
+              confirmPassword: "",
+            })
+            this.showErrorMessage();
+          }
+      }else{
+        alert("Somebody is editing this user already");
+      }
+    });
 
   }
+
+  updateDatabase(newData) {
+    this.serverConnect.editUser(newData, this.state.editToken, res => {
+      if (res.success){
+       this.clearForm();
+       this.showConfirmationMessage();
+      }else{
+        // TODO error message
+        alert("lmao something went wrong");
+      }
+    });
+  }
+
 
   clearForm = () => {
     this.serverConnect.discardUserEditing(this.state.username, this.state.editToken, res => {
      this.setState({
        editToken: undefined,
+       email: "",
        password: "",
        confirmPassword: "",
      });
@@ -192,14 +209,14 @@ export default class Credentials extends Component {
      this.setState({showErrorMessage: true})
      setTimeout( () => {
          this.setState({showErrorMessage: false})
-     }, 4000);
+     }, 3000);
  }
 
  showConfirmationMessage = () => {
      this.setState({showConfirmationMessage: true})
      setTimeout( () => {
          this.setState({showConfirmationMessage: false})
-     }, 4000);
+     }, 3000);
  }
 
   render(){

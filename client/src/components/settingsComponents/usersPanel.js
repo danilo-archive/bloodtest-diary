@@ -357,12 +357,15 @@ export default class UsersPanel extends Component {
        if (res.success){
         this.clearForm();
         this.showConfirmationMessage();
+        this.updateUsers();
        }else{
          // TODO error message
          alert("lmao something went wrong");
        }
      });
-
+  } else if (this.state.password === "" && this.state.confirmPassword === "") {
+       let newData = {username: this.state.username, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
+       this.updateDatabase(newData);
    } else {
      this.setState({
        password: "",
@@ -371,6 +374,18 @@ export default class UsersPanel extends Component {
      this.showErrorMessage();
    }
 
+ }
+
+ updateDatabase(newData) {
+   this.serverConnect.editUser(newData, this.state.editToken, res => {
+     if (res.success){
+      this.clearForm();
+      this.showConfirmationMessage();
+     }else{
+       // TODO error message
+       alert("lmao something went wrong");
+     }
+   });
  }
 
  onSaveAddUser = (event) => {
@@ -382,6 +397,7 @@ export default class UsersPanel extends Component {
           if (res.success){
             this.clearForm();
             this.showConfirmationMessage();
+            this.updateUsers();
           }else{
             // TODO error message
           }
@@ -428,21 +444,21 @@ export default class UsersPanel extends Component {
      this.setState({showErrorMessage: true})
      setTimeout( () => {
          this.setState({showErrorMessage: false})
-     }, 4000);
+     }, 3000);
  }
 
  showConfirmationMessage = () => {
      this.setState({showConfirmationMessage: true})
      setTimeout( () => {
          this.setState({showConfirmationMessage: false})
-     }, 4000);
+     }, 3000);
  }
 
  showReloadMessage = () => {
      this.setState({showReloadMessage: true})
      setTimeout( () => {
          this.setState({showReloadMessage: false})
-     }, 4000);
+     }, 3000);
  }
 
   render(){
@@ -510,7 +526,7 @@ export default class UsersPanel extends Component {
               </AdminCheckContainer>
               <InfoMessage type={"error"} message={"Passwords Don't Match"} show={this.state.showErrorMessage}/>
               <ButtonContainer>
-                  <CancelButton onClick={this.clearForm}>Cancel</CancelButton>
+                  <CancelButton type="button" onClick={this.clearForm}>Cancel</CancelButton>
                   <input type="submit" className="saveButton" value="Save"/>
               </ButtonContainer>
             </form>
