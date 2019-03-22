@@ -18,6 +18,9 @@ describe("Select queries tests", function(){
   context("Get Next Test of patient", function(){
     test(selector.getNextTestsOfPatient,"400")
   })
+  context("Get Patient Edited Tests", function(){
+    test(selector.getPatientEditedTests,"400")
+  })
   context("Get Patient", function(){
     test(selector.getPatient, "4000");
   })

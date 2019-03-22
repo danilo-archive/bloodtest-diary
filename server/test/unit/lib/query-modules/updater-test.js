@@ -33,127 +33,48 @@ describe("Update queries tests", function(){
           spy = sinon.spy(updater.changeTestStatus);
       })
       it("Reject random update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{ token:"30000" }}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"ERROR"}, testUsername);
         response.success.should.equal(false);
         response.response.should.equal("NO SUCH UPDATE");
         spy.calledOnce.should.equal(true);
       })
       it("Accept completed update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_status:"yes"}]}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setAcceptUpdateQueryDatabase()
         const response = await spy({testId:"2000",newStatus:"completed"}, testUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
       })
       it("Reject completed update (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setRejectUpdateQueryDatabase()
         const response = await spy({testId:"2000",newStatus:"completed"}, testUsername);
         response.success.should.equal(false);
         response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
       })
       it("Accept late update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setAcceptUpdateQueryDatabase()
         const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
       })
       it("Reject late update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setRejectUpdateQueryDatabase();
         const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
         response.success.should.equal(false);
         response.response.cause.should.equal("stubbed error");
         spy.calledOnce.should.equal(true);
       })
       it("Accept in review update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          },
-          insertQuery: async function()
-          {
-            return {status: "OK", response: {insertId:"505"}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setAcceptUpdateQueryDatabase()
         const response = await spy({testId:"2000",newStatus:"inReview"}, testUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         spy.calledOnce.should.equal(true);
       })
       it("Reject in review update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setRejectUpdateQueryDatabase();
         const response = await spy({testId:"2000",newStatus:"inReview"}, testUsername);
         response.success.should.equal(false);
         response.response.cause.should.equal("stubbed error");
@@ -167,74 +88,30 @@ describe("Update queries tests", function(){
       })
       it("Correctly update password (STUBBED)", async function()
       {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
-          },
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setAcceptUpdateQueryDatabase();
         const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
       it("Correctly update email (STUBBED)", async function()
       {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
-          },
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setAcceptUpdateQueryDatabase();
         const response = await spy({username:testUsername,recovery_email:"gmail@gmail.com"}, testUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
       it("Correctly update email and password (STUBBED)", async function()
       {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
-          },
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setAcceptUpdateQueryDatabase();
         const response = await spy({username:testUsername,recovery_email:"gmail@gmail.com",hashed_password:"dsjhdshdshjdshdhjdschjdsjsdhj"}, testUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
       it("Fail due to update query error (STUBBED)", async function() {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000"}]}}
-          },
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "ERR", err:"Error here"}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setRejectUpdateQueryDatabase();
         const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
         response.success.should.equal(false);
-        response.response.should.equal("Error here");
+        response.response.cause.should.equal("stubbed error");
       })
     })
     context("Edit Patient", function(){
@@ -314,55 +191,8 @@ describe("Update queries tests", function(){
       beforeEach(()=>{
           spy = sinon.spy(updater.editTest);
       })
-      it("Accept test edit and add new test (depending on data from database) - in review (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
-          },
-          insertQuery: async function()
-          {
-            return {status:"OK", response: { insertId: "test_insert_id"}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Accept test edit and add new test (depending on data passed) - in review (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
-          },
-          insertQuery: async function()
-          {
-            return {status:"OK", response: { insertId: "test_insert_id"}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",patient_no:"300",completed_status:"in review", occurrences:"3", frequency:"5-W",notes:"Test", due_date:new Date("2020-01-01")},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Accept test edit without adding new test - in review (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", occurrences:0}]}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+      it("Accept test edit - in review (STUBBED)", async function(){
+        setAcceptUpdateQueryDatabase();
         const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testUsername);
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
@@ -394,27 +224,86 @@ describe("Update queries tests", function(){
           date = new Date();
       })
       it("Reject the change", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "ERR", err:{ error: "stubbed error" }}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setRejectUpdateQueryDatabase();
         const response = await spy("300",date);
         response.success.should.equal(false);
-        response.response.error.should.equal("stubbed error")
+        response.response.cause.should.equal("stubbed error");
       })
       it("Accept the change", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{ token: "TOKEN"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        updater.__set__("databaseController",dbController);
+        setAcceptUpdateQueryDatabase();
         const response = await spy("300",date);
+        response.success.should.equal(true)
+        response.response.affectedRows.should.equal(1)
+      })
+    })
+    context("Change last reminder", function(){
+      let spy;
+      beforeEach(()=>{
+          spy = sinon.spy(updater.updateLastReminder);
+      })
+      it("Reject the change", async function(){
+        setRejectUpdateQueryDatabase();
+        const response = await spy("300","dhgcdghcghds",testUsername);
+        response.success.should.equal(false);
+        response.response.cause.should.equal("stubbed error");
+      })
+      it("Accept the change", async function(){
+        setAcceptUpdateQueryDatabase();
+        const response = await spy("300","dhgcdghcghds",testUsername);
+        response.success.should.equal(true)
+        response.response.affectedRows.should.equal(1)
+      })
+    })
+    context("Change test colour", function(){
+      let spy;
+      beforeEach(()=>{
+          spy = sinon.spy(updater.changeTestColour);
+      })
+      it("Reject the change", async function(){
+        setRejectUpdateQueryDatabase();
+        const response = await spy("300","#FFFFFF","sdhjdshj",testUsername);
+        response.success.should.equal(false);
+        response.response.cause.should.equal("stubbed error");
+      })
+      it("Accept the change", async function(){
+        setAcceptUpdateQueryDatabase();
+        const response = await spy("300","#FFFFFF","sdhjdshj",testUsername);
+        response.success.should.equal(true)
+        response.response.affectedRows.should.equal(1)
+      })
+      it("Accept the change - null colour", async function(){
+        setAcceptUpdateQueryDatabase();
+        const response = await spy("300",null,"sdhjdshj",testUsername);
+        response.success.should.equal(true)
+        response.response.affectedRows.should.equal(1)
+      })
+    })
+    context("Change patient colour", function(){
+      let spy;
+      beforeEach(()=>{
+          spy = sinon.spy(updater.changePatientColour);
+      })
+      it("Reject the change", async function(){
+        setRejectUpdateQueryDatabase();
+        const response = await spy("300","#FFFFFF","sdhjdshj",testUsername);
+        response.success.should.equal(false);
+        response.response.cause.should.equal("stubbed error");
+      })
+      it("Reject the change - no token", async function(){
+        setRejectUpdateQueryDatabase();
+        const response = await spy("300","#FFFFFF",undefined,testUsername);
+        response.success.should.equal(false);
+        response.response.problem.should.equal("Token in use/No token defined");
+      })
+      it("Accept the change", async function(){
+        setAcceptUpdateQueryDatabase();
+        const response = await spy("300","#FFFFFF","sdhjdshj",testUsername);
+        response.success.should.equal(true)
+        response.response.affectedRows.should.equal(1)
+      })
+      it("Accept the change - null colour", async function(){
+        setAcceptUpdateQueryDatabase();
+        const response = await spy("300",null,"sdhjdshj",testUsername);
         response.success.should.equal(true)
         response.response.affectedRows.should.equal(1)
       })
@@ -427,12 +316,7 @@ describe("Other functionality", function(){
         spy = sinon.spy(updater.updateQueryDatabase);
     })
     it("Correctly execute update query (STUBBED)", async function(){
-      const dbController = {
-        updateQuery: async function() {
-          return {status: "OK",response:{query: "OK", affectedRows: 1,changedRows: 1}}
-        }
-      }
-      updater.__set__("databaseController",dbController);
+      setAcceptUpdateQueryDatabase();
       const response = await spy("Table","id","SQL","2222","user");
       response.success.should.equal(true);
       response.response.query.should.equal("OK");
@@ -455,6 +339,10 @@ describe("Other functionality", function(){
       }
       updater.__set__("databaseController",dbController);
       const response = await spy("Table","id","SQL","2222","user");
+      response.success.should.equal(false);
+    })
+    it("Reject update query - no token (STUBBED)", async function(){
+      const response = await spy("Table","id","SQL",undefined,"user");
       response.success.should.equal(false);
     })
   })
@@ -490,10 +378,6 @@ function setRejectUpdateQueryDatabase(){
   const dbController = {
     updateQuery: async function() {
       return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
-    },
-    selectQuery: async function()
-    {
-      return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
     }
   }
   updater.__set__("databaseController",dbController);
@@ -502,12 +386,8 @@ function setRejectUpdateQueryDatabase(){
 function setAcceptUpdateQueryDatabase(){
   const dbController = {
   updateQuery: async function() {
-    return {status: "OK", response:{affectedRows:1}}
-  },
-  selectQuery: async function()
-  {
-    return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
-  }
+    return {status: "OK", response:{query:"OK", affectedRows:1, changedRows:1}}
+    }
   }
   updater.__set__("databaseController",dbController);
 }

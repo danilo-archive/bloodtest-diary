@@ -3,7 +3,6 @@ const databaseController = require("../db_controller/db-controller.js");
 const mysql = require("mysql");
 const dateformat = require("dateformat");
 
-
 /**
  * Edit test query
  * @param testId The id of the test to be updated

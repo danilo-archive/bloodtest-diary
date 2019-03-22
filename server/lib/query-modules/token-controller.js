@@ -1,5 +1,6 @@
 const actionLogger = require("../action-logger");
 const databaseController = require("../db_controller/db-controller.js");
+
 /**
  * Request editing of an entry in table
  * @param {String} table - Table to edit
