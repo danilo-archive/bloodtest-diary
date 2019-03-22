@@ -2,17 +2,24 @@ import React from "react";
 import styled from "styled-components";
 import TextLabel from "./Label";
 import TextRadioButton from "./TextRadioButton";
-
+import { integerCheck } from "../../../lib/inputChecker";
+import { Tooltip } from "react-tippy";
 const Container = styled.div`
   display: flex;
+  justifyContent: "center"
+  align-items: center;
   font-size: 0.7rem;
+  height: 20%;
 `;
 
 const Input = styled.input`
-  margin: 0 0.5rem;
-  width: 15%;
+  position: relative;
+  padding: 1px 0 1px 1px;
+  margin-right: 3px;
+  margin-top: 3px;
+  width: 80%;
   font-size:  1.3rem;
-  height: 70%;
+  height: 60%;
   background-color: white;
   border: solid 1px #aaaaaa;
 `;
@@ -25,22 +32,41 @@ export default props => {
       style={{
         display: "flex",
         justifyContent: "center",
-        flexDirection: "column"
+        flexDirection: "column",
       }}
     >
       <Container>
-        <Label noRepeat={props.noRepeat}>Repeat every</Label>
-        <Input
-          disabled={props.noRepeat}
-          type="text"
-          value={
-            props.frequencyTimes === "null" || props.noRepeat
-              ? ""
-              : props.frequencyTimes
-          }
-          onChange={event => props.onFrequencyChange(event.target.value)}
-        />
-        <select style={{height: "30px"}}
+        <Label width={"120%"} noRepeat={props.noRepeat}>Repeat every</Label>
+        <Tooltip style={{height: "2rem"}}
+          unmountHTMLWhenHide={true}
+          title="Please enter a number"
+          open={props.tooltips.frequency}
+          hideDelay={100}
+          trigger="manual"
+          onRequestClose={() => {
+            props.setFrequencyTooltip(false);
+          }}
+        >
+          <Input 
+            disabled={props.noRepeat}
+            type="text"
+            value={
+              props.frequencyTimes === "null" || props.noRepeat
+                ? ""
+                : props.frequencyTimes
+            }
+            onChange={event => {
+              if (
+                integerCheck(event.target.value) ||
+                event.target.value == ""
+              ) {
+                props.onFrequencyChange(event.target.value);
+                props.setFrequencyTooltip(false);
+              } else props.setFrequencyTooltip(true);
+            }}
+          />
+        </Tooltip>
+        <select style={{width: "inherit", margin: "3px 1rem 0 1rem", height: "1.45rem"}}
           defaultValue={props.frequencyUnit}
           disabled={props.noRepeat}
           onChange={event => props.onUnitChange(event.target.value)}
@@ -52,20 +78,39 @@ export default props => {
             return <option value={value.value}>{value.name}</option>;
           })}
         </select>
-        <Label noRepeat={props.noRepeat} style={{ margin: "0 0 0 1rem" }}>
+        <Label width={"40%"} noRepeat={props.noRepeat} >
           For
         </Label>
-        <Input 
-          disabled={props.noRepeat}
-          value={
-            props.occurrences === "null" || props.noRepeat
-              ? ""
-              : props.occurrences
-          }
-          type="text"
-          onChange={event => props.onOccurrencesChange(event.target.value)}
-        />
-        <Label noRepeat={props.noRepeat}>Times</Label>
+        <Tooltip style={{height: "2rem"}}
+          unmountHTMLWhenHide={true}
+          title="Please enter a number"
+          open={props.tooltips.occurrences}
+          hideDelay={100}
+          trigger="manual"
+          onRequestClose={() => {
+            props.setOcurrencesTooltip(false);
+          }}
+        >
+          <Input style={{marginRight: "1rem"}}
+            disabled={props.noRepeat}
+            value={
+              props.occurrences === "null" || props.noRepeat
+                ? ""
+                : props.occurrences
+            }
+            type="text"
+            onChange={event => {
+              if (
+                integerCheck(event.target.value) ||
+                event.target.value == ""
+              ) {
+                props.onOccurrencesChange(event.target.value);
+                props.setOcurrencesTooltip(false);
+              } else props.setOcurrencesTooltip(true);
+            }}
+          />
+        </Tooltip>
+        <Label width={"50%"} noRepeat={props.noRepeat}>Times</Label>
       </Container>
       <TextRadioButton
         checked={props.noRepeat}

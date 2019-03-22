@@ -11,6 +11,8 @@ import dateformat from "dateformat";
 import { openAlert } from "./../../Alert.js";
 import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
 import PatientProfile from "../../patientsComponents/PatientProfile";
+import { Tooltip } from "react-tippy";
+
 const DataContainer = styled.div`
   position: relative;
   width: 45rem;
@@ -57,6 +59,10 @@ export default class EditTestView extends React.Component {
       console.log({ res });
       this.setState({
         showPatient: false,
+        tooltips: {
+          frequency: false,
+          occurrences: false
+        },
         patientToken: -1,
         patient: { name: res.patient_name, id: res.patient_no },
         test: {
@@ -219,6 +225,20 @@ export default class EditTestView extends React.Component {
               onClick={() => this.setState({ showCalendar: true })}
             />
             <FrequencySelector
+              tooltips={{
+                frequency: this.state.tooltips.frequency,
+                occurrences: this.state.tooltips.occurrences
+              }}
+              setFrequencyTooltip={state =>
+                this.setState({
+                  tooltips: { ...this.state.tooltips, frequency: state }
+                })
+              }
+              setOcurrencesTooltip={state =>
+                this.setState({
+                  tooltips: { ...this.state.tooltips, occurrences: state }
+                })
+              }
               noRepeat={this.state.test.date.noRepeat}
               onCheck={check =>
                 this.setState({
