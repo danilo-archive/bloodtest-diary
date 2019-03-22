@@ -16,7 +16,6 @@ const Container = styled.div`
 
 const Field = styled.div`
   position: relative;
-  padding-left: 1%;
   width: 30%;
   min-width: 10%;
   margin: 0 2.5%;
@@ -25,7 +24,16 @@ const Field = styled.div`
   font-family: "Rajdhani", sans-serif;
   font-size: 125%;
   overflow: scroll;
-  display:flex;
+  display: flex;
+  justify-content:center;
+  align-content:center;
+  flex-direction:column;
+`;
+
+const FieldText = styled.p`
+  margin: 0;
+  //TODO: Fix this
+  margin-top: 6px;
 `;
 
 const DeleteButton = styled.button`
@@ -51,8 +59,8 @@ export default class TestCell extends React.Component {
         return (
           <>
             <Container>
-                <Field key={"due"} fontSize={"150%"}>{this.props.due}</Field>
-                <Field key={"notes"} fontSize={"150%"}>{this.props.notes}</Field>
+                <Field key={"due"} fontSize={"150%"}><FieldText>{this.props.due}</FieldText></Field>
+                <Field key={"notes"} fontSize={"150%"}><FieldText>{this.props.notes}</FieldText></Field>
                 <DeleteButton onClick={() => {this.props.deleteTest(this.props.testId)}}>Delete test</DeleteButton>
             </Container>
           </>
