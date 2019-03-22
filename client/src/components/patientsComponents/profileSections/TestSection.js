@@ -4,7 +4,7 @@ import TestCell from "./profileCells/TestCell";
 import SectionContainer from "./SectionContainer"
 
 const Container = styled.div`
-  width: 100%;
+  width: 95%;
 `;
 
 const EmptyContainer = styled.div`

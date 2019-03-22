@@ -7,8 +7,8 @@ const Container = styled.div`
     justify-content: center;
     align-content: center;
     flex-direction: row;
-    border: #ccc 1px solid;
     border-radius: 10px;
+    background: #eeeeee;
 `;
 
 const Field = styled.div`
@@ -37,7 +37,6 @@ const DeleteButton = styled.button`
 
   :hover {
     background-color: #dc2836;
-    color: white;
     border-radius: 10px;
   }
   outline: none;
@@ -48,7 +47,7 @@ export default class TestCell extends React.Component {
     render() {
         return (
           <>
-            <Container >
+            <Container>
                 <Field key={"due"} fontSize={"150%"}>{this.props.due}</Field>
                 <Field key={"notes"} fontSize={"150%"}>{this.props.notes}</Field>
                 <DeleteButton onClick={() => {this.props.deleteTest(this.props.testId)}}>Delete test</DeleteButton>

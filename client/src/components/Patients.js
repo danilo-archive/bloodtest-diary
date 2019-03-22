@@ -117,7 +117,6 @@ class Patients extends React.Component {
 
     initAllPatients(){
         this.serverConnect.getAllPatients(res => {
-            console.log(res.response.map(a => a.patient_no));
             if (res.success){
                 this.setState({
                     allPatients: res.response,
