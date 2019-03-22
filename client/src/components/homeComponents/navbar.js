@@ -82,7 +82,7 @@ class Navbar extends React.Component {
                   option1="Show under 12"
                   option2="Show 12 or older"
                 />
-                <DatePicker onDayPicked={this.props.onDayPicked}/>
+                <DatePicker onDayPick={this.props.onDayPick}/>
                 <WeekButtons
                   onPrev={this.props.onPrev}
                   onNext={this.props.onNext}
