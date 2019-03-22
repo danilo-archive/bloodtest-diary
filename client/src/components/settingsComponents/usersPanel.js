@@ -350,19 +350,10 @@ export default class UsersPanel extends Component {
 
  onSaveEditUser = (event) => {
    event.preventDefault();
-   if (this.state.password == this.state.confirmPassword) {
+   if (this.state.password == this.state.confirmPassword && this.state.password !== "") {
      let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
      let newData = {username: this.state.username, hashed_password: hash, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
-     this.serverConnect.editUser(newData, this.state.editToken, res => {
-       if (res.success){
-        this.clearForm();
-        this.showConfirmationMessage();
-        this.updateUsers();
-       }else{
-         // TODO error message
-         alert("lmao something went wrong");
-       }
-     });
+     this.updateDatabase(newData);
   } else if (this.state.password === "" && this.state.confirmPassword === "") {
        let newData = {username: this.state.username, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
        this.updateDatabase(newData);

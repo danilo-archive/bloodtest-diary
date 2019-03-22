@@ -163,7 +163,7 @@ export default class Credentials extends Component {
     this.serverConnect.requestUserEditing(this.state.username, res => {
       if (res.success){
           this.setState({ editToken: res.token});
-          if (this.state.password == this.state.confirmPassword) {
+          if (this.state.password == this.state.confirmPassword && this.state.password !== "") {
             let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
             let newData = {username: this.state.username, hashed_password: hash, recovery_email: this.state.email};
             this.updateDatabase(newData);
