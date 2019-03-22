@@ -35,6 +35,12 @@ function getMondayOfWeek(date){
     return toReturn;
 }
 
+function getWeekDays(monday){
+    monday.setHours(0, 0, 0, 0);
+    let restOfWeek = getNextDates("1-D5", monday);
+    return [monday].concat(restOfWeek);
+}
+
 function getCurrentWeek(){
     let monday = new Date();
     monday.setHours(0, 0, 0, 0);
@@ -208,6 +214,7 @@ function stringIsInteger(str) {
 module.exports = {
     isHoliday,
     isPastDate,
+    getWeekDays,
     getNextWeek,
     getCurrentWeek,
     getPreviousWeek,

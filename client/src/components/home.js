@@ -18,6 +18,7 @@ import {
   getNextDates,
   getMondayOfWeek,
   getCurrentWeek,
+  getWeekDays,
   getPreviousWeek,
   getNextWeek
 } from "../lib/calendar-controller";
@@ -136,6 +137,10 @@ class Home extends Component {
     });
   };
 
+  jumpToWeek = day => {
+    this.setState({weekDays: getWeekDays(day)});
+  }
+
   handleNext = event => {
     let nextWeek = getNextWeek([...this.state.weekDays]);
     this.updateDashboard(nextWeek);
@@ -232,6 +237,7 @@ class Home extends Component {
                       this.refresh();
                     }}
                     page="Dashboard"
+                    onDayPicked={this.jumpToWeek}
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
