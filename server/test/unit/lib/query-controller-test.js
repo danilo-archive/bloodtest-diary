@@ -869,11 +869,11 @@ describe("Update queries tests", function(){
             return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
           },
           updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
+            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
+        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, undefined, testUsername);
         response.success.should.equal(false);
         response.response.problem.should.equal("Token in use/No token defined");
       })
