@@ -140,7 +140,10 @@ export default class Credentials extends Component {
 
   init = () => {
     this.serverConnect.getCurrentUser( res => {
-      this.setState({ username: res.username});
+      console.log(res);
+      if (res.success){
+        this.setState({ username: res.response[0].username});
+      }
     });
   }
 
@@ -162,10 +165,10 @@ export default class Credentials extends Component {
           this.setState({ editToken: res.token});
           if (this.state.password == this.state.confirmPassword) {
             let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
-            let newData = {hashed_password: hash, recovery_email: this.state.email};
+            let newData = {username: this.state.username, hashed_password: hash, recovery_email: this.state.email};
             this.updateDatabase(newData);
           } else if (this.state.password === "" && this.state.confirmPassword === "") {
-              let newData = {recovery_email: this.state.email};
+              let newData = {username: this.state.username, recovery_email: this.state.email};
               this.updateDatabase(newData);
           } else {
             this.setState({
@@ -182,15 +185,16 @@ export default class Credentials extends Component {
   }
 
   updateDatabase(newData) {
+    console.log(newData)
     this.serverConnect.editUser(newData, this.state.editToken, res => {
       if (res.success){
-       this.clearForm();
-       this.showConfirmationMessage();
+        this.showConfirmationMessage();
       }else{
-        // TODO error message
-        alert("lmao something went wrong");
+        console.log(res)
+        alert("Unable to update database");
       }
     });
+    this.clearForm();
   }
 
 
