@@ -15,6 +15,10 @@ font-family: "Rajdhani", sans-serif;
 color: black;
 align-items: center;
 
+.calendar {
+  align-items: bottom;
+}
+
 .calendar-icon {
   border: none;
   height: 40px;
@@ -58,21 +62,19 @@ export default class SearchBar extends Component {
 
     render(){
       return (
-      <Container>
-              <img className={"calendar-icon"}
-                   alt={"Calendar"} 
-                   src={calendarIcon}
-                   onClick= {() => this.setState({ showCalendar: !this.state.showCalendar })}
-              />
-              Date picker
-
-        {this.state.showCalendar ? (
-          <CalendarTable hideCalendar={this.hideCalendar}/>
-        ) : (
-          <></>
-        )}
-
-      </Container>
+        <Container>
+          <img className={"calendar-icon"}
+                alt={"Calendar"} 
+                src={calendarIcon}
+                onClick= {() => this.setState({ showCalendar: !this.state.showCalendar })}
+          />
+          Date picker
+          <div className={"calendar-table"}>{this.state.showCalendar ? (
+            <CalendarTable hideCalendar={this.hideCalendar}/>
+          ) : (
+            <></>
+          )}</div>
+        </Container>
       )
     }
 }
