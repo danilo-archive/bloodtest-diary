@@ -25,8 +25,8 @@ INSERT INTO User VALUES ("admin1","f0edc3ac2daf24876a782e9864e9596970a8b8717178e
 
 """
 
-patient_header = "INSERT INTO Patient (patient_no, patient_name, patient_surname, patient_email, patient_phone, carer_id, hospital_id) VALUES "
-carer_header = "INSERT INTO Carer (carer_id, carer_name, carer_email, carer_phone, relationship) VALUES "
+patient_header = "INSERT INTO Patient (patient_no, patient_name, patient_surname, patient_email, patient_phone, carer_id, hospital_id, isAdult) VALUES "
+carer_header = "INSERT INTO Carer (carer_id, carer_name, carer_surname, carer_email, carer_phone, relationship) VALUES "
 hospital_header = "INSERT INTO Hospital (hospital_id, hospital_name, hospital_email) VALUES "
 test_header = "INSERT INTO Test (patient_no, due_date, frequency, occurrences, completed_status, completed_date) VALUES "
 
@@ -45,11 +45,7 @@ phone_numbers = list(set(phone_numbers))
 # Generate a tuple of [due_date, completed_date]
 def generateDates():
     year = 2019
-    month = randint(1,3)
-    if (randint(0,3) == 0):
-        year = 2018
-        month = randint(10,12)
-
+    month = randint(2,5)
     
     day = randint(1,28)
 
@@ -81,15 +77,37 @@ def pad(num):
         return "0" + str(num)
     return str(num)
 
+names = ["Enola", "Rena", "Linsey", "Candance", "Cordelia", "Nellie", "An", "Lucille", "Masako", "Bethann", "Fransisca", "Sue", "Joan", "Denny", 
+"Greg", "Maura", "Zula", "Velia", "Mao", "Rebecka", "Elizabet", "Cruz", "Desire", "Damon", "Gertie", "Roger", "Kanesha", "Lashaunda", 
+"Glinda", "Concetta", "Edie", "Mable", "Shantae", "Lionel", "Bridgett", "Roni", "Melynda", "Madelene", "Sharell", "Cleveland", 
+"Vicente", "Liana", "Leonie", "Yoshie", "Jacquie", "Telma", "Rebbecca", "Trisha", "Gianna","Eliz", "Myron", "Francie", "Providencia", "Janett", 
+"Keiko", "Dominque", "Erika", "Jena", "Raelene", "Ethelyn", "Phil", "Tammi", "Rex", "Adeline", "Shalonda", "Cassidy", "Alana", "Abbie", "Randolph", 
+"Madeline", "Daria", "Rhiannon", "Bess", "Carmen", "Evelynn", "Kyong", "Eusebio", "Christal", "Bruna", "Odell", "Tanika", "Rosio", "Shanti", "Gabrielle", 
+"Olivia", "Diego", "Carita", "Tova", "Moshe", "Nieves", "Bertram", "Ollie", "Mandie", "Daphne", "Alphonse", "Salley", "Christin", "Shonna", "Jesusita"] 
 
+surnames = ["Bennett","Campos","Sanchez","Jacobs","Fuentes","Long","Strickland","Mitchell","Adam","Rice","Summers", "Vargas","Garcia","Byrd","Kumar",
+"Copeland", "Mullins","Reynolds","Sutton", "Carpenter","Sherman", "Figueroa","Washington","Ellis","Robertson","Watkins","West","Stone","Hughes","Wood",
+"Peterson","Perez","Hampton","Banks","Pratt","Douglas","Newton","Elliott", "Thorne","Wong","Brooks","Bryant","Zimmerman","Willis","Schneider",
+"Blair","Salazar","Manning","Holland","Dixon","Rhodes","Thomas","Robbins","Medina","Thompson","Mckinney","Mccarthy","Ferguson","Oliver","Schroeder","Little",
+"Espinoza","Simpson","Fox","Ashton","Graves","Parks","Stewart","Hawkins","Mcdonald", "Wells","Ruiz", "Scott","Benson","Schofield","King","Kent","Griffiths",
+"Gomez","Mills","Jimenez","Bowen","Brady","Watson","Brown","James","Harper","Hamilton","Henderson","Richardson","Davidson"]
+
+def getRandName():
+    return names[randint(0, len(names)-1)]
+
+def getRandSurname():
+    return surnames[randint(0, len(surnames)-1)]
+
+    
 #####################################################
 carers = ""
 for i in range(1, 601):
     i = str(i)
     carers += carer_header  \
         + "(" + i \
-        + ", 'carer" + i    \
-        + "', 'carer" + i + "@gmail.com', "
+        + ", '" + getRandName()    \
+        + "', '" + getRandSurname()    \
+        + "', '" + i + "@gmail.com', "
 
     if (len(phone_numbers) > 0):
         carers += "'" + str(phone_numbers.pop()) + "'"
@@ -115,14 +133,16 @@ patients = ""
 for num in patient_numbers:
     patients += patient_header  \
         + "('" + num \
-        + "', 'name" + num    \
-        +  "', 'surname" + num
+        + "', '" + getRandName()    \
+        +  "', '" + getRandSurname()
 
+    needsCarer = False
     if (randint(0,3) == 0):
         # no email, no phone
         patients += "', NULL, NULL, "
 
         # needs carer
+        needsCarer = True
         patients += str(randint(1,600)) + ", "
     else:
         patients += "', 'patient" + num + "@gmail.com', "
@@ -136,9 +156,16 @@ for num in patient_numbers:
 
     if (randint(0,6) == 0):
         # client's patient
-        patients += "NULL);\n"
+        patients += "NULL, "
     else:
-        patients += str(randint(1,600)) + ");\n"
+        patients += str(randint(1,600)) + ", "
+
+    if (needsCarer):
+        patients += "'no'"
+    else:
+        patients += "'yes'"
+
+    patients += ");\n"
 
 print("Generated patients...")
 #####################################################
