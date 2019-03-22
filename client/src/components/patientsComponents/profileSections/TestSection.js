@@ -30,13 +30,11 @@ const Field = styled.div`
 
 const Horizontal = styled.div`
     display: flex;
-    width: 90%;
 `;
 
 const CellContainer = styled.div`
   display: block;
   overflow: scroll;
-  width: 90%;
   max-height: 160px;
 `;
 
