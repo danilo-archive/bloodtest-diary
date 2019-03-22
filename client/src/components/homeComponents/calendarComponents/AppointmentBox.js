@@ -19,7 +19,7 @@ const Container = styled.div`
   opacity: ${props => props.isDragging ? 0 : 1}
   display: block;
   position: relative;
-  background-color: ${props => (props.test_colour ? props.test_colour : (props.patient_colour ? props.patient_colour : `white`))};
+  background-color: ${props => (props.test_colour ? props.test_colour : (props.patient_colour ? props.patient_colour : props.default_colour))};
 
   margin-top: 3.5%;
   margin-bottom: 3.5%;
@@ -208,7 +208,7 @@ class AppointmentBox extends React.Component {
       <div>
       <RightClickMenu id={menuId} patientNo={this.props.patient_no} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
       <MenuProvider id={menuId}>
-        <Container patient_colour={this.props.patient_colour} test_colour={this.props.test_colour} isDragging={isDragging} tentative={this.props.tentative}>
+        <Container default_colour={this.props.default_colour} patient_colour={this.props.patient_colour} test_colour={this.props.test_colour} isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
           <StatusCircle
             type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
