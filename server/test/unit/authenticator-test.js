@@ -180,7 +180,7 @@ describe("Test authentication", function() {
                 expect(username).to.equal("test_user_valid");
                 expect(accessTokens.test_valid_login_token.username).to.equal("test_user_valid");
                 expect(accessTokens.test_invalid_login_token.username).to.equal("test_user_invalid");
-                expect(accessTokens.test_valid_login_token.expires.getDate() - date.getDate()).to.be.greaterThan(2);
+                expect(accessTokens.test_valid_login_token.expires > date).to.be.true;
             });
         });
     });
