@@ -202,14 +202,14 @@ export default class EditTestView extends React.Component {
               {this.state.showCalendar ? (
                 <CalendarTable
                   style={{ width: "50%", top: "47%", left: "37%" }}
-                  onDaySelected={day => {
+                  onDayPick={day => {
                     this.setState({
                       showCalendar: false,
                       test: {
                         ...this.state.test,
                         date: {
                           ...this.state.test.date,
-                          dueDate: day
+                          dueDate: dateformat(day, "d mmm yyyy")
                         }
                       }
                     });
