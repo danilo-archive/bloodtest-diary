@@ -177,7 +177,7 @@ export default class Credentials extends Component {
             this.showErrorMessage();
           }
       }else{
-        openAlert("Somebody is editing this user already", "confirmationAlert", 
+        openAlert("Somebody is editing this user already", "confirmationAlert",
                    "Ok", () => {return});
       }
     });
@@ -200,7 +200,6 @@ export default class Credentials extends Component {
 
   clearForm = () => {
      this.setState({
-       email: "",
        password: "",
        confirmPassword: "",
      });
