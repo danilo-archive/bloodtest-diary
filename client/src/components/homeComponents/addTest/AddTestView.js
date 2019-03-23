@@ -142,7 +142,7 @@ export default class AddTestView extends React.Component {
           }}
         >
           <TitleTab onClose={this.props.closeModal} main={true}>
-            Add Appointments
+            Schedule test
           </TitleTab>
           <DataContainer>
             <PatientSelect
