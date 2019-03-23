@@ -45,6 +45,7 @@ export default props => {
             handleError={props.handleError}
             patient_colour={appointment.patient_colour}
             test_colour={appointment.test_colour}
+            default_colour={appointment.hospital_id ? "white" : "#c4fcff"}
             patient_no = {appointment.patient_no}
           />
         ))}
