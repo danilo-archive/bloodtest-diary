@@ -147,6 +147,7 @@ const spec = {
       completed_status: props.type,
       patient_name: props.name,
       dueDate: props.dueDate,
+      default_colour: props.default_colour,
       patient_colour: props.patient_colour,
       test_colour: props.test_colour
     };

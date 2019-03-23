@@ -29,7 +29,7 @@ describe("Read JSON files", () => {
             "staticFolder": "/public",
             "indexFile": "index.html"
         }
-        obj.should.deep.equal(expected_result);
+        obj.should.contain(expected_result);
     });
 
     it('should not find the file and return null', () => {
