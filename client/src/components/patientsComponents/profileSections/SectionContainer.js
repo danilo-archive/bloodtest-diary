@@ -7,7 +7,7 @@ const Container = styled.div`
   border: #839595 3px solid;
   border-radius: 10px;
   width: 80%;
-  font-family: "Rajdhani", sans-serif;
+  
   background: white;
   max-height: 225px;
 `;

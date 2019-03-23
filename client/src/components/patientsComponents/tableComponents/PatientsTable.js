@@ -8,7 +8,6 @@ const Table = styled.table`
   width: 100%;
   height: 100%;
   border-spacing: 0;
-  font-family: "Rajdhani",sans-serif;
 `;
 
 const TableHeader = styled.thead`

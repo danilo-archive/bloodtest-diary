@@ -82,6 +82,7 @@ class CalendarDay extends React.Component {
               type="Anytime Today"
               appointments={this.props.anytimeAppointments}
               editTest={this.props.editTest}
+              editPatient={this.props.editPatient}
               handleError={this.props.handleError}
               section={"calendar"}
             />

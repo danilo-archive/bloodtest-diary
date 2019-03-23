@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from "styled-components";
 
 import Label from "./../Label";
-import refresh from "../../images/refresh.png"
+import refresh from "../../resources/images/refresh.png"
 
 const Container = styled.div`
   width: auto;
@@ -20,7 +20,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  font-family: "Rajdhani", sans-serif;
+  
   color: #e2e2d9;
   font-size: 150%;
 

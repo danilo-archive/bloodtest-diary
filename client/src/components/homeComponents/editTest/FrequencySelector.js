@@ -6,14 +6,22 @@ import { integerCheck } from "../../../lib/inputChecker";
 import { Tooltip } from "react-tippy";
 const Container = styled.div`
   display: flex;
+  justifyContent: "center"
+  align-items: center;
   font-size: 0.7rem;
+  height: 20%;
 `;
 
 const Input = styled.input`
-  margin: 0 0.5rem;
-  width: 20%;
-  font-size: 1rem;
-  height: 50%;
+  position: relative;
+  padding: 1px 0 1px 1px;
+  margin-right: 3px;
+  margin-top: 3px;
+  width: 80%;
+  font-size:  1.3rem;
+  height: 60%;
+  background-color: white;
+  border: solid 1px #aaaaaa;
 `;
 const Label = styled(TextLabel)`
   color: ${props => (props.noRepeat ? `#c9c9c9` : `#0d4e56`)};
@@ -24,12 +32,12 @@ export default props => {
       style={{
         display: "flex",
         justifyContent: "center",
-        flexDirection: "column"
+        flexDirection: "column",
       }}
     >
       <Container>
-        <Label noRepeat={props.noRepeat}>Repeat every</Label>
-        <Tooltip
+        <Label width={"120%"} noRepeat={props.noRepeat}>Repeat every</Label>
+        <Tooltip style={{height: "2rem"}}
           unmountHTMLWhenHide={true}
           title="Please enter a number"
           open={props.tooltips.frequency}
@@ -39,7 +47,7 @@ export default props => {
             props.setFrequencyTooltip(false);
           }}
         >
-          <Input
+          <Input 
             disabled={props.noRepeat}
             type="text"
             value={
@@ -58,22 +66,22 @@ export default props => {
             }}
           />
         </Tooltip>
-        <select
+        <select style={{width: "inherit", margin: "3px 1rem 0 1rem", height: "1.45rem"}}
           defaultValue={props.frequencyUnit}
           disabled={props.noRepeat}
           onChange={event => props.onUnitChange(event.target.value)}
         >
           <option value="" disabled className="text-hide">
-            Please select a month
+            select
           </option>
           {props.values.map(value => {
             return <option value={value.value}>{value.name}</option>;
           })}
         </select>
-        <Label noRepeat={props.noRepeat} style={{ margin: "0 0 0 1rem" }}>
+        <Label width={"40%"} noRepeat={props.noRepeat} >
           For
         </Label>
-        <Tooltip
+        <Tooltip style={{height: "2rem"}}
           unmountHTMLWhenHide={true}
           title="Please enter a number"
           open={props.tooltips.occurrences}
@@ -83,7 +91,7 @@ export default props => {
             props.setOcurrencesTooltip(false);
           }}
         >
-          <Input
+          <Input style={{marginRight: "1rem"}}
             disabled={props.noRepeat}
             value={
               props.occurrences === "null" || props.noRepeat
@@ -102,7 +110,7 @@ export default props => {
             }}
           />
         </Tooltip>
-        <Label noRepeat={props.noRepeat}>Times</Label>
+        <Label width={"50%"} noRepeat={props.noRepeat}>Times</Label>
       </Container>
       <TextRadioButton
         checked={props.noRepeat}

@@ -36,7 +36,7 @@ const Toggle = styled.input.attrs({ type: "checkbox" })`
     content: "";
     position: absolute;
     border-radius: 2rem;
-    background: #0b999d;
+    background: #0d4e56;
     transform: translate(-50%, -50%);
     left: 50%;
     top: 50%;
@@ -45,7 +45,7 @@ const Toggle = styled.input.attrs({ type: "checkbox" })`
     transition: background 250ms;
   }
   &:checked::after {
-    background: #0d4e56;
+    background: #0b999d;
     filter: blur(0.5px);
   }
 `;
