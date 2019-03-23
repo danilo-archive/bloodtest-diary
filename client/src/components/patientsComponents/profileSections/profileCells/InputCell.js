@@ -21,6 +21,44 @@ const Input = styled.input.attrs({ spellCheck: "false"})`
   box-sizing: border-box;
   
 `;
+const RadioButtonFieldContainer = styled.div`
+  width: 100%;
+`;
+
+const RadioButtonComponent = styled.input.attrs({ type: "checkbox" })`
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  appearance: none;
+  outline: none;
+  border: solid 3px #0d4e56;
+  margin: 0 5px 0 0;
+  padding: 0;
+  transition: 100ms;
+  cursor: pointer;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background: #0b999d;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0;
+    transition: 100ms;
+  }
+  &:checked {
+    border: solid 3px #0b999d;
+  }
+
+  &:checked::before {
+    opacity: 1;
+  }
+`;
 
 
 class InputCell extends React.Component {
@@ -46,10 +84,12 @@ class InputCell extends React.Component {
         } else if (this.props.type === "checkbox"){
             return (
                 <Container
-                    style={{width: `100%`}}
+                    style={{width: `100%`, margin: `0`}}
                 >
-                    <Field htmlFor={this.props.id}>{this.props.field}</Field>
-                    <Input
+                    <RadioButtonFieldContainer>
+                        <Field htmlFor={this.props.id}>{this.props.field}</Field>
+                    </RadioButtonFieldContainer>
+                    <RadioButtonComponent
                         defaultValue={this.props.value}
                         id={this.props.id}
                         type={this.props.type}
