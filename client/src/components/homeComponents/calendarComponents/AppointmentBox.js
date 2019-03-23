@@ -114,7 +114,6 @@ const RightClickMenu = props => {
            </Test>
            <Item onClick={() => {props.editPatient(props.patientNo)}}>Open patient profile</Item>
            <Separator />
-           <Item disabled={!props.completed}>Schedule next</Item>
            <Item onClick={() => sendReminder(props.test)}>Send reminder</Item>
            <Separator />
            <Submenu label="Patient color">
