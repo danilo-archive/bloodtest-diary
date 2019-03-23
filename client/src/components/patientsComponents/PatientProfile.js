@@ -5,6 +5,8 @@ import PatientSection from "./profileSections/PatientSection";
 import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import TestSection from "./profileSections/TestSection";
+import OptionSwitch from "./../switch/OptionSwitch"
+
 import {getServerConnect} from "../../serverConnection";
 import {emptyCheck, emailCheck} from "../../lib/inputChecker";
 import {openAlert} from "../Alert";
@@ -343,6 +345,10 @@ class PatientProfile extends Component {
                         deleteTest={this.onDeleteTestClick}
                     />
 
+                    <OptionSwitch
+                        option1={"test"}
+                        option2={"test"}
+                    />
                     <ButtonContainer>
                         <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                         <DeleteButton onClick={this.deleteOption}>Delete patient</DeleteButton>
