@@ -251,6 +251,11 @@ io.on('connection',function(socket)
             return;
         }
         const response = await queryController.getUser(user);
+        if (response.success) {
+            delete response.response[0].hashed_password;
+            delete response.response[0].salt;
+            delete response.response[0].iterations;
+        }
         socket.emit("getUserResponse", response);
     });
 

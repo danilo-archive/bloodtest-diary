@@ -78,7 +78,7 @@ async function getUser(username) {
  * @return {JSON} result of the query - {success:true/false response:Array/Error}
  **/
 async function getAllUsers() {
-    const sql = `Select * From User;`;
+    const sql = `Select username, isAdmin, recovery_email From User;`;
     return await selectQueryDatabase(sql);
 }
 
