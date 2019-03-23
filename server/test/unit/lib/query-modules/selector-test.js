@@ -79,8 +79,8 @@ describe("Select queries tests", function(){
         }
       }
       selector.__set__("databaseController",dbController);
-      const response = await spy("2018-04-04",false);
-      spy.calledWith("2018-04-04",false).should.equal(true);
+      const response = await spy("2019-03-24",false);
+      spy.calledWith("2019-03-24",false).should.equal(true);
       spy.calledOnce.should.equal(true);
       response.success.should.equal(true);
       response.response.length.should.equal(6);
