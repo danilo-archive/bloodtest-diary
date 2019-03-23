@@ -44,7 +44,7 @@ const DeleteButton = styled.button`
   text-align: center;
   text-decoration: none;
   border-radius: 10px;
-  margin: 4%;
+  margin: 3%;
 
   height: 44px;
   min-width: 100px;
@@ -67,7 +67,7 @@ const CloseButton = styled.button`
 
   height: 44px;
   min-width: 100px;
-  margin: 4%;
+  margin: 3%;
 
   :hover {
     background: #c8c8c8;
@@ -83,7 +83,7 @@ const SaveButton = styled.button`
   color: white;
   text-align: center;
   text-decoration: none;
-  margin: 4%;
+  margin: 3%;
   border-radius: 10px;
 
   height: 44px;
@@ -94,6 +94,10 @@ const SaveButton = styled.button`
     color: white;
   }
   outline: none;
+`;
+
+const SwitchContainer = styled.div`
+  margin-top: 2%;
 `;
 
 
@@ -344,11 +348,12 @@ class PatientProfile extends Component {
                         tests={this.state.testsData}
                         deleteTest={this.onDeleteTestClick}
                     />
-
-                    <OptionSwitch
-                        option1={"test"}
-                        option2={"test"}
-                    />
+                    <SwitchContainer>
+                        <OptionSwitch
+                            option1={"Under 12"}
+                            option2={"12 or older"}
+                        />
+                    </SwitchContainer>
                     <ButtonContainer>
                         <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                         <DeleteButton onClick={this.deleteOption}>Delete patient</DeleteButton>
