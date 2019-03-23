@@ -486,7 +486,7 @@ export default class UsersPanel extends Component {
           <Select
             className="userSelect"
             styles={colourStyles}
-            placeholder="Edit User..."
+            placeholder="Edit users"
             value={this.state.selectedOption}
             options={this.state.allUsers}
             onChange={this.handleSelectChange}
@@ -537,7 +537,7 @@ export default class UsersPanel extends Component {
                   onClick={this.onAdminCheck}
                 />
               </AdminCheckContainer>
-              <InfoMessage type={"error"} message={"Passwords Don't Match"} show={this.state.showErrorMessage}/>
+              <InfoMessage type={"error"} message={"Passwords must match!"} show={this.state.showErrorMessage}/>
               <ButtonContainer>
                   <CancelButton type="button" onClick={this.clearForm}>Cancel</CancelButton>
                   <input type="submit" className="saveButton" value="Save"/>
