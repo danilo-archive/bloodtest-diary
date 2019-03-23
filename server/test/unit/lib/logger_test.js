@@ -6,6 +6,9 @@ const rewire = require('rewire');
 const json_controller = require('./../../../lib/json-parser');
 
 const getJSONStub = sinon.stub(json_controller, "getJSON");
+
+const outpath = __dirname.split("server")[0] + "server/logs";
+
 getJSONStub.callsFake(function () {
     return {
         "compact": true,
@@ -13,7 +16,7 @@ getJSONStub.callsFake(function () {
         "consoleOutput": true,
         "fileOutput": true,
         "colorize": true,
-        "outputFilePath":__dirname + "/logs"
+        "outputFilePath": outpath
     };
 })
 
