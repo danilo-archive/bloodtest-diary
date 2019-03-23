@@ -13,6 +13,7 @@ import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
 import { Menu, Item, Separator, Submenu, MenuProvider } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.min.css';
 import ColorPicker from "./ColorPicker";
+import dateformat from "dateformat";
 
 const serverConnect = getServerConnect();
 const Container = styled.div`
@@ -99,8 +100,8 @@ const Test = styled.div`
 `;
 
 function sendReminder(test){
-  let text = test.last_reminder ? `This patient was contacted on the ${test.last_reminder}, do you want to send another reminder email?`
-                                 : `This patient was never contacted about this test, do you want to send an email?`;
+  let text = test.last_reminder ? `This patient was last contacted on ${dateformat(test.last_reminder, "dS mmm yyyy")}. Do you want to send another email?`
+                                 : `This patient was never contacted about this test. Do you want to send an email?`;
   openAlert(text, "optionAlert",
             "No", () => {return},
             "Yes", () => {console.log("sending email")});
@@ -110,23 +111,23 @@ const RightClickMenu = props => {
     return(
         <Menu id={props.id} style={{position: "absolute", zIndex: "4", fontSize: "1rem"}}>
         <Test>
-           <Item onClick={() => {props.editTest(props.testId)}}>Edit</Item>
+           <Item onClick={() => {props.editTest(props.testId)}}>Edit test</Item>
            </Test>
-           <Item onClick={() => {props.editPatient(props.patientNo)}}>Open patient profile</Item>
+           <Item onClick={() => {props.editPatient(props.patientNo)}}>Patient profile</Item>
            <Separator />
            <Item onClick={() => sendReminder(props.test)}>Send reminder</Item>
            <Separator />
-           <Submenu label="Patient color">
-             <Submenu label="Choose color">
+           <Submenu label="Patient colour">
+             <Submenu label="Choose colour">
                 <ColorPicker id={props.patientNo} type={"patient"}/>
              </Submenu>
-             <Item  onClick={() => {serverConnect.changePatientColour(props.patientNo, null, res => {return})}}>Remove color</Item>
+             <Item  onClick={() => {serverConnect.changePatientColour(props.patientNo, null, res => {return})}}>Remove colour</Item>
            </Submenu>
-           <Submenu label="Test color">
-             <Submenu label="Choose color">
+           <Submenu label="Test colour">
+             <Submenu label="Choose colour">
                 <ColorPicker id={props.testId} type={"test"}/>
              </Submenu>
-             <Item onClick={() => {serverConnect.changeTestColour(props.testId, null, res => {return})}}>Remove color</Item>
+             <Item onClick={() => {serverConnect.changeTestColour(props.testId, null, res => {return})}}>Remove colour</Item>
            </Submenu>
 
         </Menu>
@@ -158,7 +159,7 @@ const spec = {
       if (newDate){
         serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate, res => {
             if (!res.success){
-                props.handleError(res, "Somebody is already editing this test")    }
+                props.handleError(res, "Somebody is already editing this test.")    }
         });
       }
     }
@@ -208,10 +209,10 @@ class AppointmentBox extends React.Component {
     this.serverConnect.changeTestStatus(this.props.id, status, res => {
         if (res.success){
             if (res.response.insertId != undefined){
-                openAlert(`A new test was automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}.`, "confirmationAlert", "Ok");
+                openAlert(`A new test was automatically scheduled on ${formatDatabaseDate(res.response.new_date)}.`, "confirmationAlert", "OK");
             }
         }else{
-            this.props.handleError(res, "Somebody is already editing this test")
+            this.props.handleError(res, "Somebody is already editing this test.")
         }
     });
   };

@@ -30,7 +30,7 @@ const Container = styled.div`
 export default props => {
   return (
     <Container onClick={props.onClick}>
-      <Label style={{ color: "white" }}>Submit</Label>
+      <Label style={{ color: "white" }}>Send</Label>
     </Container>
   );
 };

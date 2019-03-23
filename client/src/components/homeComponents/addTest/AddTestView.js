@@ -43,7 +43,7 @@ export default class AddTestView extends React.Component {
   handleError = (res, error) => {
     if (res.errorType === "authentication") {
       openAlert(
-        "Authentication error",
+        "Authentication failed.",
         "confirmationAlert",
         "Go back to login",
         () => {
@@ -53,9 +53,9 @@ export default class AddTestView extends React.Component {
       );
     } else {
       openAlert(
-        `${error ? error : "Unknown error occurred"}`,
+        `${error ? error : "Unknown error occurred."}`,
         "confirmationAlert",
-        "Ok",
+        "OK",
         () => {
           return;
         }
@@ -126,7 +126,7 @@ export default class AddTestView extends React.Component {
             this.props.closeModal();
           } else {
             openAlert(
-              "something went wrong, test was not added",
+              "Something went wrong. Test was not added.",
               "confirmationAlert",
               "OK",
               () => {}
@@ -136,7 +136,7 @@ export default class AddTestView extends React.Component {
       );
     } else {
       openAlert(
-        "Please ensure you have selected all the relevant fields",
+        "Please select a patient first.",
         "confirmationAlert",
         "OK",
         () => {}
@@ -154,7 +154,7 @@ export default class AddTestView extends React.Component {
           }}
         >
           <TitleTab onClose={this.props.closeModal} main={true}>
-            Add Appointments
+            New appointment
           </TitleTab>
           <DataContainer>
             <PatientSelect

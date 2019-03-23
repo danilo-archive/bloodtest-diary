@@ -91,9 +91,9 @@ export default class EmailModal extends Component {
       console.log(res);
       if (res.success) {
         openAlert(
-          "Patients contacted successfully",
+          "All selected patients contacted successfully.",
           "confirmationAlert",
-          "Ok",
+          "OK",
           () => {
             this.props.closeModal();
           }
@@ -108,7 +108,7 @@ export default class EmailModal extends Component {
           response: res.response,
           submitted: true
         });
-        this.props.handleError(res, "Something went wrong");
+        this.props.handleError(res, "Something went wrong.");
       }
     });
   };
@@ -116,7 +116,7 @@ export default class EmailModal extends Component {
   render() {
     return (
       <Container>
-        <Title>Email Reminders</Title>
+        <Title>Email reminders</Title>
         {this.state.submitted ? (
           <>
             <TestBox
@@ -132,7 +132,7 @@ export default class EmailModal extends Component {
                   : this.deselect(this.state.notNotified)
               }
               title={true}
-              text="Emails Sent"
+              text="Emails sent"
             />
             <Scroll fullLength={this.state.notified.length === 0}>
               <Section

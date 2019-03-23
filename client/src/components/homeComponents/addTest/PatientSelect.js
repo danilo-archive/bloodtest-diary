@@ -129,7 +129,7 @@ export default class PatientSelect extends React.Component {
                   color: "black"
                 }}
               >
-                Hide ID
+                Show ID
               </Label>
               <Switch
                   margin={"0 0 0 50%"}
@@ -160,7 +160,7 @@ export default class PatientSelect extends React.Component {
                 />
               ))}
               <div style={{ textAlign: "center", opacity: "0.4" }}>
-                To see more patients, use the search functionality
+                To see more patients, use the search functionality above.
               </div>
             </>
           ) : (
@@ -179,7 +179,7 @@ export default class PatientSelect extends React.Component {
                   margin: "auto"
                 }}
               >
-                Fetching Patients
+                Fetching patients...
               </Label>
             </div>
           )}

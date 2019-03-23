@@ -45,7 +45,7 @@ export default class SearchBar extends React.Component {
             <i className="fa fa-search" />
             <Bar
                 onChange={event => this.props.onChange(event.target.value)}
-                placeholder={"Enter patient name or Id ..."}
+                placeholder={"Enter patient name or ID..."}
             />
           </SearchDiv>
         </Container>
