@@ -32,7 +32,6 @@ export default props => {
           props.onSelectChange(timeUnit);
         }}
       />
-      <br />
       <TextRadioButton
         checked={props.noRepeat}
         text="Do not repeat"

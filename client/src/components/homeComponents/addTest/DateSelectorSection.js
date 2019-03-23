@@ -27,6 +27,21 @@ const TextArea = styled.textarea`
   resize: none;
   outline: none;
 `;
+const DateInput = styled.input`
+  align-items: center;
+  cursor: pointer;
+  z-index: 2;
+  text-align: center;
+  border-radius: 20px;
+  background-color: #028090;
+  color:white;
+  font-weight: bold;
+
+  &:hover {
+    background-color: #0b989d;
+  }
+`;
+
 
 export default props => {
   return (
@@ -34,8 +49,7 @@ export default props => {
       <Container>
         <TitleTab color="#0b999d">Date</TitleTab>
         <br />
-        <input
-          style={{cursor: 'pointer'}}
+        <DateInput
           type="text"
           onClick={props.onInputClick}
           value={props.selectedDate}
@@ -56,7 +70,6 @@ export default props => {
           }}
           frequency={props.frequency}
           occurrences={props.occurrences}
-          noRepeat={props.noRepeat}
           onNoRepeatChange={props.onNoRepeatChange}
           unitOptions={props.unitOptions}
           timeAmount={props.timeAmount}
