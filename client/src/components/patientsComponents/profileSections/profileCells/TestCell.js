@@ -28,12 +28,14 @@ const Field = styled.div`
   justify-content:center;
   align-content:center;
   flex-direction:column;
+  
 `;
 
 const FieldText = styled.p`
   margin: 0;
   //TODO: Fix this
   margin-top: 6px;
+  max-height: 30px;
 `;
 
 const DeleteButton = styled.button`
@@ -57,13 +59,13 @@ const DeleteButton = styled.button`
 export default class TestCell extends React.Component {
     render() {
         return (
-          <>
-            <Container>
-                <Field key={"due"} fontSize={"150%"}><FieldText>{this.props.due}</FieldText></Field>
-                <Field key={"notes"} fontSize={"150%"}><FieldText>{this.props.notes}</FieldText></Field>
-                <DeleteButton onClick={() => {this.props.deleteTest(this.props.testId)}}>Delete test</DeleteButton>
-            </Container>
-          </>
+            <>
+                <Container>
+                    <Field key={"due"} fontSize={"150%"}><FieldText>{this.props.due}</FieldText></Field>
+                    <Field key={"notes"} fontSize={"150%"}><FieldText>{this.props.notes}</FieldText></Field>
+                    <DeleteButton onClick={() => {this.props.deleteTest(this.props.testId)}}>Delete test</DeleteButton>
+                </Container>
+            </>
         );
     }
 }

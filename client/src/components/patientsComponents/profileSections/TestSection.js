@@ -46,23 +46,23 @@ export default class PatientSection extends React.Component {
 
     render() {
         const content = (
-          <Container>
-                  <Horizontal>
-                      <Field>Due</Field>
-                      <Field>Notes</Field>
-                  </Horizontal>
-                  <CellContainer>
-                      {this.props.tests.map(test => (
-                          <TestCell
-                              key={test.test_id}
-                              testId={test.test_id}
-                              due = {test.due_date.substring(0, 10)}
-                              notes={test.notes}
-                              deleteTest={this.props.deleteTest}
-                          />
-                      ))}
-                  </CellContainer>
-          </Container>
+            <Container>
+                <Horizontal>
+                    <Field>Due</Field>
+                    <Field>Notes</Field>
+                </Horizontal>
+                <CellContainer>
+                    {this.props.tests.map(test => (
+                        <TestCell
+                            key={test.test_id}
+                            testId={test.test_id}
+                            due = {test.due_date.substring(0, 10)}
+                            notes={test.notes}
+                            deleteTest={this.props.deleteTest}
+                        />
+                    ))}
+                </CellContainer>
+            </Container>
         );
         const emptyTest = (
             <>
