@@ -4,8 +4,6 @@ import styled from 'styled-components'
 const Container = styled.div`
   margin: 0.5% 0;
   padding: 0.5%;
-  border: #839595 3px solid;
-  border-radius: 10px;
   width: 80%;
   font-family: "Rajdhani", sans-serif;
   background: white;
@@ -22,6 +20,11 @@ const ContentContainer = styled.div`
   justify-content: center;
 `;
 
+const TitleContainer = styled.div`
+  width: 100%;
+  height: auto;
+`;
+
 const SectionTitle = styled.p`
   text-align: center;
   font-size: 150%;
@@ -35,7 +38,9 @@ export default class SectionContainer extends React.Component {
             <Container>
 
                 <ContentContainer>
-                    <SectionTitle>{this.props.title}</SectionTitle>
+                    <TitleContainer>
+                        <SectionTitle>{this.props.title}</SectionTitle>
+                    </TitleContainer>
                     {this.props.content}
                 </ContentContainer>
             </Container>

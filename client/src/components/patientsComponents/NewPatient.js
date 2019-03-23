@@ -79,6 +79,15 @@ const SwitchContainer = styled.div`
   margin-top: 2%;
 `;
 
+const Hr = styled.hr`
+  border: 0;
+  clear: both;
+  display: block;
+  width: 96%;               
+  background-color: #839595;
+  height: 1px;
+`;
+
 
 class NewPatient extends Component {
 
@@ -187,6 +196,7 @@ class NewPatient extends Component {
         return (
             <Container>
                 <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
+                <Hr/>
                 <PatientSection
                     editable={true}
                     patientId={""}
@@ -204,6 +214,7 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                <Hr/>
                 <CarerSection
                     carerId={""} //TODO : generate this
                     carerRelationship={""}
@@ -223,6 +234,7 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                <Hr/>
                 <HospitalSection
                     hospitalId={""} //TODO : generate this
                     hospitalName={""}

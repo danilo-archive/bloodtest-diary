@@ -16,10 +16,15 @@ const Container = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  background: #f5f5f5;
+  background: white;
   align-items: center;
   font-family: "Rajdhani",sans-serif;
   padding: 1%;
+`;
+
+const Header = styled.div`
+  width: 100%;
+  height: auto;
 `;
 
 const PatientProfileTitle = styled.p`
@@ -93,11 +98,21 @@ const SaveButton = styled.button`
     background-color: #018589;
     color: white;
   }
+  
   outline: none;
 `;
 
 const SwitchContainer = styled.div`
   margin-top: 2%;
+`;
+
+const Hr = styled.hr`
+  border: 0;
+  clear: both;
+  display: block;
+  width: 96%;               
+  background-color: #839595;
+  height: 1px;
 `;
 
 
@@ -277,6 +292,7 @@ class PatientProfile extends Component {
             carer_id: carerInfo.carerId, carer_name: carerInfo.carerName, carer_surname: carerInfo.carerSurname, carer_email: carerInfo.carerEmail, carer_phone: carerInfo.carerPhone,
             relationship: carerInfo.carerRelationship
         };
+        //TODO : save patient "age"
         console.log({newInfo});
         this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
             if (res.success) {
@@ -293,7 +309,10 @@ class PatientProfile extends Component {
         if (this.state.ready && this.state.readyTest) {
             return (
                 <Container>
-                    <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
+                    <Header>
+                        <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
+                    </Header>
+                    <Hr/>
                     <PatientSection
                         patientId={this.state.patientId}
                         patientName={this.state.patientName}
@@ -309,6 +328,7 @@ class PatientProfile extends Component {
                             })
                         }}
                     />
+                    <Hr/>
                     <CarerSection
                         carerId={this.state.carerId}
                         carerRelationship={this.state.carerRelationship}
@@ -328,6 +348,7 @@ class PatientProfile extends Component {
                             })
                         }}
                     />
+                    <Hr/>
                     <HospitalSection
                         hospitalId={this.state.hospitalId}
                         hospitalName={this.state.hospitalName}
@@ -344,6 +365,7 @@ class PatientProfile extends Component {
                             })
                         }}
                     />
+                    <Hr/>
                     <TestSection
                         tests={this.state.testsData}
                         deleteTest={this.onDeleteTestClick}

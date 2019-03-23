@@ -8,6 +8,7 @@ const Container = styled.div`
 `;
 
 const EmptyContainer = styled.div`
+  margin-top: 1%;
   width: 100%;
   text-align: center;
   font-size: 115%;
@@ -29,7 +30,8 @@ const Field = styled.div`
 `;
 
 const Horizontal = styled.div`
-    display: flex;
+  margin-top: 1%;
+  display: flex;
 `;
 
 const CellContainer = styled.div`
