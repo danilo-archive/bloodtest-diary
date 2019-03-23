@@ -8,7 +8,6 @@ const Container = styled.div`
   position: relative;
   width: 49.8%;
   height: 100%;
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,6 +27,21 @@ const TextArea = styled.textarea`
   resize: none;
   outline: none;
 `;
+const DateInput = styled.input`
+  align-items: center;
+  cursor: pointer;
+  z-index: 2;
+  text-align: center;
+  border-radius: 20px;
+  background-color: #028090;
+  color:white;
+  font-weight: bold;
+
+  &:hover {
+    background-color: #0b989d;
+  }
+`;
+
 
 export default props => {
   return (
@@ -35,14 +49,14 @@ export default props => {
       <Container>
         <TitleTab color="#0b999d">Date</TitleTab>
         <br />
-        <input
+        <DateInput
           type="text"
           onClick={props.onInputClick}
           value={props.selectedDate}
           readOnly
         />
         {props.showCalendar ? (
-          <CalendarTable onDaySelected={day => props.onDateSelect(day)} />
+          <CalendarTable outsideClick={props.onCalendarClose} onDayPick={props.onDayPick} />
         ) : (
           <></>
         )}
@@ -56,7 +70,6 @@ export default props => {
           }}
           frequency={props.frequency}
           occurrences={props.occurrences}
-          noRepeat={props.noRepeat}
           onNoRepeatChange={props.onNoRepeatChange}
           unitOptions={props.unitOptions}
           timeAmount={props.timeAmount}

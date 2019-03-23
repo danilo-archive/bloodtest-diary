@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import SearchBar from "./../navbarComponents/searchBar.js";
+import DatePicker from "./../navbarComponents/searchBar.js";
 import ControlButtons from "./../navbarComponents/controlButtons.js";
 import WeekButtons from "./../navbarComponents/weekButtons.js";
 import NavHeader from "./../navbarComponents/navHeader.js";
@@ -102,7 +102,7 @@ class Navbar extends React.Component {
                   option1="Under 12"
                   option2="12 or older"
                 />
-                <SearchBar />
+                <DatePicker onDayPick={this.props.onDayPick}/>
                 <WeekButtons
                   onPrev={this.props.onPrev}
                   onNext={this.props.onNext}

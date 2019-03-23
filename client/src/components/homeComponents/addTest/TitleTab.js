@@ -19,7 +19,7 @@ const TitleDiv = styled.div`
 
 const TitleLabel = styled(Label)`
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 50%;
   color: white;
   font-size: 3rem;

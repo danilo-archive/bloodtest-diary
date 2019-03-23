@@ -31,9 +31,17 @@ function formatDatabaseDate(dateString){
  * @returns {Date} relative monday date
  */
 function getMondayOfWeek(date){
+    let offset = date.getDay() === 0 ? -7 : 0;
     let toReturn = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    toReturn.setDate(toReturn.getDate() - toReturn.getDay() + 1);
+    toReturn.setDate(toReturn.getDate() - toReturn.getDay() + 1 + offset);
     return toReturn;
+}
+
+function getWeekDays(day){
+    let monday = getMondayOfWeek(day);
+    monday.setHours(0, 0, 0, 0);
+    let restOfWeek = getNextDates("1-D:5", monday);
+    return [monday].concat(restOfWeek);
 }
 
 function getCurrentWeek(){
@@ -209,6 +217,7 @@ function stringIsInteger(str) {
 module.exports = {
     isHoliday,
     isPastDate,
+    getWeekDays,
     getNextWeek,
     getCurrentWeek,
     getPreviousWeek,

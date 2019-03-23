@@ -94,6 +94,10 @@ export default class EditTestView extends React.Component {
     });
   }
 
+  onCalendarClose = () => {
+    this.setState({showCalendar: false});
+  }
+
   saveTest = () => {
     const { test, patient } = this.state;
     let freq = null;
@@ -218,15 +222,16 @@ export default class EditTestView extends React.Component {
             />
             {this.state.showCalendar ? (
               <CalendarTable
+                outsideClick={this.onCalendarClose}
                 style={{ width: "50%", top: "47%", left: "37%" }}
-                onDaySelected={day => {
+                onDayPick={day => {
                   this.setState({
                     showCalendar: false,
                     test: {
                       ...this.state.test,
                       date: {
                         ...this.state.test.date,
-                        dueDate: day
+                        dueDate: dateformat(day, "d mmm yyyy")
                       }
                     }
                   });
