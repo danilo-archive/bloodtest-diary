@@ -12,7 +12,7 @@ getJSONStub.callsFake(function () {
     return {
         "compact": true,
         "timeStamp": true,
-        "consoleOutput": true,
+        "consoleOutput": false,
         "fileOutput": true,
         "colorize": true,
         "outputFilePath": outpath
@@ -44,7 +44,7 @@ describe("Test logger module functionalities", () => {
             });
 
             while (!done) {
-                await sleep(5);
+                await sleep(10);
             }
             lastLine.should.contain("test")
             lastLine.should.contain(command)
@@ -62,7 +62,7 @@ describe("Test logger module functionalities", () => {
         });
 
         while (!done) {
-            await sleep(10);
+            await sleep(20);
         }
         lastLine.should.contain("test")
         lastLine.should.contain("LOG")

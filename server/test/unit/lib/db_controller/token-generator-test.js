@@ -8,6 +8,7 @@
  * @see module:token-generator
  */
 
+require('./../../../../lib/logger').changeOption("consoleOutput", false)
 const expect = require("chai").expect;
 const id_gen = require("../../../../lib/db_controller/token-generator");
 

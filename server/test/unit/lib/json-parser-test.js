@@ -29,7 +29,6 @@ describe("Read JSON files", () => {
             "staticFolder": "/public",
             "indexFile": "index.html"
         }
-        console.log(obj, expected_result)
         obj.should.contain(expected_result);
     });
 
