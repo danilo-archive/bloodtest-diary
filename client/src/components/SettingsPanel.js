@@ -42,6 +42,8 @@ export default class SettingsPanel extends Component {
             <>
               <UsersPanel/>
               <divider />
+              <Credentials/>
+              <divider />
               <PrefrencesPanel/>
             </>
           );

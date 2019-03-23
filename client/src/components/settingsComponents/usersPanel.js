@@ -305,12 +305,14 @@ export default class UsersPanel extends Component {
       };
       this.serverConnect = getServerConnect();
       this.getUsers();
+      this.getCurrentUserUsername();
   }
 
   getUsers() {
     this.serverConnect.getAllUsers(res => {
       if (res.success){
-        let users = res.response.map(user => ({
+        let otherUsers = res.response.filter(user => ( user.username !== this.state.currUsername));
+        let users = otherUsers.map(user => ({
           label: user.username,
           value: user.recovery_email,
           isAdmin: user.isAdmin === "yes"
@@ -318,6 +320,16 @@ export default class UsersPanel extends Component {
         this.setState({allUsers: users});
       }else{
         //TODO error check
+      }
+    });
+  }
+
+  getCurrentUserUsername() {
+    this.serverConnect.getCurrentUser( res => {
+      if (res.success){
+        this.setState({
+            currUsername: res.response[0].username
+        });
       }
     });
   }

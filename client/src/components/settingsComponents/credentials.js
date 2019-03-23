@@ -176,7 +176,7 @@ export default class Credentials extends Component {
                 confirmPassword: "",
               })
               this.showErrorMessage();
-            });     
+            });
           }
       }else{
         openAlert("Somebody is editing this user already", "confirmationAlert",
@@ -187,7 +187,6 @@ export default class Credentials extends Component {
   }
 
   updateDatabase(newData, token) {
-    console.log(this.state.editToken)
     this.serverConnect.editUser(newData, token, res => {
       if (res.success){
         this.showConfirmationMessage();
@@ -225,7 +224,7 @@ export default class Credentials extends Component {
     return (
       <Container>
 
-        <p className="credentialsTitle">Credentials</p>
+        <p className="credentialsTitle">My Credentials</p>
 
         <InfoMessage className={""} message={"Database Updated Successfully" } show={this.state.showConfirmationMessage}/>
         <>
