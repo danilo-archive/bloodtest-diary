@@ -27,7 +27,7 @@ const PillDiv = styled.div`
   width: auto;
   background-color: #0b999d;
   color: white;
-  
+
   transform: translate(-50%, -50%);
   padding: 0% 5% 0% 5%;
   top: -20%;
@@ -36,7 +36,7 @@ const PillDiv = styled.div`
 export default props => {
   const TESTJSX = test => (
     <TestContainer
-      key={test.testId}
+      key={test.id}
       style={{
         position: "relative",
 
@@ -55,16 +55,15 @@ export default props => {
       <TestBox
         noCheck={props.awaitResponse}
         fail={
-          props.response &&
-          failedTests.find(failedId => test.testId === failedId)
+          props.response && failedTests.find(failedId => test.id === failedId)
         }
         onCheck={(checked, user) => {
           props.select(checked, user);
         }}
-        selected={props.selected.find(exam => test.testId === exam.testId)}
+        selected={props.selected.find(exam => test.id === exam.testId)}
         text={test.patientName}
         dueDate={test.dueDate}
-        testId={test.testId}
+        testId={test.id}
       />
     </TestContainer>
   );
