@@ -246,7 +246,14 @@ async function selectQueryDatabase(sql) {
  **/
 function getTestsDuringTheWeek(date, isAdult) {
     const adult = isAdult ? "yes" : "no";
-    const weekDay = new Date(date).getDay();
+    const dateObject = new Date(date);
+    //Check if Sunday
+    if(dateObject.getDay()==0){
+      //Make it Saturday
+      dateObject.setDate(dateObject.getDate()-1);
+      date = dateformat(dateObject, "yyyymmdd");
+    }
+    const weekDay = dateObject.getDay();
     const daysInWeek = [];
     let sql;
     let i = 0;
@@ -267,6 +274,7 @@ function getTestsDuringTheWeek(date, isAdult) {
     daysInWeek.push(databaseController.selectQuery(sql));
     return daysInWeek;
 }
+getTestWithinWeek("2019-03-17",true).then((d)=>console.log(d));
 
 /**
  * Run multiple queries on the database
