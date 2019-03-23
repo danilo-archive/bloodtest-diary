@@ -83,6 +83,7 @@ export default class Alert extends Component {
   getAlert() {
       switch(this.state.type) {
         case 'dialogAlert':
+          this.startTimer();
           return (
             <DialogAlert
               message = {this.state.message}

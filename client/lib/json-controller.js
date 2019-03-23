@@ -12,7 +12,8 @@
 */
 module.exports = {
     getJSON,
-    isJSON
+    isJSON,
+    writeServerConfigFile
 }
 
 const fs = require('fs');
@@ -32,6 +33,14 @@ function getJSON(path) {
         console.error(`There is no JSON file at ${path}`)
         return null;
     }
+}
+
+function writeServerConfigFile(json){
+    let toWrite = JSON.stringify(json);
+    console.log(toWrite);
+    fs.writeFile('src/server_connect_config.json', toWrite, 'utf8', err => {
+        console.log(err);
+    });
 }
 
 /**

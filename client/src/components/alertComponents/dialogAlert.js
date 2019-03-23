@@ -11,9 +11,9 @@ const Alert = styled.div`
   justify-content: center;
   align-content: stretch;
 
-  font-family: "Rajdhani", sans-serif;
+
   color: #646464;
-  font-size: 150%;
+  font-size: 130%;
 
   .alertMessageContainer {
     border: solid 0 blue;
@@ -39,7 +39,14 @@ const Alert = styled.div`
 
 export default class DialogAlert extends Component {
 
+    startTimer = () => {
+      setTimeout( () => {
+            this.props.closeAlert();
+      }, 5000);
+    }
+
     render(){
+      this.startTimer();
       return (
           <>
             <Alert>

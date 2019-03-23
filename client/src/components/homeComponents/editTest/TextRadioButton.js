@@ -10,7 +10,7 @@ const Container = styled.div`
   flex-direction: row;
   white-space: nowrap;
   align-items: center;
-  margin: 0 1rem;
+  margin: 1rem 1rem 0 .4rem;
 
   & > p {
     margin-left: 5px;

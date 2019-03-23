@@ -11,6 +11,8 @@ import dateformat from "dateformat";
 import { openAlert } from "./../../Alert.js";
 import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
 import PatientProfile from "../../patientsComponents/PatientProfile";
+import { Tooltip } from "react-tippy";
+
 const DataContainer = styled.div`
   position: relative;
   width: 45rem;
@@ -25,9 +27,20 @@ const SetterValues = [
 ];
 
 const TextArea = styled.textarea`
-  width: 40%;
-  height: 10rem;
+  width: 100%;
+  height: 7rem;
   outline: none;
+  resize: none;
+  overflow: scroll;
+`;
+
+const ButtonsContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+  margin-top: 1%;
 `;
 
 export default class EditTestView extends React.Component {
@@ -46,6 +59,10 @@ export default class EditTestView extends React.Component {
       console.log({ res });
       this.setState({
         showPatient: false,
+        tooltips: {
+          frequency: false,
+          occurrences: false
+        },
         patientToken: -1,
         patient: { name: res.patient_name, id: res.patient_no },
         test: {
@@ -107,7 +124,7 @@ export default class EditTestView extends React.Component {
           openAlert(
             `A new test had been automatically scheduled for the ${formatDatabaseDate(
               res.response.new_date
-            )}`,
+            )}.`,
             "confirmationAlert",
             "Ok",
             () => {
@@ -162,179 +179,160 @@ export default class EditTestView extends React.Component {
   render() {
     return this.state.ready ? (
       <>
-        {!this.state.showPatient ? (
-          <div
-            style={{
-              width: "35rem",
-              height: "38rem",
-              background: "rgba(244, 244, 244,0.7)",
-              position: "relative"
-            }}
-          >
-            <TitleTab onClose={this.props.closeModal} main={true}>
-              Edit Appointment
-            </TitleTab>
-            <div style={{ padding: "1rem 1rem" }}>
-              <InfoBox
-                label={"Full Name"}
-                text={this.state.patient.name}
-                icon="arrow-circle-right"
-                onClick={() => {
-                  this.serverConnect.getFullPatientInfo(
-                    this.state.patient.id,
-                    res => {
-                      if (res.success) {
-                        this.setState({
-                          showPatient: true,
-                          patientToken: res.token
-                        });
-                      } else
-                        openAlert(
-                          "Something went wrong",
-                          "confirmationAlert",
-                          "Ok",
-                          () => {}
-                        );
-                    }
-                  );
-                }}
-              />
-              {this.state.showCalendar ? (
-                <CalendarTable
-                  style={{ width: "50%", top: "47%", left: "37%" }}
-                  onDayPick={day => {
-                    this.setState({
-                      showCalendar: false,
-                      test: {
-                        ...this.state.test,
-                        date: {
-                          ...this.state.test.date,
-                          dueDate: dateformat(day, "d mmm yyyy")
-                        }
-                      }
-                    });
-                  }}
-                />
-              ) : (
-                ``
-              )}
-              <InfoBox
-                label={"Due"}
-                text={this.state.test.date.dueDate}
-                icon="edit"
-                onClick={() => this.setState({ showCalendar: !this.state.showCalendar })}
-              />
-              <FrequencySelector
-                noRepeat={this.state.test.date.noRepeat}
-                onCheck={check =>
-                  this.setState({
-                    test: {
-                      ...this.state.test,
-                      date: { ...this.state.test.date, noRepeat: check }
-                    }
-                  })
-                }
-                values={SetterValues}
-                frequencyTimes={
-                  this.state.test.date.frequency.split("-")[0] !== "0"
-                    ? this.state.test.date.frequency.split("-")[0]
-                    : ""
-                }
-                frequencyUnit={
-                  this.state.test.date.frequency[
-                    this.state.test.date.frequency.length - 1
-                  ]
-                }
-                occurrences={this.state.test.date.occurrences}
-                onUnitChange={unit =>
+        <div
+          style={{
+            width: "35rem",
+            height: "38rem",
+            background: "rgba(244, 244, 244,0.7)",
+            position: "relative"
+          }}
+        >
+          <TitleTab onClose={this.props.closeModal} main={true}>
+            Edit Appointment
+          </TitleTab>
+          <div style={{ padding: "1rem 1rem" }}>
+            <InfoBox
+              label={"Full Name"}
+              text={this.state.patient.name}
+              icon="arrow-circle-right"
+              onClick={() => {
+                alert("This is supposed to open the patient view");
+              }}
+            />
+            {this.state.showCalendar ? (
+              <CalendarTable
+                style={{ width: "50%", top: "47%", left: "37%" }}
+                onDayPick={day => {
                   this.setState({
                     showCalendar: false,
                     test: {
                       ...this.state.test,
                       date: {
                         ...this.state.test.date,
-                        frequency: `${this.state.test.date.frequency.slice(
-                          0,
-                          -1
-                        )}${unit}`
-                      }
-                    }
-                  })
-                }
-                onFrequencyChange={time => {
-                  time = time === "" || time === "-" ? "0" : time;
-                  this.setState({
-                    showCalendar: false,
-                    test: {
-                      ...this.state.test,
-                      date: {
-                        ...this.state.test.date,
-                        frequency: `${time}-${
-                          this.state.test.date.frequency.split("-")[1]
-                        }`
-                      }
-                    }
-                  });
-                }}
-                onOccurrencesChange={value => {
-                  this.setState({
-                    showCalendar: false,
-                    test: {
-                      ...this.state.test,
-                      date: {
-                        ...this.state.test.date,
-                        occurrences: value
+                        dueDate: dateformat(day, "d mmm yyyy")
                       }
                     }
                   });
                 }}
               />
-              <hr />
-              <StatusSetter
-                currentStatus={this.state.test.status}
-                onStatusCheck={(status, checked) => {
-                  if (checked) {
-                    this.setState({ test: { ...this.state.test, status } });
+            ) : (
+              ``
+            )}
+            <InfoBox
+              label={"Due"}
+              text={this.state.test.date.dueDate}
+              icon="edit"
+              onClick={() => this.setState({ showCalendar: true })}
+            />
+            <FrequencySelector
+              tooltips={{
+                frequency: this.state.tooltips.frequency,
+                occurrences: this.state.tooltips.occurrences
+              }}
+              setFrequencyTooltip={state =>
+                this.setState({
+                  tooltips: { ...this.state.tooltips, frequency: state }
+                })
+              }
+              setOcurrencesTooltip={state =>
+                this.setState({
+                  tooltips: { ...this.state.tooltips, occurrences: state }
+                })
+              }
+              noRepeat={this.state.test.date.noRepeat}
+              onCheck={check =>
+                this.setState({
+                  test: {
+                    ...this.state.test,
+                    date: { ...this.state.test.date, noRepeat: check }
                   }
-                }}
+                })
+              }
+              values={SetterValues}
+              frequencyTimes={
+                this.state.test.date.frequency.split("-")[0] !== "0"
+                  ? this.state.test.date.frequency.split("-")[0]
+                  : ""
+              }
+              frequencyUnit={
+                this.state.test.date.frequency[
+                  this.state.test.date.frequency.length - 1
+                ]
+              }
+              occurrences={this.state.test.date.occurrences}
+              onUnitChange={unit =>
+                this.setState({
+                  showCalendar: false,
+                  test: {
+                    ...this.state.test,
+                    date: {
+                      ...this.state.test.date,
+                      frequency: `${this.state.test.date.frequency.slice(
+                        0,
+                        -1
+                      )}${unit}`
+                    }
+                  }
+                })
+              }
+              onFrequencyChange={time => {
+                time = time === "" || time === "-" ? "0" : time;
+                this.setState({
+                  showCalendar: false,
+                  test: {
+                    ...this.state.test,
+                    date: {
+                      ...this.state.test.date,
+                      frequency: `${time}-${
+                        this.state.test.date.frequency.split("-")[1]
+                      }`
+                    }
+                  }
+                });
+              }}
+              onOccurrencesChange={value => {
+                this.setState({
+                  showCalendar: false,
+                  test: {
+                    ...this.state.test,
+                    date: {
+                      ...this.state.test.date,
+                      occurrences: value
+                    }
+                  }
+                });
+              }}
+            />
+            <hr />
+            <StatusSetter
+              currentStatus={this.state.test.status}
+              onStatusCheck={(status, checked) => {
+                if (checked) {
+                  this.setState({ test: { ...this.state.test, status } });
+                }
+              }}
+            />
+            <hr />
+            <div >
+              <TextArea
+                value={this.state.test.notes}
+                onChange={event =>
+                  this.setState({
+                    test: {
+                      ...this.state.test,
+                      notes: event.target.value
+                    }
+                  })
+                }
               />
-              <hr />
-              <div style={{ display: "flex" }}>
-                <TextArea
-                  value={this.state.test.notes}
-                  onChange={event =>
-                    this.setState({
-                      test: {
-                        ...this.state.test,
-                        notes: event.target.value
-                      }
-                    })
-                  }
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-end"
-                  }}
-                >
-                  <Button save onClick={this.saveTest}>
-                    Save Changes
-                  </Button>
-                  <Button onClick={this.unscheduleTest}>Unschedule test</Button>
-                </div>
-              </div>
+              <ButtonsContainer>
+                <Button backgroundColor={"#0b999d"} hoverColor={"#018589"} onClick={this.saveTest}>Save Changes</Button>
+                <Button backgroundColor={"#f44336"} hoverColor={"#dc2836"} onClick={this.unscheduleTest}>Unschedule test</Button>
+                <Button backgroundColor={"#aaaaaa"} hoverColor={"#c8c8c8"} onClick={this.props.closeModal}>Close</Button>
+              </ButtonsContainer>
             </div>
           </div>
-        ) : (
-          <div>
-            <PatientProfile
-              patientId={this.state.patient.id}
-              editToken={this.state.patientToken}
-              closeModal={() => this.setState({ showPatient: false })}
-            />
-          </div>
-        )}
+        </div>
       </>
     ) : (
       ``

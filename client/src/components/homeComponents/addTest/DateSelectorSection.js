@@ -48,6 +48,15 @@ export default props => {
         )}
         <FrequencySetter
           noRepeat={props.noRepeat}
+          setFrequencyTooltip={props.setFrequencyTooltip}
+          setOcurrencesTooltip={props.setOcurrencesTooltip}
+          tooltips={{
+            frequency: props.tooltips.frequency,
+            occurrences: props.tooltips.occurrences
+          }}
+          frequency={props.frequency}
+          occurrences={props.occurrences}
+          noRepeat={props.noRepeat}
           onNoRepeatChange={props.onNoRepeatChange}
           unitOptions={props.unitOptions}
           timeAmount={props.timeAmount}

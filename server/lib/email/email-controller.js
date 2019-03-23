@@ -181,27 +181,32 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction) 
 * @param {String} username - user to recover password
 * @result {JSON} result - {success:Boolean response:(optional) Error/Problem}
 **/
-async function recoverPassword(username){
+async function recoverPassword(username) {
     const user = await query_controller.getUser(username);
-    if(!user.success){
-      return user;
+    if (!user.success) {
+        return user;
     }
-    if(user.response[0].length==0){
-      return {success:false, response:"No user found!"}
+    if (user.response[0].length == 0) {
+        return { success: false, response: "No user found!" }
+    }
+    const token = await query_controller.requestEditing("User", username, username);
+    if (!token) {
+        return { success: false, response: "Could not send an email." };
     }
     const newPassword = authenticator.produceSalt();
 
     const userToEmail = {
-      user:{
-        username:username,
-        new_password:newPassword,
-        recovery_email:user.response[0].recovery_email
-      }
+        user: {
+            username: username,
+            new_password: newPassword,
+            recovery_email: user.response[0].recovery_email
+        }
     }
     const emailResponse = await email_sender.sendPasswordRecoveryEmail(userToEmail);
-    if(!emailResponse){
-      return {success:false, response:"Could not send an email."};
+    if (!emailResponse) {
+        query_controller.returnToken("User", username, token, username);
+        return { success: false, response: "Could not send an email." };
     }
     const hash = crypto.createHash('sha256').update(newPassword).digest('hex');
-    return await query_controller.editUser({username:username, hashed_password:hash},username);
-  }
+    return await query_controller.editUser({ username: username, hashed_password: hash }, token, username);
+}

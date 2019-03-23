@@ -7,8 +7,28 @@ import WeekButtons from "./../navbarComponents/weekButtons.js";
 import NavHeader from "./../navbarComponents/navHeader.js";
 import OptionSwitch from "../switch/OptionSwitch";
 
-import { openAlert } from "./../Alert.js";
+const Wrapper = styled.div`
+  border: #839595 0px solid;
 
+  background-color: white;
+
+  margin-bottom: 1%;
+
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
+
+  min-height: 150px;
+  max-height: 150px;
+
+  flex-grow: 1;
+  flex-shrink: 2;
+
+  overflow: hidden;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+`;
 const Container = styled.div`
   border: red 0px solid;
   padding: 0%;
@@ -79,8 +99,8 @@ class Navbar extends React.Component {
                 <OptionSwitch
                   checked={this.props.over12}
                   onChange={this.props.setUnder12}
-                  option1="Show under 12"
-                  option2="Show 12 or older"
+                  option1="Under 12"
+                  option2="12 or older"
                 />
                 <DatePicker onDayPick={this.props.onDayPick}/>
                 <WeekButtons
@@ -108,8 +128,8 @@ class Navbar extends React.Component {
               <OptionSwitch
                 checked={this.props.over12}
                 onChange={this.props.setUnder12}
-                option1="Show under 12"
-                option2="Show 12 or older"
+                option1="Under 12"
+                option2="12 or older"
               />
               <ControlButtons
                 page={this.props.page}
@@ -126,7 +146,13 @@ class Navbar extends React.Component {
 
   render() {
     const content = this.getNavbar();
-    return <Container>{content}</Container>;
+    return (
+      <Wrapper>
+        <Container>
+          {content}
+        </Container>
+      </Wrapper>
+    );
   }
 }
 

@@ -5,6 +5,7 @@ import WeekDaySection from "./calendarComponents/WeekDaySection";
 import ScrollBox from "./calendarComponents/ScrollBox";
 import AppointmentSection from "./calendarComponents/AppointmentSection";
 import { DropTarget } from "react-dnd";
+import "../../styles/ongoingWeekly.css";
 
 const Container = styled.div`
   margin: 3px;
@@ -13,7 +14,7 @@ const Container = styled.div`
   height: 100%;
   overflow: hidden;
   background: ${props => props.background ? props.background : "white"};
-
+  
 `;
 
 function collect(connect, monitor){
@@ -45,7 +46,7 @@ class OngoingWeekly extends React.Component {
     const { connectDropTarget, hovered, item} = this.props;
     const backgroundColor = hovered ? "#dbfffc" : "white";
     return connectDropTarget(
-      <div style={{width:"100%",height:"100%"}}>
+     <div className="ongoingWeekly">
         <Container background={backgroundColor}>
           <WeekDaySection
             notificationNumber={
@@ -61,13 +62,14 @@ class OngoingWeekly extends React.Component {
               appointments={this.props.anytimeAppointments}
               section={"ongoing"}
               editTest={this.props.editTest}
+              editPatient={this.props.editPatient}
               handleError={this.props.handleError}
               section={"ongoing"}
             />
             <div style={{width:"100%",height:"45px"}}/>
           </ScrollBox>
         </Container>
-      </div>
+    </div>
     );
   }
 }

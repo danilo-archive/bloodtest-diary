@@ -1,0 +1,104 @@
+:root {
+    --htmlFontSize: 100%;
+    --bodyFontSize: 0.850rem;
+    --bodyFontWeight: 500;
+    --bodyLineHeight: 1.5;
+  }
+
+  html {
+    box-sizing: border-box;
+    font-size: var(--htmlFontSize);
+    height: 100%;
+    font-family: Rajdhani, serif;
+  }
+
+  body {
+    background-color: var(--bodyBackgroundColor);
+    color: var(--bodyColor);
+    font-size: var(--bodyFontSize);
+    font-weight: var(--bodyFontWeight);
+    height: auto;
+    line-height: var(--bodyLineHeight);
+    min-height: 100vh;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+  }
+
+  input {
+    background-image: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    margin: 0;
+    outline: 0;
+    padding: 0;
+    background: transparent;
+    transition: background-color 0.3s;
+  }
+
+  input:disabled {
+    background: rgb(235, 235, 228);
+  }
+  button {
+      font-family: Rajdhani, sans-serif;
+  }
+
+
+
+  ::selection {
+    color: #0e4f54;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  
+  ::-webkit-scrollbar:vertical {
+    display: none;
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb  {
+    background: #0b989d;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-track  {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-corner {
+    display: none;
+  }
+
+@font-face {
+    font-family: "Rajdhani";
+    src: url("../resources/font/Rajdhani-Regular.ttf");
+}
+@font-face {
+    font-family: "Rajdhani";
+    src: url("../resources/font/Rajdhani-Bold.ttf");
+    font-weight: bold;
+}
+@font-face {
+    font-family: "Rajdhani";
+    src: url("../resources/font/Rajdhani-Medium.ttf");
+    font-weight: 600;
+}
+@font-face {
+    font-family: "Rajdhani";
+    src: url("../resources/font/Rajdhani-SemiBold.ttf");
+    font-weight: 700;
+}
+@font-face {
+    font-family: "Rajdhani";
+    src: url("../resources/font/Rajdhani-Light.ttf");
+    font-weight: 100;
+}

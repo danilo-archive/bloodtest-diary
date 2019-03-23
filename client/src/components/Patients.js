@@ -32,26 +32,6 @@ const Container = styled.div`
   -o-user-select: none;
 `;
 
-const NavbarContainer = styled.div`
-  border: #839595 0 solid;
-
-  background-color: white;
-
-  margin-bottom: 1%;
-
-  padding: 10px 1%;
-
-  min-height: 150px;
-  max-height: 150px;
-
-  flex-grow: 1;
-  flex-shrink: 2;
-
-  overflow: hidden;
-
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-`;
-
 const TableContainer = styled.div`
   color: #ffffff;
   border: green 0 solid;
@@ -80,7 +60,7 @@ const Button = styled.button`
   font-weight: 200;
   background-color: #0b989d;
   word-break: break-word;
-  font-family: "Rajdhani", sans-serif;
+  
   outline: none;
   :hover {
     background: #018589;
@@ -239,7 +219,7 @@ class Patients extends React.Component {
   openEditModal = id => {
     this.serverConnect.requestPatientEditing(id, res => {
       console.log(`id in openEditModal: ${id}`);
-      if (res.token) {
+      if (res.success) {
         this.setState({
           selectedId: id,
           openEditModal: true,
@@ -263,98 +243,95 @@ class Patients extends React.Component {
           editToken: undefined
         });
       }
-    );
-  };
+    )
+  }    
 
-  openAddModal = () => {
-    this.setState({ openAddModal: true });
-  };
+    openAddModal = () => {
+        this.setState({openAddModal: true});
+    };
 
-  onCloseAddModal = () => {
-    this.setState({ openAddModal: false });
-  };
+    onCloseAddModal = () => {
+        this.setState({openAddModal: false})
+    };
 
-  //TODO : rename all components to capital case
-  render() {
-    if (this.state.allPatientsReady) {
-      return (
-        <ModalProvider>
-          <Container>
-            <NavbarContainer>
-              <Navbar
-                over12={!this.state.under12}
-                setUnder12={check => {
-                  check
-                    ? this.serverConnect.setUnderTwelve()
-                    : this.serverConnect.setOverTwelve();
-                  this.setState({ under12: !check });
-                  this.refresh();
-                }}
-                page="Patients"
-                onHomeClick={this.onHomeClick}
-                onSignoutClick={this.logout}
-                refresh={this.refresh}
-              />
-            </NavbarContainer>
-            <Button onClick={this.openAddModal}>Add patient</Button>
-            <TableContainer>
-              <PatientsTable
-                shownPatients={this.state.shownPatients}
-                openEditModal={this.openEditModal}
-                filterNumber={this.number_filter}
-                filterName={this.name_filter}
-                filterSurname={this.surname_filter}
-                filterEmail={this.email_filter}
-                filterPhone={this.phone_filter}
-              />
-            </TableContainer>
-            <Modal
-              open={this.state.openEditModal}
-              onClose={this.onCloseEditModal}
-              showCloseIcon={false}
-              style={modalStyles}
-              center
-            >
-              <PatientProfile
-                patientId={this.state.selectedId}
-                closeModal={this.onCloseEditModal}
-                editToken={this.state.editToken}
-                purpose={"Edit patient"}
-                handleError={this.handleError}
-              />
-            </Modal>
+    //TODO : rename all components to capital case
+    render() {
+        if (this.state.allPatientsReady) {
+            return (
+                <ModalProvider>
+                    <Container>
+                          <Navbar
+                            over12={!this.state.under12}
+                            setUnder12={check => {
+                              check
+                                ? this.serverConnect.setUnderTwelve()
+                                : this.serverConnect.setOverTwelve();
+                              this.setState({ under12: !check });
+                              this.refresh();
+                            }}
+                            page="Patients"
+                            onHomeClick={this.onHomeClick}
+                            onSignoutClick={this.logout}
+                            refresh={this.refresh}
+                          />
+                        <Button onClick={this.openAddModal}>Add patient</Button>
+                        <TableContainer>
+                            <PatientsTable
+                                shownPatients={this.state.shownPatients}
+                                openEditModal = {this.openEditModal}
+                                filterNumber = {this.number_filter}
+                                filterName = {this.name_filter}
+                                filterSurname = {this.surname_filter}
+                                filterEmail = {this.email_filter}
+                                filterPhone = {this.phone_filter}
+                            />
+                        </TableContainer>
+                        <Modal
+                            open={this.state.openEditModal}
+                            onClose={this.onCloseEditModal}
+                            showCloseIcon={false}
+                            style={modalStyles}
+                            center
+                            >
+                            <PatientProfile
+                                patientId={this.state.selectedId}
+                                closeModal={this.onCloseEditModal}
+                                editToken={this.state.editToken}
+                                purpose={"Edit patient"}
+                                handleError={this.handleError}
+                            />
+                        </Modal>
 
-            <Modal
-              open={this.state.openAddModal}
-              onClose={this.onCloseAddModal}
-              showCloseIcon={false}
-              style={modalStyles}
-              center
-            >
-              <NewPatient
-                closeModal={this.onCloseAddModal}
-                purpose={"Add patient"}
-                handleError={this.handleError}
-              />
-            </Modal>
-          </Container>
-        </ModalProvider>
-      );
-    } else {
-      return (
-        <div
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%,-50%)"
-          }}
-        >
-          <LoadingAnimation />
-        </div>
-      );
+                        <Modal
+                            open={this.state.openAddModal}
+                            onClose={this.onCloseAddModal}
+                            showCloseIcon={false}
+                            style={modalStyles}
+                            center
+                        >
+                            <NewPatient
+                                closeModal={this.onCloseAddModal}
+                                purpose={"Add patient"}
+                                handleError={this.handleError}
+                            />
+                        </Modal>
+
+                    </Container>
+                </ModalProvider>
+            );
+        } else {
+            return (
+                <div style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%,-50%)",
+                }}>
+                    <LoadingAnimation/>
+                </div>
+            );
+        }
     }
-  }
 }
 
 export default Patients;

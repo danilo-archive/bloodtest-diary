@@ -8,7 +8,7 @@ const Heading = styled.h3`
   color: #646464;
   border-radius: 2px;
   border-bottom: solid 1.5px rgb(100, 100, 100, 0.5);
-  font-family: "Rajdhani", sans-serif;
+  
   font-size: 150%;
   height: 35px;
   overflow: hidden;

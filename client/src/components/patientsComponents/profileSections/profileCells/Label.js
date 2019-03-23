@@ -8,7 +8,7 @@ export default styled.p`
     margin: 0 42%;
     height: 100%;
     color: inherit;
-    font-family: "Rajdhani", sans-serif;
+    
     font-size: 250%;
     overflow: scroll;
     display:flex;
