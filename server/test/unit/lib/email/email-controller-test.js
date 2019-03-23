@@ -42,6 +42,9 @@ describe("Test email controller:", () => {
                     getUser: async function () {
                         return { success: true, response: [{ username: "admin", recovery_email: "admin123@gmail.com" }] }
                     },
+                    requestEditing: async function() {
+                        return "token";
+                    },
                     editUser: async function () {
                         return { success: false, response: { error: "STUBBED ERROR" } }
                     }
@@ -62,6 +65,12 @@ describe("Test email controller:", () => {
                     getUser: async function () {
                         return { success: true, response: [{ username: "admin", recovery_email: "admin123@gmail.com" }] }
                     },
+                    requestEditing: async function() {
+                        return "token";
+                    },
+                    returnToken: async function() {
+                        return "token";
+                    },
                     editUser: async function () {
                         return { success: true, response: { affectedRows: 1, changedRows: 1 } }
                     }
@@ -80,6 +89,9 @@ describe("Test email controller:", () => {
                 const query_controller = {
                     getUser: async function () {
                         return { success: true, response: [{ username: "admin", recovery_email: "admin123@gmail.com" }] }
+                    },
+                    requestEditing: async function() {
+                        return "token";
                     },
                     editUser: async function () {
                         return { success: true, response: { affectedRows: 1, changedRows: 1 } }
