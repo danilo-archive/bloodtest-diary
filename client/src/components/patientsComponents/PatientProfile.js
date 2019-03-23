@@ -369,6 +369,7 @@ class PatientProfile extends Component {
                         <OptionSwitch
                             option1={"Under 12"}
                             option2={"12 or older"}
+                            onToggleClick={() => {console.log("editing patient with over/under 12")}}
                         />
                     </SwitchContainer>
                     <ButtonContainer>

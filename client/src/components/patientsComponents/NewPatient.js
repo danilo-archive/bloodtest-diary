@@ -14,7 +14,7 @@ const Container = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  background: #f5f5f5;
+  background: white;
   align-items: center;
   padding: 1%;
 `;
@@ -254,7 +254,7 @@ class NewPatient extends Component {
                     <OptionSwitch
                         option1={"Under 12"}
                         option2={"12 or older"}
-                        onToggleClick={console.log("adding patient with over/under 12")}
+                        onToggleClick={() => {console.log("adding patient with over/under 12")}}
                     />
                 </SwitchContainer>
 
