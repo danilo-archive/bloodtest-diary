@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from "styled-components";
 
 import Cookies from 'universal-cookie';
+import { getServerConnect } from '../../serverConnection';
 const cookies = new Cookies();
 
 const Container = styled.div`
@@ -89,6 +90,10 @@ const RestartLabel = styled.p`
 let oldIp;
 let oldPort;
 
+function refresh(){
+  window.location.reload(true);
+}
+
 export default class ConnectionPanel extends Component {
 
   constructor(props){
@@ -97,6 +102,7 @@ export default class ConnectionPanel extends Component {
         ip: cookies.get("ip"),
         port: cookies.get("port")
       };
+      this.serverConnect = getServerConnect();
 
       oldIp = this.state.ip;
       oldPort = this.state.port;
@@ -135,7 +141,7 @@ export default class ConnectionPanel extends Component {
         </InputSection>
 
       {(oldIp !== this.state.ip || oldPort !== this.state.port) ?
-          <RestartLabel id="restart-button">Restart now</RestartLabel>
+          <RestartLabel onClick={refresh} id="restart-button">Restart now</RestartLabel>
         :
           <>
           </>

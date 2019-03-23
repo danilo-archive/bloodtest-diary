@@ -7,13 +7,14 @@ import HospitalSection from "./profileSections/HospitalSection";
 import {getServerConnect} from "../../serverConnection";
 import { openAlert } from "../Alert"
 import {emptyCheck, emailCheck} from "../../lib/inputChecker";
+import OptionSwitch from "./../switch/OptionSwitch";
 
 
 const Container = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  background: #f5f5f5;
+  background: white;
   align-items: center;
   padding: 1%;
 `;
@@ -44,7 +45,7 @@ const CloseButton = styled.button`
 
   height: 44px;
   min-width: 100px;
-  margin: 4%;
+  margin: 3%;
 
   :hover {
     background: #c8c8c8;
@@ -60,7 +61,7 @@ const SaveButton = styled.button`
   color: white;
   text-align: center;
   text-decoration: none;
-  margin: 4%;
+  margin: 3%;
   border-radius: 10px;
 
   height: 44px;
@@ -71,6 +72,19 @@ const SaveButton = styled.button`
     color: white;
   }
   outline: none;
+`;
+
+const SwitchContainer = styled.div`
+  margin-top: 2%;
+`;
+
+const Hr = styled.hr`
+  border: 0;
+  clear: both;
+  display: block;
+  width: 96%;               
+  background-color: #839595;
+  height: 1px;
 `;
 
 
@@ -89,6 +103,9 @@ class NewPatient extends Component {
     checkValues () {
         if (emptyCheck(this.state.patientId)) {
             return {correct: false, message: "Please provide the patient number first."};
+        }
+        if (this.props.allPatientsId.indexOf(this.state.patientId) > -1) {
+            return {correct: false, message: "Patient with this Id already exists"}
         }
         if (emptyCheck(this.state.patientName) || emptyCheck(this.state.patientSurname)) {
             return {correct: false, message: "Please provide patient name and surname."};
@@ -178,6 +195,7 @@ class NewPatient extends Component {
         return (
             <Container>
                 <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
+                <Hr/>
                 <PatientSection
                     editable={true}
                     patientId={""}
@@ -195,6 +213,7 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                <Hr/>
                 <CarerSection
                     carerId={""} //TODO : generate this
                     carerRelationship={""}
@@ -214,6 +233,7 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                <Hr/>
                 <HospitalSection
                     hospitalId={""} //TODO : generate this
                     hospitalName={""}
@@ -229,6 +249,14 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                <Hr/>
+                <SwitchContainer>
+                    <OptionSwitch
+                        option1={"Under 12"}
+                        option2={"12 or older"}
+                        onToggleClick={() => {console.log("adding patient with over/under 12")}}
+                    />
+                </SwitchContainer>
 
                 <ButtonContainer>
                     <CloseButton onClick={this.props.closeModal}>Close</CloseButton>

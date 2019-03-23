@@ -8,6 +8,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   z-index:2;
+  width: 90%;
 `;
 
 export default props => {

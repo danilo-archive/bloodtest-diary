@@ -4,6 +4,15 @@ import styled from 'styled-components';
 import PatientRow from "./PatientRow.js";
 import FilterCell from "./FilterCell.js";
 
+const TableContainer = styled.div`
+  padding: 0.5%;
+  width: 100%;
+  height: 78%;
+  background: #ffffff;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  overflow: hidden;
+`;
+
 const Table = styled.table`
   width: 100%;
   height: 100%;
@@ -17,7 +26,7 @@ const TableHeader = styled.thead`
 
 const TableBody = styled.tbody`
     display: block;
-    max-height: 80%; //change this to increase height of table
+    max-height: 87%; //change this to increase height of table
     overflow-y: scroll;
 `;
 
@@ -26,8 +35,9 @@ const TableHead = styled.th`
     padding: 10px;
     //word-break: break-all;
     color: white;
-    background: #0b989d;
+    background: #0d4e56;
     text-align: left;
+    font-weight: normal;
 `;
 
 const TableRow = styled.tr`
@@ -65,57 +75,59 @@ class PatientsTable extends React.Component {
     };
 
     render() {
-        //TODO : change class names
         return (
-            <Table>
-                <TableHeader>
-                <TableRow>
-                    <TableHead>Patient number</TableHead>
-                    <TableHead>Patient name</TableHead>
-                    <TableHead>Patient surname</TableHead>
-                    <TableHead>Patient email</TableHead>
-                    <TableHead>Patient phone</TableHead>
-                    <TableHead/>
-                </TableRow>
-                <TableRow>
-                    <FilterCell
-                        onChange={value => this.number_filter(value)}
-                        placeholder={"Search numbers..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.name_filter(value)}
-                        placeholder={"Search names..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.surname_filter(value)}
-                        placeholder={"Search surnames..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.email_filter(value)}
-                        placeholder={"Search emails..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.phone_filter(value)}
-                        placeholder={"Search phones..."}
-                    />
-                    <FilterCell
-                    />
-                </TableRow>
-                </TableHeader>
-                <TableBody>
-                {this.props.shownPatients.map(patient => (
-                    <PatientRow
-                        key={patient.patient_no}
-                        patient_no = {patient.patient_no}
-                        patient_name = {patient.patient_name}
-                        patient_surname = {patient.patient_surname}
-                        patient_email = {patient.patient_email}
-                        patient_phone = {patient.patient_phone}
-                        openEditModal = {this.props.openEditModal}
-                    />
-                ))}
-                </TableBody>
-            </Table>
+            <TableContainer>
+                <Table>
+                    <TableHeader>
+                    <TableRow>
+                        <TableHead>Patient number</TableHead>
+                        <TableHead>Patient name</TableHead>
+                        <TableHead>Patient surname</TableHead>
+                        <TableHead>Patient email</TableHead>
+                        <TableHead>Patient phone</TableHead>
+                        <TableHead/>
+                    </TableRow>
+                    <TableRow>
+                        <FilterCell
+                            onChange={value => this.number_filter(value)}
+                            placeholder={"Search numbers..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.name_filter(value)}
+                            placeholder={"Search names..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.surname_filter(value)}
+                            placeholder={"Search surnames..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.email_filter(value)}
+                            placeholder={"Search emails..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.phone_filter(value)}
+                            placeholder={"Search phones..."}
+                        />
+                        <FilterCell
+                        />
+                    </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                    {this.props.shownPatients.map(patient => (
+                        <PatientRow
+                            key={patient.patient_no}
+                            patient_no = {patient.patient_no}
+                            patient_name = {patient.patient_name}
+                            patient_surname = {patient.patient_surname}
+                            patient_email = {patient.patient_email}
+                            patient_phone = {patient.patient_phone}
+                            openEditModal = {this.props.openEditModal}
+                        />
+                    ))}
+                    <div style={{width:"100%", height: "20px"}}/>
+                    </TableBody>
+                </Table>
+            </TableContainer>
         );
     }
 }
