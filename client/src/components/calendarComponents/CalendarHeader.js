@@ -43,7 +43,6 @@ const monthColSpan = 5;
  * @return {string} The name of date's month
  */
 function getMonthName(date){
-    console.log(monthNames[date.getMonth()])
     return monthNames[date.getMonth()];
 }
 

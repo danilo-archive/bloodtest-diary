@@ -19,6 +19,7 @@ import {
   getNextDates,
   getMondayOfWeek,
   getCurrentWeek,
+  getWeekDays,
   getPreviousWeek,
   getNextWeek
 } from "../lib/calendar-controller";
@@ -179,6 +180,11 @@ class Home extends Component {
     });
   };
 
+  jumpToWeek = day => {
+    console.log(getWeekDays(day));
+    this.updateDashboard(getWeekDays(day));
+  }
+
   handleNext = event => {
     let nextWeek = getNextWeek([...this.state.weekDays]);
     this.updateDashboard(nextWeek);
@@ -208,7 +214,7 @@ class Home extends Component {
       } else {
         this.handleInvalidResponseError(
           res,
-          "Somebody is aready editing this test"
+          "Somebody is already editing this test"
         );
       }
     });
@@ -289,6 +295,7 @@ class Home extends Component {
                       this.refresh();
                     }}
                     page="Dashboard"
+                    onDayPick={this.jumpToWeek}
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}

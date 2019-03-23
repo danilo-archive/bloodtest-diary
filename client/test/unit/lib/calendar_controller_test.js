@@ -131,7 +131,8 @@ describe("Test not frequency formats", function () {
 });
 
 describe("Test week handling", function() {
-    const testDays = [ (new Date(2019, 1, 20)), (new Date(2019, 2, 1)), (new Date(2019, 5, 20))];
+    const testDays = [ (new Date(2019, 1, 20)), (new Date(2019, 2, 1)), (new Date(2019, 5, 20)),  (new Date(2019, 2, 24)), 
+                       (new Date(2019, 2, 31)), (new Date(2019, 3, 12))];
     it ("Should return the correct monday date given any date", function(){
         let results = [];
         testDays.forEach( day => {
@@ -148,6 +149,15 @@ describe("Test week handling", function() {
         results[2].getDate().should.equal(17);
         results[2].getMonth().should.equal(5);
         results[2].getFullYear().should.equal(2019);
+        results[3].getDate().should.equal(18);
+        results[3].getMonth().should.equal(2);
+        results[3].getFullYear().should.equal(2019);
+        results[4].getDate().should.equal(25);
+        results[4].getMonth().should.equal(2);
+        results[4].getFullYear().should.equal(2019);
+        results[5].getDate().should.equal(8);
+        results[5].getMonth().should.equal(3);
+        results[5].getFullYear().should.equal(2019);
 
     });
 
