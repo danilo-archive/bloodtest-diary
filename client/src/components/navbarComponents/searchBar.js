@@ -20,6 +20,7 @@ align-items: center;
 }
 
 .calendar-icon {
+  cursor: pointer;
   border: none;
   height: 40px;
   color: #1b1b1b;
@@ -56,11 +57,11 @@ export default class SearchBar extends Component {
           showCalendar: false,
           selectedDate: null,
         };
-        this.hideCalendar = () => {
-          this.setState({showCalendar:false})
-        };
         this.setSelectedDate = (selectedDate) => {
           this.setState({selectedDate: selectedDate});
+        }
+        this.hideCalendar = () => {
+          this.setState({showCalendar: false});
         }
     }
 
@@ -70,13 +71,13 @@ export default class SearchBar extends Component {
           <img className={"calendar-icon"}
                 alt={"Calendar"} selectedDate
                 src={calendarIcon}
-                onClick= {() => this.setState({ showCalendar: !this.state.showCalendar })}
+                onClick={() => this.setState({ showCalendar: true })}
           />
           Date picker
           <div className={"calendar-table"}>{this.state.showCalendar ? (
             <CalendarTable
+              outsideClick={this.hideCalendar}
               onDayPick={this.props.onDayPick}
-              hideCalendar={this.hideCalendar}
               setSelectedDate={this.setSelectedDate}
               selectedDate={this.state.selectedDate}
             />

@@ -222,7 +222,7 @@ export default class EditTestView extends React.Component {
                 label={"Due"}
                 text={this.state.test.date.dueDate}
                 icon="edit"
-                onClick={() => this.setState({ showCalendar: true })}
+                onClick={() => this.setState({ showCalendar: !this.state.showCalendar })}
               />
               <FrequencySelector
                 noRepeat={this.state.test.date.noRepeat}

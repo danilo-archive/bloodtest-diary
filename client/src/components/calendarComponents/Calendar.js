@@ -13,10 +13,10 @@ class CalendarTable extends Component {
   constructor(props) {
     super(props);
     const currentDate = (props.selectedDate) ? props.selectedDate : new Date();
-    alert(currentDate);
     this.state = {
       date: currentDate,
       calendar: getCalendar(currentDate),
+      selected: props.selectedDate,
       isVisible: true,
     };
     this.select = this.select;
@@ -74,9 +74,7 @@ class CalendarTable extends Component {
       if (this.props.onDayPick) {
         this.props.onDayPick(selectedDay);
       }
-      // if(this.props.hideCalendar){
-      //   this.props.hideCalendar();
-      // }
+      this.setState({selected: selectedDay});
     };
 
     this.returnDate = () => {
@@ -84,10 +82,30 @@ class CalendarTable extends Component {
     };
   }
 
+  componentWillMount() {
+    document.addEventListener('mousedown', this.handleClick, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClick, false);
+  }
+
+  handleClick = (e) => {
+    if (this.node && this.node.contains(e.target)) {
+      return;
+    }
+    if(this.props.outsideClick){
+      this.props.outsideClick();
+    }else{
+      this.setState({isVisible: false});
+    }
+  }
+
   render() {
     return (
       this.state.isVisible && (
         <table
+          ref={node => this.node = node}
           style={this.props.style}
           className={'calendar'}
           cellPadding={0}
