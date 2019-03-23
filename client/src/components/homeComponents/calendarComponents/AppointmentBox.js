@@ -103,7 +103,21 @@ function sendReminder(test){
                                  : `This patient was never contacted about this test, do you want to send an email?`;
   openAlert(text, "optionAlert",
             "No", () => {return},
-            "Yes", () => {console.log("sending email")});
+            "Yes", () => {
+              if (isPastDate(test.dueDate)){
+                serverConnect.sendOverdueReminders(test.test_id, res => {
+                  if (!res.success){
+                    openAlert("An error occurred during email sending", "confirmationAlert", "Ok", () => {return});
+                  }
+                });
+              }else{
+                serverConnect.sendNormalReminders(test.test_id, res => {
+                  if (!res.success){
+                    openAlert("An error occurred during email sending", "confirmationAlert", "Ok", () => {return});
+                  }
+                });
+              }
+            });
 }
 
 const RightClickMenu = props => {

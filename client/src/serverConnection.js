@@ -464,9 +464,16 @@ class ServerConnect {
         });
     }
 
-    sendReminders(testIds, callback){
+    sendOverdueReminders(testIds, callback){
         this.socket.emit("sendOverdueReminders", testIds, this.loginToken);
         this.socket.once("sendOverdueRemindersResponse", res => {
+            callback(res);
+        });
+    }
+
+    sendNormalReminders(testId, callback){
+        this.socket.emit("sendNormalReminders", testId, this.loginToken);
+        this.socket.once("sendNormalRemindersResponse", res => {
             callback(res);
         });
     }
