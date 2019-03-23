@@ -15,7 +15,7 @@ const Circle = styled.div`
   margin: auto;
   overflow: hidden;
   transition: background-color 0.2s ease;
-  margin: auto;
+
   transform: translate(-50%, -50%);
   z-index: 10;
   &:hover {

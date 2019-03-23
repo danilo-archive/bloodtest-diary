@@ -42,6 +42,7 @@ const DeleteButton = styled.button`
   text-decoration: none;
   border-radius: 10px;
   margin: 4%;
+  font-size: 130%;
 
   height: 44px;
   min-width: 100px;
@@ -61,6 +62,7 @@ const CloseButton = styled.button`
   text-align: center;
   text-decoration: none;
   border-radius: 10px;
+  font-size: 130%;
 
   height: 44px;
   min-width: 100px;
@@ -82,6 +84,7 @@ const SaveButton = styled.button`
   text-decoration: none;
   margin: 4%;
   border-radius: 10px;
+  font-size: 130%;
 
   height: 44px;
   min-width: 100px;
