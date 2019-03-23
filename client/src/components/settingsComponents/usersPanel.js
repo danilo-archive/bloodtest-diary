@@ -130,6 +130,12 @@ const Container = styled.div`
     outline: none;
   }
 
+  .inputDisabled {
+    border: solid 1px #b3b3b3;
+    background-color: rgb(235, 235, 228);
+    color: #646464;
+  }
+
   .saveButton {
     border: none;
     background-color: #0b999d;
@@ -334,7 +340,7 @@ export default class UsersPanel extends Component {
         if (res.success){
           this.setState({selectedOption , username: selectedOption.label, editToken: res.token, disabled: true, email: selectedOption.value, adminChecked: selectedOption.isAdmin});
         }else{
-          openAlert("Somebody is editing this user already", "confirmationAlert", 
+          openAlert("Somebody is editing this user already", "confirmationAlert",
           "Ok", () => {return});
         }
       });
@@ -376,7 +382,7 @@ export default class UsersPanel extends Component {
       this.showConfirmationMessage();
       this.getUsers();
      }else{
-      openAlert("Something went wrong", "confirmationAlert", 
+      openAlert("Something went wrong", "confirmationAlert",
                  "Ok", () => {return});
      }
    });
@@ -393,7 +399,7 @@ export default class UsersPanel extends Component {
             this.showConfirmationMessage();
             this.getUsers();
           }else{
-            openAlert("Something went wrong, make sure username is not already used", "confirmationAlert", 
+            openAlert("Something went wrong, make sure username is not already used", "confirmationAlert",
                        "Ok", () => {return});
           }
        });
@@ -496,9 +502,9 @@ export default class UsersPanel extends Component {
         {this.state.selectedOption ?
           <>
             <form onSubmit={this.onSaveEditUser} style={{ display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
-              <div className="inputSection">
+              <div className="inputSection inputDisabled">
                 <div className="usersLabel">Username:</div>
-                <input id="usernameInput" type="text" name="username" className="usersInput" value={this.state.username} onChange={this.handleCredentialUpdate} required/>
+                <input id="usernameInput" type="text" name="username" className="usersInput" value={this.state.username} onChange={this.handleCredentialUpdate} disabled/>
               </div>
               <div className="inputSection">
                 <div className="usersLabel">Email:</div>
