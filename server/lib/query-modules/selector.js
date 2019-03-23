@@ -247,12 +247,6 @@ async function selectQueryDatabase(sql) {
 function getTestsDuringTheWeek(date, isAdult) {
     const adult = isAdult ? "yes" : "no";
     const dateObject = new Date(date);
-    //Check if Sunday
-    if(dateObject.getDay()==0){
-      //Make it Saturday
-      dateObject.setDate(dateObject.getDate()-1);
-      date = dateformat(dateObject, "yyyymmdd");
-    }
     const weekDay = dateObject.getDay();
     const daysInWeek = [];
     let sql;
