@@ -19,18 +19,29 @@ class CalendarTable extends Component {
       selected: props.selectedDate,
       isVisible: true,
     };
+    this.firstSwitch = true;
+    this.preventSelectedToChange = this.preventSelectedToChange;
     this.select = this.select;
     this.nextMonth = this.nextMonth;
     this.prevMonth = this.prevMonth;
-    this.returnDate = this.returnDate;
+
+
+    //prevents selected day to change on first month change
+    this.preventSelectedToChange = (date,monthCorrector) => {
+      if(this.firstSwitch){
+        this.firstSwitch = false;
+        this.setState({selected: new Date(date.setMonth(date.getMonth() + monthCorrector))});
+      }
+    };
 
     this.prevMonth = () => {
       const date = this.state.date;
       const newDate = new Date(date.setMonth(date.getMonth() - 1));
       this.setState({
         date: newDate,
-        calendar: getCalendar(newDate)
+        calendar: getCalendar(newDate),
       });
+      this.preventSelectedToChange(date,1);
     };
 
     this.nextMonth = () => {
@@ -38,8 +49,9 @@ class CalendarTable extends Component {
       const newDate = new Date(date.setMonth(date.getMonth() + 1));
       this.setState({
         date: newDate,
-        calendar: getCalendar(newDate)
+        calendar: getCalendar(newDate),
       });
+      this.preventSelectedToChange(date,-1);
     };
 
     this.selectDay = (day, isFromThisMonth) => {
@@ -75,10 +87,6 @@ class CalendarTable extends Component {
         this.props.onDayPick(selectedDay);
       }
       this.setState({selected: selectedDay});
-    };
-
-    this.returnDate = () => {
-      return this.state.selected;
     };
   }
 

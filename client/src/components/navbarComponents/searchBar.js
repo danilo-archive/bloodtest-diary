@@ -69,7 +69,7 @@ export default class SearchBar extends Component {
       return (
         <Container>
           <img className={"calendar-icon"}
-                alt={"Calendar"} selectedDate
+                alt={"Calendar"} 
                 src={calendarIcon}
                 onClick={() => this.setState({ showCalendar: true })}
           />
