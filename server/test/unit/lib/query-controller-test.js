@@ -247,7 +247,7 @@ describe("Edit test functionality", function(){
         return {success: true, response:[{test_id:"400",completed_status:"no", frequency:"2-W", occurrences:10}]}
       })
       queryController.__set__("scheduleNextTest",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
+          return {success:false, response:{error:"STUBBED ERROR"}}
       })
       const updater = {
         editTest:async function(){
@@ -256,7 +256,7 @@ describe("Edit test functionality", function(){
       }
       queryController.__set__("updater",updater)
       const response = await spy("400",{test_id:"400",due_date:"2019-09-03",completed_status:"yes"},"400",testUsername)
-      response.success.should.equal(false)
+      response.success.should.equal(true)
     })
     it("Accept the test edit and schedule new - all success", async function(){
       queryController.__set__("getTest",async function(){
@@ -305,6 +305,232 @@ describe("Edit test functionality", function(){
       queryController.__set__("updater",updater)
       const response = await spy("400",{test_id:"400",due_date:"2019-09-03",completed_status:"yes"},"400",testUsername)
       response.success.should.equal(true)
+    })
+  })
+  context("Edit user", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.editUser);
+      resetQueryController();
+    })
+    it("Edit all fields (password,email,isAdmin) in user - accept query", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: true, response:[{username:"admin", iterations:1923, salt:"hjywehewhewh", hashed_password:"1651256as256f2261727d"}]}
+      })
+      const updater = {
+        editUser: async function(){ return {success:true , response:{affectedRows:1, changedRows:1}}}
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy({username:"admin",hashed_password:"a154145b67227612f",recovery_email:"gmail",isAdmin:"yes"},"300",testUsername)
+      response.success.should.equal(true);
+    })
+    it("Edit all fields (password,email,isAdmin) in user - reject query", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: true, response:[{username:"admin", iterations:1923, salt:"hjywehewhewh", hashed_password:"1651256as256f2261727d"}]}
+      })
+      const updater = {
+        editUser: async function(){ return {success:false , err:{error:"STUBBED ERROR"}}}
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy({username:"admin",hashed_password:"a154145b67227612f",recovery_email:"gmail",isAdmin:"yes"},"300",testUsername)
+      response.success.should.equal(false);
+    })
+    it("Edit all fields (password,email,isAdmin) in user - no user found", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: true, response:[]}
+      })
+      const response = await spy({username:"admin",hashed_password:"a154145b67227612f",recovery_email:"gmail",isAdmin:"yes"},"300",testUsername)
+      response.success.should.equal(false);
+    })
+    it("Edit all fields (password,email,isAdmin) in user - select error query", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: false, response:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy({username:"admin",hashed_password:"a154145b67227612f",recovery_email:"gmail",isAdmin:"yes"},"300",testUsername)
+      response.success.should.equal(false);
+    })
+    it("Edit password only in user - accept query", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: true, response:[{username:"admin", iterations:1923, salt:"hjywehewhewh", hashed_password:"1651256as256f2261727d"}]}
+      })
+      const updater = {
+        editUser: async function(){ return {success:true , response:{affectedRows:1, changedRows:1}}}
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy({username:"admin",hashed_password:"a154145b67227612f"},"300",testUsername)
+      response.success.should.equal(true);
+    })
+    it("Edit email only in user - accept query", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: true, response:[{username:"admin", iterations:1923, salt:"hjywehewhewh", hashed_password:"1651256as256f2261727d"}]}
+      })
+      const updater = {
+        editUser: async function(){ return {success:true , response:{affectedRows:1, changedRows:1}}}
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy({username:"admin",recovery_email:"gmail"},"300",testUsername)
+      response.success.should.equal(true);
+    })
+  })
+  context("Change test status", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.changeTestStatus);
+      resetQueryController();
+    })
+    it("Accept completed change status", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300"}]}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"completed"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept completed change status and schedule new test", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300", completed_status:"no"}]}
+      })
+      queryController.__set__("scheduleNextTest", async function(){
+        return {success:true, response:{insertId:500,new_date:"2019-09-08"}}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"completed"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept completed change status and reject new test", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300", completed_status:"no"}]}
+      })
+      queryController.__set__("scheduleNextTest", async function(){
+        return {success:false, err:{error:"STUBBED ERROR"}}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"completed"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept inReview change status", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300"}]}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"inReview"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept inReview change status and schedule new test", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300", completed_status:"no"}]}
+      })
+      queryController.__set__("scheduleNextTest", async function(){
+        return {success:true, response:{insertId:500,new_date:"2019-09-08"}}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"inReview"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept inReview change status and reject new test", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300", completed_status:"no"}]}
+      })
+      queryController.__set__("scheduleNextTest", async function(){
+        return {success:false, err:{error:"STUBBED ERROR"}}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"inReview"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept late change status", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300"}]}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"late"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Reject test change status - select query error", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy({test_id:500, newStatus:"inReview"},testUsername);
+      response.success.should.equal(false)
+    })
+    it("Reject test change status - no test found", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[]}
+      })
+      const response = await spy({test_id:500, newStatus:"inReview"},testUsername);
+      response.success.should.equal(false)
+    })
+    it("Reject test change status - random update found", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:500}]}
+      })
+      const response = await spy({test_id:500, newStatus:"ERROR"},testUsername);
+      response.success.should.equal(false)
     })
   })
 })
@@ -585,5 +811,7 @@ function resetQueryController(){
   queryController.__set__("addPatient",queryController.addPatient);
   queryController.__set__("getPatient",queryController.getPatient)
   queryController.__set__("getTest",queryController.getTest);
-  queryController.__set__("addTest",queryController.addTest)
+  queryController.__set__("addTest",queryController.addTest);
+  queryController.__set__("getUser",queryController.getUser);
+  queryController.__set__("requestEditing",queryController.requestEditing);
 }

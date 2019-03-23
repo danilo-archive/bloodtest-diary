@@ -190,7 +190,7 @@ async function editTest(testId, newInfo, token, actionUsername) {
     const res = await updater.editTest(testId, newInfo, token, actionUsername)
     if (res.success && scheduleNew &&testInfo.response[0].completed_status == "no") {
         const insertedResponse = await scheduleNextTest(testId, actionUsername);
-        if (insertedResponse.response) {
+        if (insertedResponse.success) {
             res.response.new_date = insertedResponse.response.new_date;
             res.response.insertId = insertedResponse.response.insertId;
         }
@@ -335,7 +335,7 @@ async function changeTestDueDate(testId, newDate, actionUsername) {
  * @return {JSON} - {success:Boolean response:Array or Error}
  **/
 async function editUser(json, token, actionUsername) {
-    const response = await selector.getUser(json.username);
+    const response = await getUser(json.username);
     if (!response.success) {
         return response;
     }
@@ -384,7 +384,7 @@ async function changeTestStatus(test, actionUsername) {
 
     if (res.success &&scheduleNew &&testInfo.response[0].completed_status == "no") {
         const insertedResponse = await scheduleNextTest(test.testId,actionUsername);
-        if (insertedResponse.response) {
+        if (insertedResponse.success) {
             res.response.new_date = insertedResponse.response.new_date;
             res.response.insertId = insertedResponse.response.insertId;
         }
