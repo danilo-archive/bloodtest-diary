@@ -67,7 +67,7 @@ export default class AddTestView extends React.Component {
     this.setState({ open: false });
   };
   onDateSelect = selectedDate => {
-    this.setState({ showCalendar: false, selectedDate });
+    this.setState({ showCalendar: false, selectedDate: dateformat(selectedDate, "d mmm yyyy")});
   };
   onDoneClick = () => {
     if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
@@ -146,7 +146,7 @@ export default class AddTestView extends React.Component {
               }
               selectedDate={this.state.selectedDate}
               onInputClick={() => this.setState({ showCalendar: true })}
-              onDateSelect={day => this.onDateSelect(day)}
+              onDayPick={day => this.onDateSelect(day)}
               onObservationsChange={observations =>
                 this.setState({ observations })
               }
