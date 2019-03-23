@@ -149,6 +149,7 @@ export default class AddTestView extends React.Component {
             <PatientSelect
               patients={this.state.allPatients}
               onDoneClick={this.onDoneClick}
+              closeModal={this.props.closeModal}
               onSelectClick={id => this.setState({ selectedID: id })}
             />
 
