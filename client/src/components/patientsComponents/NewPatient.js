@@ -249,7 +249,7 @@ class NewPatient extends Component {
                         })
                     }}
                 />
-
+                <Hr/>
                 <SwitchContainer>
                     <OptionSwitch
                         option1={"Under 12"}

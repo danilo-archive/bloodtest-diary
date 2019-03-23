@@ -15,37 +15,16 @@ import {openAlert} from "./Alert";
 
 const Container = styled.div`
   border: blue 0 solid;
-    height: calc(100vh - 65px);
+    height: calc(103vh - 88px);
     width: auto;
     position: relative;
-    top: 30px;
+    top: 20px;
     margin: 1% 1% 1% 1%;
 
-  flex-wrap: wrap;
-  align-content: flex-start;
-  justify-content: center;
+
   background: rgb(244,249,253);
 `;
 
-const NavbarContainer = styled.div`
-    border: #839595 0 solid;
-
-    background-color: white;
-
-    margin-bottom: 1%;
-
-    padding: 10px 1%;
-
-    min-height: 150px;
-    max-height: 150px;
-
-    flex-grow: 1;
-    flex-shrink: 2;
-
-    overflow: hidden;
-
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-`;
 
 const TableContainer = styled.div`
     height: 80%;
