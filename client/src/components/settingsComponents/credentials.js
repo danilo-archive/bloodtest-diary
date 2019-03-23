@@ -162,14 +162,13 @@ export default class Credentials extends Component {
     event.preventDefault();
     this.serverConnect.requestUserEditing(this.state.username, res => {
       if (res.success){
-          this.setState({ editToken: res.token});
           if (this.state.password == this.state.confirmPassword && this.state.password !== "") {
             let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
             let newData = {username: this.state.username, hashed_password: hash, recovery_email: this.state.email};
-            this.updateDatabase(newData);
+            this.updateDatabase(newData, res.token);
           } else if (this.state.password === "" && this.state.confirmPassword === "") {
               let newData = {username: this.state.username, recovery_email: this.state.email};
-              this.updateDatabase(newData);
+              this.updateDatabase(newData, res.token);
           } else {
             this.setState({
               password: "",
@@ -184,9 +183,8 @@ export default class Credentials extends Component {
 
   }
 
-  updateDatabase(newData) {
-    console.log(newData)
-    this.serverConnect.editUser(newData, this.state.editToken, res => {
+  updateDatabase(newData, token) {
+    this.serverConnect.editUser(newData, token, res => {
       if (res.success){
         this.showConfirmationMessage();
       }else{
