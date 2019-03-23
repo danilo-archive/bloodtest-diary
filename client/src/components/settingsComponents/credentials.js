@@ -170,11 +170,13 @@ export default class Credentials extends Component {
               let newData = {username: this.state.username, recovery_email: this.state.email};
               this.updateDatabase(newData, res.token);
           } else {
-            this.setState({
-              password: "",
-              confirmPassword: "",
-            })
-            this.showErrorMessage();
+            this.serverConnect.discardUserEditing(this.state.username, res.token, res => {
+              this.setState({
+                password: "",
+                confirmPassword: "",
+              })
+              this.showErrorMessage();
+            });     
           }
       }else{
         openAlert("Somebody is editing this user already", "confirmationAlert",
