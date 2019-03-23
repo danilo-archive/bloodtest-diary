@@ -8,7 +8,6 @@ const Container = styled.div`
   position: relative;
   width: 49.8%;
   height: 100%;
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -36,6 +35,7 @@ export default props => {
         <TitleTab color="#0b999d">Date</TitleTab>
         <br />
         <input
+          style={{cursor: 'pointer'}}
           type="text"
           onClick={props.onInputClick}
           value={props.selectedDate}

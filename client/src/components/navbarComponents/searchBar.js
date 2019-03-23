@@ -15,7 +15,7 @@ font-family: "Rajdhani", sans-serif;
 color: black;
 align-items: center;
 
-.calendar {
+.calendar-table {
   align-items: bottom;
 }
 
