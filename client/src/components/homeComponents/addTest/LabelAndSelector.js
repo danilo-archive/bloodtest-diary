@@ -80,7 +80,7 @@ export default props => {
         </div>
         <Text noRepeat={props.noRepeat}>
           <>
-            Number of tests:{" "}
+            For {" "}
             <Tooltip
               unmountHTMLWhenHide={true}
               title="Please enter a number"
@@ -112,6 +112,7 @@ export default props => {
                 }}
               />
             </Tooltip>
+            {" "} Times
           </>
         </Text>
       </div>
