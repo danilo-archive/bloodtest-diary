@@ -6,6 +6,7 @@ import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import {getServerConnect} from "../../serverConnection";
 import { openAlert } from "../Alert"
+import {emptyCheck, emailCheck} from "../../lib/inputChecker";
 
 
 const Container = styled.div`
@@ -14,7 +15,6 @@ const Container = styled.div`
   flex-direction: column;
   background: #f5f5f5;
   align-items: center;
-  font-family: "Rajdhani",sans-serif;
   padding: 1%;
 `;
 
@@ -86,24 +86,49 @@ class NewPatient extends Component {
 
     }
 
+    checkValues () {
+        if (emptyCheck(this.state.patientId)) {
+            return {correct: false, message: "Patient Id is compulsory"};
+        }
+        if (emptyCheck(this.state.patientName) || emptyCheck(this.state.patientSurname)) {
+            return {correct: false, message: "Patient name and surname are compulsory"};
+        }
+        if (!emailCheck(this.state.patientEmail)) {
+            return {correct: false, message: "Wrong format of patient's email"};
+        }
+
+        if (!this.state.noCarer) {
+            if (emptyCheck(this.state.carerEmail)) {
+                return {correct: false, message: "Carer's email is compulsory"};
+            }
+            if (!emailCheck(this.state.carerEmail)) {
+                return {correct: false, message: "Wrong format of carer's email"};
+            }
+
+        }
+        if (!this.state.localHospital) {
+            if (emptyCheck(this.state.hospitalEmail)){
+                return {correct: false, message: "Hospital's email is compulsory"};
+            }
+            if (!emailCheck(this.state.hospitalEmail)) {
+                return {correct: false, message: "Wrong format of hospital's email"};
+            }
+
+        }
+        return {correct : true};
+    }
+
     onAddClick = () => {
-        let carerInfo = undefined;
-        let hospitalInfo = undefined;
-        if (this.state.patientId === "" || this.state.patientId === undefined) {
-            openAlert("Patient Id is compulsory", "confirmationAlert", "Ok");
+        const result = this.checkValues();
+        if (!result.correct) {
+            openAlert(result.message, "confirmationAlert", "Ok");
             return;
         }
 
-        if (this.state.patientName === "" || this.state.patientName === undefined || this.state.patientSurname === "" || this.state.patientSurname === undefined) {
-            openAlert("Patient name and surname are compulsory", "confirmationAlert", "Ok");
-            return;
-        }
-        if (!this.state.noCarer){
-            if (this.state.carerEmail === "" || this.state.carerEmail === undefined){
-                // TODO add UI alert
-                openAlert("Carer's email is compulsory", "confirmationAlert", "Ok");
-                return;
-            }
+        let carerInfo = undefined;
+        let hospitalInfo = undefined;
+
+        if (!this.state.noCarer) {
             carerInfo = {
                 carerId: this.state.carerId,
                 carerRelationship: this.state.carerRelationship,
@@ -112,16 +137,12 @@ class NewPatient extends Component {
                 carerEmail: this.state.carerEmail,
                 carerPhone: this.state.carerPhone
             }
-        }else{
+        } else {
             carerInfo = {
                 carerId: undefined
             }
         }
         if (!this.state.localHospital){
-            if (this.state.hospitalEmail === "" || this.state.hospitalEmail === undefined){
-                openAlert("Hospital's email is compulsory", "confirmationAlert", "Ok");
-                return;
-            }
             hospitalInfo = {
                 hospitalId: this.state.hospitalId,
                 hospitalName: this.state.hospitalName,
@@ -142,7 +163,6 @@ class NewPatient extends Component {
             relationship: carerInfo.carerRelationship
         };
         console.log({newInfo});
-        //TODO : save patient
         this.serverConnect.addPatient(newInfo, res => {
             if (res.success) {
                 openAlert("Patient added successfully", "confirmationAlert", "Ok", () => {this.props.closeModal()});

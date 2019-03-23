@@ -17,7 +17,7 @@ const Field = styled.div`
   margin: 0 2.5%;
   height: 100%;
   color: inherit;
-  font-family: "Rajdhani", sans-serif;
+  
   font-size: 125%;
   overflow: scroll;
   display: flex;

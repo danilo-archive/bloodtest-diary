@@ -14,10 +14,12 @@ import EmailModal from "./homeComponents/emailModal/EmailModal.js";
 import ColorPicker from "./homeComponents/calendarComponents/ColorPicker.js";
 
 import EditTest from "./homeComponents/editTest/EditTestView";
+import PatientProfile from "./patientsComponents/PatientProfile.js";
 import {
   getNextDates,
   getMondayOfWeek,
   getCurrentWeek,
+  getWeekDays,
   getPreviousWeek,
   getNextWeek
 } from "../lib/calendar-controller";
@@ -26,7 +28,46 @@ import { group, getNumberOfTestsInGroup } from "../lib/overdue-controller.js";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DragDropContext } from "react-dnd";
 import CustomDragLayer from "./homeComponents/CustomDragLayer.js";
-import "./home.css";
+import "../styles/global.css";
+
+const Dashboard = styled.div`
+  border: blue 0px solid;
+  height: calc(103vh - 88px);
+  width: auto;
+  position: relative;
+  top: 20px;
+  padding: 1% 1% 1% 1%;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+`;
+const RightSideDash = styled.div`
+  border: red 0 solid;
+  height: 100%;
+  width: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+
+  flex-grow: 5;
+  flex-shrink: 1;
+`;
+const BottomSideDash = styled.div`
+  border: green 0 solid;
+  height: auto;
+  width: auto;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+
+
+  flex-grow: 1;
+  flex-shrink: 1;
+`;
 
 class Home extends Component {
   constructor(props) {
@@ -45,10 +86,13 @@ class Home extends Component {
       openAddTestModal: false,
       openEditTestModal: false,
       openEmailModal: false,
+      openEditPatientModal: false,
       editTestId: undefined,
       editToken: undefined,
       notified: undefined,
-      notNotified: undefined
+      notNotified: undefined,
+      editPatientId: undefined,
+      editPatientToken: undefined
     };
   }
 
@@ -136,6 +180,11 @@ class Home extends Component {
     });
   };
 
+  jumpToWeek = day => {
+    console.log(getWeekDays(day));
+    this.updateDashboard(getWeekDays(day));
+  }
+
   handleNext = event => {
     let nextWeek = getNextWeek([...this.state.weekDays]);
     this.updateDashboard(nextWeek);
@@ -165,7 +214,7 @@ class Home extends Component {
       } else {
         this.handleInvalidResponseError(
           res,
-          "Somebody is aready editing this test"
+          "Somebody is already editing this test"
         );
       }
     });
@@ -202,26 +251,40 @@ class Home extends Component {
     this.setState({ openEmailModal: false });
   };
 
+  openEditPatientModal = id => {
+    this.serverConnect.requestPatientEditing(id, res => {
+      if (res.token){
+          this.setState({editPatientId: id, openEditPatientModal: true, editPatientToken: res.token});
+      }else{
+          this.handleError(res, "Somebody is already editing this patient");
+      }
+    });
+  }
+
+  onCloseEditPatientModal = () => {
+    this.serverConnect.discardPatientEditing(this.state.editPatientId, this.state.editPatientToken, res => {
+      this.setState({editPatientId: undefined, openEditPatientModal: false, editPatientToken: undefined});
+    });
+  }
+
   render() {
     if (this.state.dashboardReady && this.state.overdueReady) {
       return (
         <ModalProvider>
-          <div className={"home"}>
             <CustomDragLayer snapToGrid={true} />
-            <div className={"dashboard"}>
-              <div className={"overduePatients"}>
-                <OverduePatients
+            <Dashboard>
+               <OverduePatients
                   openEmailModal={this.openEmailModal}
                   notificationNumber={getNumberOfTestsInGroup(
                     this.state.overdueTests
                   )}
                   anytimeAppointments={this.state.overdueTests}
                   editTest={this.onEditTestOpenModal}
+                  editPatient={this.openEditPatientModal}
                   handleError={this.handleInvalidResponseError}
-                />
-              </div>
-              <div className={"rightSideDash"}>
-                <div className={"navbar"}>
+                  openEmailModal={this.openEmailModal}
+              />
+              <RightSideDash>
                   <Navbar
                     over12={!this.state.under12}
                     setUnder12={check => {
@@ -232,35 +295,33 @@ class Home extends Component {
                       this.refresh();
                     }}
                     page="Dashboard"
+                    onDayPick={this.jumpToWeek}
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
                     onSignoutClick={this.logout}
                     refresh={this.refresh}
                   />
-                </div>
-                <div className={"bottomSideDash"}>
-                  <div className={"homecalendar"}>
+                <BottomSideDash>
                     <WeeklyCalendar
                       calendar={this.state.calendar}
                       weekDays={this.state.weekDays}
                       openModal={this.onAddTestOpenModal}
                       editTest={this.onEditTestOpenModal}
+                      editPatient={this.openEditPatientModal}
                       handleError={this.handleInvalidResponseError}
                     />
-                  </div>
-                  <div className={"ongoingWeekly"}>
                     <OngoingWeekly
                       currentMonday={this.currentMonday}
                       date={this.state.weekDays[5]}
                       notificationNumber={this.state.ongoingTests.length}
                       anytimeAppointments={this.state.ongoingTests}
                       editTest={this.onEditTestOpenModal}
+                      editPatient={this.openEditPatientModal}
                       handleError={this.handleInvalidResponseError}
                     />
-                  </div>
-                </div>
-              </div>
+                </BottomSideDash>
+              </RightSideDash>
               <Modal
                 open={this.state.openAddTestModal}
                 onClose={this.onAddTestCloseModal}
@@ -300,8 +361,22 @@ class Home extends Component {
                   handleError={this.handleInvalidResponseError}
                 />
               </Modal>
-            </div>
-          </div>
+              <Modal
+                  open={this.state.openEditPatientModal}
+                  onClose={this.onCloseEditPatientModal}
+                  showCloseIcon={false}
+                  style={modalStyles}
+                  center
+              >
+                <PatientProfile
+                    patientId={this.state.editPatientId}
+                    closeModal={this.onCloseEditPatientModal}
+                    editToken={this.state.editPatientToken}
+                    purpose={"Edit patient"}
+                    handleError={this.handleInvalidResponseError}
+                />
+              </Modal>
+            </Dashboard>
         </ModalProvider>
       );
     } else {

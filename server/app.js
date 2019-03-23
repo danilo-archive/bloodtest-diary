@@ -53,6 +53,7 @@ io.on('connection',function(socket)
             }
             socket.join(room);
             logger.info(`Socket ${socket.id} joined ${room}`);
+            socket.emit("joined", room);          
         }
     });
 
@@ -483,9 +484,11 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.deletePatient(patientId, token, username);
+        logger.debug(response)
         if (response.success){
             socket.emit("deletePatientResponse", {success: true});
             io.in("patients_page").emit("patientEdited");
+            io.in("main_page").emit("testAdded");
         }else{
             socket.emit("deletePatientResponse", {success: false});
         }
@@ -671,6 +674,7 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.editUser(newData, token, username);
+        logger.info(response);
         if (response.success){
             socket.emit("editUserResponse", {success: true, response: response.response});
             // TODO: do we need this?

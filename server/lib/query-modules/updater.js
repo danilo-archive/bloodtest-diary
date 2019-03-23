@@ -71,7 +71,17 @@ async function changeTestDueDate(testId,token, newDate, actionUsername) {
  * @property hashed_password {String}
  * @return {JSON} - {success:Boolean response:Array or Error}
  **/
-async function editUser(user, token, actionUsername){
+async function editUser(json, token, actionUsername){
+  const user = {username: json.username}
+  if(json.hashed_password){
+    user["hashed_password"] = json.hashed_password
+  }
+  if(json.recovery_email){
+    user["recovery_email"] = json.recovery_email;
+  }
+  if(json.isAdmin){
+    user["isAdmin"]=json.isAdmin;
+  }
   const sql = prepareUpdateSQL("User",user,"username");
   return await updateQueryDatabase("User", user.username, sql, token, actionUsername);
 }

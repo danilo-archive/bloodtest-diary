@@ -350,6 +350,9 @@ async function editUser(json, token, actionUsername) {
     if(json.recovery_email){
       user["recovery_email"] = json.recovery_email;
     }
+    if(json.isAdmin){
+      user["isAdmin"]=json.isAdmin;
+    }
     return await updater.editUser(user, token, actionUsername);
 }
 
@@ -454,7 +457,6 @@ async function changePatientColour(patientNo, newColour, actionUsername) {
 async function addUser(json, actionUsername) {
     return await inserter.addUser(json, actionUsername)
 }
-
 /**
  * Add new test to the database
  * @param {JSON} - entry to add

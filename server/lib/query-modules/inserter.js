@@ -15,12 +15,20 @@ const mysql = require("mysql");
 * @return {JSON} result of the query - {success:Boolean}
 **/
 async function addUser(json, actionUsername) {
-    const iterations = authenticator.produceIterations();
-    const salt = authenticator.produceSalt();
-    //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
-    const hash = authenticator.produceHash(json.hashed_password, iterations, salt);
-    const sql = `INSERT INTO User VALUES(${mysql.escape(json.username)},${hash},${mysql.escape(json.isAdmin)},${salt},${iterations},${mysql.escape(json.email)});`;
-    return await insertQueryDatabase(sql, "User", actionUsername, json.username);
+  const iterations = authenticator.produceIterations();
+  const salt = authenticator.produceSalt();
+  //Hash password to store it in database (password should be previously hashed with another algorithm on client side)
+  const hash = authenticator.produceHash(json.hashed_password, iterations, salt);
+  const user = {
+    username: json.username,
+   isAdmin: json.isAdmin,
+   salt: salt,
+   iterations: iterations,
+   hashed_password: hash,
+   recovery_email: json.recovery_email
+  }
+  const sql = prepareInsertSQL("User",user)
+  return await insertQueryDatabase(sql, "User", actionUsername, json.username);
 }
 
 /**

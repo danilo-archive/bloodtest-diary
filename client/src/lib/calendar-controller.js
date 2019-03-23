@@ -6,6 +6,7 @@
  */
 const Holidays = require('date-holidays');
 const hd = new Holidays('GB');
+const formatDate = new require("dateformat");
 
 function isPastDate(date){
     let today = new Date();
@@ -18,10 +19,10 @@ function isPastDate(date){
 *@param dateString a date of the form "20190323"
 */
 function formatDatabaseDate(dateString){
-    let year = dateString.slice(0,4);
-    let month = dateString.slice(4,6);
-    let day = dateString.slice(6,8);
-    return `${year}/${month}/${day}`
+    const year = dateString.slice(0,4);
+    const month = dateString.slice(4,6);
+    const day = dateString.slice(6,8);
+    return formatDate(`${year}-${month}-${day}`, "dS mmm yyyy")
 }
 
 /**
@@ -30,9 +31,17 @@ function formatDatabaseDate(dateString){
  * @returns {Date} relative monday date
  */
 function getMondayOfWeek(date){
+    let offset = date.getDay() === 0 ? -7 : 0;
     let toReturn = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    toReturn.setDate(toReturn.getDate() - toReturn.getDay() + 1);
+    toReturn.setDate(toReturn.getDate() - toReturn.getDay() + 1 + offset);
     return toReturn;
+}
+
+function getWeekDays(day){
+    let monday = getMondayOfWeek(day);
+    monday.setHours(0, 0, 0, 0);
+    let restOfWeek = getNextDates("1-D:5", monday);
+    return [monday].concat(restOfWeek);
 }
 
 function getCurrentWeek(){
@@ -208,6 +217,7 @@ function stringIsInteger(str) {
 module.exports = {
     isHoliday,
     isPastDate,
+    getWeekDays,
     getNextWeek,
     getCurrentWeek,
     getPreviousWeek,

@@ -27,7 +27,7 @@ const PillDiv = styled.div`
   width: auto;
   background-color: #0b999d;
   color: white;
-  font-family: "Rajdhani", sans-serif;
+  
   transform: translate(-50%, -50%);
   padding: 0% 5% 0% 5%;
   top: -20%;

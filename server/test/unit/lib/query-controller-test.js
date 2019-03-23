@@ -754,7 +754,6 @@ describe("Other functionality", function(){
     })
     it("Sort patinet - full data (patient,carer,hospital)",function(){
       const response = spy({patient_no:"400", patient_name:"Mark", hospital_id:"300", carer_id:"600", relationship:"son", carer_name:"John"});
-      console.log(response);
       Object.keys(response).length.should.equal(3);
       response.patient.patient_no.should.equal("400");
       response.patient.patient_name.should.equal("Mark");
@@ -765,7 +764,6 @@ describe("Other functionality", function(){
     })
     it("Sort patinet - partial data (patient,hospital)",function(){
       const response = spy({patient_no:"400", patient_name:"Mark", hospital_id:"300", hospital_name:"600", hospital_email:"here"});
-      console.log(response);
       Object.keys(response).length.should.equal(3);
       response.patient.patient_no.should.equal("400");
       response.patient.patient_name.should.equal("Mark");
@@ -776,7 +774,6 @@ describe("Other functionality", function(){
     })
     it("Sort patinet - partial data (patient,carer)",function(){
       const response = spy({patient_no:"457", patient_name:"Steff", carer_id:"600", relationship:"father", carer_surname:"Smith"});
-      console.log(response);
       Object.keys(response).length.should.equal(3);
       response.patient.patient_no.should.equal("457");
       response.patient.patient_name.should.equal("Steff");
@@ -787,7 +784,6 @@ describe("Other functionality", function(){
     })
     it("Sort patient - partial data (carer,hospital)",function(){
       const response = spy({carer_id:"600", relationship:"father", carer_surname:"Smith",hospital_id:"300", hospital_name:"600", hospital_email:"here"});
-      console.log(response);
       Object.keys(response).length.should.equal(3);
       Object.keys(response.patient).length.should.equal(0)
       response.carer.carer_id.should.equal("600");

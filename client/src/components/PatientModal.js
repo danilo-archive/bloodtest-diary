@@ -1,6 +1,8 @@
 import React from "react";
+import styled from "styled-components";
 import Modal from "react-responsive-modal";
-import "./PatientModal.css";
+import "../styles/PatientModal.css";
+
 export default props => {
     return (
         <Modal

@@ -107,6 +107,13 @@ describe("Update queries tests", function(){
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
+      it("Correctly update all fields (isAdmin,password,email) (STUBBED)", async function()
+      {
+        setAcceptUpdateQueryDatabase();
+        const response = await spy({username:testUsername,recovery_email:"gmail@gmail.com",hashed_password:"dsjhdshdshjdshdhjdschjdsjsdhj",isAdmin:"yes"}, testUsername);
+        response.success.should.equal(true);
+        response.response.affectedRows.should.equal(1);
+      })
       it("Fail due to update query error (STUBBED)", async function() {
         setRejectUpdateQueryDatabase();
         const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);

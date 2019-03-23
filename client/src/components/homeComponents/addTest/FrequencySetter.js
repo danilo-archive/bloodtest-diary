@@ -7,6 +7,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  z-index:2;
 `;
 
 export default props => {
@@ -14,6 +15,14 @@ export default props => {
     <Container>
       <br />
       <LabelAndSelector
+        setFrequencyTooltip={props.setFrequencyTooltip}
+        setOcurrencesTooltip={props.setOcurrencesTooltip}
+        tooltips={{
+          frequency: props.tooltips.frequency,
+          occurrences: props.tooltips.occurrences
+        }}
+        frequency={props.frequency}
+        occurrences={props.occurrences}
         noRepeat={props.noRepeat}
         timeAmount={props.timeAmount}
         options={props.unitOptions}
@@ -23,8 +32,8 @@ export default props => {
           props.onSelectChange(timeUnit);
         }}
       />
-      <br />
       <TextRadioButton
+        checked={props.noRepeat}
         text="Do not repeat"
         onCheck={check => {
           return props.onNoRepeatChange(check);

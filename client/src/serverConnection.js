@@ -15,8 +15,8 @@ import openSocket from 'socket.io-client';
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
-const host = "http://localhost";
-const port = 3265;
+const host = decodeURIComponent(cookies.get("ip"));
+const port = cookies.get("port");
 
 const underTwelve = 0;
 const overTwelve = 1;
@@ -48,6 +48,12 @@ class ServerConnect {
             this.onDisconnect();
         });
 
+
+        this.onRoomJoin = undefined;
+        this.socket.on("joined", room => {
+            this.onRoomJoin(room);
+        });
+
         /**
         *   Triggered when a new test is added.
         */
@@ -64,6 +70,10 @@ class ServerConnect {
             this.onPatientEdit(patientId, newInfo);
         });
 
+    }
+
+    isAdmin(){
+        return this.currentUser.isAdmin === "yes";
     }
 
     setUnderTwelve(){
@@ -83,6 +93,11 @@ class ServerConnect {
         this.loginToken = undefined;
         cookies.set('accessToken', "", { path: '/' });
     }
+
+    initSession(token, callback){
+        this.setLoginToken(token);
+        callback();
+    }
     /**
     * Set the current authentication token.
     * @param {String} token the new token
@@ -91,6 +106,7 @@ class ServerConnect {
         this.loginToken = token;
         cookies.set('accessToken', token, { path: '/' });
     }
+
 
     /**
     * Joins the main page room in the server.
@@ -114,6 +130,10 @@ class ServerConnect {
         this.socket.emit("join", this.currentRoom, "patients_page");
         this.currentRoom = "patients_page";
 
+    }
+
+    setOnRoomJoin(callback){
+        this.onRoomJoin = callback;
     }
 
     /**
@@ -174,6 +194,20 @@ class ServerConnect {
             if (res.success){
                 this.deleteLoginToken();
             }
+            callback(res);
+        });
+    }
+
+    getCurrentUser(callback){
+        this.socket.emit("getUser", this.loginToken);
+        this.socket.once("getUserResponse", res => {
+            callback(res);
+        });
+    }
+
+    getAllUsers(callback){
+        this.socket.emit("getAllUsers", this.loginToken);
+        this.socket.once("getAllUsersResponse", res => {
             callback(res);
         });
     }
@@ -242,27 +276,6 @@ class ServerConnect {
         });
     }
 
-    // TODO: what is this???
-    getMockTest(testId, callback){
-        const duedate = new Date(2019, 3, 4);
-        const mockedTest = {
-            patient_name: "John Doe",
-            patient_no: "P123890",
-            test_id: 123,
-            due_date: "2019-3-3",
-            frequency: "2-W",
-            occurrences: 3,
-            completed_status: "no",
-            notes: "This guys is basically just an idiot",
-            completedDate: null,
-            hospitalId: 3
-
-        }
-        setTimeout( () => {
-            callback(mockedTest);
-        }, 3000);
-    }
-
     /**
      * Retrieves the information regarding a test, calls the callback with the response.
      * @param {int} testId The id of the test
@@ -296,6 +309,15 @@ class ServerConnect {
             callback(res);
         });
     }
+
+    requestUserEditing(username, callback){
+        this.socket.emit("requestUserEditToken", username, this.loginToken);
+        this.socket.once("requestUserEditTokenResponse", res => {
+            callback(res);
+        });
+    }
+
+
     /**
      * Requests the distruction of the token previously received to edit a test, calls the callback with the response.
      * @param {int} testId The id of the test
@@ -320,6 +342,21 @@ class ServerConnect {
             callback(res);
         });
     }
+
+    discardUserEditing(username, token, callback){
+        this.socket.emit("discardEditing", "User", username, token, this.loginToken);
+        this.socket.once("discardEditingResponse", res => {
+            callback(res);
+        })
+    }
+
+    addUser(newUser, callback){
+        this.socket.emit("addUser", newUser, this.loginToken);
+        this.socket.once("addUserResponse", res => {
+            callback(res);
+        });
+    }
+
 
     addPatient(newPatient, callback){
         this.socket.emit("addPatient", newPatient, this.loginToken);
@@ -405,6 +442,13 @@ class ServerConnect {
         });
     }
 
+    editUser(newData, token, callback){
+        this.socket.emit("editUser", newData, token, this.loginToken);
+        this.socket.once("editUserResponse", res => {
+            callback(res);
+        });
+    }
+
     unscheduleTest(testId, token, callback){
         this.socket.emit("unscheduleTest", testId, token, this.loginToken);
         this.socket.once("unscheduleTestResponse", res => {
@@ -437,6 +481,13 @@ class ServerConnect {
     changeTestColour(testId, newColor, callback){
         this.socket.emit("changeTestColour", testId, newColor, this.loginToken);
         this.socket.once("changeTestColourResponse", res => {
+            callback(res);
+        });
+    }
+
+    recoverPassword(username, callback){
+        this.socket.emit("passwordRecoverRequest", username);
+        this.socket.once("passwordRecoverResponse", res => {
             callback(res);
         });
     }
