@@ -4,6 +4,7 @@ import {getServerConnect} from "../../serverConnection.js";
 import Select from 'react-select';
 import InfoMessage from './infoMessage';
 import refresh from "../../resources/images/refresh.png"
+import { openAlert } from '../Alert.js';
 
 const crypto = require('crypto');
 
@@ -333,7 +334,8 @@ export default class UsersPanel extends Component {
         if (res.success){
           this.setState({selectedOption , username: selectedOption.label, editToken: res.token, disabled: true, email: selectedOption.value, adminChecked: selectedOption.isAdmin});
         }else{
-          alert("Somebody is editing this user already");
+          openAlert("Somebody is editing this user already", "confirmationAlert", 
+          "Ok", () => {return});
         }
       });
 
@@ -374,8 +376,8 @@ export default class UsersPanel extends Component {
       this.showConfirmationMessage();
       this.getUsers();
      }else{
-       // TODO error message
-       alert("lmao something went wrong");
+      openAlert("Something went wrong", "confirmationAlert", 
+                 "Ok", () => {return});
      }
    });
  }
@@ -391,7 +393,8 @@ export default class UsersPanel extends Component {
             this.showConfirmationMessage();
             this.getUsers();
           }else{
-            // TODO error message
+            openAlert("Something went wrong, make sure username is not already used", "confirmationAlert", 
+                       "Ok", () => {return});
           }
        });
    } else {

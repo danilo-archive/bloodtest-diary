@@ -4,6 +4,7 @@ import {getServerConnect} from "../../serverConnection.js";
 import Select from 'react-select';
 import InfoMessage from './infoMessage';
 import refresh from "../../resources/images/refresh.png"
+import { openAlert } from '../Alert.js';
 
 const crypto = require('crypto');
 
@@ -176,7 +177,8 @@ export default class Credentials extends Component {
             this.showErrorMessage();
           }
       }else{
-        alert("Somebody is editing this user already");
+        openAlert("Somebody is editing this user already", "confirmationAlert", 
+                   "Ok", () => {return});
       }
     });
 
@@ -188,8 +190,8 @@ export default class Credentials extends Component {
       if (res.success){
         this.showConfirmationMessage();
       }else{
-        console.log(res)
-        alert("Unable to update database");
+        openAlert("Something went wrong", "confirmationAlert",
+                   "Ok", () => {return});
       }
     });
     this.clearForm();
