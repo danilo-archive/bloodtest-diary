@@ -392,7 +392,7 @@ export default class UsersPanel extends Component {
    event.preventDefault();
    if (this.state.password === this.state.confirmPassword) {
        let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
-       let user = {username: this.state.username, hashed_password: hash, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
+       let user = {username: this.state.username, hashed_password: hash, isAdmin: "no", recovery_email: this.state.email};
        this.serverConnect.addUser(user, res => {
           if (res.success){
             this.clearForm();
