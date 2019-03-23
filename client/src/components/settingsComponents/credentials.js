@@ -125,7 +125,6 @@ export default class Credentials extends Component {
   constructor(props){
       super(props);
       this.state = {
-         editToken: undefined,
          username: "",
          email: "",
          password: "",
@@ -184,6 +183,7 @@ export default class Credentials extends Component {
   }
 
   updateDatabase(newData, token) {
+    console.log(this.state.editToken)
     this.serverConnect.editUser(newData, token, res => {
       if (res.success){
         this.showConfirmationMessage();
@@ -197,14 +197,11 @@ export default class Credentials extends Component {
 
 
   clearForm = () => {
-    this.serverConnect.discardUserEditing(this.state.username, this.state.editToken, res => {
      this.setState({
-       editToken: undefined,
        email: "",
        password: "",
        confirmPassword: "",
      });
-    });
   }
 
  showErrorMessage = () => {

@@ -372,6 +372,7 @@ export default class UsersPanel extends Component {
      if (res.success){
       this.clearForm();
       this.showConfirmationMessage();
+      this.getUsers();
      }else{
        // TODO error message
        alert("lmao something went wrong");
@@ -388,7 +389,7 @@ export default class UsersPanel extends Component {
           if (res.success){
             this.clearForm();
             this.showConfirmationMessage();
-            this.updateUsers();
+            this.getUsers();
           }else{
             // TODO error message
           }
