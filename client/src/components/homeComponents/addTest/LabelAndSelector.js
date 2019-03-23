@@ -35,7 +35,7 @@ export default props => {
         <div style={{ display: "flex", flexDirection: "row", margin: "0 0 3% 0" }}>
           <Text noRepeat={props.noRepeat}>
             <>
-              Repeat every:{"  "}
+              Repeat every{"  "}
               <Tooltip
                 unmountHTMLWhenHide={true}
                 title="Please enter a number"
