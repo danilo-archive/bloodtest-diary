@@ -171,7 +171,7 @@ class Home extends Component {
       } else {
         this.handleInvalidResponseError(
           res,
-          "Somebody is aready editing this test"
+          "Somebody is already editing this test"
         );
       }
     });

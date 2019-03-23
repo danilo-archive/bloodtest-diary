@@ -30,8 +30,9 @@ function formatDatabaseDate(dateString){
  * @returns {Date} relative monday date
  */
 function getMondayOfWeek(date){
+    let offset = date.getDay() === 0 ? -7 : 0;
     let toReturn = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    toReturn.setDate(toReturn.getDate() - toReturn.getDay() + 1);
+    toReturn.setDate(toReturn.getDate() - toReturn.getDay() + 1 + offset);
     return toReturn;
 }
 
