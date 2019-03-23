@@ -42,7 +42,7 @@ export default props => {
           readOnly
         />
         {props.showCalendar ? (
-          <CalendarTable onDayPick={props.onDayPick} onDaySelected={day => props.onDateSelect(day)} />
+          <CalendarTable outsideClick={props.onCalendarClose} onDayPick={props.onDayPick} />
         ) : (
           <></>
         )}

@@ -63,6 +63,10 @@ export default class AddTestView extends React.Component {
     });
   }
 
+  onCalendarClose = () => {
+    this.setState({showCalendar: false});
+  }
+
   close = () => {
     this.setState({ open: false });
   };
@@ -122,6 +126,7 @@ export default class AddTestView extends React.Component {
             />
 
             <DateSelectorSection
+              onCalendarClose={this.onCalendarClose}
               showCalendar={this.state.showCalendar}
               noRepeat={this.state.frequency.noRepeat}
               occurrences={this.state.frequency.occurrences}
