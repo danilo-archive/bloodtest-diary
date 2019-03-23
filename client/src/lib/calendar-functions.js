@@ -26,7 +26,7 @@ function getDaysInMonth(year, month) {
  * @return {integer} The date of the first day
  */
 function getDateOfFirstDayOf(year, month) {
-  return new Date(year, month-1, 1).getDay();
+  return new Date(year, month-1, 0).getDay();
 }
 
 /**

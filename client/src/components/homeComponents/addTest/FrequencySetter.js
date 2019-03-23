@@ -7,6 +7,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  z-index:2;
 `;
 
 export default props => {
@@ -31,7 +32,6 @@ export default props => {
           props.onSelectChange(timeUnit);
         }}
       />
-      <br />
       <TextRadioButton
         checked={props.noRepeat}
         text="Do not repeat"
