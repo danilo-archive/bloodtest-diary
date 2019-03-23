@@ -77,7 +77,7 @@ export default class EditTestView extends React.Component {
                 ? res.frequency
                 : "0-D",
             occurrences: res.occurrences,
-            noRepeat: res.occurrences === 1
+            noRepeat: res.frequency === null
           },
           status:
             res.completed_status === "yes"
@@ -85,7 +85,7 @@ export default class EditTestView extends React.Component {
               : res.completed_status === "no"
               ? "pending"
               : "in review",
-          notes: res.notes !== "null" ? res.notes : ""
+          notes: res.notes !== "null" && res.notes !== null ? res.notes : ""
         },
         showCalendar: false,
 
@@ -96,17 +96,34 @@ export default class EditTestView extends React.Component {
 
   saveTest = () => {
     const { test, patient } = this.state;
+    let freq = null;
+    if (test.date.frequency.length > 0 && test.date.frequency.split("-")[0] !== "0") {
+      if (test.date.frequency.split("-")[1] === "M") {
+        freq = `${parseInt(test.date.frequency.split("-")[0]) * 4}-W`;
+      }
+      else {
+        freq = test.date.frequency;
+      }
+    }
+
+    let occur;
+    if (test.date.noRepeat || 
+        freq === null || 
+        test.date.occurrences === null || 
+        test.date.occurrences === "" ||
+        test.date.occurrences === 0) {
+          occur = 1;
+    }
+    else {
+      occur = test.date.occurrences;
+    }
+
     const params = {
       test_id: test.id,
       patient_no: patient.id,
       due_date: dateformat(new Date(test.date.dueDate), "yyyy-mm-dd"),
-      frequency:
-        test.date.frequency.length === 0
-          ? null
-          : test.date.frequency.split("-")[1] === "M"
-          ? `${parseInt(test.date.frequency.split("-")[0]) * 4}-W`
-          : test.date.frequency,
-      occurrences: test.date.noRepeat ? 1 : test.date.occurrences,
+      frequency: freq,
+      occurrences: occur,
       completed_status:
         test.status === "completed"
           ? "yes"
