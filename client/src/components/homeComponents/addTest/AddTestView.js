@@ -91,6 +91,7 @@ export default class AddTestView extends React.Component {
   };
   onDoneClick = () => {
     if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
+      let doesNotRepeat = false;
       let frequency = undefined;
       if (parseInt(this.state.frequency.timeAmount)) {
         let { timeUnit, timeAmount } = this.state.frequency;
@@ -98,11 +99,21 @@ export default class AddTestView extends React.Component {
         timeAmount = timeUnit === "Months" ? timeAmount * 4 : timeAmount;
         timeUnit = timeUnit === "Months" ? "W" : timeUnit;
         timeUnit = timeUnit.charAt(0);
-        frequency = `${timeAmount}-${timeUnit}`;
+        if (timeAmount === 0) {
+          doesNotRepeat = true;
+          frequency = null;
+        }
+        else {
+          frequency = `${timeAmount}-${timeUnit}`;
+        }
       }
       const { selectedID, selectedDate, observations } = this.state;
       let { occurrences, noRepeat } = this.state.frequency;
-      occurrences = noRepeat ? 1 : occurrences;
+      occurrences = (noRepeat 
+        || doesNotRepeat 
+        || occurrences === null 
+        || occurrences === ""
+        || occurrences === "0") ? 1 : occurrences;
       this.serverConnect.addTest(
         selectedID,
         dateformat(new Date(selectedDate), "yyyymmdd"),

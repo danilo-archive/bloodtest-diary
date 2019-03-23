@@ -3,7 +3,12 @@ import styled from "styled-components";
 import TestCell from "./profileCells/TestCell";
 import SectionContainer from "./SectionContainer"
 
+const Container = styled.div`
+  width: 95%;
+`;
+
 const EmptyContainer = styled.div`
+  margin-top: 1%;
   width: 100%;
   text-align: center;
   font-size: 115%;
@@ -25,14 +30,13 @@ const Field = styled.div`
 `;
 
 const Horizontal = styled.div`
-    display: flex;
-    width: 90%;
+  margin-top: 1%;
+  display: flex;
 `;
 
 const CellContainer = styled.div`
   display: block;
   overflow: scroll;
-  width: 90%;
   max-height: 160px;
 `;
 
@@ -44,23 +48,23 @@ export default class PatientSection extends React.Component {
 
     render() {
         const content = (
-          <>
-                  <Horizontal>
-                      <Field>Due</Field>
-                      <Field>Notes</Field>
-                  </Horizontal>
-                  <CellContainer>
-                      {this.props.tests.map(test => (
-                          <TestCell
-                              key={test.test_id}
-                              testId={test.test_id}
-                              due = {test.due_date.substring(0, 10)}
-                              notes={test.notes}
-                              deleteTest={this.props.deleteTest}
-                          />
-                      ))}
-                  </CellContainer>
-          </>
+            <Container>
+                <Horizontal>
+                    <Field>Due</Field>
+                    <Field>Notes</Field>
+                </Horizontal>
+                <CellContainer>
+                    {this.props.tests.map(test => (
+                        <TestCell
+                            key={test.test_id}
+                            testId={test.test_id}
+                            due = {test.due_date.substring(0, 10)}
+                            notes={test.notes}
+                            deleteTest={this.props.deleteTest}
+                        />
+                    ))}
+                </CellContainer>
+            </Container>
         );
         const emptyTest = (
             <>

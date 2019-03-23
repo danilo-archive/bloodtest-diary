@@ -289,6 +289,7 @@ io.on('connection',function(socket)
     // ==============
 
     socket.on("addTest", async (patientId, date, notes, frequency, occurrences, accessToken) => {
+        logger.debug("New info: ", date, notes, "f: "+frequency, "o: "+occurrences);
         if (!accessToken) {
             socket.emit("addTestResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
@@ -536,6 +537,7 @@ io.on('connection',function(socket)
     });
 
     socket.on("editTest", async (testId, newInfo, token, accessToken) => {
+        logger.debug("New info: ", newInfo);
         if (!accessToken) {
             socket.emit("editTestResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
