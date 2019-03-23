@@ -1,26 +1,35 @@
 import React from "react";
 import styled from "styled-components";
-import TextLabel from "../editTest/Label";
+import Label from "../../Label";
+import CloseTabIcon from "../addTest/CloseTabIcon";
 
 const Container = styled.div`
   width: 100%;
-  height: 10%;
-  font-size: 25px;
+  height: 12%;
+  background: ${props => props.color || `#0d4e56`};
   display: flex;
+  text-align: center;
+  flex-direction: column;
   justify-content: center;
-  background: #0b999d;
-  border-bottom: 1px #e8e8e8 solid;
+  align-items: center;
+  position: relative;
+  white-space: nowrap;
 `;
 
-const Label = styled(TextLabel)`
+const TitleLabel = styled(Label)`
+  position: absolute;
+  top: 60%;
+  left: 50%;
   color: white;
+  font-size: 3rem;
 `;
 
 export default props => {
   return (
     <>
       <Container>
-        <Label>{props.children}</Label>
+        <TitleLabel>{props.children}</TitleLabel>
+        <CloseTabIcon close={props.onClose} />
       </Container>
       <br />
     </>

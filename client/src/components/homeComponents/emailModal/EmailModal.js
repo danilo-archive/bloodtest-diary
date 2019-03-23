@@ -4,7 +4,7 @@ import Section from "./Section";
 import Title from "./Title";
 import ScrollBox from "../calendarComponents/ScrollBox";
 import TestBox from "./TestBox";
-import SubmitButton from "./SubmitButton";
+import Button from "../editTest/Button";
 import { inherits } from "util";
 import { openAlert } from "./../../Alert.js";
 import { getServerConnect } from "./../../../serverConnection.js";
@@ -17,7 +17,6 @@ const Container = styled.div`
 
 const Scroll = styled(ScrollBox)`
   height: ${props => (!props.fullLength ? `27%` : `66%`)};
-  border: 1px solid #b0b0b0b0;
 `;
 export default class EmailModal extends Component {
   constructor(props) {
@@ -116,7 +115,7 @@ export default class EmailModal extends Component {
   render() {
     return (
       <Container>
-        <Title>Email Reminders</Title>
+        <Title onClose={this.props.closeModal}>Email Reminders</Title>
         {this.state.submitted ? (
           <>
             <TestBox
@@ -210,8 +209,22 @@ export default class EmailModal extends Component {
         ) : (
           ``
         )}
-
-        <SubmitButton onClick={this.submit} />
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            backgroundColor={"#f44336"}
+            hoverColor={"#dc2836"}
+            onClick={this.props.closeModal}
+          >
+            Cancel
+          </Button>
+          <Button
+            backgroundColor={"#0b999d"}
+            hoverColor={"#018589"}
+            onClick={this.submit}
+          >
+            Send Reminders
+          </Button>
+        </div>
       </Container>
     );
   }
