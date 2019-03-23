@@ -116,18 +116,18 @@ class PatientProfile extends Component {
       res => {
         if (res.success) {
           openAlert(
-            "Patient successfully deleted",
+            "Patient successfully deleted.",
             "confirmationAlert",
-            "Ok",
+            "OK",
             () => {
               this.props.closeModal();
             }
           );
         } else {
           openAlert(
-            "Something went wrong while deleating",
+            "Something went wrong while deleting the patient.",
             "confirmationAlert",
-            "Ok",
+            "OK",
             () => {
               return;
             }
@@ -139,7 +139,7 @@ class PatientProfile extends Component {
 
   deleteOption = () => {
     openAlert(
-      "Are you sure you want to delete this patient ?",
+      "Are you sure you want to delete this patient?",
       "optionAlert",
       "Yes",
       this.deletePatient,
@@ -152,7 +152,7 @@ class PatientProfile extends Component {
 
   onDeleteTestClick = testId => {
     openAlert(
-      "Are you sure you want to delete this Test ?",
+      "Are you sure you want to delete this test?",
       "optionAlert",
       "Yes",
       () => {
@@ -172,15 +172,15 @@ class PatientProfile extends Component {
           if (res2.success) {
             this.loadTests();
             openAlert(
-              "Test successfully deleted",
+              "Test successfully deleted.",
               "confirmationAlert",
-              "Ok",
+              "OK",
               () => {
                 return;
               }
             );
           } else {
-            openAlert("Something went wrong", "confirmationAlert", "Ok", () => {
+            openAlert("Something went wrong.", "confirmationAlert", "OK", () => {
               return;
             });
           }
@@ -191,7 +191,7 @@ class PatientProfile extends Component {
 
   deleteOption = () => {
     openAlert(
-      "Are you sure you want to delete this patient ?",
+      "Are you sure you want to delete this patient?",
       "optionAlert",
       "Yes",
       this.deletePatient,
@@ -204,7 +204,7 @@ class PatientProfile extends Component {
 
   onDeleteTestClick = testId => {
     openAlert(
-      "Are you sure you want to delete this Test ?",
+      "Are you sure you want to delete this test?",
       "optionAlert",
       "Yes",
       () => {
@@ -224,21 +224,21 @@ class PatientProfile extends Component {
           if (res2.success) {
             this.loadTests();
             openAlert(
-              "Test successfully deleted",
+              "Test successfully deleted.",
               "confirmationAlert",
-              "Ok",
+              "OK",
               () => {
                 return;
               }
             );
           } else {
-            openAlert("Something went wrong", "confirmationAlert", "Ok", () => {
+            openAlert("Something went wrong.", "confirmationAlert", "OK", () => {
               return;
             });
           }
         });
       } else {
-        this.props.handleError(res, "This test is currently being edited");
+        this.props.handleError(res, "Somebody is already editing this test.");
       }
     });
   };
@@ -290,7 +290,7 @@ class PatientProfile extends Component {
 
   checkValues = () => {
     if (emptyCheck(this.state.patientId)) {
-      return { correct: false, message: "Patient Id is compulsory" };
+      return { correct: false, message: "Please provide the patient number first." };
     }
     if (
       emptyCheck(this.state.patientName) ||
@@ -298,26 +298,26 @@ class PatientProfile extends Component {
     ) {
       return {
         correct: false,
-        message: "Patient name and surname are compulsory"
+        message: "Please provide patient name and surname."
       };
     }
     if (!emailCheck(this.state.patientEmail)) {
-      return { correct: false, message: "Wrong format of patient's email" };
+      return { correct: false, message: "Invalid format of the patient's email." };
     }
     if (!this.state.noCarer) {
       if (emptyCheck(this.state.carerEmail)) {
-        return { correct: false, message: "Carer's email is compulsory" };
+        return { correct: false, message: "Please provide the carer's email." };
       }
       if (!emailCheck(this.state.carerEmail)) {
-        return { correct: false, message: "Wrong format of carer's email" };
+        return { correct: false, message: "Invalid format of the carer's email." };
       }
     }
     if (!this.state.localHospital) {
       if (emptyCheck(this.state.hospitalEmail)) {
-        return { correct: false, message: "Hospital's email is compulsory" };
+        return { correct: false, message: "Please provide the hospital's email." };
       }
       if (!emailCheck(this.state.hospitalEmail)) {
-        return { correct: false, message: "Wrong format of hospital's email" };
+        return { correct: false, message: "Invalid format of the hospital's email." };
       }
     }
     return { correct: true };
@@ -326,7 +326,7 @@ class PatientProfile extends Component {
   onSaveClick = () => {
     const result = this.checkValues();
     if (!result.correct) {
-      openAlert(result.message, "confirmationAlert", "Ok");
+      openAlert(result.message, "confirmationAlert", "OK");
       return;
     }
 
@@ -389,18 +389,18 @@ class PatientProfile extends Component {
     this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
       if (res.success) {
         openAlert(
-          "Patient edited successfully",
+          "Patient details updated successfully.",
           "confirmationAlert",
-          "Ok",
+          "OK",
           () => {
             this.props.closeModal();
           }
         );
       } else {
         openAlert(
-          "An error occurred while editing patient",
+          "An error occurred while updating the patient.",
           "confirmationAlert",
-          "Ok"
+          "OK"
         );
       }
     });

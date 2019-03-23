@@ -352,8 +352,8 @@ export default class UsersPanel extends Component {
         if (res.success){
           this.setState({selectedOption , username: selectedOption.label, editToken: res.token, disabled: true, email: selectedOption.value, adminChecked: selectedOption.isAdmin});
         }else{
-          openAlert("Somebody is editing this user already", "confirmationAlert",
-          "Ok", () => {return});
+          openAlert("Somebody is already editing this user.", "confirmationAlert",
+          "OK", () => {return});
         }
       });
 
@@ -394,8 +394,8 @@ export default class UsersPanel extends Component {
       this.showConfirmationMessage();
       this.getUsers();
      }else{
-      openAlert("Something went wrong", "confirmationAlert",
-                 "Ok", () => {return});
+      openAlert("Something went wrong.", "confirmationAlert",
+                 "OK", () => {return});
      }
    });
  }
@@ -411,8 +411,8 @@ export default class UsersPanel extends Component {
             this.showConfirmationMessage();
             this.getUsers();
           }else{
-            openAlert("Something went wrong, make sure username is not already used", "confirmationAlert",
-                       "Ok", () => {return});
+            openAlert("Something went wrong, make sure username is not already used.", "confirmationAlert",
+                       "OK", () => {return});
           }
        });
    } else {
@@ -478,10 +478,10 @@ export default class UsersPanel extends Component {
     return (
       <Container>
 
-        <p className="userTitle">Users - Admin</p>
+        <p className="userTitle">User management</p>
 
         <MenuContainer>
-          <div className={this.state.disabled ? 'disabled' : 'addUser'} onClick={this.onAddUser}>Add User</div>
+          <div className={this.state.disabled ? 'disabled' : 'addUser'} onClick={this.onAddUser}>Add user</div>
 
           <Select
             className="userSelect"
@@ -509,7 +509,7 @@ export default class UsersPanel extends Component {
           </RefreshButton>
         </MenuContainer>
 
-        <InfoMessage className={""} message={this.state.showReloadMessage ?  "Users Reload Complete" : "Database Updated Successfully" } show={this.state.showReloadMessage || this.state.showConfirmationMessage}/>
+        <InfoMessage className={""} message={this.state.showReloadMessage ?  "Reloading completed." : "Database updated successfully." } show={this.state.showReloadMessage || this.state.showConfirmationMessage}/>
 
         {this.state.selectedOption ?
           <>
@@ -523,15 +523,15 @@ export default class UsersPanel extends Component {
                 <input id="emailInput" type="text" name="email" className="usersInput" value={this.state.email} onChange={this.handleCredentialUpdate} required/>
               </div>
               <div className="inputSection">
-                <div className="usersLabel">New Password:</div>
-                <input id="passwordInput" type="password" name="password" className="usersInput" value={this.state.password} onChange={this.handleCredentialUpdate} placeholder="Optional"/>
+                <div className="usersLabel">New password:</div>
+                <input id="passwordInput" type="password" name="password" className="usersInput" value={this.state.password} onChange={this.handleCredentialUpdate} placeholder="(optional)"/>
               </div>
               <div className="inputSection">
-                <div className="usersLabel">Confirm Password:</div>
-                <input id="confrimPasswordInput" type="password" name="confirmPassword" className="usersInput" value={this.state.confirmPassword} onChange={this.handleCredentialUpdate} placeholder="Optional"/>
+                <div className="usersLabel">Confirm password:</div>
+                <input id="confrimPasswordInput" type="password" name="confirmPassword" className="usersInput" value={this.state.confirmPassword} onChange={this.handleCredentialUpdate} placeholder="(optional)"/>
               </div>
               <AdminCheckContainer>
-                <p className="adminLabel">Admin:</p>
+                <p className="adminLabel">Administrator:</p>
                 <AdminCheck
                   checked={this.state.adminChecked}
                   onClick={this.onAdminCheck}
@@ -561,14 +561,14 @@ export default class UsersPanel extends Component {
                 <input id="emailInput" type="text" name="email" className="usersInput" value={this.state.email} onChange={this.handleCredentialUpdate} required/>
               </div>
               <div className="inputSection">
-                <div className="usersLabel">New Password:</div>
+                <div className="usersLabel">New password:</div>
                 <input id="passwordInput" type="password" name="password" className="usersInput" value={this.state.password} onChange={this.handleCredentialUpdate} required/>
               </div>
               <div className="inputSection">
-                <div className="usersLabel">Confirm Password:</div>
+                <div className="usersLabel">Confirm password:</div>
                 <input id="confrimPasswordInput" type="password" name="confirmPassword" className="usersInput" value={this.state.confirmPassword} onChange={this.handleCredentialUpdate} required/>
               </div>
-              <InfoMessage type={"error"} message={"Passwords Don't Match"} show={this.state.showErrorMessage}/>
+              <InfoMessage type={"error"} message={"Passwords must match!"} show={this.state.showErrorMessage}/>
               <ButtonContainer>
                   <CancelButton type="button" onClick={this.clearForm}>Cancel</CancelButton>
                   <input type="submit" className="saveButton" value="Save"/>

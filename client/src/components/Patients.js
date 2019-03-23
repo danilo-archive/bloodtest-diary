@@ -98,7 +98,7 @@ class Patients extends React.Component {
   handleError = (res, error) => {
     if (res.errorType === "authentication") {
       openAlert(
-        "Authentication error",
+        "Authentication failed.",
         "confirmationAlert",
         "Go back to login",
         () => {
@@ -107,9 +107,9 @@ class Patients extends React.Component {
       );
     } else {
       openAlert(
-        `${error ? error : "Unknown error occurred"}`,
+        `${error ? error : "Unknown error occurred."}`,
         "confirmationAlert",
-        "Ok",
+        "OK",
         () => {
           return;
         }
@@ -127,7 +127,7 @@ class Patients extends React.Component {
         });
       } else {
         openAlert(
-          "Authentication failed",
+          "Authentication failed.",
           "confirmationAlert",
           "Go back to login",
           () => {
@@ -226,7 +226,7 @@ class Patients extends React.Component {
           editToken: res.token
         });
       } else {
-        this.handleError(res, "Somebody is already editing this patient");
+        this.handleError(res, "Somebody is already editing this patient.");
       }
     });
   };
