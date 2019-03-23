@@ -89,7 +89,7 @@ export default props => {
           <TitleTab color="#0b999d">Observations</TitleTab>
           <TextArea
             onChange={event => props.onObservationsChange(event.target.value)}
-            placeholder={"Enter observation here ..."}
+            placeholder={"Enter observations here ..."}
           />
         </SecondHalfDiv>
       </Container>
