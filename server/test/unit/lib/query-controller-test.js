@@ -26,7 +26,7 @@ const actionLogger = {
 queryController.__set__("actionLogger",actionLogger);
 
 const testUsername = "admin"; // username that is used throughout the tests (also for action username)
-describe("Edit test functionality", function(){
+describe("Edit query functionality", function(){
   context("Edit patient extended", function(){
     let spy;
     beforeEach(()=>{
@@ -305,6 +305,102 @@ describe("Edit test functionality", function(){
       queryController.__set__("updater",updater)
       const response = await spy("400",{test_id:"400",due_date:"2019-09-03",completed_status:"yes"},"400",testUsername)
       response.success.should.equal(true)
+    })
+  })
+  context("Change Test Colour",function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.changeTestColour);
+      resetQueryController();
+    })
+    it("Accept the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changeTestColour: async function(){
+          return {success:true, respnse:{affectedRows:1,changedRows:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "#FFFFFF", testUsername);
+      response.success.should.equal(true);
+    })
+    it("Reject the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changeTestColour: async function(){
+          return {success:false, response:{problem:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "#FFFFFF", testUsername);
+      response.success.should.equal(false);
+      response.response.should.equal(1);
+    })
+  })
+  context("Change Patient Colour",function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.changePatientColour);
+      resetQueryController();
+    })
+    it("Accept the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changePatientColour: async function(){
+          return {success:true, respnse:{affectedRows:1,changedRows:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "#FFFFFF", testUsername);
+      response.success.should.equal(true);
+    })
+    it("Reject the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changePatientColour: async function(){
+          return {success:false, response:{problem:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "#FFFFFF", testUsername);
+      response.success.should.equal(false);
+      response.response.should.equal(1);
+    })
+  })
+  context("Change Test Due Date",function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.changeTestDueDate);
+      resetQueryController();
+    })
+    it("Accept the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changeTestDueDate: async function(){
+          return {success:true, respnse:{affectedRows:1,changedRows:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "2016-03-04", testUsername);
+      response.success.should.equal(true);
+    })
+    it("Reject the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changeTestDueDate: async function(){
+          return {success:false, response:{problem:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "2016-03-04", testUsername);
+      response.success.should.equal(false);
+      response.response.should.equal(1);
     })
   })
   context("Edit user", function(){
@@ -746,6 +842,91 @@ describe("Add query functionality", function(){
     })
   })
 })
+describe("Delete query functionality", function(){
+  context("Unschedule Test", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.unscheduleTest);
+      resetQueryController()
+    })
+    it("Unshedule Test correctly",async function(){
+      queryController.__set__("returnToken",async function(){
+        return {success:true}
+      })
+      queryController.__set__("deleteTest",async function(){
+        return {success:true}
+      })
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(true);
+    })
+    it("Problem with token realease",async function(){
+      queryController.__set__("returnToken",async function(){
+        return {success:false}
+      })
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(false);
+    })
+  })
+  context("Delete Patient", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.deletePatient);
+      resetQueryController()
+    })
+    it("Delete Patient correctly",async function(){
+      queryController.__set__("checkIfPatientsTestsAreEdited",async function(){
+        return false;
+      })
+      queryController.__set__("returnToken",async function(){
+        return {success:true}
+      })
+      queryController.__set__("deleter",{deletePatient:async function(){
+        return {success:true}
+      }})
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(true);
+    })
+    it("Problem with token return",async function(){
+      queryController.__set__("checkIfPatientsTestsAreEdited",async function(){
+        return false;
+      })
+      queryController.__set__("returnToken",async function(){
+        return {success:false}
+      })
+      queryController.__set__("deleter",{deletePatient:async function(){
+        return {success:true}
+      }})
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(false);
+    })
+    it("Problem with checkIfPatientsTestsAreEdited",async function(){
+      queryController.__set__("checkIfPatientsTestsAreEdited",async function(){
+        return {success:false, error:"STUBBED ERROR"};
+      })
+      queryController.__set__("returnToken",async function(){
+        return {success:false}
+      })
+      queryController.__set__("deleter",{deletePatient:async function(){
+        return {success:true}
+      }})
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(false);
+    })
+    it("Patinet's tests being edited",async function(){
+      queryController.__set__("checkIfPatientsTestsAreEdited",async function(){
+        return true;
+      })
+      queryController.__set__("returnToken",async function(){
+        return {success:false}
+      })
+      queryController.__set__("deleter",{deletePatient:async function(){
+        return {success:true}
+      }})
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(false);
+    })
+  })
+})
 describe("Other functionality", function(){
   context("Patient sorter", function(){
     let spy;
@@ -794,6 +975,108 @@ describe("Other functionality", function(){
       response.hospital.hospital_email.should.equal("here");
     })
   })
+  context("schedule Next Test", function() {
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.scheduleNextTest);
+    })
+    it("Schedule correctly next test base on data", async function(){
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:500, frequency:"2-W", completed_date:"2019-03-23", occurrences:5}]
+      }})
+      queryController.__set__("addTest", async function(){
+        return {success:true, response:{insertId:"501"}}
+      })
+      const response = await spy("500",testUsername);
+      response.success.should.equal(true);
+      response.response.insertId.should.equal("501");
+      response.response.new_date.should.equal("20190406");
+    })
+    it("Reject next test base on data", async function(){
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:500, frequency:"2-W", completed_date:"2019-03-23", occurrences:5}]
+      }})
+      queryController.__set__("addTest", async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy("500",testUsername);
+      response.success.should.equal(false);
+      response.response.error.should.equal("STUBBED ERROR");
+    })
+    it("No new test - frequency null", async function(){
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:500, frequency:null, completed_date:"2019-03-23", occurrences:5}]
+      }})
+      const response = await spy("500",testUsername);
+      response.success.should.equal(true);
+      response.response.should.equal("No new tests");
+    })
+    it("No new test - occurences 0", async function(){
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:500, frequency:"2-W", completed_date:"2019-03-23", occurrences:0}]
+      }})
+      const response = await spy("500",testUsername);
+      response.success.should.equal(true);
+      response.response.should.equal("No new tests");
+    })
+  })
+  context("Get next due date", function(){
+    let spy;
+    beforeEach(()=>{spy = sinon.spy(queryController.getNextDueDate);})
+      it("Next test on next Saturday", function(){
+        const response = spy("1-W","2019-03-23");
+        response.should.equal("20190330")
+      })
+      it("Next test on next Saturday (Friday passed)", function(){
+        const response = spy("1-W","2019-03-22");
+        response.should.equal("20190330")
+      })
+      it("Next test on next Saturday (Sunday passed)", function(){
+        const response = spy("1-W","2019-03-24");
+        response.should.equal("20190406")
+      })
+      it("Next test on next Saturday (Monday passed)", function(){
+        const response = spy("1-W","2019-03-18");
+        response.should.equal("20190330")
+      })
+  })
+  context("Check if Patients' Tests are Being Edited", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.checkIfPatientsTestsAreEdited);
+    })
+    it("NO tests edited", async function(){
+      const selector = {
+        getPatientEditedTests:async function(){
+            return {success:true, response:[]}
+        }
+      }
+      queryController.__set__("selector",selector);
+      const response = await spy("500");
+      response.should.equal(false)
+    })
+    it("Tests being edited", async function(){
+      const selector = {
+        getPatientEditedTests:async function(){
+            return {success:true, response:[{test_id:1}]}
+        }
+      }
+      queryController.__set__("selector",selector);
+      const response = await spy("500");
+      response.should.equal(true)
+    })
+    it("Query Fail", async function(){
+      const selector = {
+        getPatientEditedTests:async function(){
+            return {success:false, response:{error:"STUBBED ERROR"}}
+        }
+      }
+      queryController.__set__("selector",selector);
+      const response = await spy("500");
+      response.success.should.equal(false)
+      response.response.error.should.equal("STUBBED ERROR")
+    })
+  })
 })
 
 function resetQueryController(){
@@ -808,6 +1091,9 @@ function resetQueryController(){
   queryController.__set__("getPatient",queryController.getPatient)
   queryController.__set__("getTest",queryController.getTest);
   queryController.__set__("addTest",queryController.addTest);
+  queryController.__set__("deleteTest",queryController.deleteTest);
   queryController.__set__("getUser",queryController.getUser);
   queryController.__set__("requestEditing",queryController.requestEditing);
+  queryController.__set__("returnToken",queryController.returnToken);
+  queryController.__set__("checkIfPatientsTestsAreEdited",queryController.checkIfPatientsTestsAreEdited)
 }

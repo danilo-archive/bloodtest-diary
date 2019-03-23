@@ -666,7 +666,7 @@ async function unscheduleTest(testid, token, actionUsername) {
     if (!tokenRealeaseResponse.success) {
         return tokenRealeaseResponse;
     }
-    return await deleter.deleteTest(testid, actionUsername);
+    return await deleteTest(testid, actionUsername);
 }
 /*===============================*
       HELPER FUNCTIONS BELOW:
@@ -725,7 +725,7 @@ async function scheduleNextTest(testId, actionUsername) {
         }
         return response;
     }
-    return { success: true, reply: "No new tests" };
+    return { success: true, response: "No new tests" };
 }
 
 /**
@@ -821,4 +821,7 @@ module.exports = {
     returnToken,
     //Helper functions - for tests only
     sortPatinetProperties,
+    scheduleNextTest,
+    checkIfPatientsTestsAreEdited,
+    getNextDueDate,
 };
