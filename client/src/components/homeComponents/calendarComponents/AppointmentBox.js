@@ -209,7 +209,7 @@ class AppointmentBox extends React.Component {
     this.serverConnect.changeTestStatus(this.props.id, status, res => {
         if (res.success){
             if (res.response.insertId != undefined){
-                openAlert(`A new test was automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}`, "confirmationAlert", "Ok");
+                openAlert(`A new test was automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}.`, "confirmationAlert", "Ok");
             }
         }else{
             this.props.handleError(res, "Somebody is aready editing this test")

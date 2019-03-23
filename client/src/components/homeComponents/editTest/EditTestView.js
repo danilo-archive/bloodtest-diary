@@ -124,7 +124,7 @@ export default class EditTestView extends React.Component {
           openAlert(
             `A new test had been automatically scheduled for the ${formatDatabaseDate(
               res.response.new_date
-            )}`,
+            )}.`,
             "confirmationAlert",
             "Ok",
             () => {
