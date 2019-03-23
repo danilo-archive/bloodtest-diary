@@ -479,6 +479,7 @@ io.on('connection',function(socket)
         }
 
         const response = await queryController.deletePatient(patientId, token, username);
+        logger.debug(response)
         if (response.success){
             socket.emit("deletePatientResponse", {success: true});
             io.in("patients_page").emit("patientEdited");
