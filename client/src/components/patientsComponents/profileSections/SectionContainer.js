@@ -5,7 +5,7 @@ const Container = styled.div`
   margin: 0.5% 0;
   padding: 0.5%;
   width: 80%;
-  font-family: "Rajdhani", sans-serif;
+  
   background: white;
   max-height: 225px;
   display: flex;

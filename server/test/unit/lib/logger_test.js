@@ -3,12 +3,14 @@ const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
 const rewire = require('rewire');
-
+const c = require('./../../../config/logger.json')
 let logger = rewire('./../../../lib/logger', false);
 beforeEach(() => {
     logger = rewire('./../../../lib/logger', false);
+    logger.__get__("initialise")("./../logs/");
     logger.changeOption("fileOutput", true);
     logger.changeOption("consoleOutput", false);
+    logger.changeOption("outputFilePath", __dirname + "/../../../logs")
 });
 
 describe("Test logger module functionalities", () => {
@@ -42,11 +44,11 @@ describe("Test logger module functionalities", () => {
                     "consoleOutput": true,
                     "fileOutput": true,
                     "colorize": true,
-                    "outputFilePath": "./../logs/"
+                    "outputFilePath": __dirname + "/../../../logs"
                 };
             })
             const initialise = logger.__get__("initialise");
-            initialise("./../logs/");
+            initialise("test");
             callCommand(command, logger, "test");
             getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
                 lastLine.should.contain("test");
@@ -59,24 +61,29 @@ describe("Test logger module functionalities", () => {
     it('should log with level LOG when createLog is called with null level', () => {
         const json_controller = require('./../../../lib/json-parser');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
-        getJSONStub.callsFake(function () {
-            return {
-                "compact": true,
-                "timeStamp": true,
-                "consoleOutput": true,
-                "fileOutput": true,
-                "colorize": true,
-                "outputFilePath": "./../logs/"
-            };
-        })
-        const initialise = logger.__get__("initialise");
-        initialise("./../logs/");
-        const createLog = logger.__get__("createLog");
-        createLog(["test"], null)
-        getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
-            lastLine.should.contain("test");
-            lastLine.should.contain("LOG")
-        })
+        try {
+            getJSONStub.callsFake(function () {
+                return {
+                    "compact": true,
+                    "timeStamp": true,
+                    "consoleOutput": true,
+                    "fileOutput": true,
+                    "colorize": true,
+                    "outputFilePath": __dirname + "/../../../logs"
+                };
+            })
+            const initialise = logger.__get__("initialise");
+            initialise(__dirname + "/../../../logs");
+            const createLog = logger.__get__("createLog");
+            createLog(["test"], null)
+            getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
+                lastLine.should.contain("test");
+                lastLine.should.contain("LOG")
+            })
+        }
+        catch (e) {
+            console.error(e);
+        }
         getJSONStub.restore();
     })
 
@@ -84,24 +91,29 @@ describe("Test logger module functionalities", () => {
     it('should log with level LOG when createLog is called with undefined level', () => {
         const json_controller = require('./../../../lib/json-parser');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
-        getJSONStub.callsFake(function () {
-            return {
-                "compact": true,
-                "timeStamp": true,
-                "consoleOutput": true,
-                "fileOutput": true,
-                "colorize": true,
-                "outputFilePath": "./../logs/"
-            };
-        })
-        const initialise = logger.__get__("initialise");
-        initialise("./../logs/");
-        const createLog = logger.__get__("createLog");
-        createLog(["test"], undefined)
-        getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
-            lastLine.should.contain("test");
-            lastLine.should.contain("LOG")
-        })
+        try {
+            getJSONStub.callsFake(function () {
+                return {
+                    "compact": true,
+                    "timeStamp": true,
+                    "consoleOutput": true,
+                    "fileOutput": true,
+                    "colorize": true,
+                    "outputFilePath": __dirname + "/../../../logs"
+                };
+            })
+            const initialise = logger.__get__("initialise");
+            initialise(__dirname + "/../../../logs");
+            const createLog = logger.__get__("createLog");
+            createLog(["test"], undefined)
+            getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
+                lastLine.should.contain("test");
+                lastLine.should.contain("LOG")
+            })
+        }
+        catch (e) {
+            console.error(e);
+        }
         getJSONStub.restore();
 
     })
@@ -110,90 +122,102 @@ describe("Test logger module functionalities", () => {
     it('should be able to create options even when output directory string does not have a / at the end', () => {
         const json_controller = require('./../../../lib/json-parser');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
-        getJSONStub.callsFake(function () {
-            return {
-                "compact": true,
-                "timeStamp": true,
-                "consoleOutput": true,
-                "fileOutput": true,
-                "colorize": true,
-                "outputFilePath": "./../logs"
-            };
-        })
-        const initialise = logger.__get__("initialise");
-        initialise("./../logs/");
-        const createLog = logger.__get__("createLog");
-        logger.changeOption("consoleOutput", false);
+        try {
+            getJSONStub.callsFake(function () {
+                return {
+                    "compact": true,
+                    "timeStamp": true,
+                    "consoleOutput": true,
+                    "fileOutput": true,
+                    "colorize": true,
+                    "outputFilePath": __dirname + "/../../../logs"
+                };
+            })
+            const initialise = logger.__get__("initialise");
+            initialise("./../logs/");
+            const createLog = logger.__get__("createLog");
+            logger.changeOption("consoleOutput", false);
 
-        createLog(["test"], undefined)
-        getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
-            lastLine.should.contain("test");
-            lastLine.should.contain("LOG")
-        })
+            createLog(["test"], undefined)
+            getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
+                lastLine.should.contain("test");
+                lastLine.should.contain("LOG")
+            })
+        }
+        catch (e) {
+            console.error(e);
+        }
         getJSONStub.restore();
     })
 
     it('should be able to create options even when they are null when calling createLog()', () => {
         const json_controller = require('./../../../lib/json-parser');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
-        getJSONStub.callsFake(function () {
-            return {
-                "compact": true,
-                "timeStamp": true,
-                "consoleOutput": true,
-                "fileOutput": true,
-                "colorize": true,
-                "outputFilePath": "./../logs"
-            };
-        })
-        const initialise = logger.__get__("initialise");
-        initialise("./../logs/");
+        try {
+            getJSONStub.callsFake(function () {
+                return {
+                    "compact": true,
+                    "timeStamp": true,
+                    "consoleOutput": true,
+                    "fileOutput": true,
+                    "colorize": true,
+                    "outputFilePath": __dirname + "/../../../logs"
+                };
+            })
+            const initialise = logger.__get__("initialise");
+            initialise("./../logs/");
 
-        const createLog = logger.__get__("createLog");
-        logger.__set__("options", null)  //manually setting options to null
-        logger.changeOption("consoleOutput", false);
+            const createLog = logger.__get__("createLog");
+            logger.__set__("options", null)  //manually setting options to null
+            logger.changeOption("consoleOutput", false);
 
-        createLog(["test"], "LOG")
-        getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
-            lastLine.should.contain("test");
-            lastLine.should.contain("LOG")
-        })
+            createLog(["test"], "LOG")
+            getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
+                lastLine.should.contain("test");
+                lastLine.should.contain("LOG")
+            })
+        }
+        catch (e) {
+            console.error(e);
+        }
         getJSONStub.restore();
     })
 
     it('should send an error to the log when the messages array is undefined', () => {
         const json_controller = require('./../../../lib/json-parser');
         const getJSONStub = sinon.stub(json_controller, "getJSON");
-        getJSONStub.callsFake(function () {
-            return {
-                "compact": true,
-                "timeStamp": true,
-                "consoleOutput": true,
-                "fileOutput": true,
-                "colorize": true,
-                "outputFilePath": "./../logs"
-            };
-        })
-        const initialise = logger.__get__("initialise");
-        initialise("./../logs/");
-        logger.__set__("options", null)  //manually setting options to null
-        logger.changeOption("consoleOutput", false);
-        const createLog = logger.__get__("createLog");
-        createLog(undefined, undefined)
-        getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
-            lastLine.should.contain("Log failed with messages array:");
-            lastLine.should.contain("ERROR")
-        })
+        try {
+            getJSONStub.callsFake(function () {
+                return {
+                    "compact": true,
+                    "timeStamp": true,
+                    "consoleOutput": true,
+                    "fileOutput": true,
+                    "colorize": true,
+                    "outputFilePath": __dirname + "/../../../logs"
+                };
+            })
+            const initialise = logger.__get__("initialise");
+            initialise("./../logs/");
+            logger.__set__("options", null)  //manually setting options to null
+            logger.changeOption("consoleOutput", false);
+            const createLog = logger.__get__("createLog");
+            createLog(undefined, undefined)
+            getLastLineOfFile(logger.__get__("logPath"), 1).then((lastLine) => {
+                lastLine.should.contain("Log failed with messages array:");
+                lastLine.should.contain("ERROR")
+            })
+        }
+        catch (e) {
+            console.error(e);
+        }
         getJSONStub.restore();
     })
 
 });
 
 after(() => { //remove the logs folder
-    const fs = require('fs');
-    logger.deleteAllLogFiles();
-    if (fs.existsSync('./../logs'))
-        fs.rmdirSync('./../logs');
+
 })
 
 /**
@@ -254,3 +278,4 @@ function callCommand(command, logger, message) {
             break;
     }
 }
+

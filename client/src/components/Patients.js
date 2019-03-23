@@ -80,32 +80,32 @@ const Button = styled.button`
 `;
 
 const modalStyles = {
-    border: `solid 0 black`
+  border: `solid 0 black`
 };
 
 class Patients extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onHomeClick = this.onHomeClick.bind(this);
+    this.serverConnect = getServerConnect();
+    this.serverConnect.joinPatientsPage();
 
-    constructor(props){
-        super(props);
-        this.onHomeClick = this.onHomeClick.bind(this);
-        this.serverConnect = getServerConnect();
-        this.serverConnect.joinPatientsPage();
-
-        this.state = {
-            allPatientsReady: false,
-            allPatients: {},
-            shownPatients: {},
-            openEditModal: false,
-            openAddModal: false,
-            selectedId: undefined
-        };
-        this.initOnPatientEditedCallback();
-        this.initAllPatients();
-    }
-
-    refresh = event => {
-        this.initAllPatients();
+    this.state = {
+      under12: this.serverConnect.isUnderTwelve(),
+      allPatientsReady: false,
+      allPatients: {},
+      shownPatients: {},
+      openEditModal: false,
+      openAddModal: false,
+      selectedId: undefined
     };
+    this.initOnPatientEditedCallback();
+    this.initAllPatients();
+  }
+
+  refresh = event => {
+    this.initAllPatients();
+  };
 
     handleError = (res, error) => {
         if (res.errorType === "authentication"){
@@ -198,7 +198,7 @@ class Patients extends React.Component {
       this.serverConnect.logout(res => {
           this.props.history.replace("");
       });
-    }
+    };
 
 
     openEditModal = id => {
@@ -218,7 +218,6 @@ class Patients extends React.Component {
         this.serverConnect.discardPatientEditing(this.state.selectedId, this.state.editToken, res => {
             this.setState({selectedId: undefined, openEditModal: false, editToken: undefined});
         });
-
     };
 
     openAddModal = () => {
@@ -234,14 +233,20 @@ class Patients extends React.Component {
             return (
                 <ModalProvider>
                     <Container>
-                        <NavbarContainer>
-                            <Navbar
-                                onHomeClick={this.onHomeClick}
-                                onSignoutClick={this.logout}
-                                refresh={this.refresh}
-
-                            />
-                        </NavbarContainer>
+                          <Navbar
+                            over12={!this.state.under12}
+                            setUnder12={check => {
+                              check
+                                ? this.serverConnect.setUnderTwelve()
+                                : this.serverConnect.setOverTwelve();
+                              this.setState({ under12: !check });
+                              this.refresh();
+                            }}
+                            page="Patients"
+                            onHomeClick={this.onHomeClick}
+                            onSignoutClick={this.logout}
+                            refresh={this.refresh}
+                          />
                         <Button onClick={this.openAddModal}>Add patient</Button>
                         <TableContainer>
                             <PatientsTable

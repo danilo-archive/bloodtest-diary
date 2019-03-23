@@ -19,7 +19,7 @@ const Container = styled.div`
   opacity: ${props => props.isDragging ? 0 : 1}
   display: block;
   position: relative;
-  background-color: ${props => (props.test_colour ? props.test_colour : (props.patient_colour ? props.patient_colour : `white`))};
+  background-color: ${props => (props.test_colour ? props.test_colour : (props.patient_colour ? props.patient_colour : props.default_colour))};
 
   margin-top: 3.5%;
   margin-bottom: 3.5%;
@@ -88,15 +88,33 @@ const Container = styled.div`
         margin-left: 7px;
         margin-right: 7px;
       }
+
 `;
 
 
+const Test = styled.div`
+  &:hover {
+    background-color: red;
+  }
+`;
+
+function sendReminder(test){
+  let text = test.last_reminder ? `This patient was contacted on the ${test.last_reminder}, do you want to send another reminder email?`
+                                 : `This patient was never contacted about this test, do you want to send an email?`;
+  openAlert(text, "optionAlert",
+            "No", () => {return},
+            "Yes", () => {console.log("sending email")});
+}
+
 const RightClickMenu = props => {
     return(
-        <Menu id={props.id} style={{position: "absolute", zIndex: "4"}}>
+        <Menu id={props.id} style={{position: "absolute", zIndex: "4", fontSize: "1rem"}}>
+        <Test>
            <Item onClick={() => {props.editTest(props.testId)}}>Edit</Item>
+           </Test>
+           <Item onClick={() => {props.editPatient(props.patientNo)}}>Open patient profile</Item>
            <Separator />
-           <Item disabled={!props.completed}>Schedule next</Item>
+           <Item onClick={() => sendReminder(props.test)}>Send reminder</Item>
            <Separator />
            <Submenu label="Patient color">
              <Submenu label="Choose color">
@@ -147,6 +165,7 @@ const spec = {
     }
   },
   canDrag(props, monitor){
+      console.log(props.section);
     return (props.section !== "overdue");
   }
 }
@@ -190,7 +209,7 @@ class AppointmentBox extends React.Component {
     this.serverConnect.changeTestStatus(this.props.id, status, res => {
         if (res.success){
             if (res.response.insertId != undefined){
-                openAlert(`A new test was automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}`, "confirmationAlert", "Ok");
+                openAlert(`A new test was automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}.`, "confirmationAlert", "Ok");
             }
         }else{
             this.props.handleError(res, "Somebody is aready editing this test")
@@ -205,9 +224,9 @@ class AppointmentBox extends React.Component {
     console.log(this.props.patient_colour)
     return connectDragSource(
       <div>
-      <RightClickMenu id={menuId} patientNo={this.props.patient_no} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
+      <RightClickMenu editPatient={this.props.editPatient} test={this.props.test} id={menuId} patientNo={this.props.patient_no} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
       <MenuProvider id={menuId}>
-        <Container patient_colour={this.props.patient_colour} test_colour={this.props.test_colour} isDragging={isDragging} tentative={this.props.tentative}>
+        <Container default_colour={this.props.default_colour} patient_colour={this.props.patient_colour} test_colour={this.props.test_colour} isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
           <StatusCircle
             type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}

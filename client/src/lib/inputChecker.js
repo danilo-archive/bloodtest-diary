@@ -22,7 +22,7 @@ function emptyCheck(input) {
 }
 
 /**
- * Checks if input contains only numbers
+ * Checks if input contains only non-negative numbers
  * @param input String of some value
  * @returns {boolean} Match with regular expression
  */

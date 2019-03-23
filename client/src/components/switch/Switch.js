@@ -13,7 +13,6 @@ const Toggle = styled.input.attrs({ type: "checkbox" })`
   margin: 0;
   padding: 0;
 
-
   &::before {
     content: "";
     position: absolute;
@@ -37,7 +36,7 @@ const Toggle = styled.input.attrs({ type: "checkbox" })`
     content: "";
     position: absolute;
     border-radius: 2rem;
-    background: #0b999d;
+    background: #0d4e56;
     transform: translate(-50%, -50%);
     left: 50%;
     top: 50%;
@@ -46,16 +45,17 @@ const Toggle = styled.input.attrs({ type: "checkbox" })`
     transition: background 250ms;
   }
   &:checked::after {
-    background: #0d4e56;
+    background: #0b999d;
     filter: blur(0.5px);
   }
 `;
 
 export default class Switch extends React.Component {
-  state = { checked: false };
+  state = { checked: this.props.checked };
 
   onToggleClick = () => {
     this.setState({ checked: !this.state.checked });
+    this.props.onToggleClick(this.state.checked);
   };
   render() {
     return (

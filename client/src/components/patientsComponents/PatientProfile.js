@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
 
 import PatientSection from "./profileSections/PatientSection";
@@ -18,7 +18,6 @@ const Container = styled.div`
   flex-direction: column;
   background: white;
   align-items: center;
-  font-family: "Rajdhani",sans-serif;
   padding: 1%;
 `;
 
@@ -98,7 +97,6 @@ const SaveButton = styled.button`
     background-color: #018589;
     color: white;
   }
-  
   outline: none;
 `;
 
@@ -108,6 +106,7 @@ const SwitchContainer = styled.div`
 
 const Hr = styled.hr`
   border: 0;
+  margin: 0;
   clear: both;
   display: block;
   width: 96%;               
@@ -172,37 +171,33 @@ class PatientProfile extends Component {
     };
 
     loadPatient() {
-        if (this.state.patientId === "") {
+        this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
+            if (res.success) {
+                const info = res.response[0];
+                this.setState({
+                    patientName: info.patient_name,
+                    patientSurname: info.patient_surname,
+                    patientEmail: info.patient_email,
+                    patientPhone: info.patient_phone,
+                    carerId: info.carer_id,
+                    carerRelationship: info.relationship,
+                    carerName: info.carer_name,
+                    carerSurname: info.carer_surname,
+                    carerEmail: info.carer_email,
+                    carerPhone: info.carer_phone,
+                    hospitalId: info.hospital_id,
+                    hospitalName: info.hospital_name,
+                    hospitalEmail: info.hospital_email,
+                    hospitalPhone: info.hospital_phone,
 
-        } else {
-            this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
-                if (res.success) {
-                    const info = res.response[0];
-                    this.setState({
-                        patientName: info.patient_name,
-                        patientSurname: info.patient_surname,
-                        patientEmail: info.patient_email,
-                        patientPhone: info.patient_phone,
-                        carerId: info.carer_id,
-                        carerRelationship: info.relationship,
-                        carerName: info.carer_name,
-                        carerSurname: info.carer_surname,
-                        carerEmail: info.carer_email,
-                        carerPhone: info.carer_phone,
-                        hospitalId: info.hospital_id,
-                        hospitalName: info.hospital_name,
-                        hospitalEmail: info.hospital_email,
-                        hospitalPhone: info.hospital_phone,
-
-                        noCarer: info.carer_id ? false : true,
-                        localHospital: info.hospital_id ? false : true,
-                        ready: true
-                    });
-                } else {
-                    this.props.handleError(res);
-                }
-            });
-        }
+                    noCarer: info.carer_id ? false : true,
+                    localHospital: info.hospital_id ? false : true,
+                    ready: true
+                });
+            } else {
+                this.props.handleError(res);
+            }
+        });
     }
 
     loadTests() {

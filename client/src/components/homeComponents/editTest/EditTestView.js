@@ -10,6 +10,9 @@ import Button from "./Button";
 import dateformat from "dateformat";
 import { openAlert } from "./../../Alert.js";
 import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
+import PatientProfile from "../../patientsComponents/PatientProfile";
+import { Tooltip } from "react-tippy";
+
 const DataContainer = styled.div`
   position: relative;
   width: 45rem;
@@ -23,11 +26,21 @@ const SetterValues = [
   { value: "Y", name: "Years" }
 ];
 
-
 const TextArea = styled.textarea`
-  width: 40%;
-  height: 10rem;
+  width: 100%;
+  height: 7rem;
   outline: none;
+  resize: none;
+  overflow: scroll;
+`;
+
+const ButtonsContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+  margin-top: 1%;
 `;
 
 export default class EditTestView extends React.Component {
@@ -45,13 +58,24 @@ export default class EditTestView extends React.Component {
     this.serverConnect.getTestInfo(this.props.testId, res => {
       console.log({ res });
       this.setState({
+        showPatient: false,
+        tooltips: {
+          frequency: false,
+          occurrences: false
+        },
+        patientToken: -1,
         patient: { name: res.patient_name, id: res.patient_no },
         test: {
           id: res.test_id,
           date: {
             dueDate: dateformat(new Date(res.due_date), "d mmm yyyy"),
 
-            frequency: res.frequency && res.frequency !== "null" &&  res.frequency !== null ? res.frequency : "0-D",
+            frequency:
+              res.frequency &&
+              res.frequency !== "null" &&
+              res.frequency !== null
+                ? res.frequency
+                : "0-D",
             occurrences: res.occurrences,
             noRepeat: res.occurrences === 1
           },
@@ -95,32 +119,61 @@ export default class EditTestView extends React.Component {
     console.log(params);
     this.serverConnect.editTest(this.state.test.id, params, this.token, res => {
       if (res.success) {
-          console.log(res);
-        if (res.response.insertId != undefined){
-            openAlert(`A new test had been automatically scheduled for the ${formatDatabaseDate(res.response.new_date)}`, "confirmationAlert",
-                      "Ok", () => {this.props.closeModal()});
-        }else{
-            this.props.closeModal();
+        console.log(res);
+        if (res.response.insertId != undefined) {
+          openAlert(
+            `A new test had been automatically scheduled for the ${formatDatabaseDate(
+              res.response.new_date
+            )}.`,
+            "confirmationAlert",
+            "Ok",
+            () => {
+              this.props.closeModal();
+            }
+          );
+        } else {
+          this.props.closeModal();
         }
-
       } else {
-        openAlert("Something went wrong", "confirmationAlert", "Ok", () => {this.props.closeModal()});
+        openAlert("Something went wrong", "confirmationAlert", "Ok", () => {
+          this.props.closeModal();
+        });
       }
     });
   };
 
   unscheduleTest = () => {
-    openAlert("Are you sure you want to unschedule this test?", "optionAlert",
-              "No", () => {return},
-              "Yes", () => {
-                  this.serverConnect.unscheduleTest(this.state.test.id, this.token, res => {
-                    if (res.success) {
-                      openAlert("Test successfully unscheduled", "confirmationAlert", "Ok", () => {this.props.closeModal()});
-                    } else {
-                      openAlert(res.response, "confirmationAlert", "Ok", () => {this.props.closeModal()});
-                    }
-                  });
+    openAlert(
+      "Are you sure you want to unschedule this test?",
+      "optionAlert",
+      "No",
+      () => {
+        return;
+      },
+      "Yes",
+      () => {
+        this.serverConnect.unscheduleTest(
+          this.state.test.id,
+          this.token,
+          res => {
+            if (res.success) {
+              openAlert(
+                "Test successfully unscheduled",
+                "confirmationAlert",
+                "Ok",
+                () => {
+                  this.props.closeModal();
+                }
+              );
+            } else {
+              openAlert(res.response, "confirmationAlert", "Ok", () => {
+                this.props.closeModal();
               });
+            }
+          }
+        );
+      }
+    );
   };
 
   render() {
@@ -172,6 +225,20 @@ export default class EditTestView extends React.Component {
               onClick={() => this.setState({ showCalendar: true })}
             />
             <FrequencySelector
+              tooltips={{
+                frequency: this.state.tooltips.frequency,
+                occurrences: this.state.tooltips.occurrences
+              }}
+              setFrequencyTooltip={state =>
+                this.setState({
+                  tooltips: { ...this.state.tooltips, frequency: state }
+                })
+              }
+              setOcurrencesTooltip={state =>
+                this.setState({
+                  tooltips: { ...this.state.tooltips, occurrences: state }
+                })
+              }
               noRepeat={this.state.test.date.noRepeat}
               onCheck={check =>
                 this.setState({
@@ -246,7 +313,7 @@ export default class EditTestView extends React.Component {
               }}
             />
             <hr />
-            <div style={{ display: "flex" }}>
+            <div >
               <TextArea
                 value={this.state.test.notes}
                 onChange={event =>
@@ -258,18 +325,11 @@ export default class EditTestView extends React.Component {
                   })
                 }
               />
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-end"
-                }}
-              >
-                <Button save onClick={this.saveTest}>
-                  Save Changes
-                </Button>
-                <Button onClick={this.unscheduleTest}>Unschedule test</Button>
-              </div>
+              <ButtonsContainer>
+                <Button backgroundColor={"#0b999d"} hoverColor={"#018589"} onClick={this.saveTest}>Save Changes</Button>
+                <Button backgroundColor={"#f44336"} hoverColor={"#dc2836"} onClick={this.unscheduleTest}>Unschedule test</Button>
+                <Button backgroundColor={"#aaaaaa"} hoverColor={"#c8c8c8"} onClick={this.props.closeModal}>Close</Button>
+              </ButtonsContainer>
             </div>
           </div>
         </div>

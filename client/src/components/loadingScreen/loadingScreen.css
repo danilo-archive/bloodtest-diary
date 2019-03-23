@@ -35,9 +35,6 @@
   align-items: center;
 }
 
-.override {
-  margin: 0;
-}
 
 .line{
     position: sticky;

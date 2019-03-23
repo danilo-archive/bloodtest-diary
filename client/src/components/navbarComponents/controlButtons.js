@@ -8,12 +8,12 @@ const Container = styled.div`
   max-width: 340px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-evenly;
   height: 98px;
   border: solid 0px #97a9a9;
   text-align: center;
-  font-family: "Rajdhani", sans-serif;
+  
   color: #646464;
   font-size: 150%;
 
@@ -25,7 +25,7 @@ const Container = styled.div`
     background-color: ;
     width: 100px;
     height: 31px;
-    margin-right: 45px;
+    margin-right: 44px;
     border-radius:  0;
     cursor: pointer;
     outline:none;
@@ -37,10 +37,11 @@ const Container = styled.div`
     background-color: ;
     width: 100px;
     height: 31px;
-    margin-right:45px;
+    margin-right:44px;
     cursor: pointer;
     outline:none;
     align-self: flex-end;
+
   }
 
 
@@ -63,11 +64,31 @@ export default class ControlButtons extends Component {
         this.onSignoutClick = props.onSignoutClick;
     }
 
+    getButtons() {
+        switch(this.props.page) {
+          case 'Dashboard':
+            return (
+              <>
+                <div className={"patientsButton"} onClick={this.onPatientsClick}>Patients</div>
+                <div className={"signOutButton"} onClick={this.onSignoutClick}>Sign Out</div>
+              </>
+            );
+          case 'Patients':
+            return (
+              <>
+                <div className={"signOutButton"} onClick={this.onSignoutClick}>Sign Out</div>
+              </>
+            );
+          default:
+            return null;
+        }
+    }
+
     render(){
+      const content = this.getButtons();
       return (
         <Container>
-          <div className={"patientsButton"} onClick={this.onPatientsClick}>Patients</div>
-          <div className={"signOutButton"} onClick={this.onSignoutClick}>Sign Out</div>
+          {content}
         </Container>
       )
     }

@@ -10,7 +10,7 @@ const crypto = require("crypto");
 const tokenGenerator = require('./db_controller/token-generator');
 const db_controller = require('./db_controller/db-controller');
 const mysql = require('mysql');
-
+const logger = require('./logger')
 module.exports = {
   canLogin,
   produceIterations,
@@ -29,54 +29,32 @@ initTokens();
 *Function tha naively checks if user
 *provided right credentials
 */
-function canLogin(user, userInDatabase)
-{
-  if(userInDatabase==undefined)
-  {
+function canLogin(user, userInDatabase) {
+  if (userInDatabase == undefined || userInDatabase.length !== 1 || user.username == null || user.password == null) {
     return false;
   }
-  if(userInDatabase.length!==1)
-  {
-    return false;
-  }
-  if(user.username==null||user.password==null)
-  {
-    return false;
-  }
-  if(user.username===userInDatabase[0].username)
-  {
-    const hash = crypto.pbkdf2Sync(user.password,userInDatabase[0].salt,userInDatabase[0].iterations,64,'sha256').toString('hex');
-    if(hash==userInDatabase[0].hashed_password)
-    {
+  if (user.username === userInDatabase[0].username) {
+    const hash = crypto.pbkdf2Sync(user.password, userInDatabase[0].salt, userInDatabase[0].iterations, 64, 'sha256').toString('hex');
+    if (hash == userInDatabase[0].hashed_password) {
       return true;
     }
-    else
-    {
-      return false;
-    }
   }
-  else
-  {
-    return false;
-  }
+  return false;
 }
 
-function produceIterations()
-{
-  const min=1000;
-  const max=2000;
-  const random=Math.floor(Math.random() * (+max - +min)) + +min;
+function produceIterations() {
+  const min = 1000;
+  const max = 2000;
+  const random = Math.floor(Math.random() * (+max - +min)) + +min;
   return random;
 }
 
-function produceSalt()
-{
+function produceSalt() {
   return crypto.randomBytes(16).toString('hex');
 }
 
-function produceHash(password, iterations, salt)
-{
-  return crypto.pbkdf2Sync(password,salt,iterations,64,'sha256').toString('hex');
+function produceHash(password, iterations, salt) {
+  return crypto.pbkdf2Sync(password, salt, iterations, 64, 'sha256').toString('hex');
 }
 
 /**
@@ -86,7 +64,7 @@ function produceHash(password, iterations, salt)
 async function initTokens() {
   const res = await db_controller.selectQuery("SELECT * FROM AccessTokens");
   if (res.status !== "OK") {
-    console.log("Could not initialise tokens from the DB. Response: " + JSON.stringify(res));
+    logger.error("Could not initialise tokens from the DB. Response: " + JSON.stringify(res));
     return;
   }
   const rows = res.response.rows;
@@ -96,7 +74,7 @@ async function initTokens() {
       expires: rows[i].expiration
     }
   }
-  console.log("Successfully loaded " + rows.length + " token(s) from the DB.");
+  logger.info("Successfully loaded " + rows.length + " token(s) from the DB.");
 }
 
 
@@ -108,21 +86,21 @@ async function initTokens() {
  */
 async function verifyToken(accessToken) {
   if (!(accessToken in accessTokens)) {
-      return undefined;
+    return undefined;
   }
   const expires = new Date(accessTokens[accessToken].expires);
   if ((expires - new Date()) <= 0) {
-      delete accessTokens[accessToken];
-      db_controller.deleteAccessToken(accessToken)
-        .then((res) => {
-          if (res.status === "OK") {
-            console.log("Access token successfully deleted.")
-          }
-          else {
-            console.log("Error deleting access token. Response: " + JSON.stringify(res));
-          }
-        });
-      return undefined;
+    delete accessTokens[accessToken];
+    db_controller.deleteAccessToken(accessToken)
+      .then((res) => {
+        if (res.status === "OK") {
+          logger.info("Access token successfully deleted.")
+        }
+        else {
+          logger.error("Error deleting access token. Response: " + JSON.stringify(res));
+        }
+      });
+    return undefined;
   }
   const newExpiry = new Date();
   newExpiry.setDate(newExpiry.getDate() + ACCESS_TOKEN_VALIDITY_DAYS);
@@ -130,7 +108,7 @@ async function verifyToken(accessToken) {
   db_controller.updateAccessToken(accessToken, newExpiry)
     .then((res) => {
       if (res.status !== "OK") {
-        console.log("Error updating access token. Response: " + JSON.stringify(res));
+        logger.error("Error updating access token. Response: " + JSON.stringify(res));
       }
     });
 
@@ -148,16 +126,16 @@ async function registerNewUsername(username) {
   const token = tokenGenerator.generateLoginToken();
   const expires = new Date();
   expires.setDate(expires.getDate() + ACCESS_TOKEN_VALIDITY_DAYS);
-  accessTokens[token] = {username: username, expires: expires};
+  accessTokens[token] = { username: username, expires: expires };
   let sql = "INSERT INTO AccessTokens VALUES (?, ?, ?)";
   sql = mysql.format(sql, [token, username, expires]);
   db_controller.insertQuery(sql)
     .then((res) => {
       if (res.status === "OK") {
-        console.log("Access token successfully stored.")
+        logger.info("Access token successfully stored.")
       }
       else {
-        console.log("Error storing access token. Response: " + JSON.stringify(res));
+        logger.error("Error storing access token. Response: " + JSON.stringify(res));
       }
     });
   return token;
@@ -173,14 +151,14 @@ async function logoutUser(accessToken) {
   if (await verifyToken(accessToken)) {
     delete accessTokens[accessToken];
     db_controller.deleteAccessToken(accessToken)
-    .then((res) => {
-      if (res.status === "OK") {
-        console.log("Access token successfully deleted.")
-      }
-      else {
-        console.log("Error deleting access token. Response: " + JSON.stringify(res));
-      }
-    });
+      .then((res) => {
+        if (res.status === "OK") {
+          logger.info("Access token successfully deleted.")
+        }
+        else {
+          logger.error("Error deleting access token. Response: " + JSON.stringify(res));
+        }
+      });
     return true;
   }
   else {

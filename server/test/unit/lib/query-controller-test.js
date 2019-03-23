@@ -7,9 +7,9 @@ const rewire = require("rewire");
 chai.use(sinonChai);
 const queryController = rewire("../../../lib/query-controller");
 
-//Tests for query controller do NOT depend on action-logger
+//Tests for query controller do NOT depend on action-actionLogger
 //We can safely assume the function do not disturb execution of the program
-const logger = {
+const actionLogger = {
   logInsert:function() {
     return 4;
   },
@@ -23,13 +23,16 @@ const logger = {
     return 1;
   }
 };
-queryController.__set__("logger",logger);
+queryController.__set__("actionLogger",actionLogger);
 
 const testUsername = "admin"; // username that is used throughout the tests (also for action username)
 
 describe("Select queries tests", function(){
-  context("Get All patients", function(){
-    test(queryController.getAllPatients);
+  context("Get All patients (adults)", function(){
+    test(queryController.getAllPatients,true);
+  })
+  context("Get All patients (children)", function(){
+    test(queryController.getAllPatients,false);
   })
   context("Get Next Test of patient", function(){
     test(queryController.getNextTestsOfPatient,"400")
@@ -43,17 +46,11 @@ describe("Select queries tests", function(){
   context("Get Hospital", function(){
     test(queryController.getHospital, "300");
   })
-  context("Get All Tests", function(){
-    test(queryController.getAllTests)
-  })
-  context("Get All Tests of Patient", function(){
-    test(queryController.getTestsOfPatient,"50005");
-  })
   context("Get User", function(){
     test(queryController.getUser,testUsername);
   });
-  context("Get All tests on date", function(){
-    test(queryController.getAllTestsOnDate,"2018-04-03");
+  context("Get All Users", function(){
+    test(queryController.getAllUsers,);
   });
   context("Get Full Patient Info", function(){
     test(queryController.getFullPatientInfo,"P400");
@@ -66,28 +63,53 @@ describe("Select queries tests", function(){
     beforeEach(()=>{
         spy = sinon.spy(queryController.getTestWithinWeek);
     })
-    it("Should return all days (STUBBED)", async function(){
+    it("Should return all days (adult) (STUBBED)", async function(){
       const dbController = {
         selectQuery: async function() {
           return {status:"OK", response:{ rows:[]}}
         }
       }
       queryController.__set__("databaseController",dbController);
-      const response = await spy("2018-04-03");
-      spy.calledWith("2018-04-03").should.equal(true);
+      const response = await spy("2018-04-03",true);
+      spy.calledWith("2018-04-03",true).should.equal(true);
       spy.calledOnce.should.equal(true);
       response.success.should.equal(true);
       response.response.length.should.equal(6);
     });
-    it("Should return error (STUBBED)", async function(){
+    it("Should return error (adult) (STUBBED)", async function(){
         const dbController = {
           selectQuery: async function() {
             return {status: "ERR", err:{ }}
           }
         }
         queryController.__set__("databaseController",dbController);
-        const response = await spy("2018-04-03");
-        spy.calledWith("2018-04-03").should.equal(true);
+        const response = await spy("2018-04-03",true);
+        spy.calledWith("2018-04-03",true).should.equal(true);
+        spy.calledOnce.should.equal(true);
+        response.success.should.equal(false);
+    });
+    it("Should return all days (children) (STUBBED)", async function(){
+      const dbController = {
+        selectQuery: async function() {
+          return {status:"OK", response:{ rows:[]}}
+        }
+      }
+      queryController.__set__("databaseController",dbController);
+      const response = await spy("2018-04-04",false);
+      spy.calledWith("2018-04-04",false).should.equal(true);
+      spy.calledOnce.should.equal(true);
+      response.success.should.equal(true);
+      response.response.length.should.equal(6);
+    });
+    it("Should return error (children) (STUBBED)", async function(){
+        const dbController = {
+          selectQuery: async function() {
+            return {status: "ERR", err:{ }}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy("2018-04-04",false);
+        spy.calledWith("2018-04-04",false).should.equal(true);
         spy.calledOnce.should.equal(true);
         response.success.should.equal(false);
     });
@@ -97,26 +119,43 @@ describe("Select queries tests", function(){
     beforeEach(()=>{
         spy = sinon.spy(queryController.getSortedOverdueWeeks);
     })
-    it("Should return all overdue weeks grouped (STUBBED)", async function(){
+    it("Should return all overdue weeks grouped (children) (STUBBED)", async function(){
       const dbController = {
         selectQuery: async function() {
           return {status:"OK", response:{ rows:[
-            {test_id:"100", Monday:"1"},
-            {test_id:"110", Monday:"1"},
-            {test_id:"200", Monday:"2"},
-            {test_id:"203", Monday:"2"},
-            {test_id:"201", Monday:"2"},
-            {test_id:"307", Monday:"3"},
+            {test_id:"110", Monday:"1", isAdult:"no"},
+            {test_id:"203", Monday:"2", isAdult:"no"},
+            {test_id:"201", Monday:"2", isAdult:"no"}
           ]}}
         }
       }
       queryController.__set__("databaseController",dbController);
-      const response = await spy();
+      const response = await spy(false);
+      spy.calledOnce.should.equal(true);
+      response.success.should.equal(true);
+      response.response.length.should.equal(2);
+      response.response[0].tests.length.should.equal(1);
+      response.response[1].tests.length.should.equal(2);
+      response.response[0].class.should.equal("1");
+      response.response[1].class.should.equal("2");
+    });
+    it("Should return all overdue weeks grouped (adult) (STUBBED)", async function(){
+      const dbController = {
+        selectQuery: async function() {
+          return {status:"OK", response:{ rows:[
+            {test_id:"100", Monday:"1", isAdult:"yes"},
+            {test_id:"200", Monday:"2", isAdult:"yes"},
+            {test_id:"307", Monday:"3", isAdult:"yes"},
+          ]}}
+        }
+      }
+      queryController.__set__("databaseController",dbController);
+      const response = await spy(true);
       spy.calledOnce.should.equal(true);
       response.success.should.equal(true);
       response.response.length.should.equal(3);
-      response.response[0].tests.length.should.equal(2);
-      response.response[1].tests.length.should.equal(3);
+      response.response[0].tests.length.should.equal(1);
+      response.response[1].tests.length.should.equal(1);
       response.response[2].tests.length.should.equal(1);
       response.response[0].class.should.equal("1");
       response.response[1].class.should.equal("2");
@@ -159,25 +198,50 @@ describe("Select queries tests", function(){
       const res = await queryController.getOverdueReminderGroups();
       expect(res.success).to.be.false;
     });
-    it ("Should return return correct groups.", async () => {
+    it ("Should return correct groups (adults).", async () => {
       const dbController = {
         selectQuery: async function() {
           return {status:"OK", response:{ rows:[
-            {test_id: 404, reminders_sent: 0},
-            {test_id: 200, reminders_sent: 1}
+            {test_id: 404, reminders_sent: 0, isAdult:"yes"},
+            {test_id: 200, reminders_sent: 1, isAdult:"yes"}
           ]}};
         }
       }
       queryController.__set__("databaseController",dbController);
-      const res = await queryController.getOverdueReminderGroups();
+      const res = await queryController.getOverdueReminderGroups(true);
       const shouldBe = {
         success:true,
         response: {
           notReminded: [
-            {test_id: 404, reminders_sent: 0}
+            {test_id: 404, reminders_sent: 0, isAdult:"yes"}
           ],
           reminded: [
-            {test_id: 200, reminders_sent: 1}
+            {test_id: 200, reminders_sent: 1, isAdult:"yes"}
+          ]
+        }
+      };
+      expect(res.success).to.be.true;
+      expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
+    });
+    it ("Should return correct groups (children).", async () => {
+      const dbController = {
+        selectQuery: async function() {
+          return {status:"OK", response:{ rows:[
+            {test_id: 40, reminders_sent: 0, isAdult:"no"},
+            {test_id: 390, reminders_sent: 3, isAdult:"no"}
+          ]}};
+        }
+      }
+      queryController.__set__("databaseController",dbController);
+      const res = await queryController.getOverdueReminderGroups(false);
+      const shouldBe = {
+        success:true,
+        response: {
+          notReminded: [
+            {test_id: 40, reminders_sent: 0, isAdult:"no"}
+          ],
+          reminded: [
+            {test_id: 390, reminders_sent: 3, isAdult:"no"}
           ]
         }
       };
@@ -607,6 +671,7 @@ describe("Update queries tests", function(){
         }
         queryController.__set__("databaseController",dbController);
         const response = await spy({testId:"2000",newStatus:"completed"}, testUsername);
+        console.log(response)
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
         response.response.new_date.should.equal("20201114");
@@ -736,16 +801,16 @@ describe("Update queries tests", function(){
         spy.calledOnce.should.equal(true);
       })
     })
-    context("Update password", function(){
+    context("Update User", function(){
       let spy;
       beforeEach(()=>{
-          spy = sinon.spy(queryController.updatePassword);
+          spy = sinon.spy(queryController.editUser);
       })
       it("Correctly update password (STUBBED)", async function()
       {
         const dbController = {
           selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000"}]}}
+            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
           },
           requestEditing: async function() {
             return {status: "OK", response:{token:"2000"}}
@@ -759,10 +824,63 @@ describe("Update queries tests", function(){
         response.success.should.equal(true);
         response.response.affectedRows.should.equal(1);
       })
-      it("Fail due to password being edited (STUBBED)", async function() {
+      it("Correctly update email (STUBBED)", async function()
+      {
+        const dbController = {
+          selectQuery: async function() {
+            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
+          },
+          requestEditing: async function() {
+            return {status: "OK", response:{token:"2000"}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({username:testUsername,recovery_email:"gmail@gmail.com"}, testUsername);
+        response.success.should.equal(true);
+        response.response.affectedRows.should.equal(1);
+      })
+      it("Correctly update email (STUBBED)", async function()
+      {
+        const dbController = {
+          selectQuery: async function() {
+            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
+          },
+          requestEditing: async function() {
+            return {status: "OK", response:{token:"2000"}}
+          },
+          updateQuery: async function() {
+            return {status: "OK", response:{affectedRows:1}}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({username:testUsername,recovery_email:"gmail@gmail.com",hashed_password:"dsjhdshdshjdshdhjdschjdsjsdhj"}, testUsername);
+        response.success.should.equal(true);
+        response.response.affectedRows.should.equal(1);
+      })
+      it("Fail due to user being edited (STUBBED)", async function() {
         const dbController = {
           selectQuery: async function() {
             return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000"}]}}
+          },
+          requestEditing: async function() {
+            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
+          },
+          updateQuery: async function() {
+            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
+          }
+        }
+        queryController.__set__("databaseController",dbController);
+        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, undefined, testUsername);
+        response.success.should.equal(false);
+        response.response.problem.should.equal("Token in use/No token defined");
+      })
+      it("Fail due to no user found (STUBBED)", async function() {
+        const dbController = {
+          selectQuery: async function() {
+            return {status:"OK", response:{ rows:[]}}
           },
           requestEditing: async function() {
             return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
@@ -774,12 +892,12 @@ describe("Update queries tests", function(){
         queryController.__set__("databaseController",dbController);
         const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
         response.success.should.equal(false);
-        response.response.problem.should.equal("Token in use/No token defined");
+        response.response.should.equal("No user found");
       })
-      it("Fail due to no user found (STUBBED)", async function() {
+      it("Fail due to too many users found (STUBBED)", async function() {
         const dbController = {
           selectQuery: async function() {
-            return {status:"OK", response:{ rows:[]}}
+            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000"},{username:testUsername,iterations:1000,salt:"30000"}]}}
           },
           requestEditing: async function() {
             return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
@@ -826,45 +944,6 @@ describe("Update queries tests", function(){
         queryController.__set__("databaseController",dbController);
         const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
         response.success.should.equal(false);
-      })
-    })
-    context("Update User's email", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.updateUserEmail);
-      })
-      it("Correctly update email (STUBBED)", async function()
-      {
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,recovery_email:"email123@gmail.com"},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Fail - no token (STUBBED)", async function() {
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"});
-        response.success.should.equal(false);
-      })
-      it("Fail - query error (STUBBED)", async function() {
-        const dbController = {
-          updateQuery: async function() {
-            return {status:"ERR", err: { error:"STUBBED ERROR"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
       })
     })
     context("Edit Patient", function(){

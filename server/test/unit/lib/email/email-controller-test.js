@@ -7,232 +7,340 @@ const rewire = require("rewire");
 chai.use(sinonChai);
 const emailController = rewire("./../../../../lib/email/email-controller");
 
+describe("Test email controller:", () => {
 
-/*describe("Send overdue reminders:", () => {
-    beforeEach(() => {
-      const dbController = {
-        selectQuery: async function() {
-          return {status: "OK", response: { rows: [{}]}};
-        },
-        requestEditing: async function() {
-          return {status: "OK", response:{ token: "TOKEN"}};
-        },
-        updateQuery: async function() {
-          return {status: "OK"};
-        },
-        cancelEditing: async function() {
-          return {status: "OK"};
-        }
-      }
-      query_controller.__set__("databaseController",dbController);
+    describe("> Password Recovery Functionality", function () {
+        context("Recovery password email", function () {
+            let spy;
+            beforeEach(() => {
+                spy = sinon.spy(emailController.recoverPassword)
+            })
+            it("Cannot find user due to database error - (STUBBED)", async function () {
+                const query_controller = {
+                    getUser: async function () {
+                        return { success: false, response: { error: "STUBBED ERROR" } }
+                    }
+                }
+                emailController.__set__("query_controller", query_controller)
+                const response = await spy("admin");
+                response.success.should.equal(false);
+                response.response.error.should.equal("STUBBED ERROR");
+            })
+            it("Cannot find user due to lack of user with this username - (STUBBED)", async function () {
+                const query_controller = {
+                    getUser: async function () {
+                        return { success: true, response: [[]] }
+                    }
+                }
+                emailController.__set__("query_controller", query_controller)
+                const response = await spy("admin");
+                response.success.should.equal(false);
+                response.response.should.equal("No user found!");
+            })
+            it("Find user, cannot update due to an error - (STUBBED)", async function () {
+                const query_controller = {
+                    getUser: async function () {
+                        return { success: true, response: [{ username: "admin", recovery_email: "admin123@gmail.com" }] }
+                    },
+                    requestEditing: async function() {
+                        return "token";
+                    },
+                    editUser: async function () {
+                        return { success: false, response: { error: "STUBBED ERROR" } }
+                    }
+                }
+                const emailSender = {
+                    sendPasswordRecoveryEmail: async function () {
+                        return true;
+                    }
+                }
+                emailController.__set__("email_sender", emailSender)
+                emailController.__set__("query_controller", query_controller)
+                const response = await spy("admin");
+                response.success.should.equal(false);
+                response.response.error.should.equal("STUBBED ERROR");
+            })
+            it("Find user, update password and fail to send an email - (STUBBED)", async function () {
+                const query_controller = {
+                    getUser: async function () {
+                        return { success: true, response: [{ username: "admin", recovery_email: "admin123@gmail.com" }] }
+                    },
+                    requestEditing: async function() {
+                        return "token";
+                    },
+                    returnToken: async function() {
+                        return "token";
+                    },
+                    editUser: async function () {
+                        return { success: true, response: { affectedRows: 1, changedRows: 1 } }
+                    }
+                }
+                const emailSender = {
+                    sendPasswordRecoveryEmail: async function () {
+                        return false;
+                    }
+                }
+                emailController.__set__("query_controller", query_controller)
+                emailController.__set__("email_sender", emailSender)
+                const response = await spy("admin");
+                response.success.should.equal(false);
+            })
+            it("Find user, update password and send an email - (STUBBED)", async function () {
+                const query_controller = {
+                    getUser: async function () {
+                        return { success: true, response: [{ username: "admin", recovery_email: "admin123@gmail.com" }] }
+                    },
+                    requestEditing: async function() {
+                        return "token";
+                    },
+                    editUser: async function () {
+                        return { success: true, response: { affectedRows: 1, changedRows: 1 } }
+                    }
+                }
+                const emailSender = {
+                    sendPasswordRecoveryEmail: async function () {
+                        return true
+                    }
+                }
+                emailController.__set__("query_controller", query_controller)
+                emailController.__set__("email_sender", emailSender)
+                const response = await spy("admin");
+                response.success.should.equal(true);
+            });
+        });
     });
 
-    it("Should return false.", async () => {
-      const dbController = {
-        selectQuery: async function() {
-          return {status: "OK", response: { rows: [{}]}};
-        },
-        requestEditing: async function() {
-          return {status: "ERR", err: {cause: "stubbed error"}};
-        },
-        cancelEditing: async function() {
-          return {status: "OK"};
+    describe("> Test send overdue reminders:", () => {
+        it("Should fail (token fail).", async () => {
+            const query_controller = {
+                requestEditing: async function() {
+                    return undefined;
+                }
+            }
+            emailController.__set__("query_controller", query_controller);
+            const res = await emailController.sendOverdueReminders([404]);
+            const shouldBe = {
+                success: false,
+                response: {
+                    failedBoth: [404],
+                    failedPatient: [],
+                    failedHospital: []
+                }
+            };
+            expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
+        });
+        it("Should fail (getTest fail).", async () => {
+            let called = false;
+            const query_controller = {
+                requestEditing: async function() {
+                    return "token";
+                },
+                getTest: async function() {
+                    return { invalid: 123 };
+                },
+                returnToken: async function() {
+                    called = true;
+                }
+            }
+            emailController.__set__("query_controller", query_controller);
+            const res = await emailController.sendOverdueReminders([404]);
+            const shouldBe = {
+                success: false,
+                response: {
+                    failedBoth: [404],
+                    failedPatient: [],
+                    failedHospital: []
+                }
+            };
+            expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
+            expect(called).to.be.true;
+        });
+        it("Should succeed (no hospital).", async () => {
+            let called = false;
+            const query_controller = {
+                requestEditing: async function() {
+                    return "token";
+                },
+                getTest: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getPatient: async function() {
+                    return { response: [{
+                        carer_id: null,
+                        hospital_id: null
+                    }] };
+                },
+                returnToken: async function() {
+                    called = true;
+                },
+                updateLastReminder: async function() {
+                    return {success: true}
+                }
+            };
+            const email_sender = {
+                sendOverdueReminderToPatient: async function() {
+                    return true;
+                }
+            }
+            emailController.__set__("query_controller", query_controller);
+            emailController.__set__("email_sender", email_sender);
+            const res = await emailController.sendOverdueReminders([404]);
+            expect(res.success).to.be.true;
+            expect(called).to.be.false;
+        });
+        it("Should fail for hospital.", async () => {
+            let called = false;
+            const query_controller = {
+                requestEditing: async function() {
+                    return "token";
+                },
+                getTest: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getCarer: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getHospital: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getPatient: async function() {
+                    return { response: [{
+                        carer_id: 5,
+                        hospital_id: 15
+                    }] };
+                },
+                returnToken: async function() {
+                    called = true;
+                },
+                updateLastReminder: async function() {
+                    return {success: false, err: "stubbed error"}
+                }
+            };
+            const email_sender = {
+                sendOverdueReminderToPatient: async function() {
+                    return true;
+                },
+                sendOverdueReminderToHospital: async function() {
+                    return false;
+                }
+            }
+            emailController.__set__("query_controller", query_controller);
+            emailController.__set__("email_sender", email_sender);
+            const res = await emailController.sendOverdueReminders([404]);
+            const shouldBe = {
+                success: false,
+                response: {
+                    failedBoth: [],
+                    failedPatient: [],
+                    failedHospital: [404]
+                }
+            };
+            expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
+            expect(called).to.be.false;
+        });
+    });
+    it("Should fail for patient.", async () => {
+        let called = false;
+        const query_controller = {
+            requestEditing: async function() {
+                return "token";
+            },
+            getTest: async function() {
+                return { response: [{ some: "info"}] };
+            },
+            getCarer: async function() {
+                return { response: [{ some: "info"}] };
+            },
+            getHospital: async function() {
+                return { response: [{ some: "info"}] };
+            },
+            getPatient: async function() {
+                return { response: [{
+                    carer_id: 5,
+                    hospital_id: 15
+                }] };
+            },
+            returnToken: async function() {
+                called = true;
+            },
+            updateLastReminder: async function() {
+                return {success: false, err: "stubbed error"}
+            }
+        };
+        const email_sender = {
+            sendOverdueReminderToPatient: async function() {
+                return false;
+            },
+            sendOverdueReminderToHospital: async function() {
+                return true;
+            }
         }
-      };
-      query_controller.__set__("databaseController", dbController);
-      const res = await query_controller.sendOverdueReminders([1], testUsername);
-      const shouldBe = {
-        success: false,
-        response : {
-          failedBoth: [1],
-          failedPatient: [],
-          failedHospital: []
-        }
-      };
-      expect(JSON.stringify(res)).to.be.equal(JSON.stringify(shouldBe));
+        emailController.__set__("query_controller", query_controller);
+        emailController.__set__("email_sender", email_sender);
+        const res = await emailController.sendOverdueReminders([404]);
+        const shouldBe = {
+            success: false,
+            response: {
+                failedBoth: [],
+                failedPatient: [404],
+                failedHospital: []
+            }
+        };
+        expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
+        expect(called).to.be.true;
     });
 
-    it("Should return both failed.", async () => {
-      const email_sender = {
-        sendOneOverdueTestReminderToPatient: async function() {
-          return [1];
-        },
-        sendOneOverdueTestReminderToHospital: async function() {
-          return [1];
-        }
-      };
-      query_controller.__set__("email_sender", email_sender);
-      const res = await query_controller.sendOverdueReminders([1], testUsername);
-      const shouldBe = {
-        success: false,
-        response : {
-          failedBoth: [1],
-          failedPatient: [],
-          failedHospital: []
-        }
-      };
-      expect(JSON.stringify(res)).to.be.equal(JSON.stringify(shouldBe));
+    describe("> Test send overdue reminders:", () => {
+        it("Should fail for both (not sent)", async () => {
+            let called = false;
+            const query_controller = {
+                requestEditing: async function() {
+                    return "token";
+                },
+                getTest: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getCarer: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getHospital: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getPatient: async function() {
+                    return { response: [{
+                        carer_id: 5,
+                        hospital_id: 15
+                    }] };
+                },
+                returnToken: async function() {
+                    called = true;
+                },
+                updateLastReminder: async function() {
+                    return {success: false, err: "stubbed error"}
+                }
+            };
+            const email_sender = {
+                sendReminderToPatient: async function() {
+                    return false;
+                },
+                sendReminderToHospital: async function() {
+                    return false;
+                }
+            }
+            emailController.__set__("query_controller", query_controller);
+            emailController.__set__("email_sender", email_sender);
+            const res = await emailController.sendNormalReminders([404]);
+            const shouldBe = {
+                success: false,
+                response: {
+                    failedBoth: [404],
+                    failedPatient: [],
+                    failedHospital: []
+                }
+            };
+            expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
+            expect(called).to.be.true;
+        });
     });
+});
 
-    it("Should return patient failed.", async () => {
-      const email_sender = {
-        sendOneOverdueTestReminderToPatient: async function() {
-          return [1];
-        },
-        sendOneOverdueTestReminderToHospital: async function() {
-          return [];
-        }
-      };
-      query_controller.__set__("email_sender", email_sender);
-      const res = await query_controller.sendOverdueReminders([1], testUsername);
-      const shouldBe = {
-        success: false,
-        response : {
-          failedBoth: [],
-          failedPatient: [1],
-          failedHospital: []
-        }
-      };
-      expect(JSON.stringify(res)).to.be.equal(JSON.stringify(shouldBe));
-    });
-
-    it("Should return hospital failed.", async () => {
-      const email_sender = {
-        sendOneOverdueTestReminderToPatient: async function() {
-          return [];
-        },
-        sendOneOverdueTestReminderToHospital: async function() {
-          return [1];
-        }
-      };
-      const dbController = {
-        selectQuery: async function() {
-          return {status: "OK", response: { rows: [{}]}};
-        },
-        requestEditing: async function() {
-          return {status: "OK", response:{ token: "TOKEN"}};
-        },
-        updateQuery: async function() {
-          return {status: "ERR", err: {cause: "stubbed error"}};
-        },
-        cancelEditing: async function() {
-          return {status: "OK"};
-        }
-      }
-      query_controller.__set__("databaseController",dbController);
-      query_controller.__set__("email_sender", email_sender);
-      const res = await query_controller.sendOverdueReminders([1], testUsername);
-      const shouldBe = {
-        success: false,
-        response : {
-          failedBoth: [],
-          failedPatient: [],
-          failedHospital: [1]
-        }
-      };
-      expect(JSON.stringify(res)).to.be.equal(JSON.stringify(shouldBe));
-    });
-
-    it("Should return success.", async () => {
-      const email_sender = {
-        sendOneOverdueTestReminderToPatient: async function() {
-          return [];
-        },
-        sendOneOverdueTestReminderToHospital: async function() {
-          return [];
-        }
-      };
-      query_controller.__set__("email_sender", email_sender);
-      const res = await query_controller.sendOverdueReminders([1], testUsername);
-      expect(res.success).to.be.true;
-    });
-  });*/
-
-  describe("Password Recovery Functionality", function(){
-    context("Recovery password email", function(){
-      let spy;
-      beforeEach(()=>{
-        spy = sinon.spy(emailController.recoverPassword)
-      })
-      it("Cannot find user due to database error - (STUBBED)", async function(){
-        const query_controller ={
-          getUser: async function(){
-            return {success: false, response:{error:"STUBBED ERROR"}}
-          }
-        }
-        emailController.__set__("query_controller",query_controller)
-        const response = await spy("admin");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
-      })
-      it("Cannot find user due to lack of user with this username - (STUBBED)", async function(){
-        const query_controller ={
-          getUser: async function(){
-            return {success: true, response:[[]]}
-          }
-        }
-        emailController.__set__("query_controller",query_controller)
-        const response = await spy("admin");
-        response.success.should.equal(false);
-        response.response.should.equal("No user found!");
-      })
-      it("Find user, cannot update due to an error - (STUBBED)", async function(){
-        const query_controller ={
-          getUser: async function(){
-            return {success: true, response:[{username:"admin", recovery_email:"admin123@gmail.com"}]}
-          },
-          updatePassword: async function(){
-            return {success:false, response:{error:"STUBBED ERROR"}}
-          }
-        }
-        const emailSender = {
-          sendPasswordRecoveryEmail: async function(){
-            return true;
-          }
-        }
-        emailController.__set__("email_sender",emailSender)
-        emailController.__set__("query_controller",query_controller)
-        const response = await spy("admin");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
-      })
-      it("Find user, update password and fail to send an email - (STUBBED)", async function(){
-        const query_controller ={
-          getUser: async function(){
-            return {success: true, response:[{username:"admin", recovery_email:"admin123@gmail.com"}]}
-          },
-          updatePassword: async function(){
-            return {success: true, response:{affectedRows:1, changedRows:1}}
-          }
-        }
-        const emailSender = {
-          sendPasswordRecoveryEmail: async function(){
-            return false;
-          }
-        }
-        emailController.__set__("query_controller",query_controller)
-        emailController.__set__("email_sender",emailSender)
-        const response = await spy("admin");
-        response.success.should.equal(false);
-      })
-      it("Find user, update password and send an email - (STUBBED)", async function(){
-        const query_controller ={
-          getUser: async function(){
-            return {success: true, response:[{username:"admin", recovery_email:"admin123@gmail.com"}]}
-          },
-          updatePassword: async function(){
-            return {success: true, response:{affectedRows:1, changedRows:1}}
-          }
-        }
-        const emailSender = {
-          sendPasswordRecoveryEmail: async function(){
-            return true
-          }
-        }
-        emailController.__set__("query_controller",query_controller)
-        emailController.__set__("email_sender",emailSender)
-        const response = await spy("admin");
-        response.success.should.equal(true);
-      })
-    })
-  })

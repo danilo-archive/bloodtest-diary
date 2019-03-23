@@ -47,11 +47,11 @@ They all need information contained in the "email_info" JSON objects.
 |--------------------------------------------------------------------------
 */
 module.exports = {
-  testReminderForPatient,
-  testReminderForHospital,
-  overdueTestReminderForPatient,
-  overdueTestReminderForHospital,
-  passwordRecoveryEmail
+    testReminderForPatient,
+    testReminderForHospital,
+    overdueTestReminderForPatient,
+    overdueTestReminderForHospital,
+    passwordRecoveryEmail
 };
 
 const dateformat = require('dateformat');
@@ -70,21 +70,22 @@ const mjml2html = require("mjml");
  * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
-async function overdueTestReminderForHospital(email_info,email_config) {
+async function overdueTestReminderForHospital(email_info, email_config) {
     const greeting = "Dear colleagues,";
     const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.overdueHospital, greeting, true, email_config));
 
-    let subject =  email_config.content.overdueHospital.subject.title;
+    let subject = email_config.content.overdueHospital.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
-    if ( email_config.content.overdueHospital.subject.appendDate) {
-        subject += (subject.endsWith(" ")) ? due_date : " " + due_date; 
+    if (email_config.content.overdueHospital.subject.appendDate) {
+        subject += (subject.endsWith(" ")) ? due_date : " " + due_date;
     }
-    if (computed_html.errors.length === 0)
+    if (computed_html.errors.length === 0) {
         return {
             to: email_info.hospital.hospital_email,
-            html:  (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
+            html: (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
             subjectTitle: subject
         };
+    }
     return null;
 }
 
@@ -94,26 +95,39 @@ async function overdueTestReminderForHospital(email_info,email_config) {
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
 async function overdueTestReminderForPatient(email_info, email_config) {
-    if (email_info.patient.patient_email == null || email_info.patient.patient_email.length === 0) {
+    if (email_info.patient.patient_email === null ||
+        email_info.patient.patient_email === undefined ||
+        email_info.patient.patient_email.length === 0 ||
+        email_info.patient.patient_email === "null") {
         return await overdueTestReminderForCarer(email_info, email_config);
     }
-    const greeting = "Dear " + email_info.patient.patient_name + " " + email_info.patient.patient_surname + ",";
+    let name = email_info.patient.patient_name;
+    let surname = email_info.patient.patient_surname;
+    name = (name === null  || name === undefined|| name.length === 0 || name === "null") ? undefined : name;
+    surname = (surname === null || surname === undefined || surname.length === 0 || surname === "null") ? undefined : surname;
+
+    let greeting = "Dear ";
+    if (name && surname) {
+        greeting += name + " " + surname + ",";
+    }
+    else {
+        greeting += "patient,";
+    }
     const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.overduePatient, greeting, true, email_config));
 
-    let subject =  email_config.content.overduePatient.subject.title;
+    let subject = email_config.content.overduePatient.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
-    if ( email_config.content.overduePatient.subject.appendDate) {
-        subject += (subject.endsWith(" ")) ? due_date : " " + due_date; 
+    if (email_config.content.overduePatient.subject.appendDate) {
+        subject += (subject.endsWith(" ")) ? due_date : " " + due_date;
     }
+
     if (computed_html.errors.length === 0) {
         return {
             to: email_info.patient.patient_email,
-            html:  (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
+            html: (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
             subjectTitle: subject
         };
     }
-
-        
     return null;
 }
 
@@ -123,30 +137,35 @@ async function overdueTestReminderForPatient(email_info, email_config) {
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
 async function overdueTestReminderForCarer(email_info, email_config) {
-    if (email_config.carer == null) {
+    if (email_info.carer === null || email_info.carer === undefined) {
         return null;
     }
-    let greeting = "Dear";
-    if (email_info.carer.carer_name != null && email_info.carer.carer_name.length !== 0) {
-        greeting += " " + email_info.carer.carer_name;
+    let name = email_info.carer.carer_name;
+    let surname = email_info.carer.carer_surname;
+    name = (name === null || name === undefined || name.length === 0 || name === "null") ? undefined : name;
+    surname = (surname === null || surname === undefined || surname.length === 0 || surname === "null") ? undefined : surname;
+
+    let greeting = "Dear ";
+    if (name && surname) {
+        greeting += name + " " + surname + ",";
     }
-    if (email_info.carer.carer_surname != null && email_info.carer.carer_surname.length !== 0) {
-        greeting += " " + email_info.carer.carer_surname;
+    else {
+        greeting += "carer,";
     }
-    greeting += ",";
     const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.overdueCarer, greeting, true, email_config));
 
-    let subject =  email_config.content.overdueCarer.subject.title;
+    let subject = email_config.content.overdueCarer.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
-    if ( email_config.content.overdueCarer.subject.appendDate) {
-        subject += (subject.endsWith(" ")) ? due_date : " " + due_date; 
+    if (email_config.content.overdueCarer.subject.appendDate) {
+        subject += (subject.endsWith(" ")) ? due_date : " " + due_date;
     }
-    if (computed_html.errors.length === 0)
+    if (computed_html.errors.length === 0) {
         return {
             to: email_info.carer.carer_email,
-            html:  (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
+            html: (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
             subjectTitle: subject
         };
+    }
     return null;
 }
 
@@ -156,17 +175,17 @@ async function overdueTestReminderForCarer(email_info, email_config) {
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
 async function passwordRecoveryEmail(email_info, email_config) {
-  const subject =  email_config.content.recoveryEmail.subject;
-  const newPassword = email_info.user.new_password;
-  const computed_html = mjml2html(await generateRecoveryEmailBody(newPassword, email_config.content.recoveryEmail));
-  
+    const subject = email_config.content.recoveryEmail.subject;
+    const newPassword = email_info.user.new_password;
+    const computed_html = mjml2html(await generateRecoveryEmailBody(newPassword, email_config.content.recoveryEmail));
 
-  if (computed_html.errors.length === 0)
+    if (computed_html.errors.length === 0) {
         return {
             to: email_info.user.recovery_email,
-            html:  (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
+            html: (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
             subjectTitle: subject
         };
+    }
     return null;
 }
 
@@ -176,23 +195,38 @@ async function passwordRecoveryEmail(email_info, email_config) {
  * @returns {string} html for an email containing info about a test which is due for a patient
  */
 async function testReminderForPatient(email_info, email_config) {
-    if (email_info.patient.patient_email == null || email_info.patient.patient_email.length === 0) {
-        return await testReminderForCarer(email_info);
+    if (email_info.patient.patient_email === null ||
+        email_info.patient.patient_email === undefined ||
+        email_info.patient.patient_email.length === 0 ||
+        email_info.patient.patient_email === "null") {
+        return await testReminderForCarer(email_info, email_config);
     }
-    const greeting = "Dear " + email_info.patient.patient_name + " " + email_info.patient.patient_surname + ",";
+    let name = email_info.patient.patient_name;
+    let surname = email_info.patient.patient_surname;
+    name = (name === null || name === undefined || name.length === 0 || name === "null") ? undefined : name;
+    surname = (surname === null || surname === undefined || surname.length === 0 || surname === "null") ? undefined : surname;
+
+    let greeting = "Dear ";
+    if (name && surname) {
+        greeting += name + " " + surname + ",";
+    }
+    else {
+        greeting += "patient,";
+    }
     const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.generalPatient, greeting, false, email_config));
 
-    let subject =  email_config.content.generalPatient.subject.title;
+    let subject = email_config.content.generalPatient.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
-    if ( email_config.content.generalPatient.subject.appendDate) {
-        subject += (subject.endsWith(" ")) ? due_date : " " + due_date; 
+    if (email_config.content.generalPatient.subject.appendDate) {
+        subject += (subject.endsWith(" ")) ? due_date : " " + due_date;
     }
-    if (computed_html.errors.length === 0)
+    if (computed_html.errors.length === 0) {
         return {
             to: email_info.patient.patient_email,
-            html:  (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
+            html: (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
             subjectTitle: subject
         };
+    }
     return null;
 }
 
@@ -203,18 +237,19 @@ async function testReminderForPatient(email_info, email_config) {
 async function testReminderForHospital(email_info, email_config) {
     const greeting = "Dear colleagues,";
     const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.generalHospital, greeting, false, email_config));
-    
-    let subject =  email_config.content.generalHospital.subject.title;
+
+    let subject = email_config.content.generalHospital.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
-    if ( email_config.content.generalHospital.subject.appendDate) {
-        subject += (subject.endsWith(" ")) ? due_date : " " + due_date; 
+    if (email_config.content.generalHospital.subject.appendDate) {
+        subject += (subject.endsWith(" ")) ? due_date : " " + due_date;
     }
-    if (computed_html.errors.length === 0)
+    if (computed_html.errors.length === 0) {
         return {
             to: email_info.hospital.hospital_email,
-            html:  (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
+            html: (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
             subjectTitle: subject
         };
+    }
     return null;
 }
 
@@ -223,30 +258,35 @@ async function testReminderForHospital(email_info, email_config) {
  * @param {JSON} email_info the json containing info needed to generate the email. For format info look at the module's documentation.
 */
 async function testReminderForCarer(email_info, email_config) {
-    if (email_config.carer == null) {
+    if (email_info.carer === null || email_info.carer === undefined) {
         return null;
     }
-    let greeting = "Dear";
-    if (email_info.carer.carer_name != null && email_info.carer.carer_name.length !== 0) {
-        greeting += " " + email_info.carer.carer_name;
+    let name = email_info.carer.carer_name;
+    let surname = email_info.carer.carer_surname;
+    name = (name === null || name === undefined || name.length === 0 || name === "null") ? undefined : name;
+    surname = (surname === null || surname === undefined || surname.length === 0 || surname === "null") ? undefined : surname;
+
+    let greeting = "Dear ";
+    if (name && surname) {
+        greeting += name + " " + surname + ",";
     }
-    if (email_info.carer.carer_surname != null && email_info.carer.carer_surname.length !== 0) {
-        greeting += " " + email_info.carer.carer_surname;
+    else {
+        greeting += "carer,";
     }
-    greeting += ",";
     const computed_html = mjml2html(await generateReminderBody(email_info, email_config.content.generalCarer, greeting, false, email_config));
-    
-    let subject =  email_config.content.generalCarer.subject.title;
+
+    let subject = email_config.content.generalCarer.subject.title;
     const due_date = beautifyDate(email_info.test.due_date);
-    if ( email_config.content.generalCarer.subject.appendDate) {
-        subject += (subject.endsWith(" ")) ? due_date : " " + due_date; 
+    if (email_config.content.generalCarer.subject.appendDate) {
+        subject += (subject.endsWith(" ")) ? due_date : " " + due_date;
     }
-    if (computed_html.errors.length === 0)
+    if (computed_html.errors.length === 0) {
         return {
             to: email_info.carer.carer_email,
-            html:  (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
+            html: (computed_html.html + "<br>" + getFooter(email_config)).replace(/--br--/g, "<br>"),
             subjectTitle: subject
         };
+    }
     return null;
 }
 
@@ -303,15 +343,37 @@ async function generateReminderBody(emailInfo, contentConfiguration, greeting, i
                 ${patient.patient_no}--br--`;
     }
     if (contentConfiguration.details.includePatientName) {
-        rows += `<i>Full name:    </i>
+        let name = patient.patient_name;
+        let surname = patient.patient_surname;
+        name = (name === null || name === undefined || name.length === 0 || name === "null") ? undefined : name;
+        surname = (surname === null || surname === undefined || surname.length === 0 || surname === "null") ? undefined : surname;
+
+        if (name && surname) {
+            rows += `<i>Full name:    </i>
                 ${patient.patient_name} ${patient.patient_surname}--br--`;
+        }
+        else if (name) {
+            rows += `<i>Name:    </i>
+                ${patient.patient_name}--br--`;
+        }
+        else if (surname) {
+            rows += `<i>Name:    </i>
+                ${patient.patient_surname}--br--`;
+        }
+        
     }
     if (contentConfiguration.details.includePatientContact) {
-        if (patient.patient_email !== null && patient.patient_email.length !== 0) {
+        if (!(patient.patient_email === null ||
+            patient.patient_email === undefined ||
+            patient.patient_email.length === 0 ||
+            patient.patient_email === "null")) {
             rows += `<i>Email:    </i>
                 ${patient.patient_email}--br--`;
         }
-        if (patient.patient_phone !== null && patient.patient_phone.length !== 0) {
+        if (!(patient.patient_phone === null ||
+            patient.patient_phone === undefined ||
+            patient.patient_phone.length === 0 ||
+            patient.patient_phone === "null")) {
             rows += `<i>Phone number:    </i>
                 ${patient.patient_phone}--br--`;
         }
@@ -354,8 +416,8 @@ async function generateReminderBody(emailInfo, contentConfiguration, greeting, i
         },
  */
 async function generateRecoveryEmailBody(newPassword, contentConfiguration) {
-  const main = contentConfiguration.mainBody;
-  let html = `
+    const main = contentConfiguration.mainBody;
+    let html = `
   <mjml>
      ${getHead("Password recovery")}
      <mj-body>
@@ -374,12 +436,12 @@ async function generateRecoveryEmailBody(newPassword, contentConfiguration) {
             <b>New password:    </b>${newPassword}--br--
   `;
 
-  html += `--br--</mj-text>
+    html += `--br--</mj-text>
           </mj-column>
       </mj-section>
   </mj-body>
   </mjml>`;
-  return html;
+    return html;
 }
 
 /**
@@ -392,11 +454,9 @@ function getLogo(email_config) {
         return "";
     }
     return `
-        <mj-section>
-        <mj-column width="30%">
-            <mj-image src="${header_image_url}" />
-        </mj-column>
-        </mj-section>
+        <div>
+            <img src="${header_image_url}" alt="Logo" width="200">
+        </div>
         `;
 }
 
@@ -432,11 +492,6 @@ function getFooter(email_config) {
     `;
 }
 
-/*
-|--------------------------------------------------------------------------
-| HELPER FUNCTIONS
-|--------------------------------------------------------------------------
-*/
 /**
  * Beautify a date object as a readable string of "1st October 2020" format
  * @param {date} date the date object to be beautified

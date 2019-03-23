@@ -20,6 +20,7 @@ module.exports = {
 const  mysql = require('mysql');
 const db_controller = require('./db_controller/db-controller');
 const dateFormat = require('dateformat');
+const logger = require('./logger');
 
 /** 
  * If true, it will output to the console, otherwise it will not output anything.
@@ -128,22 +129,16 @@ function log(type, username, tableName, entryID, message = undefined, callback =
         if (showConsoleOutput) {
             message = (message === "NULL") ? "No message." : message;
             if (s.length > 0 && result.status === "OK") {
-                console.log("Log: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message);
+                logger.info("Log: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message);
             }
             else if (s.length > 0) {
-                console.log("===========================");
-                console.log("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message);
-                console.log(result.err);
-                console.log("===========================");
+                logger.error("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message + ". Error: " + JSON.stringify(result.err));
             }
             else if (result.status === "OK") {
-                console.log("Log: user " + username + " committed other action: " + message);
+                logger.info("Log: user " + username + " committed other action: " + message);
             }
             else {
-                console.log("===========================");
-                console.log("ERROR logging: user " + username + " committed other action: " + message);
-                console.log(result.err);
-                console.log("===========================");
+                logger.error("ERROR logging: user " + username + " committed other action: " + message + ". Error: " + JSON.stringify(result.err));
             }
         }
 
