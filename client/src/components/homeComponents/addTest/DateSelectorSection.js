@@ -6,7 +6,8 @@ import FrequencySetter from "./FrequencySetter";
 
 const Container = styled.div`
   position: relative;
-  width: 49.8%;
+  width: 50%;
+  background: white;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -14,7 +15,8 @@ const Container = styled.div`
 `;
 const SecondHalfDiv = styled.div`
   position: absolute;
-  width: 100%;
+  width: 90%;
+  margin-left: 5%;
   height: 74%;
   top: 55%;
   left: 0;
@@ -22,23 +24,27 @@ const SecondHalfDiv = styled.div`
   z-index: 0;
 `;
 const TextArea = styled.textarea`
-  width: 98%;
-  height: 47%;
+  width: 94%;
+  height: 43%;
   resize: none;
   outline: none;
+  border: none;
+  padding: 3%;
+  background: white;
 `;
 const DateInput = styled.input`
   align-items: center;
   cursor: pointer;
   z-index: 2;
   text-align: center;
-  border-radius: 20px;
-  background-color: #028090;
+  border-radius: 10px;
+  background-color: #0b999d;
   color:white;
+  height: 8%;
   font-weight: bold;
 
   &:hover {
-    background-color: #0b989d;
+    background-color: #018589;
   }
 `;
 
@@ -83,6 +89,7 @@ export default props => {
           <TitleTab color="#0b999d">Observations</TitleTab>
           <TextArea
             onChange={event => props.onObservationsChange(event.target.value)}
+            placeholder={"Enter observations here ..."}
           />
         </SecondHalfDiv>
       </Container>
