@@ -20,7 +20,8 @@ module.exports = {
     debug,
     changeOption,
     deleteLogFile,
-    deleteAllLogFiles
+    deleteAllLogFiles,
+    createLog
 }
 
 const jsonController = require('./json-parser.js');
@@ -126,7 +127,7 @@ function initialise(configPath) {
     let outputFilePath = json.outputFilePath;
     if (outputFilePath[outputFilePath.length - 1] !== '/')  //check if the output file path is formatted as a directory
         outputFilePath += '/';
-    logPath = outputFilePath + dateformat(new Date(), "yyyymmdd_HHMMss") + "_server.log";
+    logPath = getLogPath(outputFilePath);
     try {
         if (writeStream == null && json.fileOutput == true) {
             if (!fs.existsSync(outputFilePath))
@@ -297,6 +298,14 @@ function convertToString(obj) {
         }
     }
     return obj
+}
+
+/**
+ * Generate the log path for this module
+ * @param {string} outputPath the output path
+ */
+function getLogPath(outputPath){
+    return outputPath + dateformat(new Date(), "yyyymmdd_HHMMss") + "_server.log";
 }
 
 /**
