@@ -6,7 +6,6 @@ const rewire = require('rewire');
 const json_controller = require('./../../../lib/json-parser');
 
 const getJSONStub = sinon.stub(json_controller, "getJSON");
-
 const outpath = __dirname.split("server")[0] + "server/logs";
 
 getJSONStub.callsFake(function () {
@@ -69,11 +68,13 @@ describe("Test logger module functionalities", () => {
         lastLine.should.contain("LOG")
     });
 
+    after(()=>{logger.deleteLogFile()})
+
 });
 
 
 getJSONStub.restore();
-
+logger.deleteLogFile();
 
 /**
 |--------------------------------------------------------------------------

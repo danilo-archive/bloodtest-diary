@@ -75,3 +75,5 @@ describe("Test token generator:", () => {
         }).timeout(5000);
     });
 });
+
+require('./../../../../lib/logger').deleteLogFile();
