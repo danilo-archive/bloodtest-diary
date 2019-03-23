@@ -13,6 +13,7 @@ const DataContainer = styled.div`
   height: 88%;
   background: rgba(0, 0, 0, 0);
 `;
+
 export default class AddTestView extends React.Component {
   state = {
     open: true,
@@ -136,8 +137,8 @@ export default class AddTestView extends React.Component {
       <>
         <div
           style={{
-            width: "35rem",
-            height: "30rem",
+            width: "42rem",
+            height: "36rem",
             background: "rgba(244, 244, 244,0.7)"
           }}
         >
