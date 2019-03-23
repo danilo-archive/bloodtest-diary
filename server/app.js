@@ -482,6 +482,7 @@ io.on('connection',function(socket)
         if (response.success){
             socket.emit("deletePatientResponse", {success: true});
             io.in("patients_page").emit("patientEdited");
+            io.in("main_page").emit("testAdded");
         }else{
             socket.emit("deletePatientResponse", {success: false});
         }
