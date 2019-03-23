@@ -274,7 +274,6 @@ function getTestsDuringTheWeek(date, isAdult) {
     daysInWeek.push(databaseController.selectQuery(sql));
     return daysInWeek;
 }
-getTestWithinWeek("2019-03-17",true).then((d)=>console.log(d));
 
 /**
  * Run multiple queries on the database
