@@ -90,9 +90,9 @@ export default class PatientSelect extends React.Component {
             ? `Failed to send ${this.props.stat} emails`
             : "Not notified"}
         </TitleTab>
-       <br/>
+        <br />
         <SearchBar onChange={value => this.filter(value)} />
-        
+
         <ShowID
           checked={this.state.showID}
           onChange={() => this.setState({ showID: !this.state.showID })}
@@ -109,13 +109,14 @@ export default class PatientSelect extends React.Component {
           </Label>
           <Switch checked="checked" />
         </ShowID>
-        <div style={{ display: "flex", justifyContent: "center"}}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
           <TextRadioButton
             text="Select all"
             checked={
-              this.props.patients.every(patient =>
-                this.props.selected.find(p => p.id === patient.id)
-              ) && this.props.patients.length !== 0
+              this.props.patients.every((
+                patient //This is true iff all patients of that section are within selected
+              ) => this.props.selected.find(p => p.id === patient.id)) &&
+              this.props.patients.length !== 0
             }
             onCheck={checked => {
               if (checked) {
