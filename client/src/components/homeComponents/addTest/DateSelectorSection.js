@@ -87,7 +87,7 @@ export default props => {
         />
 
         <SecondHalfDiv>
-          <TitleTab color="#0b999d">Notes:</TitleTab>
+          <TitleTab color="#0b999d">Notes</TitleTab>
           <TextArea
             onChange={event => props.onObservationsChange(event.target.value)}
             placeholder={"(optional)"}
