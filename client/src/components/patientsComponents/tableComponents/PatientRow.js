@@ -26,7 +26,7 @@ const Button = styled.button`
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 130%;
   font-weight: 200;
   background-color: #0b989d;
   word-break: break-word;
@@ -45,7 +45,6 @@ export default class PatientRow extends React.Component{
     }
 
     onEditClick = event => {
-        console.log(`id in row: ${this.props.patient_no}`);
         this.props.openEditModal(this.props.patient_no);
     };
 

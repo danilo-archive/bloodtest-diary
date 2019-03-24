@@ -95,23 +95,23 @@ class PatientsTable extends React.Component {
                     <TableRow>
                         <FilterCell
                             onChange={value => this.number_filter(value)}
-                            placeholder={"Search numbers ..."}
+                            placeholder={"Search numbers..."}
                         />
                         <FilterCell
                             onChange={value => this.name_filter(value)}
-                            placeholder={"Search names ..."}
+                            placeholder={"Search names..."}
                         />
                         <FilterCell
                             onChange={value => this.surname_filter(value)}
-                            placeholder={"Search surnames ..."}
+                            placeholder={"Search surnames..."}
                         />
                         <FilterCell
                             onChange={value => this.email_filter(value)}
-                            placeholder={"Search emails ..."}
+                            placeholder={"Search emails..."}
                         />
                         <FilterCell
                             onChange={value => this.phone_filter(value)}
-                            placeholder={"Search phones ..."}
+                            placeholder={"Search phones..."}
                         />
                         <FilterCell
                         />

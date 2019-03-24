@@ -27,9 +27,9 @@ export default props => {
   const header = formatOverdueTitle(props.section, props.type);
   const padding = ((props.section === "calendar") ? `8px` : '0px');
   return (
-      <AppointmentSection style={{ 'padding-left': padding, 'padding-right': padding}}>
+      <AppointmentSection style={{ 'paddingLeft': padding, 'paddingRight': padding}}>
         <AppointmentSectionHeader color={props.color} section={props.section}>{header}</AppointmentSectionHeader>
-        <VerticalLine style={{ 'margin-left': padding}}/>
+        <VerticalLine style={{ 'marginLeft': padding}}/>
         {props.appointments.map(appointment => (
           <AppointmentBox
             test={appointment}

@@ -59,7 +59,6 @@ class OverduePatients extends React.Component {
   }
 
   render() {
-    console.log(this.props.anytimeAppointments);
     return (
       <>
       <Wrapper>
@@ -79,7 +78,7 @@ class OverduePatients extends React.Component {
                 style={{
                   position: "absolute",
                   transform: "translate(-50%,-50%)",
-                  right: "0",
+                  right: "2%",
                   top: "50%"
                 }}
               />

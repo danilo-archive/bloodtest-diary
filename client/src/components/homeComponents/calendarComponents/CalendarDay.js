@@ -36,7 +36,6 @@ const monthNames = [
 ];
 
 function collect(connect, monitor) {
-  console.log(monitor.isOver());
   return {
     connectDropTarget: connect.dropTarget(),
     hovered: monitor.isOver(),
@@ -79,7 +78,7 @@ class CalendarDay extends React.Component {
           />
           <ScrollBox style={{ background: backgroundColor }}>
             <AppointmentSection
-              type="Anytime Today"
+              type="Anytime today"
               appointments={this.props.anytimeAppointments}
               editTest={this.props.editTest}
               editPatient={this.props.editPatient}

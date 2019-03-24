@@ -73,7 +73,7 @@ export default class SearchBar extends Component {
                 src={calendarIcon}
                 onClick={() => this.setState({ showCalendar: true })}
           />
-          Date picker
+          Go to date
           <div className={"calendar-table"}>{this.state.showCalendar ? (
             <CalendarTable
               outsideClick={this.hideCalendar}

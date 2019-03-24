@@ -22,6 +22,13 @@ const LabelBoxDiv = styled.div`
 `;
 
 export default props => {
+  if (props.button.icon === undefined) {
+    return (
+      <LabelBoxDiv>
+        <Label>{props.text}</Label>
+      </LabelBoxDiv>
+    );
+  }
   return (
     <LabelBoxDiv>
       <Label>{props.text}</Label>

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import styled from "styled-components";
-import Section from "./Section";
 import Title from "./Title";
 import ScrollBox from "../calendarComponents/ScrollBox";
 import TestBox from "./TestBox";
@@ -125,9 +124,9 @@ export default class EmailModal extends Component {
       console.log(res);
       if (res.success) {
         openAlert(
-          "Patients contacted successfully",
+          "All selected patients contacted successfully.",
           "confirmationAlert",
-          "Ok",
+          "OK",
           () => {
             this.props.closeModal();
           }

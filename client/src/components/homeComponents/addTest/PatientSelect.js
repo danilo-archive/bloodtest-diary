@@ -116,7 +116,6 @@ export default class PatientSelect extends React.Component {
         <TitleTab color="#0b999d">Patient</TitleTab>
         <br />
         <SearchBar onChange={value => this.filter(value)} />
-        <br />
         <ShowID
           checked={this.state.showID}
           onChange={() => this.setState({ showID: !this.state.showID })}
@@ -125,11 +124,10 @@ export default class PatientSelect extends React.Component {
               <Label
                 style={{
                   transform: "translate(0,0)",
-                  margin: "0rem 1rem",
                   color: "black"
                 }}
               >
-                Hide ID
+                Show ID {" "}
               </Label>
               <Switch
                   margin={"0 0 0 50%"}
@@ -160,7 +158,7 @@ export default class PatientSelect extends React.Component {
                 />
               ))}
               <div style={{ textAlign: "center", opacity: "0.4" }}>
-                To see more patients, use the search functionality
+                To see more patients, use the search functionality above.
               </div>
             </>
           ) : (
@@ -179,7 +177,7 @@ export default class PatientSelect extends React.Component {
                   margin: "auto"
                 }}
               >
-                Fetching Patients
+                Fetching patients...
               </Label>
             </div>
           )}

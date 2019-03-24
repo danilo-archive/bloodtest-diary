@@ -19,7 +19,7 @@ const Container = styled.div`
     width: auto;
     position: relative;
     top: 20px;
-    margin: 1% 1% 1% 1%;
+    padding: 1% 1% 1% 1%;
 
 
   background: rgb(244,249,253);
@@ -47,7 +47,7 @@ const Button = styled.button`
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 130%;
   font-weight: 200;
   background-color: #0b989d;
   word-break: break-word;
@@ -88,9 +88,9 @@ class Patients extends React.Component {
 
     handleError = (res, error) => {
         if (res.errorType === "authentication"){
-            openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
+            openAlert("Authentication failed.", "confirmationAlert", "Go back to login", () => {this.logout()});
         }else{
-            openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
+            openAlert(`${error ? error : "Unknown error occurred."}`, "confirmationAlert", "OK", () => {return});
         }
     };
 
@@ -182,7 +182,6 @@ class Patients extends React.Component {
 
     openEditModal = id => {
         this.serverConnect.requestPatientEditing(id, res => {
-            console.log(`id in openEditModal: ${id}`);
             if (res.token){
                 this.setState({selectedId: id, openEditModal: true, editToken: res.token});
             }else{
@@ -193,7 +192,6 @@ class Patients extends React.Component {
 
 
     onCloseEditModal = () => {
-        console.log("closing modal");
         this.serverConnect.discardPatientEditing(this.state.selectedId, this.state.editToken, res => {
             this.setState({selectedId: undefined, openEditModal: false, editToken: undefined});
         });

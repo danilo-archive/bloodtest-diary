@@ -22,15 +22,16 @@ class HospitalSection extends React.Component {
         const content = (
             <>
                 <InputCell
-                    field={"Name"}
+                    field={"Name:"}
                     value={this.props.hospitalName}
                     id={"hospital_name"}
                     disabled={this.props.localHospital}
                     onChange={this.onInputChange}
+                    placeholder={"(optional)"}
                 />
 
                 <InputCell
-                    field={"Email"}
+                    field={"Email:"}
                     value={this.props.hospitalEmail}
                     id={"hospital_email"}
                     disabled={this.props.localHospital}
@@ -38,15 +39,16 @@ class HospitalSection extends React.Component {
                 />
 
                 <InputCell
-                    field={"Phone"}
+                    field={"Phone:"}
                     value={this.props.hospitalPhone}
                     id={"hospital_phone"}
                     disabled={this.props.localHospital}
                     onChange={this.onInputChange}
+                    placeholder={"(optional)"}
                 />
 
                 <InputCell
-                    field={"This hospital"}
+                    field={"This is our patient:"}
                     value={this.props.localHospital}
                     id={"is_local"}
                     type={"checkbox"}
@@ -56,7 +58,7 @@ class HospitalSection extends React.Component {
         );
         return (
             <SectionContainer
-                title={"Hospital info"}
+                title={"Hospital details"}
                 content={content}
             />
         );

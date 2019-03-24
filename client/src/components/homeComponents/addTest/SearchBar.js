@@ -14,7 +14,6 @@ const SearchDiv = styled.div`
   width: 90%;
   height: 80%;
   background: white;
-  box-shadow: 1px 1px 10px grey;
   border: 0px;
 
   padding: 0.5rem;
@@ -45,7 +44,7 @@ export default class SearchBar extends React.Component {
             <i className="fa fa-search" />
             <Bar
                 onChange={event => this.props.onChange(event.target.value)}
-                placeholder={"Enter patient name or Id ..."}
+                placeholder={"Enter patient name or ID..."}
             />
           </SearchDiv>
         </Container>
