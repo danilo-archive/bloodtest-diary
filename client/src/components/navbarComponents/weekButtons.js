@@ -6,7 +6,7 @@ import arrow from "../../resources/images/arrow.png";
 const Container = styled.div`
   border: green 0 solid;
   width: 113px;
-  height: 42px;
+  height: 50px;
 
   display: flex;
   flex-direction: row;
@@ -21,7 +21,6 @@ const PreviousArrow = styled.img`
     opacity: 0.75;
     :hover {
       opacity: 1;
-      width: 53%;
     }
 `;
 
@@ -33,7 +32,6 @@ const NextArrow = styled.img`
     opacity: 0.75;
     :hover {
       opacity: 1;
-      width: 53%;
     }
 `;
 
