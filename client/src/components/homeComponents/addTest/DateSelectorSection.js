@@ -42,6 +42,7 @@ const DateInput = styled.input`
   color:white;
   height: 8%;
   font-weight: bold;
+  font-size: 130%;
 
   &:hover {
     background-color: #018589;
