@@ -112,6 +112,7 @@ class Navbar extends React.Component {
                 page={this.props.page}
                 onPatientsClick={this.props.onPatientsClick}
                 onSignoutClick={this.props.onSignoutClick}
+                onDownloadClick={this.props.onDownloadClick}
               />
             </BottomSide>
           </>

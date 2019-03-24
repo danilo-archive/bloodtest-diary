@@ -495,6 +495,13 @@ class ServerConnect {
             callback(res);
         });
     }
+
+    generateMonthlyReport(month, callback) {
+        this.socket.emit("generateMonthlyReport", month, this.loginToken);
+        this.socket.once("generateMonthlyReportResponse", res => {
+            callback(res);
+        });
+    }
 }
 
 

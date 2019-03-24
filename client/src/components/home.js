@@ -202,6 +202,12 @@ class Home extends Component {
     this.setState({ openAddTestModal: false, selectedDate: undefined });
   };
 
+  onDownloadClick = () => {
+    this.serverConnect.generateMonthlyReport("March", (res) => {
+      
+    });
+  };
+
   onEditTestOpenModal = testId => {
     this.serverConnect.requestTestEditing(testId, res => {
       if (res.success) {
@@ -298,6 +304,7 @@ class Home extends Component {
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
                     onSignoutClick={this.logout}
+                    onDownloadClick={this.onDownloadClick}
                     refresh={this.refresh}
                   />
                 <BottomSideDash>

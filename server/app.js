@@ -773,7 +773,7 @@ io.on('connection',function(socket)
             socket.emit("generateMonthlyReportResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
             return;
         }
-        const res = await reportGenerator(month, username);
+        const res = await reportGenerator.getMonthlyReport(month, username);
         socket.emit("generateMonthlyReportResponse", res);
     });
 

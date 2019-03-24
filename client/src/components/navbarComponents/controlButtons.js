@@ -62,6 +62,7 @@ export default class ControlButtons extends Component {
         super(props);
         this.onPatientsClick = props.onPatientsClick;
         this.onSignoutClick = props.onSignoutClick;
+        this.onDownloadClick = props.onDownloadClick;
     }
 
     getButtons() {
@@ -70,6 +71,7 @@ export default class ControlButtons extends Component {
             return (
               <>
                 <div className={"patientsButton"} onClick={this.onPatientsClick}>Patients</div>
+                <div className={"patientsButton"} onClick={this.onDownloadClick}>Download&nbsp;report</div>
                 <div className={"signOutButton"} onClick={this.onSignoutClick}>Sign out</div>
               </>
             );
