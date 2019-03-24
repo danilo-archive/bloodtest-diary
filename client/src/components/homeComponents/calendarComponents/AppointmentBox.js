@@ -104,7 +104,21 @@ function sendReminder(test){
                                  : `This patient was never contacted about this test. Do you want to send an email?`;
   openAlert(text, "optionAlert",
             "No", () => {return},
-            "Yes", () => {console.log("sending email")});
+            "Yes", () => {
+              if (isPastDate(test.dueDate)){
+                serverConnect.sendOverdueReminders(test.test_id, res => {
+                  if (!res.success){
+                    openAlert("An error occurred during email sending", "confirmationAlert", "Ok", () => {return});
+                  }
+                });
+              }else{
+                serverConnect.sendNormalReminders(test.test_id, res => {
+                  if (!res.success){
+                    openAlert("An error occurred during email sending", "confirmationAlert", "Ok", () => {return});
+                  }
+                });
+              }
+            });
 }
 
 const RightClickMenu = props => {
@@ -115,7 +129,7 @@ const RightClickMenu = props => {
            </Test>
            <Item onClick={() => {props.editPatient(props.patientNo)}}>Patient profile</Item>
            <Separator />
-           <Item onClick={() => sendReminder(props.test)}>Send reminder</Item>
+           <Item disabled={props.completed} onClick={() => sendReminder(props.test)}>Send reminder</Item>
            <Separator />
            <Submenu label="Patient colour">
              <Submenu label="Choose colour">

@@ -47,11 +47,11 @@ const Container = styled.div`
 
   .signOutButton:focus,
   .signOutButton:hover {
-    color: #e2e2d9;
+    color: black;
   }
   .patientsButton:focus,
   .patientsButton:hover {
-    color: #e2e2d9;
+    color: black;
   }
 `;
 

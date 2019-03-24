@@ -38,7 +38,7 @@ export default props => {
               Repeat every{"  "}
               <Tooltip
                 unmountHTMLWhenHide={true}
-                title="Please enter a number"
+                title="Please enter a number."
                 open={props.tooltips.frequency}
                 hideDelay={100}
                 trigger="manual"
@@ -80,10 +80,10 @@ export default props => {
         </div>
         <Text noRepeat={props.noRepeat}>
           <>
-            For {" "}
+            Repeat {" "}
             <Tooltip
               unmountHTMLWhenHide={true}
-              title="Please enter a number"
+              title="Please enter a number."
               open={props.tooltips.occurrences}
               hideDelay={100}
               trigger="manual"
@@ -112,7 +112,7 @@ export default props => {
                 }}
               />
             </Tooltip>
-            {" "} Times
+            {" "} times
           </>
         </Text>
       </div>

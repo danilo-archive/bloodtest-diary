@@ -4,23 +4,33 @@ import styled from "styled-components";
 import arrow from "../../resources/images/arrow.png";
 
 const Container = styled.div`
-  border: green 0px solid;
+  border: green 0 solid;
   width: 113px;
-  height: 42px;
+  height: 50px;
 
   display: flex;
   flex-direction: row;
   align-items: center;
 
-  .prevButton {
+`;
+
+const PreviousArrow = styled.img`
     width: 50%;
     cursor: pointer;
-  }
-  .nextButton {
+    opacity: 0.75;
+    :hover {
+      opacity: 1;
+    }
+`;
+
+const NextArrow = styled.img`
     width: 50%;
     cursor: pointer;
     transform: rotate(180deg);
-  }
+    opacity: 0.75;
+    :hover {
+      opacity: 1;
+    }
 `;
 
 
@@ -28,15 +38,13 @@ export default class WeekButtons extends Component {
 
     constructor(props){
         super(props);
-        this.onPrev = props.onPrev;
-        this.onNext = props.onNext;
     }
 
     render(){
       return (
         <Container>
-          <img src={arrow} className={"prevButton"} onClick={this.onPrev} alt={"Previous Date"}/>
-          <img src={arrow} className={"nextButton"} onClick={this.onNext} alt={"Next Date"}/>
+          <PreviousArrow src={arrow} onClick={this.props.onPrev} alt={"Previous Date"}/>
+          <NextArrow src={arrow} onClick={this.props.onNext} alt={"Next Date"}/>
         </Container>
       )
     }
