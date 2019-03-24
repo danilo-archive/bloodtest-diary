@@ -254,7 +254,7 @@ class Home extends Component {
       if (res.token){
           this.setState({editPatientId: id, openEditPatientModal: true, editPatientToken: res.token});
       }else{
-          this.handleError(res, "Somebody is already editing this patient.");
+          this.handleInvalidResponseError(res, "Somebody is already editing this patient.");
       }
     });
   }

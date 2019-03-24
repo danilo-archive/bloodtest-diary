@@ -58,7 +58,7 @@ export default class PatientSection extends React.Component {
                         <TestCell
                             key={test.test_id}
                             testId={test.test_id}
-                            due = {test.due_date.substring(0, 10)}
+                            due = {test.due_date}
                             notes={test.notes}
                             deleteTest={this.props.deleteTest}
                         />
