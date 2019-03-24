@@ -306,7 +306,7 @@ async function getDueTestsInMonth(date=dateformat(new Date(),"yyyymmdd")){
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/
 async function getCompletedOnTimeInMonth(date=dateformat(new Date(),"yyyymmdd")){
-  const sql = `Select Count(*) as Number From Test Where completed_date<=due_date AND Month(completed_date)=Month(${date});`
+  const sql = `Select Count(*) as Number From Test Where completed_date<=due_date AND Month(due_date)=Month(${date});`
   return await selectQueryDatabase(sql);
 }
 
@@ -315,8 +315,8 @@ async function getCompletedOnTimeInMonth(date=dateformat(new Date(),"yyyymmdd"))
 * @param {String} data - date for data to be retrived
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/
-async function getCompletedInMonth(date=dateformat(new Date(),"yyyymmdd")){
-  const sql = `Select Count(*) as Number From Test Where Month(completed_date)=Month(${date});`
+async function getCompletedLateInMonth(date=dateformat(new Date(),"yyyymmdd")){
+  const sql = `Select Count(*) as Number From Test Where due_date<completed_date AND Month(completed_date)=Month(${date});`
   return await selectQueryDatabase(sql);
 }
 
@@ -357,6 +357,11 @@ module.exports = {
     getSortedOverdueWeeks,
     getOverdueReminderGroups,
     getPatientEditedTests,
+    getDueTestsInMonth,
+    getCompletedOnTimeInMonth,
+    getCompletedLateInMonth,
+    getNumberOfRemindersSent,
+    getPatientsNumber,
     //Helper functions - for tests only
     selectQueryDatabase
   }

@@ -21,6 +21,7 @@ const conf = jsonController.getJSON(CONFIG_FILE_PATH);
 const port = conf.port;
 const authenticator = require("./lib/authenticator.js");
 const email_controller = require('./lib/email/email-controller');
+const reportGenerator = require('./lib/report-generator');
 
 http.listen(port);
 
@@ -760,6 +761,20 @@ io.on('connection',function(socket)
         }
         const response = await email_controller.sendNormalReminders(testID, username);
         socket.emit("sendNormalRemindersResponse", response);
+    });
+
+    socket.on('generateMonthlyReport', async (month, accessToken) => {
+        if (!accessToken) {
+            socket.emit("generateMonthlyReportResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("generateMonthlyReportResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+        const res = await reportGenerator(month, username);
+        socket.emit("generateMonthlyReportResponse", res);
     });
 
 });

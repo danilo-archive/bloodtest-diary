@@ -19,6 +19,45 @@ const tokenConroller = require('./query-modules/token-controller')
  *===============================*/
 
 /**
+ * Collects data from selector queries and returns them.
+ *
+ * @param {date} date
+ * @returns {JSON} {success:Boolean, response:JSON}
+ */
+async function getMonthlyReport(date) {
+    date = dateformat(date, "yyyymmdd");
+    let thisMonth = await selector.getDueTestsInMonth(date);
+    let completedOnTime = await selector.getCompletedOnTimeInMonth(date);
+    let completedLate = await selector.getCompletedLateInMonth(date);
+    let remindersSent = await selector.getNumberOfRemindersSent(date);
+    let children = await selector.getPatientsNumber(false);
+    let adults = await selector.getPatientsNumber(true);
+
+    try {
+        console.log(thisMonth)
+        thisMonth = thisMonth.response[0].Number;
+        completedOnTime = completedOnTime.response[0].Number;
+        completedLate = completedLate.response[0].Number;
+        remindersSent = remindersSent.response[0].Number;
+        children = children.response[0].Number;
+        adults = adults.response[0].Number;
+    }
+    catch(err) {
+        console.log(err);
+        return {success: false};
+    }
+
+    return { success:true, response: {
+        thisMonth: thisMonth,
+        completedOnTime: completedOnTime,
+        completedLate: completedLate,
+        remindersSent: remindersSent,
+        children: children,
+        adults: adults
+    }};
+}
+
+/**
  * Get the patient given its patient number
  * @param {string} patient_no the patient number
  * @return {JSON} - {success:Boolean response:Array or Error}
@@ -665,6 +704,8 @@ async function unscheduleTest(testid, token, actionUsername) {
     }
     return await deleteTest(testid, actionUsername);
 }
+
+
 /*===============================*
       HELPER FUNCTIONS BELOW:
  *===============================*/
@@ -788,6 +829,7 @@ module.exports = {
     getTestWithinWeek,
     getSortedOverdueWeeks,
     getOverdueReminderGroups,
+    getMonthlyReport,
     //INSERTS
     addTest,
     addUser,
