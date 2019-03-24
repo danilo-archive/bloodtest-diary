@@ -87,7 +87,7 @@ export default class EmailModal extends Component {
 
   submit = () => {
     let idList = this.state.selected.map(patient => patient.testId);
-    this.serverConnect.sendReminders(idList, res => {
+    this.serverConnect.sendOverdueReminders(idList, res => {
       console.log(res);
       if (res.success) {
         openAlert(
