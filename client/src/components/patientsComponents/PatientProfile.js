@@ -368,7 +368,7 @@ class PatientProfile extends Component {
                         <OptionSwitch
                             option1={"Under 12"}
                             option2={"12 or older"}
-                            checked={this.state.isAdult}
+                            checked={this.state.isAdult === "yes"}
                             onChange={() => this.setState(prevState => ({isAdult: prevState.isAdult === "yes" ? "no" : "yes"}))}
                         />
                     </SwitchContainer>
