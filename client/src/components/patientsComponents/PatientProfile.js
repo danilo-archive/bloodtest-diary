@@ -375,9 +375,9 @@ class PatientProfile extends Component {
                         />
                     </SwitchContainer>
                     <ButtonContainer>
-                        <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
-                        <DeleteButton onClick={this.deleteOption}>Delete patient</DeleteButton>
                         <SaveButton onClick={this.onSaveClick}>Save changes</SaveButton>
+                        <DeleteButton onClick={this.deleteOption}>Delete patient</DeleteButton>
+                        <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                     </ButtonContainer>
 
                 </Container>
