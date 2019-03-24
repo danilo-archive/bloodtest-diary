@@ -34,7 +34,7 @@ const Container = styled.div`
     props.direction === "right" ? "border-left: #f5f5f5f5 1px solid;" : ""};
 `;
 const ShowID = styled.div`
-  height: 10%;
+  height: 5%;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -85,14 +85,14 @@ export default class PatientSelect extends React.Component {
       <Container direction={this.props.direction}>
         <TitleTab color="#0b999d">
           {this.props.notified
-            ? "Already Notified"
+            ? "Recently notified"
             : this.props.direction === "center"
-            ? `Emails sent: Failed ${this.props.stat}`
-            : "Not Notified"}
+            ? `Failed to send ${this.props.stat} emails`
+            : "Not notified"}
         </TitleTab>
-        <br />
+       <br/>
         <SearchBar onChange={value => this.filter(value)} />
-        <br />
+        
         <ShowID
           checked={this.state.showID}
           onChange={() => this.setState({ showID: !this.state.showID })}
@@ -105,13 +105,13 @@ export default class PatientSelect extends React.Component {
               color: "rgba(0,0,0,0.7)"
             }}
           >
-            Show Additional Info
+            Show details
           </Label>
           <Switch checked="checked" />
         </ShowID>
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{ display: "flex", justifyContent: "center"}}>
           <TextRadioButton
-            text="Select All"
+            text="Select all"
             checked={
               this.props.patients.every(patient =>
                 this.props.selected.find(p => p.id === patient.id)
@@ -176,7 +176,7 @@ export default class PatientSelect extends React.Component {
                   fontSize: "110%"
                 }}
               >
-                To see more patients, please use the search functionality
+                To see more patients, use the search functionality above.
               </div>
             </>
           ) : (
@@ -195,7 +195,7 @@ export default class PatientSelect extends React.Component {
                   margin: "auto"
                 }}
               >
-                Fetching Patients
+                Fetching patients...
               </Label>
             </div>
           )}

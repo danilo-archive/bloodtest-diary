@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import Label from "../../Label";
-import CloseTabIcon from "../addTest/CloseTabIcon";
 
 const Container = styled.div`
   width: 100%;
@@ -29,7 +28,6 @@ export default props => {
     <>
       <Container>
         <TitleLabel>{props.children}</TitleLabel>
-        <CloseTabIcon close={props.onClose} />
       </Container>
       <br />
     </>

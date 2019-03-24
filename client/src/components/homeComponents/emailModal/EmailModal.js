@@ -120,9 +120,9 @@ export default class EmailModal extends Component {
   submit = () => {
     if (this.state.selected.length === 0) {
       openAlert(
-        "Please select at least one patient to contact",
+        "Please select at least one patient to contact.",
         "confirmationAlert",
-        "Ok",
+        "OK",
         () => {}
       );
       return;
@@ -133,7 +133,7 @@ export default class EmailModal extends Component {
       console.log(res);
       if (res.success) {
         openAlert(
-          "All selected patients contacted successfully.",
+          "All selected patients were contacted successfully.",
           "confirmationAlert",
           "OK",
           () => {
@@ -153,7 +153,7 @@ export default class EmailModal extends Component {
           attempted: this.state.selected,
           selected: []
         });
-        this.props.handleError(res, "Failed sending some emails");
+        this.props.handleError(res, "Some emails failed to be sent.");
       }
     });
   };
@@ -175,13 +175,13 @@ export default class EmailModal extends Component {
           }}
         >
           <WaveLoading color="#0b999d" size={90} />
-          Hold on while we send the reminders
+          Sending emails...
         </div>
       );
     } else {
       return (
         <Container>
-          <Title onClose={this.props.closeModal}>Email Reminders</Title>
+          <Title onClose={this.props.closeModal}>Overdue test reminders</Title>
           {this.state.submitted ? (
             <>
               <PatientSelect
@@ -339,7 +339,7 @@ export default class EmailModal extends Component {
                   hoverColor={"#018589"}
                   onClick={this.submit}
                 >
-                  Send Reminders
+                  Send reminders
                 </Button>
               </div>
             </>

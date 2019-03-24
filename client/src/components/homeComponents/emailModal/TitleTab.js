@@ -22,7 +22,7 @@ const TitleLabel = styled(Label)`
   top: 60%;
   left: 50%;
   color: white;
-  font-size: 3rem;
+  font-size: 2.5rem;
 `;
 
 export default props => {

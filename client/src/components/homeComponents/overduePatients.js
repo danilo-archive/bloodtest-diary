@@ -71,7 +71,7 @@ class OverduePatients extends React.Component {
             }
             dayName={"Outstanding"}
           >
-            <Tooltip title="Send Reminders" position="top" trigger="mouseenter">
+            <Tooltip title="Send overdue test reminders" position="top" trigger="mouseenter">
               <Icon
                 icon="envelope"
                 onClick={this.props.openEmailModal}

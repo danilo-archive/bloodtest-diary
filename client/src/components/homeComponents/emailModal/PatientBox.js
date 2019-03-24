@@ -62,7 +62,6 @@ export default props => {
     <>
       <Box>
         {props.patientName}
-
         <SelectButton
           selected={props.selected}
           onClick={() => {
