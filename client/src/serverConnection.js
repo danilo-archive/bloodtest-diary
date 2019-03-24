@@ -35,7 +35,6 @@ class ServerConnect {
         */
         this.onConnected = undefined;
         this.socket.on("connected", () => {
-            console.log("connected successfully");
             this.socket.emit("join", "", this.currentRoom, true);
             this.onConnected();
         });
@@ -176,7 +175,6 @@ class ServerConnect {
      * @example login({username: "exampleUsername", password: "examplePassword"})
      */
     login(credentials, callback){
-        console.log("trying to log in");
         this.socket.emit('authenticate', credentials);
         this.socket.once('authenticationResponse', res => {
             callback(res);
@@ -271,7 +269,6 @@ class ServerConnect {
         let isAdult = this.currentMode == overTwelve;
         this.socket.emit('getTestsInWeek', date, this.loginToken, isAdult);
         this.socket.once('getTestsInWeekResponse', res => {
-            console.log({res});
             callback(res);
         });
     }
@@ -325,8 +322,8 @@ class ServerConnect {
      * @param {function} callback
      */
     discardTestEditing(testId, token, callback){
-        this.socket.emit("discardEditing", "Test", testId, token, this.loginToken);
-        this.socket.once("discardEditingResponse", res => {
+        this.socket.emit("discardTestEditing", testId, token, this.loginToken);
+        this.socket.once("discardTestEditingResponse", res => {
             callback(res);
         });
     }
@@ -337,15 +334,15 @@ class ServerConnect {
      * @param {function} callback
      */
     discardPatientEditing(patientId, token, callback){
-        this.socket.emit("discardEditing", "Patient", patientId, token, this.loginToken);
-        this.socket.once("discardEditingResponse", res => {
+        this.socket.emit("discardPatientEditing", patientId, token, this.loginToken);
+        this.socket.once("discardPatientEditingResponse", res => {
             callback(res);
         });
     }
 
     discardUserEditing(username, token, callback){
-        this.socket.emit("discardEditing", "User", username, token, this.loginToken);
-        this.socket.once("discardEditingResponse", res => {
+        this.socket.emit("discardUserEditing", username, token, this.loginToken);
+        this.socket.once("discardUserEditingResponse", res => {
             callback(res);
         })
     }
@@ -464,9 +461,16 @@ class ServerConnect {
         });
     }
 
-    sendReminders(testIds, callback){
+    sendOverdueReminders(testIds, callback){
         this.socket.emit("sendOverdueReminders", testIds, this.loginToken);
         this.socket.once("sendOverdueRemindersResponse", res => {
+            callback(res);
+        });
+    }
+
+    sendNormalReminders(testId, callback){
+        this.socket.emit("sendNormalReminders", testId, this.loginToken);
+        this.socket.once("sendNormalRemindersResponse", res => {
             callback(res);
         });
     }

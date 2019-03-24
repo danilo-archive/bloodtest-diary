@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import styled from "styled-components";
-import Section from "./Section";
 import Title from "./Title";
 import ScrollBox from "../calendarComponents/ScrollBox";
 import TestBox from "./TestBox";
-import SubmitButton from "./SubmitButton";
+import Button from "../editTest/Button";
 import { inherits } from "util";
 import { openAlert } from "./../../Alert.js";
 import { getServerConnect } from "./../../../serverConnection.js";
+import PatientSelect from "./PatientSelect";
+import { WaveLoading } from "styled-spinkit";
 const Container = styled.div`
   position: relative;
   height: 592px;
@@ -15,35 +16,33 @@ const Container = styled.div`
   background: white;
 `;
 
-const Scroll = styled(ScrollBox)`
-  height: ${props => (!props.fullLength ? `27%` : `66%`)};
-  border: 1px solid #b0b0b0b0;
-`;
+
 export default class EmailModal extends Component {
   constructor(props) {
     super(props);
     this.serverConnect = getServerConnect();
     this.state = {
+      awaitResponse: false,
       selected: [],
       response: {},
       submitted: false,
       notNotified: props.notNotified.map(patient => {
         return {
-          testId: patient.test_id,
+          id: patient.test_id,
           dueDate: patient.due_date,
-          patientName: `${patient.patient_name} ${patient.patient_surname}`
+          name: `${patient.patient_name} ${patient.patient_surname}`
         };
       }),
       notified: props.notified.map(patient => {
         return {
-          testId: patient.test_id,
+          id: patient.test_id,
           dueDate: patient.due_date,
-          patientName: `${patient.patient_name} ${patient.patient_surname}`,
+          name: `${patient.patient_name} ${patient.patient_surname}`,
           lastReminder: patient.last_reminder
         };
       })
     };
-  }
+  };
 
   select = users => {
     if (users instanceof Array) {
@@ -59,6 +58,8 @@ export default class EmailModal extends Component {
       this.setState({ selected: [...this.state.selected, users] });
     }
   };
+
+
   deselect = users => {
     if (users instanceof Array) {
       this.setState({
@@ -74,26 +75,58 @@ export default class EmailModal extends Component {
       });
     }
   };
-  areAllIncluded(array1, array2) {
-    let count = 0;
-    array1.map(test => {
-      array2.find(test2 => test.testId === test2.testId)
-        ? (count += 1)
-        : (count += 0);
-    });
 
-    return count === array2.length;
-  }
-
+  selectAll = (notified, checked) => {
+    if (checked) {
+      if (notified) {
+        this.setState({
+          selected: [...this.state.selected, ...this.state.notified]
+        });
+      } else {
+        this.setState({
+          selected: [...this.state.selected, ...this.state.notNotified]
+        });
+      }
+    } else {
+      if (notified) {
+        console.log("====================================");
+        console.log("Removing notified");
+        console.log("====================================");
+        this.setState({
+          selected: this.state.selected.filter(patient =>
+            this.state.notNotified.find(
+              notifiedPatient => notifiedPatient.id === patient.id
+            )
+          )
+        });
+      } else {
+        this.setState({
+          selected: this.state.selected.filter(patient =>
+            this.state.notified.find(p => p.id === patient.id)
+          )
+        });
+      }
+    }
+  };
   submit = () => {
-    let idList = this.state.selected.map(patient => patient.testId);
-    this.serverConnect.sendReminders(idList, res => {
+    if (this.state.selected.length === 0) {
+      openAlert(
+        "Please select at least one patient to contact.",
+        "confirmationAlert",
+        "OK",
+        () => {}
+      );
+      return;
+    }
+    this.setState({ awaitResponse: true });
+    let idList = this.state.selected.map(patient => patient.id);
+    this.serverConnect.sendOverdueReminders(idList, res => {
       console.log(res);
       if (res.success) {
         openAlert(
-          "Patients contacted successfully",
+          "All selected patients were contacted successfully.",
           "confirmationAlert",
-          "Ok",
+          "OK",
           () => {
             this.props.closeModal();
           }
@@ -106,113 +139,204 @@ export default class EmailModal extends Component {
             })
             .reduce((a, b) => a + b),
           response: res.response,
-          submitted: true
+          submitted: true,
+          awaitResponse: false,
+          attempted: this.state.selected,
+          selected: []
         });
-        this.props.handleError(res, "Something went wrong");
+        this.props.handleError(res, "Some emails failed to be sent.");
       }
     });
   };
 
   render() {
-    return (
-      <Container>
-        <Title>Email Reminders</Title>
-        {this.state.submitted ? (
-          <>
-            <TestBox
-              noCheck
-              stat={`${this.state.failedMails}/${this.state.selected.length}`}
-              selected={this.areAllIncluded(
-                this.state.selected,
-                this.state.notNotified
-              )}
-              onAllCheck={check =>
-                check
-                  ? this.select(this.state.notNotified)
-                  : this.deselect(this.state.notNotified)
-              }
-              title={true}
-              text="Emails Sent"
-            />
-            <Scroll fullLength={this.state.notified.length === 0}>
-              <Section
-                awaitResponse={true}
-                response={this.state.response}
-                submitted={this.state.submitted}
+    if (this.state.awaitResponse) {
+      return (
+        <div
+          style={{
+            width: "300px",
+            height: "300x",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            background: "rgba(255,255,255,0.5)",
+            color: "rgba(0,0,0,0.6)",
+            textAlign: "center"
+          }}
+        >
+          <WaveLoading color="#0b999d" size={90} />
+          Sending emails...
+        </div>
+      );
+    } else {
+      return (
+        <Container>
+          <Title onClose={this.props.closeModal}>Overdue test reminders</Title>
+          {this.state.submitted ? (
+            <>
+              <PatientSelect
+                stat={`${this.state.failedMails}/${
+                  this.state.attempted.length
+                }`}
+                selectAll={(_, checked) => {
+                  if (checked) {
+                    this.setState({
+                      selected: this.state.attempted.filter(test =>
+                        [
+                          ...this.state.response.failedBoth,
+                          ...this.state.response.failedPatient,
+                          ...this.state.response.failedHospital
+                        ].includes(test.id)
+                      )
+                    });
+                  } else {
+                    this.setState({ selected: [] });
+                  }
+                }}
                 selected={this.state.selected}
-                tests={this.state.selected}
-                select={(check, patient) =>
-                  check ? this.select(patient) : this.deselect(patient)
+                direction="center"
+                patients={
+                  this.state.response
+                    ? this.state.attempted.filter(test =>
+                        [
+                          ...this.state.response.failedBoth,
+                          ...this.state.response.failedPatient,
+                          ...this.state.response.failedHospital
+                        ].includes(test.id)
+                      )
+                    : []
                 }
+                onSelectClick={(id, isAlreadyIncluded) => {
+                  if (isAlreadyIncluded) {
+                    this.setState({
+                      selected: this.state.selected.filter(
+                        patient => patient.id !== id
+                      )
+                    });
+                  } else {
+                    this.setState({
+                      selected: [
+                        ...this.state.selected,
+                        ...this.state.attempted.filter(
+                          patient => patient.id === id
+                        )
+                      ]
+                    });
+                  }
+                }}
               />
-            </Scroll>
-            <br />
-          </>
-        ) : (
-          ``
-        )}
-        {this.state.notNotified.length !== 0 && !this.state.submitted ? (
-          <>
-            <TestBox
-              selected={this.areAllIncluded(
-                this.state.selected,
-                this.state.notNotified
-              )}
-              onAllCheck={check =>
-                check
-                  ? this.select(this.state.notNotified)
-                  : this.deselect(this.state.notNotified)
-              }
-              title={true}
-              text="No reminders sent"
-            />
-            <Scroll fullLength={this.state.notified.length === 0}>
-              <Section
-                submitted={this.state.submitted}
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "2%",
+                  left: "50%",
+                  display: "flex",
+                  transform: "translateX(-50%)",
+                  justifyContent: "center"
+                }}
+              >
+                <Button
+                  backgroundColor={"#f44336"}
+                  hoverColor={"#dc2836"}
+                  onClick={this.props.closeModal}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  backgroundColor={"#0b999d"}
+                  hoverColor={"#018589"}
+                  onClick={this.submit}
+                >
+                  Retry
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <PatientSelect
+                selectAll={this.selectAll}
                 selected={this.state.selected}
-                tests={this.state.notNotified}
-                select={(check, patient) =>
-                  check ? this.select(patient) : this.deselect(patient)
-                }
+                direction="left"
+                patients={this.state.notified}
+                notified
+                onSelectClick={(id, isAlreadyIncluded) => {
+                  if (isAlreadyIncluded) {
+                    this.setState({
+                      selected: this.state.selected.filter(
+                        patient => patient.id !== id
+                      )
+                    });
+                  } else {
+                    this.setState({
+                      selected: [
+                        ...this.state.selected,
+                        ...this.state.notified.filter(
+                          patient => patient.id === id
+                        )
+                      ]
+                    });
+                  }
+                }}
               />
-            </Scroll>
-            <br />
-          </>
-        ) : (
-          ``
-        )}
-        {this.state.notified.length !== 0 && !this.state.submitted ? (
-          <>
-            <TestBox
-              selected={this.areAllIncluded(
-                this.state.selected,
-                this.state.notified
-              )}
-              onAllCheck={check =>
-                check
-                  ? this.select(this.state.notified)
-                  : this.deselect(this.state.notified)
-              }
-              title={true}
-              text="Recently notified"
-            />
-            <Scroll fullLength={this.state.notNotified.length === 0}>
-              <Section
-                submitted={this.state.submitted}
-                select={(check, patient) =>
-                  check ? this.select(patient) : this.deselect(patient)
-                }
-                selected={this.state.selected}
-                tests={this.state.notified}
-              />
-            </Scroll>
-          </>
-        ) : (
-          ``
-        )}
 
-        <SubmitButton onClick={this.submit} />
-      </Container>
-    );
+              <PatientSelect
+                selectAll={this.selectAll}
+                selected={this.state.selected}
+                direction="right"
+                patients={this.state.notNotified}
+                onSelectClick={(id, isAlreadyIncluded) => {
+                  if (isAlreadyIncluded) {
+                    console.log("====================================");
+                    console.log("Adding");
+                    console.log("====================================");
+                    this.setState({
+                      selected: this.state.selected.filter(
+                        patient => patient.id !== id
+                      )
+                    });
+                  } else {
+                    this.setState({
+                      selected: [
+                        ...this.state.selected,
+                        ...this.state.notNotified.filter(
+                          patient => patient.id === id
+                        )
+                      ]
+                    });
+                  }
+                }}
+              />
+
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "2%",
+                  left: "50%",
+                  display: "flex",
+                  transform: "translateX(-50%)",
+                  justifyContent: "center"
+                }}
+              >
+                <Button
+                  backgroundColor={"#f44336"}
+                  hoverColor={"#dc2836"}
+                  onClick={this.props.closeModal}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  backgroundColor={"#0b999d"}
+                  hoverColor={"#018589"}
+                  onClick={this.submit}
+                >
+                  Send reminders
+                </Button>
+              </div>
+            </>
+          )}
+        </Container>
+      );
+    }
   }
 }

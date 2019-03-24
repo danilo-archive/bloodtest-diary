@@ -19,7 +19,7 @@ const Container = styled.div`
     width: auto;
     position: relative;
     top: 20px;
-    margin: 1% 1% 1% 1%;
+    padding: 1% 1% 1% 1%;
 
 
   background: rgb(244,249,253);
@@ -47,7 +47,7 @@ const Button = styled.button`
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 130%;
   font-weight: 200;
   background-color: #0b989d;
   word-break: break-word;
@@ -88,9 +88,9 @@ class Patients extends React.Component {
 
     handleError = (res, error) => {
         if (res.errorType === "authentication"){
-            openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
+            openAlert("Authentication failed.", "confirmationAlert", "Go back to login", () => {this.logout()});
         }else{
-            openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
+            openAlert(`${error ? error : "Unknown error occurred."}`, "confirmationAlert", "OK", () => {return});
         }
     };
 
@@ -119,7 +119,7 @@ class Patients extends React.Component {
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
-                patient => patient.patient_no.includes(value)
+                patient => patient.patient_no.toLowerCase().includes(value.toLowerCase())
               )
             });
         }
@@ -130,7 +130,7 @@ class Patients extends React.Component {
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
-                patient => patient.patient_name ? patient.patient_name.includes(value) : false
+                patient => patient.patient_name ? patient.patient_name.toLowerCase().includes(value.toLowerCase()) : false
               )
             });
         }
@@ -141,7 +141,7 @@ class Patients extends React.Component {
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
-                patient => patient.patient_surname ? patient.patient_surname.includes(value) : false
+                patient => patient.patient_surname ? patient.patient_surname.toLowerCase().includes(value.toLowerCase()) : false
               )
             });
         }
@@ -152,7 +152,7 @@ class Patients extends React.Component {
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
-                patient => patient.patient_email ? patient.patient_email.includes(value) : false
+                patient => patient.patient_email ? patient.patient_email.toLowerCase().includes(value.toLowerCase()) : false
               )
             });
         }
@@ -163,7 +163,7 @@ class Patients extends React.Component {
         else{
             this.setState({
               shownPatients: this.state.allPatients.filter(
-                patient => patient.patient_phone ? patient.patient_phone.includes(value) : false
+                patient => patient.patient_phone ? patient.patient_phone.toLowerCase().includes(value.toLowerCase()) : false
               )
             });
         }
@@ -182,7 +182,6 @@ class Patients extends React.Component {
 
     openEditModal = id => {
         this.serverConnect.requestPatientEditing(id, res => {
-            console.log(`id in openEditModal: ${id}`);
             if (res.token){
                 this.setState({selectedId: id, openEditModal: true, editToken: res.token});
             }else{
@@ -193,7 +192,6 @@ class Patients extends React.Component {
 
 
     onCloseEditModal = () => {
-        console.log("closing modal");
         this.serverConnect.discardPatientEditing(this.state.selectedId, this.state.editToken, res => {
             this.setState({selectedId: undefined, openEditModal: false, editToken: undefined});
         });

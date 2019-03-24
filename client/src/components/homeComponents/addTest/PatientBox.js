@@ -12,7 +12,7 @@ const Box = styled.div`
   justify-content: center;
   margin: auto;
   margin-top: 1%;
-  
+
   :hover {
     background: #f2f2f2f2;
   }
@@ -67,7 +67,7 @@ export default props => {
         >
           <i className={`fa fa-${!props.selected ? `check` : `times`}`} />
         </SelectButton>
-        {props.showID ? <IDBox>Patient ID: {props.patientID}</IDBox> : <></>}
+        {props.showID ? <IDBox>Patient number: {props.patientID}</IDBox> : <></>}
       </Box>
       {props.showID ? <br /> : <></>}
       <br />

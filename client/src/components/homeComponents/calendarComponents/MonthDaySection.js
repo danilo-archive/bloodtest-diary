@@ -21,7 +21,7 @@ const MonthDaySection = props => {
       <MonthDayDiv>
         <DateText month={props.monthName} day={props.dayNumber} />
         <NotificationIcon
-          isPlus={true}
+          labelStyle={{ left: "50%", top: "63%" }}
           fontSize="500%"
           text="+"
           top="97%"

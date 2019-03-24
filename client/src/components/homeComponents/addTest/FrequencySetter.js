@@ -14,7 +14,6 @@ const Container = styled.div`
 export default props => {
   return (
     <Container>
-      <br />
       <LabelAndSelector
         setFrequencyTooltip={props.setFrequencyTooltip}
         setOcurrencesTooltip={props.setOcurrencesTooltip}
@@ -35,7 +34,7 @@ export default props => {
       />
       <TextRadioButton
         checked={props.noRepeat}
-        text="Do not repeat"
+        text="Does not repeat"
         onCheck={check => {
           return props.onNoRepeatChange(check);
         }}

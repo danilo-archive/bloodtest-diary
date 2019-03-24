@@ -15,7 +15,7 @@ const Circle = styled.div`
   margin: auto;
   overflow: hidden;
   transition: background-color 0.2s ease;
-  margin: auto;
+
   transform: translate(-50%, -50%);
   z-index: 10;
   &:hover {
@@ -33,7 +33,7 @@ export default props => {
         onClick={props.onClick}
       >
         <Label
-          style={props.isPlus ? { left: "51%", top: "63%" } : { left: "49%", top : "58%"}}
+          style={props.labelStyle}
           fontSize={props.fontSize || "23px"}
         >
           {props.text ? props.text : ``}

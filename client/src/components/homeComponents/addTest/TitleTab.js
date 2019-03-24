@@ -6,7 +6,7 @@ import CloseTabIcon from "./CloseTabIcon";
 
 const TitleDiv = styled.div`
   width: 100%;
-  height: 12%;
+  height: ${props => props.height || "12%"};
   background: white;
   background: ${props => props.color || `#0d4e56`};
   display: flex;
@@ -23,15 +23,14 @@ const TitleLabel = styled(Label)`
   top: 60%;
   left: 50%;
   color: white;
-  font-size: 3rem;
+  font-size: 280%;
 `;
 
 export default props => {
   return (
     <>
-      <TitleDiv color={props.color}>
+      <TitleDiv color={props.color} height={props.height}>
         <TitleLabel>{props.children}</TitleLabel>
-        {props.main ? <CloseTabIcon close={props.onClose} /> : <></>}
       </TitleDiv>
     </>
   );

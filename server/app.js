@@ -252,6 +252,11 @@ io.on('connection',function(socket)
             return;
         }
         const response = await queryController.getUser(user);
+        if (response.success) {
+            delete response.response[0].hashed_password;
+            delete response.response[0].salt;
+            delete response.response[0].iterations;
+        }
         socket.emit("getUserResponse", response);
     });
 
@@ -449,19 +454,49 @@ io.on('connection',function(socket)
         socket.emit("requestUserEditTokenResponse", response);
     });
 
-    socket.on("discardEditing", async (table, id, token, accessToken) => {
+    socket.on("discardTestEditing", async (id, token, accessToken) => {
         if (!accessToken) {
-            socket.emit("discardEditingResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            socket.emit("discardTestEditingResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
         }
         const username = await authenticator.verifyToken(accessToken);
         if (!username) {
-            socket.emit("discardEditingResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            socket.emit("discardTestEditingResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
             return;
         }
 
-        const response = await queryController.returnToken(table, id, token, username);
-        socket.emit("discardEditingResponse", response);
+        const response = await queryController.returnToken("Test", id, token, username);
+        socket.emit("discardTestEditingResponse", response);
+    });
+
+    socket.on("discardPatientEditing", async (id, token, accessToken) => {
+        if (!accessToken) {
+            socket.emit("discardPatientEditingResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("discardPatientEditingResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await queryController.returnToken("Patient", id, token, username);
+        socket.emit("discardPatientEditingResponse", response);
+    });
+
+    socket.on("discardUserEditing", async (id, token, accessToken) => {
+        if (!accessToken) {
+            socket.emit("discardUserEditingResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            return;
+        }
+        const username = await authenticator.verifyToken(accessToken);
+        if (!username) {
+            socket.emit("discardUserEditingResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            return;
+        }
+
+        const response = await queryController.returnToken("User", id, token, username);
+        socket.emit("discardUserEditingResponse", response);
     });
 
     // ==============

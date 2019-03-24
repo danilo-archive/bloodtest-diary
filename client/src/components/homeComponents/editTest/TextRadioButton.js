@@ -26,7 +26,7 @@ const TextRadioButton = props => {
   return (
     <Container>
       <RadioButton checked={props.checked} onCheck={props.onCheck} />
-      <RadioLabel checked={props.checked}>{props.text}</RadioLabel>
+      <RadioLabel checked={props.checked}>{props.text.charAt(0).toUpperCase() + props.text.slice(1)}</RadioLabel>
     </Container>
   );
 };
