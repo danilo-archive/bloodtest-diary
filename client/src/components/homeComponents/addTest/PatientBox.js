@@ -12,7 +12,7 @@ const Box = styled.div`
   justify-content: center;
   margin: auto;
   margin-top: 1%;
-  
+
   :hover {
     background: #f2f2f2f2;
   }

@@ -62,13 +62,7 @@ export default props => {
     <>
       <Box>
         {props.patientName}
-        {props.lastReminder && props.showID ? (
-          <TimePill>
-            Last Reminder: {dateformat(new Date(props.dueDate), "d mmm yyyy")}
-          </TimePill>
-        ) : (
-          ``
-        )}
+
         <SelectButton
           selected={props.selected}
           onClick={() => {
@@ -80,9 +74,18 @@ export default props => {
         {props.showID ? (
           <IDBox>
             {" "}
-            <b>Test ID:&nbsp;</b> {props.patientID} &nbsp;&nbsp;
-            <b>Due date:&nbsp;</b>
-            {dateformat(new Date(props.dueDate), "d mmm yyyy")}
+            <div style={{ fontSize: props.lastReminder ? "95%" : "100%" }}>
+              <b>Due:&nbsp;</b>
+              {dateformat(new Date(props.dueDate), "d mmm yyyy")}
+              {props.lastReminder ? (
+                <>
+                  <b>&nbsp;&nbsp;Last reminder:&nbsp;</b>{" "}
+                  {dateformat(new Date(props.lastReminder), "d mmm yyyy")}
+                </>
+              ) : (
+                ""
+              )}
+            </div>
           </IDBox>
         ) : (
           <></>

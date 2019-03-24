@@ -69,7 +69,6 @@ export default class PatientSelect extends React.Component {
         .filter(
           patient =>
             patient.name.includes(value) ||
-            patient.id.toString().includes(value) ||
             dateformat(new Date(patient.dueDate), "d mmm yyyy").includes(value)
         )
         .slice(0, 30)
