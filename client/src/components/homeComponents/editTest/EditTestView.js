@@ -13,6 +13,9 @@ import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
 import PatientProfile from "../../patientsComponents/PatientProfile";
 import { Tooltip } from "react-tippy";
 
+const dueDateField = 1;
+const completedDateField = 2;
+
 const DataContainer = styled.div`
   position: relative;
   width: 45rem;
@@ -68,7 +71,7 @@ export default class EditTestView extends React.Component {
           id: res.test_id,
           date: {
             dueDate: dateformat(new Date(res.due_date), "d mmm yyyy"),
-
+            completedDate: res.completed_date ? dateformat(new Date(res.completed_date), "d mmm yyyy") : null,
             frequency:
               res.frequency &&
               res.frequency !== "null" &&
@@ -87,6 +90,7 @@ export default class EditTestView extends React.Component {
           notes: res.notes !== "null" && res.notes !== null ? res.notes : ""
         },
         showCalendar: false,
+        showCalendar2: false,
 
         ready: true
       });
@@ -95,6 +99,47 @@ export default class EditTestView extends React.Component {
 
   onCalendarClose = () => {
     this.setState({showCalendar: false});
+  }
+  onCalendar2Close = () => {
+    this.setState({showCalendar2: false});
+  }
+
+
+  onDayPick = (day, field=dueDateField) => {
+    if (field === dueDateField){
+      this.setState({
+        showCalendar: false,
+        test: {
+          ...this.state.test,
+          date: {
+            ...this.state.test.date,
+            dueDate: dateformat(day, "d mmm yyyy")
+          }
+        }
+      });
+    }else{
+      this.setCompletedDate(day);
+    }
+  }  
+
+  setCompletedDate = (day) => {
+    console.log(day);
+    console.log(this.state.test.date.dueDate);
+    let newStatus = this.state.test.status;
+    if (this.state.test.status === "pending"){
+      newStatus = "completed";
+    }
+    this.setState({
+      showCalendar: false,
+      test: {
+        ...this.state.test,
+        date: {
+          ...this.state.test.date,
+          completedDate: dateformat(day, "d mmm yyyy")
+        },
+        status: newStatus
+      }
+    });
   }
 
   saveTest = () => {
@@ -198,8 +243,8 @@ export default class EditTestView extends React.Component {
       <>
         <div
           style={{
-            width: "35rem",
-            height: "38rem",
+            width: "36rem",
+            height: "42rem",
             background: "rgba(244, 244, 244,0.7)",
             position: "relative"
           }}
@@ -209,26 +254,16 @@ export default class EditTestView extends React.Component {
           </TitleTab>
           <div style={{ padding: "1rem 1rem" }}>
             <InfoBox
-              label={"Full name:"}
-              text={this.state.patient.name}
+              label={"Patient number:"}
+              text={this.state.patient.id}
               icon={undefined}
             />
+            <hr />
             {this.state.showCalendar ? (
               <CalendarTable
                 outsideClick={this.onCalendarClose}
                 style={{ width: "50%", top: "47%", left: "37%" }}
-                onDayPick={day => {
-                  this.setState({
-                    showCalendar: false,
-                    test: {
-                      ...this.state.test,
-                      date: {
-                        ...this.state.test.date,
-                        dueDate: dateformat(day, "d mmm yyyy")
-                      }
-                    }
-                  });
-                }}
+                onDayPick={this.onDayPick}
               />
             ) : (
               ``
@@ -239,6 +274,22 @@ export default class EditTestView extends React.Component {
               icon="edit"
               onClick={() => this.setState({ showCalendar: true })}
             />
+            {this.state.showCalendar2 ? (
+              <CalendarTable
+                outsideClick={this.onCalendar2Close}
+                style={{ width: "50%", top: "47%", left: "37%" }}
+                onDayPick={(day) => {this.onDayPick(day, completedDateField)}}
+              />
+            ) : (
+              ``
+            )}
+            <InfoBox
+              label={"Completed date:"}
+              text={(this.state.test.date.completedDate == null) ? '' : this.state.test.date.completedDate}
+              icon="edit"
+              onClick={() => this.setState({ showCalendar2: true })}
+            />
+            <hr />
             <FrequencySelector
               tooltips={{
                 frequency: this.state.tooltips.frequency,
