@@ -8,16 +8,15 @@ const Container = styled.div`
   position: relative;
   width: 50%;
   background: white;
-  height: 100%;
+  height: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 const SecondHalfDiv = styled.div`
   position: absolute;
-  width: 90%;
-  margin-left: 5%;
-  height: 74%;
+  width: 100%;
+  height: 45%;
   top: 55%;
   left: 0;
   background: none;
@@ -25,7 +24,7 @@ const SecondHalfDiv = styled.div`
 `;
 const TextArea = styled.textarea`
   width: 94%;
-  height: 43%;
+  height: 60%;
   resize: none;
   outline: none;
   border: none;
@@ -36,25 +35,25 @@ const DateInput = styled.input`
   align-items: center;
   cursor: pointer;
   z-index: 2;
+  margin: 3% 0;
   text-align: center;
   border-radius: 10px;
   background-color: #0b999d;
   color:white;
   height: 8%;
   font-weight: bold;
+  font-size: 130%;
 
   &:hover {
     background-color: #018589;
   }
 `;
 
-
 export default props => {
   return (
     <>
       <Container>
         <TitleTab color="#0b999d">Date</TitleTab>
-        <br />
         <DateInput
           type="text"
           onClick={props.onInputClick}
@@ -86,10 +85,14 @@ export default props => {
         />
 
         <SecondHalfDiv>
-          <TitleTab color="#0b999d">Observations</TitleTab>
+          <TitleTab
+              color={"#0b999d"}
+              height={"28%"}
+          >Notes
+          </TitleTab>
           <TextArea
             onChange={event => props.onObservationsChange(event.target.value)}
-            placeholder={"Enter observations here ..."}
+            placeholder={"(optional)"}
           />
         </SecondHalfDiv>
       </Container>

@@ -53,7 +53,6 @@ function getMonthName(date){
  * @return {string} Month and Year as string
  */
 function getMonthAndYear(date){
-    console.log(date);
     return getMonthName(date) + " " + date.getFullYear();
 }
 

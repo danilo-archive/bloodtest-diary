@@ -50,15 +50,15 @@ export default class PatientSection extends React.Component {
         const content = (
             <Container>
                 <Horizontal>
-                    <Field>Due</Field>
-                    <Field>Notes</Field>
+                    <Field>Due date:</Field>
+                    <Field>Notes:</Field>
                 </Horizontal>
                 <CellContainer>
                     {this.props.tests.map(test => (
                         <TestCell
                             key={test.test_id}
                             testId={test.test_id}
-                            due = {test.due_date.substring(0, 10)}
+                            due = {test.due_date}
                             notes={test.notes}
                             deleteTest={this.props.deleteTest}
                         />
@@ -68,14 +68,14 @@ export default class PatientSection extends React.Component {
         );
         const emptyTest = (
             <>
-                <EmptyContainer>Patient has no tests scheduled</EmptyContainer>
+                <EmptyContainer>(Patient has no tests scheduled.)</EmptyContainer>
             </>
         );
         if (this.props.tests.length > 0) {
             return (
                 <>
                     <SectionContainer
-                        title={"Test info"}
+                        title={"Patient's tests"}
                         content={content}
                     />
                 </>
@@ -84,7 +84,7 @@ export default class PatientSection extends React.Component {
             return (
                 <>
                     <SectionContainer
-                        title={"Test info"}
+                        title={"Patient's tests"}
                         content={emptyTest}
                     />
                 </>

@@ -78,6 +78,7 @@ class InputCell extends React.Component {
                         id={this.props.id}
                         disabled
                         type={"text"}
+                        placeholder={this.props.placeholder}
                     />
                 </Container>
             );
@@ -107,6 +108,7 @@ class InputCell extends React.Component {
                         id={this.props.id}
                         type={"text"}
                         onChange={event => this.props.onChange()}
+                        placeholder={this.props.placeholder}
                     />
                 </Container>
             );

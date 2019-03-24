@@ -68,7 +68,7 @@ class Header extends Component {
     <>
       <header id="titlebar">
           <div id="window-title">
-            <span>Kings College London NHS</span>
+            <span>Blood Test Diary</span>
           </div>
            <div id="window-controls">
                <div className="dropdown">

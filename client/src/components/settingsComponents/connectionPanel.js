@@ -130,7 +130,7 @@ export default class ConnectionPanel extends Component {
   render(){
     return (
       <Container>
-        <p className="connectionTitle" >Connection</p>
+        <p className="connectionTitle" >Connection details</p>
         <InputSection>
           <ConnectionLabel>IP:</ConnectionLabel>
           <input id="ipInput" type="text" name="ip" className="connectionInput" value={this.state.ip} onChange={this.handleChange} onBlur={this.updateIP}/>
@@ -141,7 +141,7 @@ export default class ConnectionPanel extends Component {
         </InputSection>
 
       {(oldIp !== this.state.ip || oldPort !== this.state.port) ?
-          <RestartLabel onClick={refresh} id="restart-button">Restart Now</RestartLabel>
+          <RestartLabel onClick={refresh} id="restart-button">Restart now</RestartLabel>
         :
           <>
           </>

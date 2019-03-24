@@ -18,7 +18,6 @@ const Container = styled.div`
 `;
 
 function collect(connect, monitor){
-  console.log(monitor.isOver());
   return {
     connectDropTarget: connect.dropTarget(),
     hovered: monitor.isOver(),
@@ -54,7 +53,7 @@ class OngoingWeekly extends React.Component {
                 ? this.props.notificationNumber
                 : "0"
             }
-            dayName={"This Week"}
+            dayName={"This week"}
           />
           <ScrollBox>
             <AppointmentSection

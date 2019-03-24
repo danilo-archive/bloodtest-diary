@@ -14,6 +14,60 @@ const DataContainer = styled.div`
   background: rgba(0, 0, 0, 0);
 `;
 
+const ButtonContainer = styled.div`
+  width: 100%;
+  background: white;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+  height: 10%;
+`;
+
+const CloseButton = styled.button`
+  border: none;
+  background-color: #e7e7e7;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 10px;
+
+  height: 44px;
+  min-width: 100px;
+  margin-right: 4%;
+
+  :hover {
+    background: #c8c8c8;
+    color: black;
+    border-radius: 10px;
+  }
+  outline: none;
+`;
+
+const AddButton = styled.button`
+  border: none;
+  background-color: #0b999d;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  margin-left: 4%;
+  border-radius: 10px;
+
+  height: 44px;
+  min-width: 100px;
+
+  :hover {
+    background-color: #018589;
+    color: white;
+  }
+  outline: none;
+`;
+
+const Hr = styled.hr`
+  width: 99%;
+  background: white;
+`;
+
 export default class AddTestView extends React.Component {
   state = {
     open: true,
@@ -43,7 +97,7 @@ export default class AddTestView extends React.Component {
   handleError = (res, error) => {
     if (res.errorType === "authentication") {
       openAlert(
-        "Authentication error",
+        "Authentication failed.",
         "confirmationAlert",
         "Go back to login",
         () => {
@@ -53,9 +107,9 @@ export default class AddTestView extends React.Component {
       );
     } else {
       openAlert(
-        `${error ? error : "Unknown error occurred"}`,
+        `${error ? error : "Unknown error occurred."}`,
         "confirmationAlert",
-        "Ok",
+        "OK",
         () => {
           return;
         }
@@ -126,7 +180,7 @@ export default class AddTestView extends React.Component {
             this.props.closeModal();
           } else {
             openAlert(
-              "something went wrong, test was not added",
+              "Something went wrong. Test was not added.",
               "confirmationAlert",
               "OK",
               () => {}
@@ -136,7 +190,7 @@ export default class AddTestView extends React.Component {
       );
     } else {
       openAlert(
-        "Please ensure you have selected all the relevant fields",
+        "Please select a patient first.",
         "confirmationAlert",
         "OK",
         () => {}
@@ -150,17 +204,15 @@ export default class AddTestView extends React.Component {
           style={{
             width: "42rem",
             height: "36rem",
-            background: "rgba(244, 244, 244,0.7)"
+            background: "white"
           }}
         >
           <TitleTab onClose={this.props.closeModal} main={true}>
-            Add Appointments
+            New appointment
           </TitleTab>
           <DataContainer>
             <PatientSelect
               patients={this.state.allPatients}
-              onDoneClick={this.onDoneClick}
-              closeModal={this.props.closeModal}
               onSelectClick={id => this.setState({ selectedID: id })}
             />
 
@@ -219,6 +271,11 @@ export default class AddTestView extends React.Component {
                 })
               }
             />
+            <Hr/>
+            <ButtonContainer>
+              <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
+              <AddButton onClick={this.onDoneClick}>Add test</AddButton>
+            </ButtonContainer>
           </DataContainer>
         </div>
       </>
