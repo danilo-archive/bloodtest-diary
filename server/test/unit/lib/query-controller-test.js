@@ -26,2057 +26,1074 @@ const actionLogger = {
 queryController.__set__("actionLogger",actionLogger);
 
 const testUsername = "admin"; // username that is used throughout the tests (also for action username)
-
-describe("Select queries tests", function(){
-  context("Get All patients (adults)", function(){
-    test(queryController.getAllPatients,true);
-  })
-  context("Get All patients (children)", function(){
-    test(queryController.getAllPatients,false);
-  })
-  context("Get Next Test of patient", function(){
-    test(queryController.getNextTestsOfPatient,"400")
-  })
-  context("Get Patient", function(){
-    test(queryController.getPatient, "4000");
-  })
-  context("Get Carer", function(){
-    test(queryController.getCarer, "4000");
-  })
-  context("Get Hospital", function(){
-    test(queryController.getHospital, "300");
-  })
-  context("Get User", function(){
-    test(queryController.getUser,testUsername);
-  });
-  context("Get All Users", function(){
-    test(queryController.getAllUsers,);
-  });
-  context("Get Full Patient Info", function(){
-    test(queryController.getFullPatientInfo,"P400");
-  });
-  context("Get Full Test Info", function(){
-    test(queryController.getTestInfo,"400");
-  });
-  context("Get Tests Within week", function(){
+describe("Edit query functionality", function(){
+  context("Edit patient extended", function(){
     let spy;
     beforeEach(()=>{
-        spy = sinon.spy(queryController.getTestWithinWeek);
+      spy = sinon.spy(queryController.editPatientExtended);
     })
-    it("Should return all days (adult) (STUBBED)", async function(){
-      const dbController = {
-        selectQuery: async function() {
-          return {status:"OK", response:{ rows:[]}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("2018-04-03",true);
-      spy.calledWith("2018-04-03",true).should.equal(true);
-      spy.calledOnce.should.equal(true);
+    it("Edit carer,hospital,patient - all success",async function(){
+      queryController.__set__("editCarer",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editHospital",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editPatient",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("getPatient",async function(){
+        return {success:true, response:[{patient_no:"400",hospital_id:"500",carer_id:"600"}]}
+      })
+      const response = await spy({patient_name:"Mark", hospital_email:"gmail", relationship:"daughter"},"500",testUsername);
       response.success.should.equal(true);
-      response.response.length.should.equal(6);
-    });
-    it("Should return error (adult) (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "ERR", err:{ }}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("2018-04-03",true);
-        spy.calledWith("2018-04-03",true).should.equal(true);
-        spy.calledOnce.should.equal(true);
-        response.success.should.equal(false);
-    });
-    it("Should return all days (children) (STUBBED)", async function(){
-      const dbController = {
-        selectQuery: async function() {
-          return {status:"OK", response:{ rows:[]}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("2018-04-04",false);
-      spy.calledWith("2018-04-04",false).should.equal(true);
-      spy.calledOnce.should.equal(true);
-      response.success.should.equal(true);
-      response.response.length.should.equal(6);
-    });
-    it("Should return error (children) (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "ERR", err:{ }}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("2018-04-04",false);
-        spy.calledWith("2018-04-04",false).should.equal(true);
-        spy.calledOnce.should.equal(true);
-        response.success.should.equal(false);
-    });
-  });
-  context("Get Sorted Overdue Weeks", function(){
-    let spy;
-    beforeEach(()=>{
-        spy = sinon.spy(queryController.getSortedOverdueWeeks);
+      resetQueryController()
     })
-    it("Should return all overdue weeks grouped (children) (STUBBED)", async function(){
-      const dbController = {
-        selectQuery: async function() {
-          return {status:"OK", response:{ rows:[
-            {test_id:"110", Monday:"1", isAdult:"no"},
-            {test_id:"203", Monday:"2", isAdult:"no"},
-            {test_id:"201", Monday:"2", isAdult:"no"}
-          ]}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy(false);
-      spy.calledOnce.should.equal(true);
-      response.success.should.equal(true);
-      response.response.length.should.equal(2);
-      response.response[0].tests.length.should.equal(1);
-      response.response[1].tests.length.should.equal(2);
-      response.response[0].class.should.equal("1");
-      response.response[1].class.should.equal("2");
-    });
-    it("Should return all overdue weeks grouped (adult) (STUBBED)", async function(){
-      const dbController = {
-        selectQuery: async function() {
-          return {status:"OK", response:{ rows:[
-            {test_id:"100", Monday:"1", isAdult:"yes"},
-            {test_id:"200", Monday:"2", isAdult:"yes"},
-            {test_id:"307", Monday:"3", isAdult:"yes"},
-          ]}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy(true);
-      spy.calledOnce.should.equal(true);
-      response.success.should.equal(true);
-      response.response.length.should.equal(3);
-      response.response[0].tests.length.should.equal(1);
-      response.response[1].tests.length.should.equal(1);
-      response.response[2].tests.length.should.equal(1);
-      response.response[0].class.should.equal("1");
-      response.response[1].class.should.equal("2");
-      response.response[2].class.should.equal("3");
-    });
-    it("Should return empty overdue weeks (STUBBED)", async function(){
-      const dbController = {
-        selectQuery: async function() {
-          return {status:"OK", response:{ rows:[]}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy();
-      spy.calledOnce.should.equal(true);
-      response.success.should.equal(true);
-      response.response.length.should.equal(0);
-    });
-    it("Should return error (STUBBED)", async function(){
-      const dbController = {
-        selectQuery: async function() {
-          return {status: "ERR", err: {error:"stubbed error"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy();
-      spy.calledOnce.should.equal(true);
+    it("Edit carer,hospital,patient - no patient found",async function(){
+      queryController.__set__("editCarer",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editHospital",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editPatient",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("getPatient",async function(){
+        return {success:false, err:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy({patient_name:"Mark", hospital_email:"gmail", relationship:"daughter"},"500",testUsername);
       response.success.should.equal(false);
-      response.response.error.should.equal("stubbed error");
-    });
-  });
-
-  describe("Get overdue reminder groups:", () => {
-    it ("Should return false.", async () => {
-      const dbController = {
-        selectQuery: async function() {
-          return {status:"ERR"}
+      resetQueryController()
+    })
+    it("Edit carer,hospital,patient - add carer succesfully",async function(){
+      queryController.__set__("editHospital",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editPatient",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("getPatient",async function(){
+        return {success:true, response:[{patient_no:"400",hospital_id:"500"}]}
+      })
+      queryController.__set__("addCarer",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      const response = await spy({patient_name:"Mark", hospital_email:"gmail", relationship:"daughter"},"500",testUsername);
+      response.success.should.equal(true);
+      resetQueryController()
+    })
+    it("Edit carer,hospital,patient - fail adding carer ",async function(){
+      queryController.__set__("editHospital",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editPatient",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("getPatient",async function(){
+        return {success:true, response:[{patient_no:"400",hospital_id:"500",carer_id:null}]}
+      })
+      queryController.__set__("addCarer",async function(){
+        return {success:false, err:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy({patient_name:"Mark", hospital_email:"gmail", relationship:"daughter"},"500",testUsername);
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+    it("Edit carer,hospital,patient - delete carer success",async function(){
+      queryController.__set__("deleteCarer",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editHospital",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editPatient",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("getPatient",async function(){
+        return {success:true, response:[{patient_no:"400",hospital_id:"500",carer_id:"600"}]}
+      })
+      const response = await spy({patient_name:"Mark", hospital_email:"gmail"},"500",testUsername);
+      response.success.should.equal(true);
+      resetQueryController()
+    })
+    it("Edit carer,hospital,patient - add hospital succesfully",async function(){
+      queryController.__set__("addHospital",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editPatient",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("getPatient",async function(){
+        return {success:true, response:[{patient_no:"400",carer_id:"500"}]}
+      })
+      queryController.__set__("editCarer",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      const response = await spy({patient_name:"Mark", hospital_email:"gmail", relationship:"daughter"},"500",testUsername);
+      response.success.should.equal(true);
+      resetQueryController()
+    })
+    it("Edit carer,hospital,patient - fail adding hospital ",async function(){
+      queryController.__set__("addHospital",async function(){
+        return {success:false, err:{error:"STUBBED ERROR"}}
+      })
+      queryController.__set__("editPatient",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("getPatient",async function(){
+        return {success:true, response:[{patient_no:"400",carer_id:"500"}]}
+      })
+      queryController.__set__("editCarer",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      const response = await spy({patient_name:"Mark", hospital_email:"gmail", relationship:"daughter"},"500",testUsername);
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+    it("Edit carer,hospital,patient - delete hospital success",async function(){
+      queryController.__set__("editCarer",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("deleteHospital",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editPatient",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("getPatient",async function(){
+        return {success:true, response:[{patient_no:"400",hospital_id:"500",carer_id:"600"}]}
+      })
+      const response = await spy({patient_name:"Mark", relationship:"daughter"},"500",testUsername);
+      response.success.should.equal(true);
+      resetQueryController()
+    })
+    it("Edit carer,hospital,patient - fail patient edit",async function(){
+      queryController.__set__("editCarer",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editHospital",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("editPatient",async function(){
+        return {success:false, err:{error:"STUBBED ERROR"}}
+      })
+      queryController.__set__("getPatient",async function(){
+        return {success:true, response:[{patient_no:"400",hospital_id:"500",carer_id:"600"}]}
+      })
+      const response = await spy({patient_name:"Mark", hospital_email:"gmail", relationship:"daughter"},"500",testUsername);
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+    it("Edit carer,hospital,patient - only edit patient success",async function(){
+      queryController.__set__("editPatient",async function(){
+        return {success:true, response:{affectedRows:1, changedRows:1}}
+      })
+      queryController.__set__("getPatient",async function(){
+        return {success:true, response:[{patient_no:"400"}]}
+      })
+      const response = await spy({patient_name:"Mark"},"500",testUsername);
+      response.success.should.equal(true);
+      resetQueryController()
+    })
+  })
+  context("Edit test",function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.editTest);
+      resetQueryController();
+    })
+    it("Accept the test edit - all success", async function(){
+      queryController.__set__("getTest",async function(){
+        return {success: true, response:[{test_id:"400"}]}
+      })
+      const updater = {
+        editTest:async function(){
+          return {success:true, response:{affectedRows:1, changedRows:1}}
         }
       }
-      queryController.__set__("databaseController",dbController);
-      const res = await queryController.getOverdueReminderGroups();
-      expect(res.success).to.be.false;
-    });
-    it ("Should return correct groups (adults).", async () => {
-      const dbController = {
-        selectQuery: async function() {
-          return {status:"OK", response:{ rows:[
-            {test_id: 404, reminders_sent: 0, isAdult:"yes"},
-            {test_id: 200, reminders_sent: 1, isAdult:"yes"}
-          ]}};
+      queryController.__set__("updater",updater)
+      const response = await spy("400",{test_id:"400",due_date:"2019-09-03"},"400",testUsername)
+      response.success.should.equal(true)
+    })
+    it("Reject the test edit - no test found", async function(){
+      queryController.__set__("getTest",async function(){
+        return {success: true, response:[]}
+      })
+      const updater = {
+        editTest:async function(){
+          return {success:true, response:{affectedRows:1, changedRows:1}}
         }
       }
-      queryController.__set__("databaseController",dbController);
-      const res = await queryController.getOverdueReminderGroups(true);
-      const shouldBe = {
-        success:true,
-        response: {
-          notReminded: [
-            {test_id: 404, reminders_sent: 0, isAdult:"yes"}
-          ],
-          reminded: [
-            {test_id: 200, reminders_sent: 1, isAdult:"yes"}
-          ]
-        }
-      };
-      expect(res.success).to.be.true;
-      expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
-    });
-    it ("Should return correct groups (children).", async () => {
-      const dbController = {
-        selectQuery: async function() {
-          return {status:"OK", response:{ rows:[
-            {test_id: 40, reminders_sent: 0, isAdult:"no"},
-            {test_id: 390, reminders_sent: 3, isAdult:"no"}
-          ]}};
+      queryController.__set__("updater",updater)
+      const response = await spy("400",{test_id:"400",due_date:"2019-09-03"},"400",testUsername)
+      response.success.should.equal(false)
+    })
+    it("Reject the test edit - error in get test", async function(){
+      queryController.__set__("getTest",async function(){
+        return {success: false, response:{error:"STUBBED ERROR"}}
+      })
+      const updater = {
+        editTest:async function(){
+          return {success:true, response:{affectedRows:1, changedRows:1}}
         }
       }
-      queryController.__set__("databaseController",dbController);
-      const res = await queryController.getOverdueReminderGroups(false);
-      const shouldBe = {
-        success:true,
-        response: {
-          notReminded: [
-            {test_id: 40, reminders_sent: 0, isAdult:"no"}
-          ],
-          reminded: [
-            {test_id: 390, reminders_sent: 3, isAdult:"no"}
-          ]
-        }
-      };
-      expect(res.success).to.be.true;
-      expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
-    });
-  });
-});
-
-describe("Insert queries tests", function(){
-    context("Insert new test", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.addTest);
-      })
-      it("Should accept new test (STUBBED)", async function() {
-        stubbedPositiveInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
-      })
-      it("Should reject new test (STUBBED)", async function() {
-        stubbedErrorInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
-      })
+      queryController.__set__("updater",updater)
+      const response = await spy("400",{test_id:"400",due_date:"2019-09-03"},"400",testUsername)
+      response.success.should.equal(false)
     })
-    context("Add new User", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.addUser);
+    it("Accept the test edit and reject new test", async function(){
+      queryController.__set__("getTest",async function(){
+        return {success: true, response:[{test_id:"400",completed_status:"no", frequency:"2-W", occurrences:10}]}
       })
-      it("Should accept new User (STUBBED)", async function() {
-        stubbedPositiveInsertTest(spy,{username:testUsername,hashed_password:"21828728218",email:"email@email.com"})
-      })
-      it("Should reject new User (STUBBED)", async function() {
-        stubbedErrorInsertTest(spy,{username:testUsername,hashed_password:"21828728218",email:"email@email.com"})
-      })
-    })
-    context("Add new Patient", function(){
-      let spy;
-      beforeEach(()=>{
-          //TODO : delete JSON
-          spy = sinon.spy(queryController.addPatient);
-      })
-      it("Should accept new patient (STUBBED)", async function() {
-        stubbedPositiveInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
-      })
-      it("Should reject new patient (STUBBED)", async function() {
-        stubbedErrorInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
-      })
-    })
-    context("Add new Hospital", function(){
-      let spy;
-      beforeEach(()=>{
-          //TODO : delete JSON
-          spy = sinon.spy(queryController.addHospital);
-      })
-      it("Should accept new hospital (STUBBED)", async function() {
-        stubbedPositiveInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
-      })
-      it("Should reject new hospital (STUBBED)", async function() {
-        stubbedErrorInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
-      })
-    })
-    context("Add new Carer", function(){
-      let spy;
-      beforeEach(()=>{
-          //TODO : delete JSON
-          spy = sinon.spy(queryController.addCarer);
-      })
-      it("Should accept new carer (STUBBED)", async function() {
-        stubbedPositiveInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
-      })
-      it("Should reject new carer (STUBBED)", async function() {
-        stubbedErrorInsertTest(spy,{patient_no: "50005",due_date:"2018-03-04"})
-      })
-    })
-    context("Add new patient extended", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.addPatientExtended);
-      })
-
-      it("Add patient correctly with new carer and new hospital - correct info (STUBBED)", async function(){
-        const dbController = {
-          insertQuery: async function() {
-            return {status:"OK", response: { insertId: "test_insert_id"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"30230320",patient_name:"Bill",patient_surname:"Murray",hospital_email:"gmail",carer_email:"outlook"});
-        response.success.should.equal(true);
-        response.response.insertedId.should.equal("30230320");
-      });
-      it("Add patient correctly with new carer - missing hospital info (STUBBED)", async function(){
-        const dbController = {
-          insertQuery: async function() {
-            return {status:"OK", response: { insertId: "test_insert_id"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"302303205",patient_name:"Bill",patient_surname:"Murray",carer_email:"outlook"});
-        response.success.should.equal(true);
-        response.response.insertedId.should.equal("302303205");
-      });
-      it("Add patient correctly with new hospital - missing carer info (STUBBED)", async function(){
-        const dbController = {
-          insertQuery: async function() {
-            return {status:"OK", response: { insertId: "test_insert_id"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"302303437720",patient_name:"Bill",patient_surname:"Murray",hospital_email:"gmail"});
-        response.success.should.equal(true);
-        response.response.insertedId.should.equal("302303437720");
-      });
-      it("Add patient correctly without new carer nor new hospital - correct info (STUBBED)", async function(){
-        const dbController = {
-          insertQuery: async function() {
-            return {status:"OK", response: { insertId: "test_insert_id"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"30230320",patient_name:"Bill",patient_surname:"Murray"});
-        response.success.should.equal(true);
-        response.response.insertedId.should.equal("30230320");
-      });
-      it("Reject patient without new carer nor new hospital - correct info (STUBBED)", async function(){
-        const dbController = {
-          insertQuery: async function() {
-            return {status:"ERR", err: { error: "STUBBED ERROR"}}
-          },
-          deleteQuery: async function() {
-            return {status:"OK", response: "Entry deleted properly"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"30230320",patient_name:"Bill",patient_surname:"Murray"});
-        response.success.should.equal(false);
-        response.response.carer.should.equal(true);
-        response.response.hospital.should.equal(true);
-      });
-      it("Reject patient with new hospital incorrect data - missing carer info/accept delete (STUBBED)", async function(){
-        const dbController = {
-          insertQuery: async function() {
-            return {status:"ERR", err: { error: "STUBBED ERROR"}}
-          },
-          deleteQuery: async function() {
-            return {status:"OK", response: "Entry deleted properly"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"302303437720",patient_name:"Bill",patient_surname:"Murray",hospital_name:"Saint Cross"});
-        response.success.should.equal(false);
-        response.response.problem.should.equal("Incorrect data for hospital");
-        response.response.delete.should.equal(true);
-      });
-      it("Reject patient with new hospital and new carer - reject patient insert (STUBBED)", async function(){
-        queryController.__set__("addPatient",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("addHospital",async function(){
-          return {success:true, response:{insertId:"3993"}}
-        })
-        queryController.__set__("addCarer",async function(){
-          return {success:true, response:{insertId:"3993"}}
-        })
-        queryController.__set__("deleteCarer",async function(){
-          return {success:true, response:"Entry deleted"}
-        })
-        queryController.__set__("deleteHospital",async function(){
-          return {success:true, response:"Entry deleted"}
-        })
-        const response = await spy({patient_no:"302303437720",patient_name:"Bill",patient_surname:"Murray",carer_name:"Marry",hospital_name:"Sacred Hospital"});
-        resetThePatientQueries()
-        response.success.should.equal(false);
-        response.response.problem.should.equal("Problem on patient insert");
-        response.response.carer.should.equal(true);
-        response.response.hospital.should.equal(true);
-      });
-      it("Reject patient with new hospital and new carer - reject hospital insert (STUBBED)", async function(){
-        queryController.__set__("addPatient",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("addHospital",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("addCarer",async function(){
-          return {success:true, response:{insertId:"3993"}}
-        })
-        queryController.__set__("deleteCarer",async function(){
-          return {success:true, response:"Entry deleted"}
-        })
-        queryController.__set__("deleteHospital",async function(){
-          return {success:true, response:"Entry deleted"}
-        })
-        const response = await spy({patient_no:"302303437720",patient_name:"Bill",patient_surname:"Murray",carer_name:"Marry",hospital_name:"Sacred Hospital"});
-        resetThePatientQueries()
-        response.success.should.equal(false);
-        response.response.delete.should.equal(true);
-      });
-      it("Reject patient with new hospital and new carer - reject carer insert (STUBBED)", async function(){
-        queryController.__set__("addPatient",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("addHospital",async function(){
-          return {success:true, response:{insertId:"3993"}}
-        })
-        queryController.__set__("addCarer",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("deleteCarer",async function(){
-          return {success:true, response:"Entry deleted"}
-        })
-        queryController.__set__("deleteHospital",async function(){
-          return {success:true, response:"Entry deleted"}
-        })
-        const response = await spy({patient_no:"302303437720",patient_name:"Bill",patient_surname:"Murray",carer_name:"Marry",hospital_name:"Sacred Hospital"});
-        resetThePatientQueries()
-        response.success.should.equal(false);
-        response.response.delete.should.equal(true);
-      });
-      it("Reject patient with new hospital and new carer - reject hospital insert and carer delete (STUBBED)", async function(){
-        queryController.__set__("addPatient",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("addHospital",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("addCarer",async function(){
-          return {success:true, response:{insertId:"3993"}}
-        })
-        queryController.__set__("deleteCarer",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("deleteHospital",async function(){
-          return {success:true, response:"Entry deleted"}
-        })
-        const response = await spy({patient_no:"302303437720",patient_name:"Bill",patient_surname:"Murray",carer_name:"Marry",hospital_name:"Sacred Hospital"});
-        resetThePatientQueries()
-        response.success.should.equal(false);
-        response.response.delete.should.equal(false);
-      });
-      it("Reject patient with new hospital and new carer - reject carer insert and hospital delete (STUBBED)", async function(){
-        queryController.__set__("addPatient",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("addHospital",async function(){
-          return {success:true, response:{insertId:"3993"}}
-        })
-        queryController.__set__("addCarer",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("deleteCarer",async function(){
-          return {success:true, response:"Entry deleted"}
-        })
-        queryController.__set__("deleteHospital",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        const response = await spy({patient_no:"302303437720",patient_name:"Bill",patient_surname:"Murray",carer_name:"Marry",hospital_name:"Sacred Hospital"});
-        resetThePatientQueries()
-        response.success.should.equal(false);
-        response.response.delete.should.equal(false);
-      });
-      it("Reject patient with new hospital and new carer - reject patient insert and all deletes (STUBBED)", async function(){
-        queryController.__set__("addPatient",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("addHospital",async function(){
-          return {success:true, response:{insertId:"3993"}}
-        })
-        queryController.__set__("addCarer",async function(){
-          return {success:true, response:{insertId:"3993"}}
-        })
-        queryController.__set__("deleteCarer",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("deleteHospital",async function(){
-          return {success:false, err:{error:"STUBBED ERROR"}}
-        })
-        const response = await spy({patient_no:"302303437720",patient_name:"Bill",patient_surname:"Murray",carer_name:"Marry",hospital_name:"Sacred Hospital"});
-        resetThePatientQueries()
-        response.success.should.equal(false);
-        response.response.hospital.should.equal(false);
-        response.response.carer.should.equal(false);
-      });
-      it("Reject patient with new carer incorrect data - missing hospital info/accept delete (STUBBED)", async function(){
-        const dbController = {
-          insertQuery: async function() {
-            return {status:"ERR", err: { error: "STUBBED ERROR"}}
-          },
-          deleteQuery: async function() {
-            return {status:"OK", response: "Entry deleted properly"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"302303437720",patient_name:"Bill",patient_surname:"Murray",carer_name:"Meggy"});
-        response.success.should.equal(false);
-        response.response.problem.should.equal("Incorrect data for carer");
-        response.response.delete.should.equal(true);
-      });
-      it("Reject patient with new carer and new hospital - correct info (STUBBED)", async function(){
-        const dbController = {
-          insertQuery: async function() {
-            return {status:"ERR", err: { error: "STUBBED ERROR"}}
-          },
-          deleteQuery: async function() {
-            return {status:"OK", err: { error: "STUBBED ERROR"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"30230320",patient_name:"Bill",patient_surname:"Murray",hospital_email:"gmail",carer_email:"outlook"});
-        response.success.should.equal(false);
-        response.response.problem.should.equal("Incorrect data for carer and hospital")
-      });
-    })
-})
-
-describe("Update queries tests", function(){
-    context("Change test status", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.changeTestStatus);
-      })
-      it("Fail, as somebody is editing (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "ERR", err:{ type: "Invalid request.", cause: "stubbed error" }}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
-        response.success.should.equal(false);
-        spy.calledOnce.should.equal(true);
-      })
-      it("Fail - no test found due to an error  (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{ token:"400"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
-        spy.calledOnce.should.equal(true);
-      })
-      it("Fail empty test edit - no test found", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{ token:"400"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response:{rows:[]}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
-        response.success.should.equal(false);
-        response.response.should.equal("No new tests added - No test found!");
-      })
-      it("Reject random update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{ token:"30000" }}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400"}]}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"ERROR"}, testUsername);
-        response.success.should.equal(false);
-        response.response.should.equal("NO SUCH UPDATE");
-        spy.calledOnce.should.equal(true);
-      })
-      it("Accept completed update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_status:"yes"}]}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"completed"}, testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-        spy.calledOnce.should.equal(true);
-      })
-      it("Accept completed update and accept new test(STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          },
-          insertQuery: async function()
-          {
-            return {status: "OK", response: {insertId:"505"}}
-          },
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"completed"}, testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-        response.response.new_date.should.equal("20201114");
-        response.response.insertId.should.equal("505");
-        spy.calledOnce.should.equal(true);
-      })
-      it("Accept completed update and reject new test(STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          },
-          insertQuery: async function()
-          {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}}
-          },
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"completed"}, testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-        spy.calledOnce.should.equal(true);
-      })
-      it("Reject completed update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
-          },
-          selectQuery: async function()
-          {
-              return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"completed"}, testUsername);
-        response.success.should.equal(false);
-        response.response.cause.should.equal("stubbed error");
-        spy.calledOnce.should.equal(true);
-      })
-      it("Accept late update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-        spy.calledOnce.should.equal(true);
-      })
-      it("Reject late update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"late"}, testUsername);
-        response.success.should.equal(false);
-        response.response.cause.should.equal("stubbed error");
-        spy.calledOnce.should.equal(true);
-      })
-      it("Accept in review update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          },
-          insertQuery: async function()
-          {
-            return {status: "OK", response: {insertId:"505"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"inReview"}, testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-        spy.calledOnce.should.equal(true);
-      })
-      it("Reject in review update (STUBBED)", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", completed_date:"2020-10-30", completed_status:"no", occurrences:"3", frequency:"2-W"}]}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({testId:"2000",newStatus:"inReview"}, testUsername);
-        response.success.should.equal(false);
-        response.response.cause.should.equal("stubbed error");
-        spy.calledOnce.should.equal(true);
-      })
-    })
-    context("Update User", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.editUser);
-      })
-      it("Correctly update password (STUBBED)", async function()
-      {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
-          },
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Correctly update email (STUBBED)", async function()
-      {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
-          },
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,recovery_email:"gmail@gmail.com"}, testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Correctly update email (STUBBED)", async function()
-      {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000",recovery_email:"yahoo@gmail.com"}]}}
-          },
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,recovery_email:"gmail@gmail.com",hashed_password:"dsjhdshdshjdshdhjdschjdsjsdhj"}, testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Fail due to user being edited (STUBBED)", async function() {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000"}]}}
-          },
-          requestEditing: async function() {
-            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
-          },
-          updateQuery: async function() {
-            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, undefined, testUsername);
-        response.success.should.equal(false);
-        response.response.problem.should.equal("Token in use/No token defined");
-      })
-      it("Fail due to no user found (STUBBED)", async function() {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[]}}
-          },
-          requestEditing: async function() {
-            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
-        response.success.should.equal(false);
-        response.response.should.equal("No user found");
-      })
-      it("Fail due to too many users found (STUBBED)", async function() {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000"},{username:testUsername,iterations:1000,salt:"30000"}]}}
-          },
-          requestEditing: async function() {
-            return {status:"ERR", err: { type: "Invalid request.", cause: "NO TOKEN" }}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
-        response.success.should.equal(false);
-        response.response.should.equal("No user found");
-      })
-      it("Fail due to update query error (STUBBED)", async function() {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"OK", response:{ rows:[{username:testUsername,iterations:1000,salt:"30000"}]}}
-          },
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "ERR", err:"Error here"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
-        response.success.should.equal(false);
-        response.response.should.equal("Error here");
-      })
-      it("Fail due to getUser query error (STUBBED)", async function()
-      {
-        const dbController = {
-          selectQuery: async function() {
-            return {status:"ERR", err: { type: "SQL error", sqlMessage: "stubbed error"}}
-          },
-          requestEditing: async function() {
-            return {status: "OK", response:{token:"2000"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({username:testUsername,hashed_password:"373723172173732"}, testUsername);
-        response.success.should.equal(false);
-      })
-    })
-    context("Edit Patient", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.editPatient);
-      })
-      it("Accept patient edit (STUBBED)", async function(){
-        setAcceptUpdateQueryDatabase();
-        const response = await spy({patient_no:"400",patient_name:"Mark"},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Reject patient edit (STUBBED)", async function(){
-        setRejectUpdateQueryDatabase();
-        const response = await spy({patient_no:"400",patient_name:"Mark"},"400", testUsername);
-        response.response.cause.should.equal("stubbed error");
-        spy.calledOnce.should.equal(true);
-      })
-      it("Reject patient edit - No token passed (STUBBED)", async function(){
-        setRejectUpdateQueryDatabase();
-        const response = await spy({patient_no:"400",patient_name:"Mark"}, undefined, testUsername);
-        response.response.problem.should.equal("Token in use/No token defined");
-        spy.calledOnce.should.equal(true);
-      })
-    })
-    context("Edit Carer", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.editCarer);
-      })
-      it("Accept patient edit (STUBBED)", async function(){
-        setAcceptUpdateQueryDatabase();
-        const response = await spy({carer_id:"400",carer_email:"Mark@gmail.com"},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Reject patient edit (STUBBED)", async function(){
-        setRejectUpdateQueryDatabase();
-        const response = await spy({carer_id:"400",carer_email:"Mark@gmail.com"},"400", testUsername);
-        response.response.cause.should.equal("stubbed error");
-        spy.calledOnce.should.equal(true);
-      })
-      it("Reject patient edit - No token passed (STUBBED)", async function(){
-        setRejectUpdateQueryDatabase();
-        const response = await spy({carer_id:"400",carer_email:"Mark@gmail.com"}, undefined, testUsername);
-        response.response.problem.should.equal("Token in use/No token defined");
-        spy.calledOnce.should.equal(true);
-      })
-    })
-    context("Edit Hospital", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.editHospital);
-      })
-      it("Accept patient edit (STUBBED)", async function(){
-        setAcceptUpdateQueryDatabase();
-        const response = await spy({hospital_id:"400",hospital_email:"KCL@gmail.com"},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Reject patient edit (STUBBED)", async function(){
-        setRejectUpdateQueryDatabase();
-        const response = await spy({hospital_id:"400",hospital_email:"KCL@gmail.com"},"400", testUsername);
-        response.response.cause.should.equal("stubbed error");
-        spy.calledOnce.should.equal(true);
-      })
-      it("Reject patient edit - No token passed (STUBBED)", async function(){
-        setRejectUpdateQueryDatabase();
-        const response = await spy({hospital_id:"400",hospital_email:"KCL@gmail.com"}, undefined, testUsername);
-        response.response.problem.should.equal("Token in use/No token defined");
-        spy.calledOnce.should.equal(true);
-      })
-    })
-    context("Edit Test", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.editTest);
-      })
-      it("Fail test edit - no test found due to an database error (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}}
-          },
-          insertQuery: async function()
-          {
-            return {status:"OK", response: { insertId: "test_insert_id"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testUsername);
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR")
-      })
-      it("Fail empty test edit - no test found", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response:{rows:[]}}
-          },
-          insertQuery: async function()
-          {
-            return {status:"OK", response: { insertId: "test_insert_id"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testUsername);
-        response.success.should.equal(false);
-        response.response.should.equal("No new tests added - No test found!");
-      })
-      it("Accept test edit and add new test (depending on data from database) - in review (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
-          },
-          insertQuery: async function()
-          {
-            return {status:"OK", response: { insertId: "test_insert_id"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Accept test edit and add new test (depending on data passed) - in review (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
-          },
-          insertQuery: async function()
-          {
-            return {status:"OK", response: { insertId: "test_insert_id"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",patient_no:"300",completed_status:"in review", occurrences:"3", frequency:"5-W",notes:"Test", due_date:new Date("2020-01-01")},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Accept test edit without adding new test - in review (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", occurrences:0}]}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Reject test edit - in review (STUBBED)", async function(){
-        setRejectUpdateQueryDatabase();
-        const response = await spy("400",{test_id:"400",completed_status:"in review"},"400", testUsername);
-        response.response.cause.should.equal("stubbed error");
-        spy.calledOnce.should.equal(true);
-      })
-      it("Accept test edit - late (STUBBED)", async function(){
-        setAcceptUpdateQueryDatabase();
-        const response = await spy("400",{test_id:"400",completed_status:"no"},"400", testUsername);
-        response.success.should.equal(true);
-        response.response.affectedRows.should.equal(1);
-      })
-      it("Reject test edit - late (STUBBED)", async function(){
-        setRejectUpdateQueryDatabase();
-        const response = await spy("400",{test_id:"400",completed_status:"no"},"400", testUsername);
-        response.response.cause.should.equal("stubbed error");
-        spy.calledOnce.should.equal(true);
-      })
-    })
-    context("Edit Patient Extended", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.editPatientExtended);
-      })
-      it("Accept the full patient edit - (patient,hospital,carer) (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", patient_name:"Mark", carer_id:"401", hospital_id:"300"}]}}
-          },
-          requestEditing: async function()
-          {
-            return {status:"OK", response: {token:"3783278321872"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", carer_id:"401", carer_name:"Bob", hospital_id:"300", hospital_name:"Heart Cross"},"545734883");
-        response.success.should.equal(true);
-        response.response.patientQuery.success.should.equal(true);
-        response.response.patientQuery.response.affectedRows.should.equal(1);
-        response.response.hospitalQuery.success.should.equal(true);
-        response.response.hospitalQuery.response.affectedRows.should.equal(1);
-        response.response.carerQuery.success.should.equal(true);
-        response.response.carerQuery.response.affectedRows.should.equal(1);
-      })
-      it("Accept the partial patient edit (patient,hospital) and delete carer (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", patient_name:"Mark", carer_id:"401", hospital_id:"300"}]}}
-          },
-          requestEditing: async function()
-          {
-            return {status:"OK", response: {token:"3783278321872"}}
-          },
-          deleteQuery: async function()
-          {
-            return {status:"OK", response: {query:"OK", affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", hospital_id:"300", hospital_name:"Heart Cross"},"545734883");
-        response.success.should.equal(true);
-        response.response.patientQuery.success.should.equal(true);
-        response.response.patientQuery.response.affectedRows.should.equal(1);
-        response.response.hospitalQuery.success.should.equal(true);
-        response.response.hospitalQuery.response.affectedRows.should.equal(1);
-        response.response.carerQuery.success.should.equal(true);
-        response.response.carerQuery.response.should.equal("Entry deleted");
-      })
-      it("Accept the partial patient edit (patient,carer) and delete hospital (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", patient_name:"Mark", carer_id:"401", hospital_id:"300"}]}}
-          },
-          requestEditing: async function()
-          {
-            return {status:"OK", response: {token:"3783278321872"}}
-          },
-          deleteQuery: async function()
-          {
-            return {status:"OK", response: {query:"OK", affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", carer_id:"401", carer_name:"Mary"},"545734883");
-        response.success.should.equal(true);
-        response.response.patientQuery.success.should.equal(true);
-        response.response.patientQuery.response.affectedRows.should.equal(1);
-        response.response.hospitalQuery.success.should.equal(true);
-        response.response.hospitalQuery.response.should.equal("Entry deleted");
-        response.response.carerQuery.success.should.equal(true);
-        response.response.carerQuery.response.affectedRows.should.equal(1);
-      })
-      it("Accept the partial patient edit (patient,hospital) and insert carer (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", patient_name:"Mark", hospital_id:"300"}]}}
-          },
-          requestEditing: async function()
-          {
-            return {status:"OK", response: {token:"3783278321872"}}
-          },
-          insertQuery: async function()
-          {
-            return {status:"OK", response: {query:"OK", insertId:"405"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", carer_name:"Mary", hospital_id:"300", hospital_name:"Hly Cross"},"545734883");
-        response.success.should.equal(true);
-        response.response.patientQuery.success.should.equal(true);
-        response.response.patientQuery.response.affectedRows.should.equal(1);
-        response.response.hospitalQuery.success.should.equal(true);
-        response.response.hospitalQuery.response.affectedRows.should.equal(1);
-        response.response.carerQuery.success.should.equal(true);
-        response.response.carerQuery.response.insertId.should.equal("405");
-      })
-      it("Accept the partial patient edit (patient,carer) and insert hospital (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", patient_name:"Mark", carer_id:"300"}]}}
-          },
-          requestEditing: async function()
-          {
-            return {status:"OK", response: {token:"3783278321872"}}
-          },
-          insertQuery: async function()
-          {
-            return {status:"OK", response: {query:"OK", insertId:"350"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", carer_id:"300", carer_name:"Mary", hospital_name:"Holy Cross"},"545734883");
-        response.success.should.equal(true);
-        response.response.patientQuery.success.should.equal(true);
-        response.response.patientQuery.response.affectedRows.should.equal(1);
-        response.response.hospitalQuery.success.should.equal(true);
-        response.response.hospitalQuery.response.insertId.should.equal("350");
-        response.response.carerQuery.success.should.equal(true);
-        response.response.carerQuery.response.affectedRows.should.equal(1);
-      })
-      it("Reject all updates (patient,carer,hospital) (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "ERR", err:{error:"Stubbed Error"}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", patient_name:"Mark", carer_id:"401", hospital_id:"300"}]}}
-          },
-          requestEditing: async function()
-          {
-            return {status:"OK", response: {token:"3783278321872"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", carer_id:"401", carer_name:"Bob", hospital_id:"300", hospital_name:"Heart Cross"},"545734883");
-        response.success.should.equal(false);
-        response.response.patientQuery.success.should.equal(false);
-        response.response.hospitalQuery.success.should.equal(false);
-        response.response.carerQuery.success.should.equal(false);
-      })
-      it("Reject carer update (patient,carer,hospital) (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "ERR", err:{error:"Stubbed Error"}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", patient_name:"Mark", carer_id:"401", hospital_id:"300"}]}}
-          }
-        }
-        queryController.__set__("requestEditing",async function(){
-          return "3783278321872";
-        })
-        queryController.__set__("editCarer",async function(){
+      queryController.__set__("scheduleNextTest",async function(){
           return {success:false, response:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("editHospital", async function(){
-          return {success:true, response:{affectedRows:"1"}}
-        })
-        queryController.__set__("editPatient", async function(){
-          return {success:true, response:{affectedRows:"1"}}
-        })
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", carer_id:"401", carer_name:"Bob", hospital_id:"300", hospital_name:"Heart Cross"},"545734883");
-        response.success.should.equal(false);
-        response.response.patientQuery.success.should.equal(true);
-        response.response.hospitalQuery.success.should.equal(true);
-        response.response.carerQuery.success.should.equal(false);
-        resetThePatientQueries();
       })
-      it("Reject hospital update (patient,carer,hospital) (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "ERR", err:{error:"Stubbed Error"}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", patient_name:"Mark", carer_id:"401", hospital_id:"300"}]}}
-          }
+      const updater = {
+        editTest:async function(){
+          return {success:true, response:{affectedRows:1, changedRows:1}}
         }
-        queryController.__set__("requestEditing",async function(){
-          return "3783278321872";
-        })
-        queryController.__set__("editCarer",async function(){
-          return {success:true, response:{affectedRows:"1"}}
-        })
-        queryController.__set__("editHospital", async function(){
-          return {success:false, response:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("editPatient", async function(){
-          return {success:true, response:{affectedRows:"1"}}
-        })
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", carer_id:"401", carer_name:"Bob", hospital_id:"300", hospital_name:"Heart Cross"},"545734883");
-        response.success.should.equal(false);
-        response.response.patientQuery.success.should.equal(true);
-        response.response.hospitalQuery.success.should.equal(false);
-        response.response.carerQuery.success.should.equal(true);
-        resetThePatientQueries();
-      })
-      it("Reject hospital patient (patient,carer,hospital) (STUBBED)", async function(){
-        const dbController = {
-          updateQuery: async function() {
-            return {status: "ERR", err:{error:"Stubbed Error"}}
-          },
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", patient_name:"Mark", carer_id:"401", hospital_id:"300"}]}}
-          }
-        }
-        queryController.__set__("requestEditing",async function(){
-          return "3783278321872";
-        })
-        queryController.__set__("editCarer",async function(){
-          return {success:true, response:{affectedRows:"1"}}
-        })
-        queryController.__set__("editHospital", async function(){
-          return {success:true, response:{affectedRows:"1"}}
-        })
-        queryController.__set__("editPatient", async function(){
-          return {success:false, response:{error:"STUBBED ERROR"}}
-        })
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", carer_id:"401", carer_name:"Bob", hospital_id:"300", hospital_name:"Heart Cross"},"545734883");
-        response.success.should.equal(false);
-        response.response.patientQuery.success.should.equal(false);
-        response.response.hospitalQuery.success.should.equal(true);
-        response.response.carerQuery.success.should.equal(true);
-        resetThePatientQueries();
-      })
-      it("Reject all updates - no patient found (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function()
-          {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", carer_id:"401", carer_name:"Bob", hospital_id:"300", hospital_name:"Heart Cross"},"545734883");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
-      })
-      it("No token passed (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function()
-          {
-            return {status: "OK", response: {rows:[{patient_no:"400", patient_name:"Mark", carer_id:"401", hospital_id:"300"}]}}
-          },
-          updateQuery: async function() {
-            return {status: "ERR", err:{error:"Stubbed Error"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy({patient_no:"400", patient_name:"John", carer_id:"401", carer_name:"Bob", hospital_id:"300", hospital_name:"Heart Cross"});
-        response.success.should.equal(false);
-        response.response.patientQuery.success.should.equal(false);
-        Object.keys(response.response.carerQuery).length.should.equal(0);
-        Object.keys(response.response.hospitalQuery).length.should.equal(0);
-      })
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy("400",{test_id:"400",due_date:"2019-09-03",completed_status:"yes"},"400",testUsername)
+      response.success.should.equal(true)
     })
-    context("Change due date", function(){
-      let spy;
-      let date;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.changeTestDueDate);
-          date = new Date();
+    it("Accept the test edit and schedule new - all success", async function(){
+      queryController.__set__("getTest",async function(){
+        return {success: true, response:[{test_id:"400",completed_status:"no", frequency:"2-W", occurrences:10}]}
       })
-      it("Reject the change", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "ERR", err:{ type: "Invalid request.", cause: "stubbed error" }}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
+      queryController.__set__("scheduleNextTest",async function(){
+          return {success:true, response:{affectedRows:1, changedRows:1, insertId:"500", new_date:"2019-03-04"}}
+      })
+      const updater = {
+        editTest:async function(){
+          return {success:true, response:{affectedRows:1, changedRows:1}}
         }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("300",date);
-        response.success.should.equal(false);
-        response.response.should.equal("Token in use/No token defined")
-      })
-      it("Accept the change", async function(){
-        const dbController = {
-          requestEditing: async function() {
-            return {status: "OK", response:{ token: "TOKEN"}}
-          },
-          updateQuery: async function() {
-            return {status: "OK", response:{affectedRows:1}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("300",date);
-        response.success.should.equal(true)
-        response.response.affectedRows.should.equal(1)
-      })
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy("400",{test_id:"400",due_date:"2019-09-03",completed_status:"yes"},"400",testUsername)
+      response.success.should.equal(true)
     })
+    it("Accept the test edit and do not schedule new - all success", async function(){
+      queryController.__set__("getTest",async function(){
+        return {success: true, response:[{test_id:"400",completed_status:"no", frequency:null, occurrences:0}]}
+      })
+      queryController.__set__("addTest",async function(){
+          return {success:true, response:{affectedRows:1, changedRows:1, insertId:"500"}}
+      })
+      const updater = {
+        editTest:async function(){
+          return {success:true, response:{affectedRows:1, changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy("400",{test_id:"400",due_date:"2019-09-03",completed_status:"yes"},"400",testUsername)
+      response.success.should.equal(true)
+    })
+    it("Accept the test edit and do not schedule new 2 - all success", async function(){
+      queryController.__set__("getTest",async function(){
+        return {success: true, response:[{test_id:"400",completed_status:"no", frequency:"2-W", occurrences:0}]}
+      })
+      queryController.__set__("addTest",async function(){
+          return {success:true, response:{affectedRows:1, changedRows:1, insertId:"500"}}
+      })
+      const updater = {
+        editTest:async function(){
+          return {success:true, response:{affectedRows:1, changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy("400",{test_id:"400",due_date:"2019-09-03",completed_status:"yes"},"400",testUsername)
+      response.success.should.equal(true)
+    })
+  })
+  context("Change Test Colour",function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.changeTestColour);
+      resetQueryController();
+    })
+    it("Accept the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changeTestColour: async function(){
+          return {success:true, respnse:{affectedRows:1,changedRows:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "#FFFFFF", testUsername);
+      response.success.should.equal(true);
+    })
+    it("Reject the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changeTestColour: async function(){
+          return {success:false, response:{problem:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "#FFFFFF", testUsername);
+      response.success.should.equal(false);
+      response.response.should.equal(1);
+    })
+  })
+  context("Change Patient Colour",function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.changePatientColour);
+      resetQueryController();
+    })
+    it("Accept the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changePatientColour: async function(){
+          return {success:true, respnse:{affectedRows:1,changedRows:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "#FFFFFF", testUsername);
+      response.success.should.equal(true);
+    })
+    it("Reject the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changePatientColour: async function(){
+          return {success:false, response:{problem:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "#FFFFFF", testUsername);
+      response.success.should.equal(false);
+      response.response.should.equal(1);
+    })
+  })
+  context("Change Test Due Date",function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.changeTestDueDate);
+      resetQueryController();
+    })
+    it("Accept the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changeTestDueDate: async function(){
+          return {success:true, respnse:{affectedRows:1,changedRows:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "2016-03-04", testUsername);
+      response.success.should.equal(true);
+    })
+    it("Reject the test colour edit - all success", async function(){
+      queryController.__set__("updater",{
+        changeTestDueDate: async function(){
+          return {success:false, response:{problem:1}}
+        }
+      })
+      queryController.__set__("requestEditing", async function(){
+        return "TOKEN"
+      })
+      const response = await spy("500", "2016-03-04", testUsername);
+      response.success.should.equal(false);
+      response.response.should.equal(1);
+    })
+  })
+  context("Edit user", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.editUser);
+      resetQueryController();
+    })
+    it("Edit all fields (password,email,isAdmin) in user - accept query", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: true, response:[{username:"admin", iterations:1923, salt:"hjywehewhewh", hashed_password:"1651256as256f2261727d"}]}
+      })
+      const updater = {
+        editUser: async function(){ return {success:true , response:{affectedRows:1, changedRows:1}}}
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy({username:"admin",hashed_password:"a154145b67227612f",recovery_email:"gmail",isAdmin:"yes"},"300",testUsername)
+      response.success.should.equal(true);
+    })
+    it("Edit all fields (password,email,isAdmin) in user - reject query", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: true, response:[{username:"admin", iterations:1923, salt:"hjywehewhewh", hashed_password:"1651256as256f2261727d"}]}
+      })
+      const updater = {
+        editUser: async function(){ return {success:false , err:{error:"STUBBED ERROR"}}}
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy({username:"admin",hashed_password:"a154145b67227612f",recovery_email:"gmail",isAdmin:"yes"},"300",testUsername)
+      response.success.should.equal(false);
+    })
+    it("Edit all fields (password,email,isAdmin) in user - no user found", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: true, response:[]}
+      })
+      const response = await spy({username:"admin",hashed_password:"a154145b67227612f",recovery_email:"gmail",isAdmin:"yes"},"300",testUsername)
+      response.success.should.equal(false);
+    })
+    it("Edit all fields (password,email,isAdmin) in user - select error query", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: false, response:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy({username:"admin",hashed_password:"a154145b67227612f",recovery_email:"gmail",isAdmin:"yes"},"300",testUsername)
+      response.success.should.equal(false);
+    })
+    it("Edit password only in user - accept query", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: true, response:[{username:"admin", iterations:1923, salt:"hjywehewhewh", hashed_password:"1651256as256f2261727d"}]}
+      })
+      const updater = {
+        editUser: async function(){ return {success:true , response:{affectedRows:1, changedRows:1}}}
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy({username:"admin",hashed_password:"a154145b67227612f"},"300",testUsername)
+      response.success.should.equal(true);
+    })
+    it("Edit email only in user - accept query", async function(){
+      queryController.__set__("getUser", async function(){
+        return {success: true, response:[{username:"admin", iterations:1923, salt:"hjywehewhewh", hashed_password:"1651256as256f2261727d"}]}
+      })
+      const updater = {
+        editUser: async function(){ return {success:true , response:{affectedRows:1, changedRows:1}}}
+      }
+      queryController.__set__("updater",updater)
+      const response = await spy({username:"admin",recovery_email:"gmail"},"300",testUsername)
+      response.success.should.equal(true);
+    })
+  })
+  context("Change test status", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.changeTestStatus);
+      resetQueryController();
+    })
+    it("Accept completed change status", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300"}]}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"completed"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept completed change status and schedule new test", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300", completed_status:"no"}]}
+      })
+      queryController.__set__("scheduleNextTest", async function(){
+        return {success:true, response:{insertId:500,new_date:"2019-09-08"}}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"completed"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept completed change status and reject new test", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300", completed_status:"no"}]}
+      })
+      queryController.__set__("scheduleNextTest", async function(){
+        return {success:false, err:{error:"STUBBED ERROR"}}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"completed"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept inReview change status", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300"}]}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"inReview"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept inReview change status and schedule new test", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300", completed_status:"no"}]}
+      })
+      queryController.__set__("scheduleNextTest", async function(){
+        return {success:true, response:{insertId:500,new_date:"2019-09-08"}}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"inReview"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept inReview change status and reject new test", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300", completed_status:"no"}]}
+      })
+      queryController.__set__("scheduleNextTest", async function(){
+        return {success:false, err:{error:"STUBBED ERROR"}}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"inReview"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Accept late change status", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:"300"}]}
+      })
+      const updater = {
+        changeTestStatus: async function(){
+          return {success:true, response:{affectedRows:1,changedRows:1}}
+        }
+      }
+      queryController.__set__("updater",updater);
+      const response = await spy({test_id:500, newStatus:"late"},testUsername);
+      response.success.should.equal(true)
+    })
+    it("Reject test change status - select query error", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy({test_id:500, newStatus:"inReview"},testUsername);
+      response.success.should.equal(false)
+    })
+    it("Reject test change status - no test found", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[]}
+      })
+      const response = await spy({test_id:500, newStatus:"inReview"},testUsername);
+      response.success.should.equal(false)
+    })
+    it("Reject test change status - random update found", async function(){
+      queryController.__set__("requestEditing", async function(){
+        return "3003030"
+      })
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:500}]}
+      })
+      const response = await spy({test_id:500, newStatus:"ERROR"},testUsername);
+      response.success.should.equal(false)
+    })
+  })
 })
-
-describe("Delete queries tests", function(){
-    context("Delete hospital", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.deleteHospital);
-      })
-      it("Fail deletion due to an error (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "OK", response: { rows: [{data: "test data"}]}}
-          },
-          deleteQuery: async function() {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
-      })
-      it("Accept delete request (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "OK", response: { rows: [{data: "test data"}]}}
-          },
-          deleteQuery: async function() {
-            return {status: "OK", err: {query:"OK", affectedRows:1}
-          }
-        }}
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400");
-        response.success.should.equal(true);
-        response.response.should.equal("Entry deleted");
-      })
+describe("Add query functionality", function(){
+  context("Add Patient extended", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.addPatientExtended);
     })
-    context("Delete carer", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.deleteCarer);
+    it("Add carer,hospital and patient - all success",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:true, response:{insertId:"500"}}
       })
-      it("Fail deletion due to an error (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "OK", response: { rows: [{data: "test data"}]}}
-          },
-          deleteQuery: async function() {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}
-          }
-        }}
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
+      queryController.__set__("addHospital",async function(){
+        return {success:true, response:{insertId:"400"}}
       })
-      it("Accept delete request (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "OK", response: { rows: [{data: "test data"}]}}
-          },
-          deleteQuery: async function() {
-            return {status: "OK", err: {query:"OK", affectedRows:1}
-          }
-        }}
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400");
-        response.success.should.equal(true);
-        response.response.should.equal("Entry deleted");
+      queryController.__set__("addPatient",async function(){
+        return {success:true, response:{insertId:"600"}}
       })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(true);
+      response.response.insertedId.should.equal("600");
+      resetQueryController()
     })
-    context("Delete test", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.deleteTest);
+    it("Add carer,hospital and patient - all fail",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
       })
-      it("Fail deletion due to an error (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "OK", response: { rows: [{data: "test data"}]}}
-          },
-          deleteQuery: async function() {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}
-          }
-        }}
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("500");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
+      queryController.__set__("addHospital",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
       })
-      it("Accept delete request (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "OK", response: { rows: [{data: "test data"}]}}
-          },
-          deleteQuery: async function() {
-            return {status: "OK", err: {query:"OK", affectedRows:1}
-          }
-        }}
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("600");
-        response.success.should.equal(true);
-        response.response.should.equal("Entry deleted");
+      queryController.__set__("addPatient",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
       })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(false);
+      resetQueryController()
     })
-    context("Unschedule test", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.unscheduleTest);
+    it("Add carer,hospital and patient - patient query fails and deletes succeed ",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:true, response:{insertId:"600"}}
       })
-      it("Fail unscheduling due to a deletion error (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "OK", response: { rows: [{data: "test data"}]}}
-          },
-          deleteQuery: async function() {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}}
-          },
-          cancelEditing: async function(){
-            return {status:"OK", response:"Token canceled"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("500");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
+      queryController.__set__("addHospital",async function(){
+        return {success:true, response:{insertId:"400"}}
       })
-      it("Fail unscheduling due to a token return error (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "OK", response: { rows: [{data: "test data"}]}}
-          },
-          deleteQuery: async function() {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}}
-          },
-          cancelEditing: async function(){
-            return {status:"ERR", err: {error:"STUBBED ERROR2"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("500");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR2");
+      queryController.__set__("addPatient",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
       })
-      it("Accept unscheduling request (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "OK", response: { rows: [{data: "test data"}]}}
-          },
-          deleteQuery: async function() {
-            return {status: "OK", err: {query:"OK", affectedRows:1}}
-          },
-          cancelEditing: async function(){
-              return {status:"OK", response:"Token canceled"}
-            }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("600");
-        response.success.should.equal(true);
-        response.response.should.equal("Entry deleted");
+      queryController.__set__("deleteHospital",async function(){
+        return {success:true, response:"Entry deleted"}
       })
+      queryController.__set__("deleteCarer",async function(){
+        return {success:true, response:"Entry deleted"}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(false);
+      resetQueryController()
     })
-    context("Delete patient", function(){
-      let spy;
-      beforeEach(()=>{
-          spy = sinon.spy(queryController.deletePatient);
+    it("Add carer,hospital and patient - patient query fails and deletes fail",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:true, response:{insertId:"600"}}
       })
-      it("Fail deletion due to an select error (STUBBED)", async function(){
-        const dbController = {
-          selectQuery: async function() {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}
-          }
-        }}
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
+      queryController.__set__("addHospital",async function(){
+        return {success:true, response:{insertId:"400"}}
       })
-      it("Fail deletion due to an token in database (STUBBED)", async function(){
-        const dbController = {
-          deleteQuery: async function() {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}}
-          },
-          selectQuery: async function() {
-            return {status: "OK", response:{rows:[{test_id:"200"},{test_id:"400"}]}}
-          },
-          cancelEditing: async function(){
-            return {status: "OK", response:"Token cancel"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400");
-        response.success.should.equal(false);
-        response.response.should.equal("Someone is editing the test");
+      queryController.__set__("addPatient",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
       })
-      it("Fail deletion due to deletion error (STUBBED)", async function(){
-        const dbController = {
-          deleteQuery: async function() {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}}
-          },
-          selectQuery: async function() {
-            return {status: "OK", response:{rows:[]}}
-          },
-          cancelEditing: async function(){
-            return {status: "OK", response:"Token cancel"}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
+      queryController.__set__("deleteHospital",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
       })
-      it("Fail deletion due to token error (STUBBED)", async function(){
-        const dbController = {
-          deleteQuery: async function() {
-            return {status: "ERR", err: {error:"STUBBED ERROR"}}
-          },
-          selectQuery: async function() {
-            return {status: "OK", response:{rows:[]}}
-          },
-          cancelEditing: async function(){
-            return {status: "ERR", err:{error:"STUBBED ERROR"}}
-          }
-        }
-        queryController.__set__("databaseController",dbController);
-        const response = await spy("400");
-        response.success.should.equal(false);
-        response.response.error.should.equal("STUBBED ERROR");
+      queryController.__set__("deleteCarer",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
       })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(false);
+      resetQueryController()
     })
+    it("Add carer,hospital and patient - carer query fails and delete hospital succeed ",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      queryController.__set__("addHospital",async function(){
+        return {success:true, response:{insertId:"400"}}
+      })
+      queryController.__set__("addPatient",async function(){
+        return {success:true, response:{insertId:"600"}}
+      })
+      queryController.__set__("deleteHospital",async function(){
+        return {success:true, response:"Entry deleted"}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+    it("Add carer,hospital and patient - carer query fails and delete hospital fails ",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      queryController.__set__("addHospital",async function(){
+        return {success:true, response:{insertId:"400"}}
+      })
+      queryController.__set__("addPatient",async function(){
+        return {success:true, response:{insertId:"600"}}
+      })
+      queryController.__set__("deleteHospital",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+    it("Add carer,hospital and patient - hospital query fails and delete carer fails ",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:true, response:{insertId:"400"}}
+      })
+      queryController.__set__("addHospital",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      queryController.__set__("addPatient",async function(){
+        return {success:true, response:{insertId:"600"}}
+      })
+      queryController.__set__("deleteCarer",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+    it("Add carer,hospital and patient - hospital query fails and delete carer succeed ",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:true, response:{insertId:"400"}}
+      })
+      queryController.__set__("addHospital",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      queryController.__set__("addPatient",async function(){
+        return {success:true, response:{insertId:"600"}}
+      })
+      queryController.__set__("deleteCarer",async function(){
+        return {success:true, response:"Entry deleted"}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+    it("Add carer and patient - all success ",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:true, response:{insertId:"400"}}
+      })
+      queryController.__set__("addPatient",async function(){
+        return {success:true, response:{insertId:"600"}}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John"});
+      response.success.should.equal(true);
+      resetQueryController()
+    })
+    it("Add hospital and patient - all success",async function(){
+      queryController.__set__("addHospital",async function(){
+        return {success:true, response:{insertId:"400"}}
+      })
+      queryController.__set__("addPatient",async function(){
+        return {success:true, response:{insertId:"600"}}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(true);
+      response.response.insertedId.should.equal("600");
+      resetQueryController()
+    })
+    it("Add hospital and patient - add hospital fails",async function(){
+      queryController.__set__("addHospital",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+    it("Add carer and patient - add carer fails",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John"});
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+    it("Add hospital and patient - add patient fails and delete hospital succeed",async function(){
+      queryController.__set__("addHospital",async function(){
+        return {success:true, response:{insertId:"400"}}
+      })
+      queryController.__set__("addPatient",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      queryController.__set__("deleteHospital",async function(){
+        return {success:true, response:"Entry deleted"}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark",hospital_name:"600", hospital_email:"here"});
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+    it("Add carer and patient - add patient fails and delete carer succeed",async function(){
+      queryController.__set__("addCarer",async function(){
+        return {success:true, response:{insertId:"600"}}
+      })
+      queryController.__set__("addPatient",async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      queryController.__set__("deleteCarer",async function(){
+        return {success:true, response:"Entry deleted"}
+      })
+      const response = await spy({patient_no:"600",patient_name:"Mark", relationship:"son", carer_name:"John"});
+      response.success.should.equal(false);
+      resetQueryController()
+    })
+  })
 })
-
+describe("Delete query functionality", function(){
+  context("Unschedule Test", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.unscheduleTest);
+      resetQueryController()
+    })
+    it("Unshedule Test correctly",async function(){
+      queryController.__set__("returnToken",async function(){
+        return {success:true}
+      })
+      queryController.__set__("deleteTest",async function(){
+        return {success:true}
+      })
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(true);
+    })
+    it("Problem with token realease",async function(){
+      queryController.__set__("returnToken",async function(){
+        return {success:false}
+      })
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(false);
+    })
+  })
+  context("Delete Patient", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.deletePatient);
+      resetQueryController()
+    })
+    it("Delete Patient correctly",async function(){
+      queryController.__set__("checkIfPatientsTestsAreEdited",async function(){
+        return false;
+      })
+      queryController.__set__("returnToken",async function(){
+        return {success:true}
+      })
+      queryController.__set__("deleter",{deletePatient:async function(){
+        return {success:true}
+      }})
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(true);
+    })
+    it("Problem with token return",async function(){
+      queryController.__set__("checkIfPatientsTestsAreEdited",async function(){
+        return false;
+      })
+      queryController.__set__("returnToken",async function(){
+        return {success:false}
+      })
+      queryController.__set__("deleter",{deletePatient:async function(){
+        return {success:true}
+      }})
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(false);
+    })
+    it("Problem with checkIfPatientsTestsAreEdited",async function(){
+      queryController.__set__("checkIfPatientsTestsAreEdited",async function(){
+        return {success:false, error:"STUBBED ERROR"};
+      })
+      queryController.__set__("returnToken",async function(){
+        return {success:false}
+      })
+      queryController.__set__("deleter",{deletePatient:async function(){
+        return {success:true}
+      }})
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(false);
+    })
+    it("Patinet's tests being edited",async function(){
+      queryController.__set__("checkIfPatientsTestsAreEdited",async function(){
+        return true;
+      })
+      queryController.__set__("returnToken",async function(){
+        return {success:false}
+      })
+      queryController.__set__("deleter",{deletePatient:async function(){
+        return {success:true}
+      }})
+      const response = await spy("500","5dkjdkjd",testUsername);
+      response.success.should.equal(false);
+    })
+  })
+})
 describe("Other functionality", function(){
-  context("Execute select query", function(){
+  context("Patient sorter", function(){
     let spy;
     beforeEach(()=>{
-        spy = sinon.spy(queryController.selectQueryDatabase);
+      spy = sinon.spy(queryController.sortPatinetProperties);
     })
-    it("Correctly execute select query (STUBBED)", async function(){
-      const dbController = {
-        selectQuery: async function() {
-          return {status: "OK", response:{rows:[1,2,3]}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("SQL");
+    it("Sort patinet - full data (patient,carer,hospital)",function(){
+      const response = spy({patient_no:"400", patient_name:"Mark", hospital_id:"300", carer_id:"600", relationship:"son", carer_name:"John"});
+      Object.keys(response).length.should.equal(3);
+      response.patient.patient_no.should.equal("400");
+      response.patient.patient_name.should.equal("Mark");
+      response.hospital.hospital_id.should.equal("300");
+      response.carer.carer_id.should.equal("600");
+      response.carer.relationship.should.equal("son");
+      response.carer.carer_name.should.equal("John");
+    })
+    it("Sort patinet - partial data (patient,hospital)",function(){
+      const response = spy({patient_no:"400", patient_name:"Mark", hospital_id:"300", hospital_name:"600", hospital_email:"here"});
+      Object.keys(response).length.should.equal(3);
+      response.patient.patient_no.should.equal("400");
+      response.patient.patient_name.should.equal("Mark");
+      response.hospital.hospital_id.should.equal("300");
+      response.hospital.hospital_name.should.equal("600");
+      response.hospital.hospital_email.should.equal("here");
+      Object.keys(response.carer).length.should.equal(0);
+    })
+    it("Sort patinet - partial data (patient,carer)",function(){
+      const response = spy({patient_no:"457", patient_name:"Steff", carer_id:"600", relationship:"father", carer_surname:"Smith"});
+      Object.keys(response).length.should.equal(3);
+      response.patient.patient_no.should.equal("457");
+      response.patient.patient_name.should.equal("Steff");
+      Object.keys(response.hospital).length.should.equal(0)
+      response.carer.carer_id.should.equal("600");
+      response.carer.relationship.should.equal("father");
+      response.carer.carer_surname.should.equal("Smith");
+    })
+    it("Sort patient - partial data (carer,hospital)",function(){
+      const response = spy({carer_id:"600", relationship:"father", carer_surname:"Smith",hospital_id:"300", hospital_name:"600", hospital_email:"here"});
+      Object.keys(response).length.should.equal(3);
+      Object.keys(response.patient).length.should.equal(0)
+      response.carer.carer_id.should.equal("600");
+      response.carer.relationship.should.equal("father");
+      response.carer.carer_surname.should.equal("Smith");
+      response.hospital.hospital_id.should.equal("300");
+      response.hospital.hospital_name.should.equal("600");
+      response.hospital.hospital_email.should.equal("here");
+    })
+  })
+  context("schedule Next Test", function() {
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.scheduleNextTest);
+    })
+    it("Schedule correctly next test base on data", async function(){
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:500, frequency:"2-W", completed_date:"2019-03-23", occurrences:5}]
+      }})
+      queryController.__set__("addTest", async function(){
+        return {success:true, response:{insertId:"501"}}
+      })
+      const response = await spy("500",testUsername);
       response.success.should.equal(true);
-      response.response[0].should.equal(1);
-      response.response[1].should.equal(2);
-      response.response[2].should.equal(3);
+      response.response.insertId.should.equal("501");
+      response.response.new_date.should.equal("20190406");
     })
-    it("Reject select query (STUBBED)", async function(){
-      const dbController = {
-        selectQuery: async function() {
-          return {status: "ERR", err:{error:"STUBBED ERROR"}}
+    it("Reject next test base on data", async function(){
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:500, frequency:"2-W", completed_date:"2019-03-23", occurrences:5}]
+      }})
+      queryController.__set__("addTest", async function(){
+        return {success:false, response:{error:"STUBBED ERROR"}}
+      })
+      const response = await spy("500",testUsername);
+      response.success.should.equal(false);
+      response.response.error.should.equal("STUBBED ERROR");
+    })
+    it("No new test - frequency null", async function(){
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:500, frequency:null, completed_date:"2019-03-23", occurrences:5}]
+      }})
+      const response = await spy("500",testUsername);
+      response.success.should.equal(true);
+      response.response.should.equal("No new tests");
+    })
+    it("No new test - occurences 0", async function(){
+      queryController.__set__("getTest", async function(){
+        return {success:true, response:[{test_id:500, frequency:"2-W", completed_date:"2019-03-23", occurrences:0}]
+      }})
+      const response = await spy("500",testUsername);
+      response.success.should.equal(true);
+      response.response.should.equal("No new tests");
+    })
+  })
+  context("Get next due date", function(){
+    let spy;
+    beforeEach(()=>{spy = sinon.spy(queryController.getNextDueDate);})
+      it("Next test on next Saturday", function(){
+        const response = spy("1-W","2019-03-23");
+        response.should.equal("20190330")
+      })
+      it("Next test on next Saturday (Friday passed)", function(){
+        const response = spy("1-W","2019-03-22");
+        response.should.equal("20190330")
+      })
+      it("Next test on next Saturday (Sunday passed)", function(){
+        const response = spy("1-W","2019-03-24");
+        response.should.equal("20190406")
+      })
+      it("Next test on next Saturday (Monday passed)", function(){
+        const response = spy("1-W","2019-03-18");
+        response.should.equal("20190330")
+      })
+  })
+  context("Check if Patients' Tests are Being Edited", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.checkIfPatientsTestsAreEdited);
+    })
+    it("NO tests edited", async function(){
+      const selector = {
+        getPatientEditedTests:async function(){
+            return {success:true, response:[]}
         }
       }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("SQL");
-      response.success.should.equal(false);
+      queryController.__set__("selector",selector);
+      const response = await spy("500");
+      response.should.equal(false)
+    })
+    it("Tests being edited", async function(){
+      const selector = {
+        getPatientEditedTests:async function(){
+            return {success:true, response:[{test_id:1}]}
+        }
+      }
+      queryController.__set__("selector",selector);
+      const response = await spy("500");
+      response.should.equal(true)
+    })
+    it("Query Fail", async function(){
+      const selector = {
+        getPatientEditedTests:async function(){
+            return {success:false, response:{error:"STUBBED ERROR"}}
+        }
+      }
+      queryController.__set__("selector",selector);
+      const response = await spy("500");
+      response.success.should.equal(false)
       response.response.error.should.equal("STUBBED ERROR")
-    })
-  })
-  context("Execute insert query", function(){
-    let spy;
-    beforeEach(()=>{
-        spy = sinon.spy(queryController.insertQueryDatabase);
-    })
-    it("Correctly execute insert query (STUBBED)", async function(){
-      const dbController = {
-        insertQuery: async function() {
-          return {status: "OK", response:{insertId:"123", }}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("SQL");
-      response.success.should.equal(true);
-      response.response.insertId.should.equal("123");
-    })
-    it("Reject insert query - random error (STUBBED)", async function(){
-      const dbController = {
-        insertQuery: async function() {
-          return {status: "ERR", err:{type:"STUBBED", error:"STUBBED ERROR"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("SQL");
-      response.success.should.equal(false);
-    })
-    it("Reject insert query - SQL error (STUBBED)", async function(){
-      const dbController = {
-        insertQuery: async function() {
-          return {status: "ERR", err:{type:"SQL Error", error:"STUBBED ERROR"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("SQL");
-      response.success.should.equal(false);
-    })
-  })
-  context("Execute update query", function(){
-    let spy;
-    beforeEach(()=>{
-        spy = sinon.spy(queryController.updateQueryDatabase);
-    })
-    it("Correctly execute update query (STUBBED)", async function(){
-      const dbController = {
-        updateQuery: async function() {
-          return {status: "OK",response:{query: "OK", affectedRows: 1,changedRows: 1}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("Table","id","SQL","2222","user");
-      response.success.should.equal(true);
-      response.response.query.should.equal("OK");
-    })
-    it("Reject update query - random error (STUBBED)", async function(){
-      const dbController = {
-        updateQuery: async function() {
-          return {status: "ERR", err:{type:"STUBBED", error:"STUBBED ERROR"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("Table","id","SQL","2222","user");
-      response.success.should.equal(false);
-    })
-    it("Reject update query - SQL error (STUBBED)", async function(){
-      const dbController = {
-        updateQuery: async function() {
-          return {status: "ERR", err:{type:"SQL Error", error:"STUBBED ERROR"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("Table","id","SQL","2222","user");
-      response.success.should.equal(false);
-    })
-  })
-  context("Execute delete query", function(){
-    let spy;
-    beforeEach(()=>{
-        spy = sinon.spy(queryController.deleteQueryDatabase);
-    })
-    it("Correctly execute delete query (STUBBED)", async function(){
-      const dbController = {
-        deleteQuery: async function() {
-          return {status: "OK", response: {query: "OK",  affectedRows: 1}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("table","id","sql", "actionUsername");
-      response.success.should.equal(true);
-      response.response.should.equal("Entry deleted");
-    })
-    it("Reject delete query - random error (STUBBED)", async function(){
-      const dbController = {
-        deleteQuery: async function() {
-          return {status: "ERR", err:{error:"STUBBED ERROR"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("table","id","sql", "actionUsername");
-      response.success.should.equal(false);
-      response.response.error.should.equal("STUBBED ERROR")
-    })
-    it("Reject delete query - SQL error (STUBBED)", async function(){
-      const dbController = {
-        deleteQuery: async function() {
-          return {status: "ERR", err:{type:"SQL Error", error:"STUBBED ERROR"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("table","id","sql", "actionUsername");
-      response.success.should.equal(false);
-    })
-  })
-  context("Prepare insert query", function(){
-    let spy;
-    beforeEach(()=>{
-        spy = sinon.spy(queryController.prepareInsertSQL);
-    })
-    it("Prepare Insert query 1", function() {
-      const sql = spy("Test", {test_id:"400", due_date:"2019-03-04"})
-      sql.should.equal("INSERT INTO Test(test_id,due_date) Values('400','2019-03-04');");
-    })
-    it("Prepare Insert query 2", function() {
-      const sql = spy("Test", {test_id:"400", due_date:"NULL"})
-      sql.should.equal("INSERT INTO Test(test_id,due_date) Values('400',NULL);");
-    })
-    it("Prepare Insert query 3", function() {
-      const sql = spy("Test", {test_id:"400", due_date:"2019-03-04", completed_date:"2019-04-04", patient_no:"400"})
-      sql.should.equal("INSERT INTO Test(test_id,due_date,completed_date,patient_no) Values('400','2019-03-04','2019-04-04','400');");
-    })
-    it("Prepare Insert query 4", function() {
-      const sql = spy("Test", {test_id:"400", due_date:"NULL", completed_date:"2019-04-04", patient_no:"NULL"})
-      sql.should.equal("INSERT INTO Test(test_id,due_date,completed_date,patient_no) Values('400',NULL,'2019-04-04',NULL);");
-    })
-    it("Prepare Insert query 5", function() {
-      const sql = spy("Test", {test_id:"NULL", due_date:"NULL", completed_date:"NULL", patient_no:"NULL"})
-      sql.should.equal("INSERT INTO Test(test_id,due_date,completed_date,patient_no) Values(NULL,NULL,NULL,NULL);");
-    })
-  })
-  context("Prepare delete query", function(){
-    let spy;
-    beforeEach(()=>{
-        spy = sinon.spy(queryController.prepareDeleteSQL);
-    })
-    it("Prepare Delete query 1", function() {
-      const sql = spy("Test", "test_id", "400")
-      sql.should.equal("DELETE FROM Test WHERE test_id='400' LIMIT 1;");
-    })
-    it("Prepare Delete query 2", function() {
-      const sql = spy("Patient", "patient_no", "500")
-      sql.should.equal("DELETE FROM Patient WHERE patient_no='500' LIMIT 1;");
-    })
-  })
-  context("Prepare update query", function(){
-    let spy;
-    beforeEach(()=>{
-        spy = sinon.spy(queryController.prepareUpdateSQL);
-    })
-    it("Prepare Update query 1", function() {
-      const sql = spy("Test", {test_id:"400", due_date:"NULL", completed_date:"2019-04-04", patient_no:"NULL"} , "test_id")
-      sql.should.equal("Update Test SET due_date = NULL, completed_date = '2019-04-04', patient_no = NULL WHERE test_id = '400';")
-    })
-    it("Prepare Update query 2", function() {
-      const sql = spy("Test", {test_id:"300", due_date:"NULL", completed_date:"NULL", patient_no:"NULL"} , "test_id")
-      sql.should.equal("Update Test SET due_date = NULL, completed_date = NULL, patient_no = NULL WHERE test_id = '300';")
-    })
-    it("Prepare Update query 3", function() {
-      const sql = spy("Test", {test_id:"300", due_date:"2020-12-12", completed_date:"NULL", patient_no:"NULL"} , "test_id")
-      sql.should.equal("Update Test SET due_date = '2020-12-12', completed_date = NULL, patient_no = NULL WHERE test_id = '300';")
-    })
-    it("Prepare Update query 4", function() {
-      const sql = spy("Test", {test_id:"NULL", due_date:"NULL", completed_date:"NULL", patient_no:"NULL"} , "test_id")
-      sql.should.equal("Update Test SET due_date = NULL, completed_date = NULL, patient_no = NULL WHERE test_id = NULL;")
-    })
-    it("Prepare Update query 5", function() {
-      const sql = spy("Test", {test_id:"NULL", due_date:"NULL", completed_date:"NULL", patient_no:"500"} , "test_id")
-      sql.should.equal("Update Test SET due_date = NULL, completed_date = NULL, patient_no = '500' WHERE test_id = NULL;")
-    })
-  })
-  context("Request token cancelation", function(){
-    let spy;
-    beforeEach(()=>{
-        spy = sinon.spy(queryController.returnToken);
-    })
-    it("Accept token cancelation request (STUBBED)", async function(){
-      const dbController = {
-        cancelEditing: async function() {
-          return {status: "OK", response: "Editing successfully cancelled."}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("Test","400","5220233920");
-      response.success.should.equal(true);
-      response.response.should.equal("Token cancelled")
-    })
-    it("Reject token cancelation request - random error (STUBBED)", async function(){
-      const dbController = {
-        cancelEditing: async function() {
-          return {status: "ERR", err: {error:"Stubbed error"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("Test","400","5220233920");
-      response.success.should.equal(false);
-      response.response.error.should.equal("Stubbed error")
-    })
-    it("Reject token cancelation request - SQL error (STUBBED)", async function(){
-      const dbController = {
-        cancelEditing: async function() {
-          return {status: "ERR", err:{type:"SQL Error", error:"STUBBED ERROR"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("Test","400","5220233920");
-      response.success.should.equal(false);
-      response.response.error.should.equal("STUBBED ERROR")
-    })
-  })
-  context("Request token", function(){
-    let spy;
-    beforeEach(()=>{
-        spy = sinon.spy(queryController.requestEditing);
-    })
-    it("Accept token request (STUBBED)", async function(){
-      const dbController = {
-        requestEditing: async function() {
-          return {status: "OK", response:{token: "3000"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("Test","400","5220233920");
-      response.should.equal("3000");
-    })
-    it("Reject token request (STUBBED)", async function(){
-      const dbController = {
-        requestEditing: async function() {
-          return {status: "ERR", err:{error:"STUBBED ERROR"}}
-        }
-      }
-      queryController.__set__("databaseController",dbController);
-      const response = await spy("Test","400","5220233920");
-      expect(typeof response).to.equal('undefined');
     })
   })
 })
 
-
-//=====================================
-//  HELPER FUNCTIONS BELOW:
-//=====================================
-
-
-async function stubbedErrorInsertTest(spy,data){
-  setFaultyInsert();
-  const response = await spy(data, testUsername);
-  spy.calledOnce.should.equal(true);
-  response.success.should.equal(false);
-}
-
-async function stubbedPositiveInsertTest(spy,data){
-  setPositiveInsert();
-  const response = await spy(data, testUsername);
-  spy.calledWith(data).should.equal(true);
-  spy.calledOnce.should.equal(true);
-  response.success.should.equal(true);
-}
-
-async function test(query,data=null){
-  let spy;
-  beforeEach(()=>{
-      spy = sinon.spy(query);
-  })
-  it("Should return error (STUBBED)", async function(){
-      stubbedErrorSelectTest(spy,data)
-  });
-  it("Should return all data (STUBBED)", async function(){
-      stubbedPositiveSelectTest(spy,data)
-  });
-}
-
-async function stubbedErrorSelectTest(spy,data=null){
-  const dbController = {
-    selectQuery: async function() {
-      return {status: "ERR", error:{ }}
-    }
-  }
-  queryController.__set__("databaseController",dbController);
-  const response = await spy(data);
-  if(data)
-  {
-    spy.calledWith(data).should.equal(true);
-  }
-  spy.calledOnce.should.equal(true);
-  response.success.should.equal(false);
-}
-
-async function stubbedPositiveSelectTest(spy,data=null){
-  const dbController = {
-    selectQuery: async function() {
-      return {status:"OK", response:{ rows:[]}}
-    }
-  }
-  queryController.__set__("databaseController",dbController);
-  const response = await spy(data);
-  if(data)
-  {
-    spy.calledWith(data).should.equal(true);
-  }
-  spy.calledOnce.should.equal(true);
-  response.success.should.equal(true);
-  response.response.length.should.equal(0);
-}
-
-function setFaultyInsert(){
-  const dbController = {
-    insertQuery: async function() {
-      return {status:"ERR", err: { type: "SQL error", sqlMessage: "stubbed SQL Message"}}
-    }
-  }
-  queryController.__set__("databaseController",dbController);
-}
-
-function setPositiveInsert(){
-  const dbController = {
-    insertQuery: async function() {
-      return {status:"OK", response: { insertId: "test_insert_id"}}
-    }
-  }
-  queryController.__set__("databaseController",dbController);
-}
-
-function setRejectUpdateQueryDatabase(){
-  const dbController = {
-    updateQuery: async function() {
-      return {status: "ERR", err: { type: "Invalid request.", cause: "stubbed error" }}
-    },
-    selectQuery: async function()
-    {
-      return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
-    }
-  }
-  queryController.__set__("databaseController",dbController);
-}
-
-function resetThePatientQueries(){
-  queryController.__set__("addPatient", queryController.addPatient)
-  queryController.__set__("addCarer", queryController.addCarer)
-  queryController.__set__("addHospital", queryController.addHospital)
-  queryController.__set__("deleteCarer", queryController.deleteCarer)
-  queryController.__set__("deleteHospital", queryController.deleteHospital)
-  queryController.__set__("editPatient",queryController.editPatient)
-  queryController.__set__("editHospital",queryController.editHospital)
+function resetQueryController(){
+  queryController.__set__("addCarer",queryController.addCarer);
   queryController.__set__("editCarer",queryController.editCarer)
-  queryController.__set__("requestEditing",queryController.requestEditing)
-}
-
-function setAcceptUpdateQueryDatabase(){
-  const dbController = {
-  updateQuery: async function() {
-    return {status: "OK", response:{affectedRows:1}}
-  },
-  selectQuery: async function()
-  {
-    return {status: "OK", response: {rows:[{test_id:"400", completed_status:"no", frequency:"4-D", occurrences:2, completed_date:new Date("2020-01-01")}]}}
-  }
-  }
-  queryController.__set__("databaseController",dbController);
+  queryController.__set__("deleteHospital",queryController.deleteCarer);
+  queryController.__set__("addHospital",queryController.addHospital);
+  queryController.__set__("editHospital",queryController.editHospital)
+  queryController.__set__("deleteHospital",queryController.deleteHospital);
+  queryController.__set__("editPatient",queryController.editPatient)
+  queryController.__set__("addPatient",queryController.addPatient);
+  queryController.__set__("getPatient",queryController.getPatient)
+  queryController.__set__("getTest",queryController.getTest);
+  queryController.__set__("addTest",queryController.addTest);
+  queryController.__set__("deleteTest",queryController.deleteTest);
+  queryController.__set__("getUser",queryController.getUser);
+  queryController.__set__("requestEditing",queryController.requestEditing);
+  queryController.__set__("returnToken",queryController.returnToken);
+  queryController.__set__("checkIfPatientsTestsAreEdited",queryController.checkIfPatientsTestsAreEdited)
 }
