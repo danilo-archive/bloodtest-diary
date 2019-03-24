@@ -19,7 +19,7 @@ const Container = styled.div`
     width: auto;
     position: relative;
     top: 20px;
-    margin: 1% 1% 1% 1%;
+    padding: 1% 1% 1% 1%;
 
 
   background: rgb(244,249,253);
