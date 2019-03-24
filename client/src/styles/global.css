@@ -49,12 +49,6 @@
   button {
       font-family: Rajdhani, sans-serif;
   }
-
-
-
-  ::selection {
-    color: #0e4f54;
-  }
   
   ::-webkit-scrollbar {
     width: 5px;
