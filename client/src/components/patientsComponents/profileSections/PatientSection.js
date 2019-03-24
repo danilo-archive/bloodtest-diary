@@ -29,7 +29,7 @@ export default class PatientSection extends React.Component {
         const content = (
             <>
                 <InputCell
-                    field={"Patient id"}
+                    field={"Patient number:"}
                     id={"patient_id"}
                     disabled={this.editable}
                     value={this.props.patientId}
@@ -37,34 +37,36 @@ export default class PatientSection extends React.Component {
                 />
 
                 <InputCell
-                    field={"Name"}
+                    field={"Name:"}
                     id={"patient_name"}
                     value={this.props.patientName}
                     onChange={this.onInputChange}
                 />
                 <InputCell
-                    field={"Surname"}
+                    field={"Surname:"}
                     id={"patient_surname"}
                     value={this.props.patientSurname}
                     onChange={this.onInputChange}
                 />
                 <InputCell
-                    field={"Email"}
+                    field={"Email:"}
                     id={"patient_email"}
                     value={this.props.patientEmail}
                     onChange={this.onInputChange}
+                    placeholder={"(optional)"}
                 />
                 <InputCell
-                    field={"Phone"}
+                    field={"Phone:"}
                     id={"patient_phone"}
                     value={this.props.patientPhone}
                     onChange={this.onInputChange}
+                    placeholder={"(optional)"}
                 />
         </>
         );
         return (
             <SectionContainer
-                title={"Patient info"}
+                title={"Patient details"}
                 content={content}
             />
         );

@@ -49,6 +49,7 @@ const DeleteButton = styled.button`
   text-decoration: none;
   border-radius: 10px;
   margin: 3%;
+  font-size: 130%;
 
   height: 44px;
   min-width: 100px;
@@ -68,6 +69,7 @@ const CloseButton = styled.button`
   text-align: center;
   text-decoration: none;
   border-radius: 10px;
+  font-size: 130%;
 
   height: 44px;
   min-width: 100px;
@@ -89,6 +91,7 @@ const SaveButton = styled.button`
   text-decoration: none;
   margin: 3%;
   border-radius: 10px;
+  font-size: 130%;
 
   height: 44px;
   min-width: 100px;
@@ -132,25 +135,24 @@ class PatientProfile extends Component {
     }
 
     deletePatient = () => {
-        console.log("deleting");
         this.serverConnect.deletePatient(this.state.patientId, this.state.editToken, res => {
             if (res.success){
-                openAlert("Patient successfully deleted", "confirmationAlert",
-                "Ok", () => {
+                openAlert("Patient successfully deleted.", "confirmationAlert",
+                "OK", () => {
                     this.props.closeModal();
                 });
             }else{
-                openAlert("Something went wrong while deleating", "confirmationAlert", "Ok", () => {return});
+                openAlert("Something went wrong while deleting the patient.", "confirmationAlert", "OK", () => {return});
             }
         });
     };
 
     deleteOption = () => {
-        openAlert("Are you sure you want to delete this patient ?", "optionAlert", "Yes", this.deletePatient, "No", () => {return});
+        openAlert("Are you sure you want to delete this patient?", "optionAlert", "Yes", this.deletePatient, "No", () => {return});
     };
 
     onDeleteTestClick = testId => {
-        openAlert("Are you sure you want to delete this Test ?", "optionAlert", "Yes", () => {this.deleteTest(testId)}, "No", () => {return});
+        openAlert("Are you sure you want to delete this test?", "optionAlert", "Yes", () => {this.deleteTest(testId)}, "No", () => {return});
     };
 
     deleteTest = testId => {
@@ -159,13 +161,13 @@ class PatientProfile extends Component {
                 this.serverConnect.unscheduleTest(testId, res.token, res2 => {
                     if (res2.success){
                         this.loadTests();
-                        openAlert("Test successfully deleted", "confirmationAlert", "Ok", () => {return});
+                        openAlert("Test successfully deleted.", "confirmationAlert", "OK", () => {return});
                     }else{
-                        openAlert("Something went wrong", "confirmationAlert", "Ok", () => {return});
+                        openAlert("Something went wrong.", "confirmationAlert", "OK", () => {return});
                     }
                 });
             }else{
-                this.props.handleError(res, "This test is currently being edited")
+                this.props.handleError(res, "Somebody is currently editing this test.")
             }
         });
     };
@@ -218,26 +220,26 @@ class PatientProfile extends Component {
 
     checkValues () {
         if (emptyCheck(this.state.patientName) || emptyCheck(this.state.patientSurname)) {
-            return {correct: false, message: "Patient name and surname are compulsory"};
+            return {correct: false, message: "Please provide patient name and surname."};
         }
         if (!emailCheck(this.state.patientEmail)) {
-            return {correct: false, message: "Wrong format of patient's email"};
+            return {correct: false, message: "Invalid format of the patient's email."};
         }
         if (!this.state.noCarer) {
             if (emptyCheck(this.state.carerEmail)) {
-                return {correct: false, message: "Carer's email is compulsory"};
+                return {correct: false, message: "Please provide the carer's email."};
             }
             if (!emailCheck(this.state.carerEmail)) {
-                return {correct: false, message: "Wrong format of carer's email"};
+                return {correct: false, message: "Invalid format of the carer's email."};
             }
 
         }
         if (!this.state.localHospital) {
             if (emptyCheck(this.state.hospitalEmail)){
-                return {correct: false, message: "Hospital's email is compulsory"};
+                return {correct: false, message: "Please provide the hospital's email."};
             }
             if (!emailCheck(this.state.hospitalEmail)) {
-                return {correct: false, message: "Wrong format of hospital's email"};
+                return {correct: false, message: "Invalid format of the hospital's email."};
             }
 
         }
@@ -247,7 +249,7 @@ class PatientProfile extends Component {
     onSaveClick = () => {
         const result = this.checkValues();
         if (!result.correct) {
-            openAlert(result.message, "confirmationAlert", "Ok");
+            openAlert(result.message, "confirmationAlert", "OK");
             return;
         }
 
@@ -288,12 +290,12 @@ class PatientProfile extends Component {
             carer_id: carerInfo.carerId, carer_name: carerInfo.carerName, carer_surname: carerInfo.carerSurname, carer_email: carerInfo.carerEmail, carer_phone: carerInfo.carerPhone,
             relationship: carerInfo.carerRelationship, isAdult: isAdult
         };
-        console.log({newInfo});
+        //TODO : save patient "age"
         this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
             if (res.success) {
-                openAlert("Patient edited successfully", "confirmationAlert", "Ok", () => {this.props.closeModal()});
+                openAlert("Patient details updated successfully.", "confirmationAlert", "OK", () => {this.props.closeModal()});
             } else {
-                openAlert("An error occurred while editing patient", "confirmationAlert", "Ok");
+                openAlert("An error occurred while updating the patient.", "confirmationAlert", "OK");
             }
         });
     };
@@ -373,9 +375,9 @@ class PatientProfile extends Component {
                         />
                     </SwitchContainer>
                     <ButtonContainer>
-                        <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
-                        <DeleteButton onClick={this.deleteOption}>Delete patient</DeleteButton>
                         <SaveButton onClick={this.onSaveClick}>Save changes</SaveButton>
+                        <DeleteButton onClick={this.deleteOption}>Delete patient</DeleteButton>
+                        <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                     </ButtonContainer>
 
                 </Container>

@@ -12,16 +12,15 @@ const Container = styled.div`
   max-height: calc(100vh - 100px);
   overflow: scroll;
   width: 300px;
-
-  divider {
-    display: block;
-    margin-before: 0.5em;
-    margin-after: 0.5em;
-    margin-start: auto;
-    margin-end: auto;
-    overflow: hidden;
-    border: solid 0.5px #0d4e56;
-  }
+`;
+const Divider = styled.div`
+  display: block;
+  margin-before: 0.5em;
+  margin-after: 0.5em;
+  margin-start: auto;
+  margin-end: auto;
+  overflow: hidden;
+  border: solid 0.5px #0d4e56;
 `;
 
 export default class SettingsPanel extends Component {
@@ -41,9 +40,9 @@ export default class SettingsPanel extends Component {
           return (
             <>
               <UsersPanel/>
-              <divider />
+              <Divider />
               <Credentials/>
-              <divider />
+              <Divider />
               <PrefrencesPanel/>
             </>
           );
@@ -51,7 +50,7 @@ export default class SettingsPanel extends Component {
           return (
             <>
               <Credentials/>
-              <divider />
+              <Divider />
               <PrefrencesPanel/>
             </>
           )

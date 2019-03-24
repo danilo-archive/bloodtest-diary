@@ -33,7 +33,6 @@ export default class InfoBox extends React.Component {
             text={this.props.text}
           />
         </Container>
-        <hr />
       </>
     );
   }

@@ -14,7 +14,6 @@ const { app } = require('electron').remote;
         const maxButton = document.getElementById('max-button');
         const closeButton = document.getElementById('close-button');
 
-        const restartButton = document.getElementById('restart-button');
 
         minButton.addEventListener("click", event => {
             window.minimize();
@@ -29,9 +28,5 @@ const { app } = require('electron').remote;
             window.close();
         });
 
-        restartButton.addEventListener("click", event => {
-          app.relaunch();
-          app.exit(0);
-        });
     }
 })();

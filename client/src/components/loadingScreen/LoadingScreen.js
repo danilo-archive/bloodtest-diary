@@ -23,8 +23,8 @@ export default class extends Component{
               <div className={"alertWindow"}>
                 <LoadingAnimation/>
                 <div className={"dialog"}>
-                  <Title>Connection to server lost...</Title>
-                  <Message>If the problem persists contact your IT department.</Message>
+                  <Title>Waiting for a server response...</Title>
+                  <Message>(If the problem persists, please, contact your IT department.)</Message>
                 </div>
               </div>
         )

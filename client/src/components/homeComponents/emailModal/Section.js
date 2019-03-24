@@ -46,7 +46,7 @@ export default props => {
     >
       {test.lastReminder ? (
         <PillDiv className="pill">
-          Last Reminder:{" "}
+          Last reminder:{" "}
           {formatDate(new Date(test.lastReminder), "dS mmm yyyy")}
         </PillDiv>
       ) : (
@@ -90,12 +90,12 @@ export default props => {
               <Tooltip
                 title={
                   props.response.failedBoth.find(id => test.testId === id)
-                    ? "Failed to send to both patient and hospital"
+                    ? "Failed to send to both patient and hospital."
                     : props.response.failedPatient.find(
                         id => test.testId === id
                       )
-                    ? "Failed to send to patient, successfully sent to hospital"
-                    : "Failed to send to hospital, successfully sent to patient"
+                    ? "Failed to send to patient, successfully sent to hospital."
+                    : "Failed to send to hospital, successfully sent to patient."
                 }
                 position="right-end"
                 trigger="mouseenter"

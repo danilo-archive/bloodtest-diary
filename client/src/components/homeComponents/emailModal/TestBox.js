@@ -65,7 +65,7 @@ export default props => {
         <TextRadioButton
           checked={props.selected}
           onCheck={checked => props.onAllCheck(checked)}
-          text="Select All"
+          text="Select all"
         />
       ) : props.noCheck ? (
         ``

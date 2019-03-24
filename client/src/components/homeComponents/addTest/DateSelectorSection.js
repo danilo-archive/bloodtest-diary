@@ -42,6 +42,7 @@ const DateInput = styled.input`
   color:white;
   height: 8%;
   font-weight: bold;
+  font-size: 130%;
 
   &:hover {
     background-color: #018589;
@@ -86,10 +87,10 @@ export default props => {
         />
 
         <SecondHalfDiv>
-          <TitleTab color="#0b999d">Observations</TitleTab>
+          <TitleTab color="#0b999d">Notes</TitleTab>
           <TextArea
             onChange={event => props.onObservationsChange(event.target.value)}
-            placeholder={"Enter observations here ..."}
+            placeholder={"(optional)"}
           />
         </SecondHalfDiv>
       </Container>
