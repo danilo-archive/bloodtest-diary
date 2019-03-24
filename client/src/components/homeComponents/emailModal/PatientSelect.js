@@ -25,7 +25,7 @@ const Container = styled.div`
   position: relative;
   top: -20px;
   ${props => (props.direction === "left" ? "left: -0px;" : "")}
-  height: 75%;
+  height: 72%;
   width: ${props => (props.direction === "center" ? "100%" : "49.8%")};
 
   background: white;

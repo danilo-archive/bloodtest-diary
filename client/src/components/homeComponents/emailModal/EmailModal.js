@@ -119,6 +119,15 @@ export default class EmailModal extends Component {
     }
   };
   submit = () => {
+    if (this.state.selected.length === 0) {
+      openAlert(
+        "Please select at least one patient to contact",
+        "confirmationAlert",
+        "Ok",
+        () => {}
+      );
+      return;
+    }
     this.setState({ awaitResponse: true });
     let idList = this.state.selected.map(patient => patient.id);
     this.serverConnect.sendReminders(idList, res => {
