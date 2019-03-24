@@ -16,6 +16,7 @@ const DataContainer = styled.div`
 
 const ButtonContainer = styled.div`
   width: 100%;
+  background: white;
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
@@ -60,6 +61,11 @@ const AddButton = styled.button`
     color: white;
   }
   outline: none;
+`;
+
+const Hr = styled.hr`
+  width: 99%;
+  background: white;
 `;
 
 export default class AddTestView extends React.Component {
@@ -198,7 +204,7 @@ export default class AddTestView extends React.Component {
           style={{
             width: "42rem",
             height: "36rem",
-            background: "rgba(244, 244, 244,0.7)"
+            background: "white"
           }}
         >
           <TitleTab onClose={this.props.closeModal} main={true}>
@@ -265,11 +271,8 @@ export default class AddTestView extends React.Component {
                 })
               }
             />
-            <ButtonContainer
-              style={{
-                padding: "4px 0 4px 0"
-              }}
-            >
+            <Hr/>
+            <ButtonContainer>
               <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
               <AddButton onClick={this.onDoneClick}>Add test</AddButton>
             </ButtonContainer>
