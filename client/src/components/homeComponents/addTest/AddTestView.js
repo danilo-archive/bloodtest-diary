@@ -204,7 +204,7 @@ export default class AddTestView extends React.Component {
           style={{
             width: "42rem",
             height: "36rem",
-            background: "rgba(244, 244, 244,0.7)"
+            background: "white"
           }}
         >
           <TitleTab onClose={this.props.closeModal} main={true}>
