@@ -115,7 +115,7 @@ export default props => {
       <TextRadioButton
         checked={props.noRepeat}
         onCheck={props.onCheck}
-        text="Does not repeat"
+        text="Do not repeat"
         style={{ margin: "auto" }}
       />
     </div>

@@ -125,11 +125,10 @@ export default class PatientSelect extends React.Component {
               <Label
                 style={{
                   transform: "translate(0,0)",
-                  margin: "0rem 1rem",
                   color: "black"
                 }}
               >
-                Show ID
+                Show ID {" "}
               </Label>
               <Switch
                   margin={"0 0 0 50%"}

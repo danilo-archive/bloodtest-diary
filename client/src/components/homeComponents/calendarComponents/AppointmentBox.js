@@ -111,7 +111,7 @@ const RightClickMenu = props => {
     return(
         <Menu id={props.id} style={{position: "absolute", zIndex: "4", fontSize: "1rem"}}>
         <Test>
-           <Item onClick={() => {props.editTest(props.testId)}}>Edit test</Item>
+           <Item onClick={() => {props.editTest(props.testId)}}>Edit</Item>
            </Test>
            <Item onClick={() => {props.editPatient(props.patientNo)}}>Patient profile</Item>
            <Separator />

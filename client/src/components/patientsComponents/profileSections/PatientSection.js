@@ -53,6 +53,7 @@ export default class PatientSection extends React.Component {
                     id={"patient_email"}
                     value={this.props.patientEmail}
                     onChange={this.onInputChange}
+                    placeholder={"(optional)"}
                 />
                 <InputCell
                     field={"Phone:"}
