@@ -17,6 +17,10 @@ describe("Test queries", function(){
   let test3_id;
   let test4_id;
   let test5_id;
+  let test6_id;
+  const nowDate = new Date();
+  nowDate.setMinutes(nowDate.getMinutes() + 30);
+  const expires = dateFormat(nowDate, "yyyymmddHHMMss");
   //Insert:
   //4 patients: 3 adults, 1 kid
   //1 hospital
@@ -25,12 +29,16 @@ describe("Test queries", function(){
   //5 tests
   before(async () => {
       const database = new Database(databaseConfig);
-      await database.query("DELETE FROM User WHERE username LIKE '%USERNAME%TEST'")
-      await database.query("DELETE FROM Patient WHERE patient_no LIKE '%Patient%TEST'")
-      await database.query("INSERT INTO Hospital (hospital_name, hospital_email) VALUES ('Hospital1', 'test@email')").then((result) => {
+      await database.query("DELETE FROM ActionLog WHERE username LIKE 'USERNAME%TEST'")
+      await database.query("DELETE FROM EditTokens WHERE token LIKE 'TOKEN%TEST'")
+      await database.query("DELETE FROM User WHERE username LIKE 'USERNAME%TEST'")
+      await database.query("DELETE FROM Carer WHERE carer_name LIKE 'Carer%TEST'")
+      await database.query("DELETE FROM Hospital WHERE hospital_name LIKE 'Hospital%TEST'")
+      await database.query("DELETE FROM Patient WHERE patient_no LIKE 'Patient%TEST'")
+      await database.query("INSERT INTO Hospital (hospital_name, hospital_email) VALUES ('Hospital1TEST', 'test@email')").then((result) => {
                       hospital_id = result.insertId;
       })
-      await database.query("INSERT INTO Carer (carer_name, carer_email) VALUES ('Carer1', 'test2@email')").then((result) => {
+      await database.query("INSERT INTO Carer (carer_name, carer_email) VALUES ('Carer1TEST', 'test2@email')").then((result) => {
                       carer_id = result.insertId;
       })
       await database.query("INSERT INTO User (username,hashed_password,salt,iterations,recovery_email) VALUES ('USERNAME1TEST','hashed_password','salty salt','1001','recovery_email@gmail.com')")
@@ -54,16 +62,19 @@ describe("Test queries", function(){
       await database.query(`INSERT INTO Test (patient_no,due_date,frequency) VALUES ('Patient2TEST','20180319','1-W')`).then((result) => {
                       test5_id = result.insertId;
       })
+      await database.query(`INSERT INTO EditTokens VALUES ('TOKEN2TEST', 'Test', ${test1_id}, ` + expires + `)`)
       await database.close();
   });
-  after(async() => {
-    after(async () => {
+  after(async () => {
         const database = new Database(databaseConfig);
-        await database.query("DELETE FROM User WHERE username LIKE '%USERNAME%TEST'")
-        await database.query("DELETE FROM Patient WHERE patient_no LIKE '%Patient%TEST'")
+        await database.query("DELETE FROM ActionLog WHERE username LIKE 'USERNAME%TEST'")
+        await database.query("DELETE FROM EditTokens WHERE token LIKE 'TOKEN%TEST'")
+        await database.query("DELETE FROM User WHERE username LIKE 'USERNAME%TEST'")
+        await database.query("DELETE FROM Carer WHERE carer_name LIKE 'Carer%TEST'")
+        await database.query("DELETE FROM Hospital WHERE hospital_name LIKE 'Hospital%TEST'")
+        await database.query("DELETE FROM Patient WHERE patient_no LIKE 'Patient%TEST'")
         await database.close();
-    });
-  })
+  });
   context("Selects", function(){
     it("Get all patients (ADULTS)", async function(){
       const response = await queryController.getAllPatients(true);
@@ -238,5 +249,139 @@ describe("Test queries", function(){
       response.success.should.equal(true);
     })
 
+  })
+  context("Inserts",function(){
+    it("Add User2", async function(){
+      const response = await queryController.addUser({username:"USERNAME2TEST",hashed_password:"aaa",recovery_email:"gmail"},"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Add User1", async function(){
+      const response = await queryController.addUser({username:"USERNAME1TEST",hashed_password:"aaa",recovery_email:"gmail"},"USERNAME1TEST")
+      response.success.should.equal(false);
+    })
+    it("Add Test6", async function(){
+      const response = await queryController.addTest({patient_no:"Patient2TEST",due_date:"19700101"},"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Add Test7", async function(){
+      const response = await queryController.addTest({due_date:"19700101"},"USERNAME1TEST")
+      response.success.should.equal(false);
+    })
+    it("Add Patient6", async function(){
+      const response = await queryController.addPatient({patient_no:"Patient6TEST"},"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Add Patient3", async function(){
+      const response = await queryController.addPatient({patient_no:"Patient3TEST"},"USERNAME1TEST")
+      response.success.should.equal(false);
+    })
+    it("Add Carer3", async function(){
+      const response = await queryController.addCarer({carer_name:"Carer3TEST"},"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Add Carer1", async function(){
+      const response = await queryController.addCarer({carer_name:"Carer2TEST"},"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Add Hospital2", async function(){
+      const response = await queryController.addHospital({hospital_name:"Hospital2TEST"},"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Add Hospital3", async function(){
+      const response = await queryController.addHospital({hospital_name:"Hospital3TEST"},"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Add Patient7 Extended", async function(){
+      const response = await queryController.addPatientExtended({patient_no:"Patient7TEST",carer_name:"Carer6TEST",hospital_name:"Hospital7TEST"},"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Add Patient8 Extended", async function(){
+      const response = await queryController.addPatientExtended({patient_no:"Patient8TEST",hospital_name:"Hospital9TEST"},"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Add Patient9 Extended", async function(){
+      const response = await queryController.addPatientExtended({patient_no:"Patient9TEST",carer_name:"Carer9TEST"},"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+  })
+
+  context("Updates",function(){
+    afterEach(async () => {
+          const database = new Database(databaseConfig);
+          await database.query("DELETE FROM EditTokens WHERE token LIKE 'TOKEN%TEST'")
+          await database.close();
+    });
+    it("Edit Patient2", async function(){
+      const token = await queryController.requestEditing("Patient",'Patient2TEST',"USERNAME1TEST")
+      const response = await queryController.editPatient({patient_no:"Patient2TEST", patient_name:"GARY"},token,"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Edit Patient6", async function(){
+      const token = await queryController.requestEditing("Patient",'Patient6TEST',"USERNAME1TEST")
+      const response = await queryController.editPatient({patient_no:"Patient6TEST", patient_name:"GARY"},token,"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Edit Patient7 Extended",async function(){
+      const token = await queryController.requestEditing("Patient",'Patient7TEST',"USERNAME1TEST")
+      const response = await queryController.editPatientExtended({patient_no:"Patient7TEST", patient_name:"MARK", carer_email:"EmailTEST123", hospital_email:"TEST123Email"},token,"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Edit Patient2 Extended (Adds carer)",async function(){
+      const token = await queryController.requestEditing("Patient",'Patient2TEST',"USERNAME1TEST")
+      const response = await queryController.editPatientExtended({patient_no:"Patient2TEST", patient_name:"BETHANY", carer_name:"Carer1TEST", hospital_name:"Hospital2TEST"},token,"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Edit Patient2 Extended (Adds hospital)",async function(){
+      const token = await queryController.requestEditing("Patient",'Patient2TEST',"USERNAME1TEST")
+      const response = await queryController.editPatientExtended({patient_no:"Patient2TEST", patient_name:"SALLY", carer_name:"Carer5TEST", hospital_name:"Hospital9TEST"},token,"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Edit Test5 add schedule new (Test 6)",async function(){
+      const token = await queryController.requestEditing("Test",test5_id,"USERNAME1TEST")
+      const response = await queryController.editTest(test5_id,{test_id:test5_id, completed_status:"yes",frequency:"W-2",occurrences:3},token,"USERNAME1TEST")
+      response.success.should.equal(true);
+      (typeof response.response.insertId).should.not.equal('undefined');
+    })
+    it("Edit Test5 add do not schedule new",async function(){
+      const token = await queryController.requestEditing("Test",test5_id,"USERNAME1TEST")
+      const response = await queryController.editTest(test5_id,{test_id:test5_id, completed_status:"no",frequency:"W-2",occurrences:3},token,"USERNAME1TEST")
+      response.success.should.equal(true);
+      (typeof response.response.insertId).should.equal('undefined');
+    })
+
+    it("Update last reminded Test5",async function(){
+      const token = await queryController.requestEditing("Test",test5_id,"USERNAME1TEST")
+      const response = await queryController.updateLastReminder(test5_id,token,"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+    it("Update last reminded Test3",async function(){
+      const token = await queryController.requestEditing("Test",test3_id,"USERNAME1TEST")
+      const response = await queryController.updateLastReminder(test3_id,token,"USERNAME1TEST")
+      response.success.should.equal(true);
+    })
+  })
+  context("Deletes", function(){
+    it("Delete Carer1", async function(){
+      const response = await queryController.deleteCarer(carer_id,'USERNAME1TEST');
+      response.success.should.equal(true);
+    })
+    it("Delete Hospital1", async function(){
+      const response = await queryController.deleteHospital(hospital_id,'USERNAME1TEST');
+      response.success.should.equal(true);
+    })
+    it("Delete Patient1TEST",async function(){
+      const response = await queryController.deletePatient("Patient1TEST","heejrjew",'USERNAME1TEST');
+      response.success.should.equal(false);
+    })
+    it("Delete Patient3TEST",async function(){
+      const token = await queryController.requestEditing("Patient","Patient3TEST","USERNAME1TEST")
+      const response = await queryController.deletePatient("Patient3TEST",token,'USERNAME1TEST');
+      response.success.should.equal(true);
+    })
+    it("Unschedule TEST4",async function(){
+      const token = await queryController.requestEditing("Test",test4_id,"USERNAME1TEST")
+      const response = await queryController.unscheduleTest(test4_id,token,'USERNAME1TEST');
+      response.success.should.equal(true);
+    })
   })
 })

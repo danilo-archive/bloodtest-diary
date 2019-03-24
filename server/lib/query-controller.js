@@ -476,10 +476,6 @@ async function addTest(json, actionUsername) {
  * @param {string} actionUsername The user who issued the request.
  * Obligatory properties within JSON
  * @property patient_no
- * @property patient_name
- * @property patient_surname
- * @property hospital_id
- * @property carer_id
  * @return {JSON} result of the query - {success:Boolean}
  **/
 async function addPatient(json, actionUsername) {

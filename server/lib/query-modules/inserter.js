@@ -21,7 +21,7 @@ async function addUser(json, actionUsername) {
   const hash = authenticator.produceHash(json.hashed_password, iterations, salt);
   const user = {
     username: json.username,
-   isAdmin: json.isAdmin,
+   isAdmin: (json.isAdmin) ? json.isAdmin : "no",
    salt: salt,
    iterations: iterations,
    hashed_password: hash,

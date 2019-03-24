@@ -48,7 +48,7 @@ describe("Insert queries tests", function(){
         stubbedPositiveInsertTest(spy,{username:testUsername,hashed_password:"21828728218",email:"email@email.com"})
       })
       it("Should reject new User (STUBBED)", async function() {
-        stubbedErrorInsertTest(spy,{username:testUsername,hashed_password:"21828728218",email:"email@email.com"})
+        stubbedErrorInsertTest(spy,{username:testUsername,isAdmin:"yes",hashed_password:"21828728218",email:"email@email.com"})
       })
     })
     context("Add new Patient", function(){
