@@ -54,6 +54,7 @@ export default class EditTestView extends React.Component {
     this.state = {
       ready: false
     };
+    this.cachedCompletedDate = null;
     this.init();
   }
 
@@ -122,9 +123,19 @@ export default class EditTestView extends React.Component {
     }
   }  
 
+  onStatusCheck = (status, checked) => {
+    if (checked) {
+      if (status === "pending"){
+        this.cachedCompletedDate = this.state.test.date.completedDate;
+        this.setState({ test: { ...this.state.test, status, date: {...this.state.test.date, completedDate: null}}});
+      }else{
+        this.setState({ test: { ...this.state.test, status, date: {...this.state.test.date, completedDate: this.cachedCompletedDate}}});
+      }
+      
+    }
+  }
+
   setCompletedDate = (day) => {
-    console.log(day);
-    console.log(this.state.test.date.dueDate);
     let newStatus = this.state.test.status;
     if (this.state.test.status === "pending"){
       newStatus = "completed";
@@ -170,6 +181,7 @@ export default class EditTestView extends React.Component {
       test_id: test.id,
       patient_no: patient.id,
       due_date: dateformat(new Date(test.date.dueDate), "yyyy-mm-dd"),
+      completed_date: dateformat(new Date(test.date.completedDate), "yyyy-mm-dd"),
       frequency: freq,
       occurrences: occur,
       completed_status:
@@ -372,11 +384,7 @@ export default class EditTestView extends React.Component {
             <hr />
             <StatusSetter
               currentStatus={this.state.test.status}
-              onStatusCheck={(status, checked) => {
-                if (checked) {
-                  this.setState({ test: { ...this.state.test, status } });
-                }
-              }}
+              onStatusCheck={this.onStatusCheck}
             />
             <hr />
             <div >
@@ -404,4 +412,4 @@ export default class EditTestView extends React.Component {
       ``
     );
   }
-}
+ }
