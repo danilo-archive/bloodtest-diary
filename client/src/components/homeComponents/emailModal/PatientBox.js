@@ -61,6 +61,7 @@ export default props => {
   return (
     <>
       <Box>
+        {props.failed ? <TimePill>{props.failed}</TimePill> : ``}
         {props.patientName}
         <SelectButton
           selected={props.selected}
