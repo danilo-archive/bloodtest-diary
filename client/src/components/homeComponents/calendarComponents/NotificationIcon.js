@@ -33,7 +33,7 @@ export default props => {
         onClick={props.onClick}
       >
         <Label
-          style={{ left: "51%", top: "63%" }}
+          style={props.isPlus ? { left: "51%", top: "63%" } : { left: "48%", top : "58%"}}
           fontSize={props.fontSize || "23px"}
         >
           {props.text ? props.text : ``}
