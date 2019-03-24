@@ -174,6 +174,7 @@ class PatientProfile extends Component {
         this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
             if (res.success) {
                 const info = res.response[0];
+                console.log(info);
                 this.setState({
                     patientName: info.patient_name,
                     patientSurname: info.patient_surname,
@@ -189,6 +190,7 @@ class PatientProfile extends Component {
                     hospitalName: info.hospital_name,
                     hospitalEmail: info.hospital_email,
                     hospitalPhone: info.hospital_phone,
+                    isAdult: info.isAdult,
 
                     noCarer: info.carer_id ? false : true,
                     localHospital: info.hospital_id ? false : true,
@@ -279,15 +281,13 @@ class PatientProfile extends Component {
             }
         }
 
-
-        const {patientId, editToken, patientName, patientSurname, patientEmail, patientPhone} = this.state;
+        const {patientId, editToken, patientName, patientSurname, patientEmail, patientPhone, isAdult} = this.state;
         let newInfo = {
             patient_no: patientId, patient_name: patientName, patient_surname: patientSurname, patient_email: patientEmail, patient_phone: patientPhone,
             hospital_id: hospitalInfo.hospitalId, hospital_name: hospitalInfo.hospitalName, hospital_email: hospitalInfo.hospitalEmail, hospital_phone: hospitalInfo.hospitalPhone,
             carer_id: carerInfo.carerId, carer_name: carerInfo.carerName, carer_surname: carerInfo.carerSurname, carer_email: carerInfo.carerEmail, carer_phone: carerInfo.carerPhone,
-            relationship: carerInfo.carerRelationship
+            relationship: carerInfo.carerRelationship, isAdult: isAdult
         };
-        //TODO : save patient "age"
         console.log({newInfo});
         this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
             if (res.success) {
@@ -297,8 +297,6 @@ class PatientProfile extends Component {
             }
         });
     };
-
-
 
     render() {
         if (this.state.ready && this.state.readyTest) {
@@ -370,7 +368,8 @@ class PatientProfile extends Component {
                         <OptionSwitch
                             option1={"Under 12"}
                             option2={"12 or older"}
-                            onToggleClick={() => {console.log("editing patient with over/under 12")}}
+                            checked={this.state.isAdult === "yes"}
+                            onChange={() => this.setState(prevState => ({isAdult: prevState.isAdult === "yes" ? "no" : "yes"}))}
                         />
                     </SwitchContainer>
                     <ButtonContainer>

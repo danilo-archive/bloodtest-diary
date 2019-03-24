@@ -218,6 +218,7 @@ async function editPatient(newInfo, token, actionUsername) {
  */
 async function editPatientExtended(newInfo, token, actionUsername) {
     const patientResponse = await getPatient(newInfo.patient_no);
+    console.log(newInfo);
     if (!patientResponse.success) {
         return patientResponse;
     }

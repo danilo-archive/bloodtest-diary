@@ -28,6 +28,11 @@ const TableBody = styled.tbody`
     display: block;
     max-height: 87%; //change this to increase height of table
     overflow-y: scroll;
+    
+    ::-webkit-scrollbar:vertical {
+      display: initial;
+    }
+    
 `;
 
 const TableHead = styled.th`
