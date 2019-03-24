@@ -265,7 +265,11 @@ export default class AddTestView extends React.Component {
                 })
               }
             />
-            <ButtonContainer>
+            <ButtonContainer
+              style={{
+                padding: "4px 0 4px 0"
+              }}
+            >
               <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
               <AddButton onClick={this.onDoneClick}>Add test</AddButton>
             </ButtonContainer>

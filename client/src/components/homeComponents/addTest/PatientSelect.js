@@ -91,7 +91,7 @@ export default class PatientSelect extends React.Component {
         <ScrollBox
           style={{
             width: "100%",
-            height: "44%"
+            height: "55%"
           }}
         >
           <br />
