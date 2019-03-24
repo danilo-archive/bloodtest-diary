@@ -11,16 +11,27 @@ import { WaveLoading } from "styled-spinkit";
 import Button from "../editTest/Button";
 import dateformat from "dateformat";
 import TextRadioButton from "../editTest/TextRadioButton";
+
+const Hr = styled.hr`
+  border: 0;
+  margin-left: 5%;
+  clear: both;
+  display: block;
+  width: 90%;
+  background-color: #839595;
+  height: 1px;
+`;
 const Container = styled.div`
   position: relative;
   top: -20px;
   ${props => (props.direction === "left" ? "left: -0px;" : "")}
   height: 75%;
   width: ${props => (props.direction === "center" ? "100%" : "49.8%")};
-  background: rgba(244, 244, 244, 0.7);
+
+  background: white;
   float: ${props => props.direction};
   ${props =>
-    props.direction === "right" ? "border-left: solid 1px grey;" : ""};
+    props.direction === "right" ? "border-left: #f5f5f5f5 1px solid;" : ""};
 `;
 const ShowID = styled.div`
   height: 10%;
@@ -121,7 +132,7 @@ export default class PatientSelect extends React.Component {
             }}
           />
         </div>
-        <hr />
+        <Hr />
         <ScrollBox
           style={{
             width: "100%",

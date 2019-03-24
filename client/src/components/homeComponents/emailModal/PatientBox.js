@@ -7,11 +7,15 @@ const Box = styled.div`
   position: relative;
   width: 80%;
   height: 20%;
-  background: white;
+  background: #eeeeee;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: auto;
+
+  :hover {
+    background: #f2f2f2f2;
+  }
 `;
 const IDBox = styled.div`
 position: absolute;
@@ -29,6 +33,8 @@ content: "Patient ID: ${props => props.id || "Not defined"}";
 const SelectButton = styled.button`
   position: absolute;
   appearance: none;
+  border: none;
+
   width: 10%;
   height: 100%;
   top: 0;
@@ -38,7 +44,7 @@ const SelectButton = styled.button`
   align-items: center;
   justify-content: center;
   color: white;
-  background: ${props => (props.selected ? "#5BC714" : `#0d4e56`)};
+  background: ${props => (props.selected ? "#5BC714" : `#0b999d`)};
   font-size: 1.25rem;
   cursor: pointer;
   outline: none;

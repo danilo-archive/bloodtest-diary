@@ -14,7 +14,7 @@ const Container = styled.div`
   position: relative;
   height: 592px;
   width: 635px;
-  background: rgba(244, 244, 244, 1);
+  background: white;
 `;
 
 const Scroll = styled(ScrollBox)`
