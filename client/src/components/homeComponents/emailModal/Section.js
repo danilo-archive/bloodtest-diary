@@ -60,8 +60,8 @@ export default props => {
         onCheck={(checked, user) => {
           props.select(checked, user);
         }}
-        selected={props.selected.find(exam => test.id === exam.testId)}
-        text={test.patientName}
+        selected={props.selected.find(exam => test.id === exam.id)}
+        text={test.name}
         dueDate={test.dueDate}
         testId={test.id}
       />
@@ -83,20 +83,18 @@ export default props => {
           <HorizontalLine style={{ opacity: "0.4" }} />
           {props.tests.map(test => {
             return props.response &&
-              !failedTests.find(failedId => test.testId === failedId) ? (
+              !failedTests.find(failedId => test.id === failedId) ? (
               ``
             ) : props.awaitResponse ? (
               <Tooltip
                 title={
-                  props.response.failedBoth.find(id => test.testId === id)
+                  props.response.failedBoth.find(id => test.id === id)
                     ? "Failed to send to both patient and hospital"
-                    : props.response.failedPatient.find(
-                        id => test.testId === id
-                      )
+                    : props.response.failedPatient.find(id => test.id === id)
                     ? "Failed to send to patient, successfully sent to hospital"
                     : "Failed to send to hospital, successfully sent to patient"
                 }
-                position="right-end"
+                position="top"
                 trigger="mouseenter"
               >
                 {TESTJSX(test)}

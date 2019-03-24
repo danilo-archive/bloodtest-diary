@@ -86,7 +86,38 @@ export default class EmailModal extends Component {
 
     return count === array2.length;
   }
-
+  selectAll = (notified, checked) => {
+    if (checked) {
+      if (notified) {
+        this.setState({
+          selected: [...this.state.selected, ...this.state.notified]
+        });
+      } else {
+        this.setState({
+          selected: [...this.state.selected, ...this.state.notNotified]
+        });
+      }
+    } else {
+      if (notified) {
+        console.log("====================================");
+        console.log("Removing notified");
+        console.log("====================================");
+        this.setState({
+          selected: this.state.selected.filter(patient =>
+            this.state.notNotified.find(
+              notifiedPatient => notifiedPatient.id === patient.id
+            )
+          )
+        });
+      } else {
+        this.setState({
+          selected: this.state.selected.filter(patient =>
+            this.state.notified.find(p => p.id === patient.id)
+          )
+        });
+      }
+    }
+  };
   submit = () => {
     this.setState({ awaitResponse: true });
     let idList = this.state.selected.map(patient => patient.id);
@@ -123,13 +154,14 @@ export default class EmailModal extends Component {
         <div
           style={{
             width: "300px",
-            height: "300px",
+            height: "300x",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
             background: "rgba(255,255,255,0.5)",
-            color: "rgba(0,0,0,0.4)"
+            color: "rgba(0,0,0,0.6)",
+            textAlign: "center"
           }}
         >
           <WaveLoading color="#0b999d" size={90} />
@@ -174,34 +206,57 @@ export default class EmailModal extends Component {
           ) : (
             <>
               <PatientSelect
+                selectAll={this.selectAll}
+                selected={this.state.selected}
                 direction="left"
                 patients={this.state.notified}
                 notified
-                onSelectClick={id =>
-                  this.setState({
-                    selected: [
-                      ...this.state.selected,
-                      this.state.notNotified.filter(
-                        patient => patient.id === id
+                onSelectClick={(id, isAlreadyIncluded) => {
+                  if (isAlreadyIncluded) {
+                    this.setState({
+                      selected: this.state.selected.filter(
+                        patient => patient.id !== id
                       )
-                    ]
-                  })
-                }
+                    });
+                  } else {
+                    this.setState({
+                      selected: [
+                        ...this.state.selected,
+                        ...this.state.notified.filter(
+                          patient => patient.id === id
+                        )
+                      ]
+                    });
+                  }
+                }}
               />
 
               <PatientSelect
+                selectAll={this.selectAll}
+                selected={this.state.selected}
                 direction="right"
                 patients={this.state.notNotified}
-                onSelectClick={id =>
-                  this.setState({
-                    selected: [
-                      ...this.state.selected,
-                      ...this.state.notNotified.filter(
-                        patient => patient.id === id
+                onSelectClick={(id, isAlreadyIncluded) => {
+                  if (isAlreadyIncluded) {
+                    console.log("====================================");
+                    console.log("Adding");
+                    console.log("====================================");
+                    this.setState({
+                      selected: this.state.selected.filter(
+                        patient => patient.id !== id
                       )
-                    ]
-                  })
-                }
+                    });
+                  } else {
+                    this.setState({
+                      selected: [
+                        ...this.state.selected,
+                        ...this.state.notNotified.filter(
+                          patient => patient.id === id
+                        )
+                      ]
+                    });
+                  }
+                }}
               />
 
               <div
