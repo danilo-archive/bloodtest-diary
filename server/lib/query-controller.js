@@ -313,6 +313,7 @@ async function editPatient(newInfo, token, actionUsername) {
  */
 async function editPatientExtended(newInfo, token, actionUsername) {
     const patientResponse = await getPatient(newInfo.patient_no);
+    console.log(newInfo);
     if (!patientResponse.success) {
         return patientResponse;
     }
@@ -336,6 +337,7 @@ async function editPatientExtended(newInfo, token, actionUsername) {
         }
         if (
             updateProperties[i].startsWith("patient") ||
+            updateProperties[i] == "isAdult" ||
             updateProperties[i] == "additional_info"
         ) {
             patientNewInfo[updateProperties[i]] = newInfo[updateProperties[i]];
@@ -770,12 +772,13 @@ async function addPatientExtended(patientInfo, actionUsername) {
         }
         if (
             insertProperties[i].startsWith("patient") ||
+            insertProperties[i] == "isAdult" ||
             insertProperties[i] == "additional_info"
         ) {
             patient[insertProperties[i]] = patientInfo[insertProperties[i]];
         }
     }
-
+    console.log(patient)
     let carerInsertResponse = {};
     //Try to add any data
     if (Object.keys(carer).length > 0) {

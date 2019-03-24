@@ -94,7 +94,8 @@ class NewPatient extends Component {
         super(props);
         this.state = {
             noCarer: true,
-            localHospital: true
+            localHospital: true,
+            isAdult: "yes"
         };
         this.serverConnect = getServerConnect();
 
@@ -172,12 +173,12 @@ class NewPatient extends Component {
             }
         }
 
-        const {patientId, patientName, patientSurname, patientEmail, patientPhone} = this.state;
+        const {patientId, patientName, patientSurname, patientEmail, patientPhone, isAdult} = this.state;
         let newInfo = {
             patient_no: patientId, patient_name: patientName, patient_surname: patientSurname, patient_email: patientEmail, patient_phone: patientPhone,
             hospital_id: hospitalInfo.hospitalId, hospital_name: hospitalInfo.hospitalName, hospital_email: hospitalInfo.hospitalEmail, hospital_phone: hospitalInfo.hospitalPhone,
             carer_id: carerInfo.carerId, carer_name: carerInfo.carerName, carer_surname: carerInfo.carerSurname, carer_email: carerInfo.carerEmail, carer_phone: carerInfo.carerPhone,
-            relationship: carerInfo.carerRelationship
+            relationship: carerInfo.carerRelationship, isAdult: isAdult
         };
         console.log({newInfo});
         this.serverConnect.addPatient(newInfo, res => {
@@ -188,8 +189,6 @@ class NewPatient extends Component {
             }
         });
     };
-
-
 
     render() {
         return (
@@ -254,7 +253,8 @@ class NewPatient extends Component {
                     <OptionSwitch
                         option1={"Under 12"}
                         option2={"12 or older"}
-                        onToggleClick={() => {console.log("adding patient with over/under 12")}}
+                        checked={true}
+                        onChange={() => this.setState(prevState => ({isAdult: prevState.isAdult === "yes" ? "no" : "yes"}))}
                     />
                 </SwitchContainer>
 
