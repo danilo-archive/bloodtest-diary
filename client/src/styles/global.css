@@ -13,8 +13,6 @@
   }
 
   body {
-    background-color: var(--bodyBackgroundColor);
-    color: var(--bodyColor);
     font-size: var(--bodyFontSize);
     font-weight: var(--bodyFontWeight);
     height: auto;
@@ -25,31 +23,28 @@
     margin-right: auto;
 
     user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
     -webkit-user-select: none;
-    -o-user-select: none;
   }
 
   input {
-    background-image: none;
     border: 0;
     color: inherit;
     font: inherit;
     margin: 0;
     outline: 0;
     padding: 0;
-    background: transparent;
+    background: transparent none;
     transition: background-color 0.3s;
   }
 
   input:disabled {
     background: rgb(235, 235, 228);
   }
+
   button {
       font-family: Rajdhani, sans-serif;
   }
-  
+
   ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
