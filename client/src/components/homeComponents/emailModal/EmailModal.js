@@ -143,7 +143,7 @@ export default class EmailModal extends Component {
           submitted: true,
           awaitResponse: false
         });
-        this.props.handleError(res, "Something went wrong");
+        this.props.handleError(res, "Failed sending some emails");
       }
     });
   };
@@ -173,36 +173,31 @@ export default class EmailModal extends Component {
         <Container>
           <Title onClose={this.props.closeModal}>Email Reminders</Title>
           {this.state.submitted ? (
-            <>
-              <TestBox
-                noCheck
-                stat={`${this.state.failedMails}/${this.state.selected.length}`}
-                selected={this.areAllIncluded(
-                  this.state.selected,
-                  this.state.notNotified
-                )}
-                onAllCheck={check =>
-                  check
-                    ? this.select(this.state.notNotified)
-                    : this.deselect(this.state.notNotified)
+            <PatientSelect
+              stat={`${this.state.failedMails}/${this.state.selected.length}`}
+              selectAll={this.selectAll}
+              selected={this.state.selected}
+              direction="center"
+              patients={this.state.failedMails}
+              onSelectClick={(id, isAlreadyIncluded) => {
+                if (isAlreadyIncluded) {
+                  this.setState({
+                    selected: this.state.selected.filter(
+                      patient => patient.id !== id
+                    )
+                  });
+                } else {
+                  this.setState({
+                    selected: [
+                      ...this.state.selected,
+                      ...this.state.notified.filter(
+                        patient => patient.id === id
+                      )
+                    ]
+                  });
                 }
-                title={true}
-                text="Emails Sent"
-              />
-              <Scroll fullLength={this.state.notified.length === 0}>
-                <Section
-                  awaitResponse={true}
-                  response={this.state.response}
-                  submitted={this.state.submitted}
-                  selected={this.state.selected}
-                  tests={this.state.selected}
-                  select={(check, patient) =>
-                    check ? this.select(patient) : this.deselect(patient)
-                  }
-                />
-              </Scroll>
-              <br />
-            </>
+              }}
+            />
           ) : (
             <>
               <PatientSelect

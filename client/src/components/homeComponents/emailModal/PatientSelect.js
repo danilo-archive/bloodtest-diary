@@ -16,7 +16,7 @@ const Container = styled.div`
   top: -20px;
   ${props => (props.direction === "left" ? "left: -0px;" : "")}
   height: 75%;
-  width: 49.8%;
+  width: ${props => (props.direction === "center" ? "100%" : "49.8%")};
   background: rgba(244, 244, 244, 0.7);
   float: ${props => props.direction};
   ${props =>
@@ -74,7 +74,11 @@ export default class PatientSelect extends React.Component {
     return (
       <Container direction={this.props.direction}>
         <TitleTab color="#0b999d">
-          {this.props.notified ? "Already Notified" : "Not Notified"}
+          {this.props.notified
+            ? "Already Notified"
+            : this.props.direction === "center"
+            ? `Emails sent: Failed ${this.props.stat}`
+            : "Not Notified"}
         </TitleTab>
         <br />
         <SearchBar onChange={value => this.filter(value)} />
