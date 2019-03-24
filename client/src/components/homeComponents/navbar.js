@@ -79,6 +79,11 @@ const CalenderControls = styled.div`
   justify-content: flex-end;
 `;
 
+const patientToggleStyle = {
+  position: 'relative',
+  bottom: '34px',
+};
+
 class Navbar extends React.Component {
   constructor(props) {
     super(props);
@@ -130,6 +135,7 @@ class Navbar extends React.Component {
                 onChange={this.props.setUnder12}
                 option1="Under 12"
                 option2="12 or older"
+                style={patientToggleStyle}
               />
               <ControlButtons
                 page={this.props.page}
