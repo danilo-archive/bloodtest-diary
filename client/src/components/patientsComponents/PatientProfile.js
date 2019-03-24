@@ -366,6 +366,7 @@ class PatientProfile extends Component {
                         tests={this.state.testsData}
                         deleteTest={this.onDeleteTestClick}
                     />
+                    <Hr/>
                     <SwitchContainer>
                         <OptionSwitch
                             option1={"Under 12"}
