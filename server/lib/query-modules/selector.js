@@ -59,7 +59,7 @@ async function getHospital(hospital_id) {
  **/
 async function getAllPatients(isAdult) {
     const adult = isAdult ? "yes" : "no";
-    const sql = `Select * From Patient WHERE isAdult='${adult}'`;
+    const sql = `Select * From Patient WHERE isAdult='${adult}' ORDER By patient_name,patient_surname`;
     return await selectQueryDatabase(sql);
 }
 
@@ -129,7 +129,7 @@ async function getSortedOverdueWeeks(isAdult) {
              From Test NATURAL JOIN Patient where
              ((completed_date IS NULL AND due_date < CURDATE() AND completed_status='no')
              OR (completed_date = CURDATE() AND due_date < CURDATE()))
-             AND isAdult='${adult}' ORDER BY due_date ASC;`;
+             AND isAdult='${adult}' ORDER BY Monday,patient_name,patient_surname ASC;`;
     const response = await selectQueryDatabase(sql);
     if (response.success == false) {
         return response;
@@ -193,7 +193,7 @@ async function getOverdueReminderGroups(isAdult) {
     const adult = isAdult ? "yes" : "no";
     const sql = `Select test_id, due_date, patient_no, patient_name, patient_surname, last_reminder, reminders_sent, isAdult
             From Test NATURAL JOIN Patient
-            where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' AND isAdult='${adult}' ORDER BY last_reminder, due_date ASC;`;
+            where completed_date IS NULL AND due_date < CURDATE() AND completed_status='no' AND isAdult='${adult}' ORDER BY last_reminder, due_date,patient_name,patient_surname ASC;`;
 
     const res = await selectQueryDatabase(sql);
 
@@ -255,7 +255,7 @@ function getTestsDuringTheWeek(date, isAdult) {
         const day = -1 * (weekDay - 1) + i;
         sql = `Select * From Test Join Patient on Test.patient_no=Patient.patient_no Where due_date = DATE_ADD(${mysql.escape(
             date
-        )}, INTERVAL ${mysql.escape(day)} DAY) AND isAdult='${adult}';`;
+        )}, INTERVAL ${mysql.escape(day)} DAY) AND isAdult='${adult}' ORDER BY patient_name,patient_surname;`;
         daysInWeek.push(databaseController.selectQuery(sql));
         i++;
     }
@@ -264,7 +264,7 @@ function getTestsDuringTheWeek(date, isAdult) {
         date
     )}, INTERVAL ${mysql.escape(day)} DAY) OR due_date = DATE_ADD(${mysql.escape(
         date
-    )}, INTERVAL ${mysql.escape(day + 1)} DAY)) AND isAdult='${adult}';`;
+    )}, INTERVAL ${mysql.escape(day + 1)} DAY)) AND isAdult='${adult}' ORDER BY patient_name,patient_surname;`;
     daysInWeek.push(databaseController.selectQuery(sql));
     return daysInWeek;
 }
