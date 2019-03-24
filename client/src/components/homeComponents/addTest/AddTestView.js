@@ -13,6 +13,7 @@ const DataContainer = styled.div`
   height: 88%;
   background: rgba(0, 0, 0, 0);
 `;
+
 export default class AddTestView extends React.Component {
   state = {
     open: true,
@@ -90,6 +91,7 @@ export default class AddTestView extends React.Component {
   };
   onDoneClick = () => {
     if (this.state.selectedID !== "" && this.state.selectedDate !== "") {
+      let doesNotRepeat = false;
       let frequency = undefined;
       if (parseInt(this.state.frequency.timeAmount)) {
         let { timeUnit, timeAmount } = this.state.frequency;
@@ -97,11 +99,21 @@ export default class AddTestView extends React.Component {
         timeAmount = timeUnit === "Months" ? timeAmount * 4 : timeAmount;
         timeUnit = timeUnit === "Months" ? "W" : timeUnit;
         timeUnit = timeUnit.charAt(0);
-        frequency = `${timeAmount}-${timeUnit}`;
+        if (timeAmount === 0) {
+          doesNotRepeat = true;
+          frequency = null;
+        }
+        else {
+          frequency = `${timeAmount}-${timeUnit}`;
+        }
       }
       const { selectedID, selectedDate, observations } = this.state;
       let { occurrences, noRepeat } = this.state.frequency;
-      occurrences = noRepeat ? 1 : occurrences;
+      occurrences = (noRepeat 
+        || doesNotRepeat 
+        || occurrences === null 
+        || occurrences === ""
+        || occurrences === "0") ? 1 : occurrences;
       this.serverConnect.addTest(
         selectedID,
         dateformat(new Date(selectedDate), "yyyymmdd"),
@@ -136,8 +148,8 @@ export default class AddTestView extends React.Component {
       <>
         <div
           style={{
-            width: "35rem",
-            height: "30rem",
+            width: "42rem",
+            height: "36rem",
             background: "rgba(244, 244, 244,0.7)"
           }}
         >
@@ -148,6 +160,7 @@ export default class AddTestView extends React.Component {
             <PatientSelect
               patients={this.state.allPatients}
               onDoneClick={this.onDoneClick}
+              closeModal={this.props.closeModal}
               onSelectClick={id => this.setState({ selectedID: id })}
             />
 

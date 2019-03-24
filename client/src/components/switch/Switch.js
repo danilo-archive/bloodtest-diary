@@ -9,8 +9,7 @@ const Toggle = styled.input.attrs({ type: "checkbox" })`
   width: 4rem;
   height: 1.8rem;
   border-radius: 4em;
-  background: ;
-  margin: 0;
+  margin: ${props => props.margin ? props.margin : "0"};
   padding: 0;
 
   &::before {
@@ -61,7 +60,7 @@ export default class Switch extends React.Component {
   };
   render() {
     return (
-      <Toggle onChange={this.onToggleClick} checked={this.state.checked} />
+      <Toggle onChange={this.onToggleClick} checked={this.state.checked} margin={this.props.margin}/>
     );
   }
 }
