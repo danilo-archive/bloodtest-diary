@@ -179,7 +179,6 @@ class NewPatient extends Component {
             carer_id: carerInfo.carerId, carer_name: carerInfo.carerName, carer_surname: carerInfo.carerSurname, carer_email: carerInfo.carerEmail, carer_phone: carerInfo.carerPhone,
             relationship: carerInfo.carerRelationship
         };
-        console.log({newInfo});
         this.serverConnect.addPatient(newInfo, res => {
             if (res.success) {
                 openAlert("Patient added successfully.", "confirmationAlert", "OK", () => {this.props.closeModal()});

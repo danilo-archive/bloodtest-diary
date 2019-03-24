@@ -56,7 +56,6 @@ export default class EditTestView extends React.Component {
 
   init() {
     this.serverConnect.getTestInfo(this.props.testId, res => {
-      console.log({ res });
       this.setState({
         showPatient: false,
         tooltips: {
@@ -136,11 +135,8 @@ export default class EditTestView extends React.Component {
           : "no",
       notes: test.notes
     };
-    console.log(this.token);
-    console.log(params);
     this.serverConnect.editTest(this.state.test.id, params, this.token, res => {
       if (res.success) {
-        console.log(res);
         if (res.response.insertId != undefined) {
           openAlert(
             `A new test has been automatically scheduled for on ${formatDatabaseDate(

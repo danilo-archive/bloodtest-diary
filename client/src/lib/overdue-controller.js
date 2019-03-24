@@ -15,7 +15,6 @@ function daysBetweenDates(date1, date2){
     date1 = new Date(date1);
     date2 = new Date(date2);
     let distance =  Math.round(Math.abs((date1.getTime() - date2.getTime())/(oneDay)));
-    //console.log({date1, date2, distance});
     return distance;
 }
 
@@ -108,7 +107,6 @@ function group(tests, testDay=undefined){
 
 function getNumberOfTestsInGroup(group){
     var length = 0;
-    console.log({group})
     for(var i = 0 ; i < group.length ; i++){
         length += group[i].tests.length;
     }

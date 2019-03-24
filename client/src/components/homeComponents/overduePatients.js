@@ -52,7 +52,6 @@ class OverduePatients extends React.Component {
   }
 
   render() {
-    console.log(this.props.anytimeAppointments);
     return (
       <>
       <Wrapper>

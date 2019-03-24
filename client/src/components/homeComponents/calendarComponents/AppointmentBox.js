@@ -165,7 +165,6 @@ const spec = {
     }
   },
   canDrag(props, monitor){
-      console.log(props.section);
     return (props.section !== "overdue");
   }
 }
@@ -220,8 +219,6 @@ class AppointmentBox extends React.Component {
   render() {
     const {isDragging, connectDragSource} = this.props;
     const menuId = `${this.props.id}_${this.props.section}`; //MUST BE UNIQUE
-    console.log(menuId);
-    console.log(this.props.patient_colour)
     return connectDragSource(
       <div>
       <RightClickMenu editPatient={this.props.editPatient} test={this.props.test} id={menuId} patientNo={this.props.patient_no} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>

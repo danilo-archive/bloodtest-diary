@@ -135,7 +135,6 @@ class PatientProfile extends Component {
     }
 
     deletePatient = () => {
-        console.log("deleting");
         this.serverConnect.deletePatient(this.state.patientId, this.state.editToken, res => {
             if (res.success){
                 openAlert("Patient successfully deleted.", "confirmationAlert",
@@ -291,7 +290,6 @@ class PatientProfile extends Component {
             relationship: carerInfo.carerRelationship
         };
         //TODO : save patient "age"
-        console.log({newInfo});
         this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
             if (res.success) {
                 openAlert("Patient details updated successfully.", "confirmationAlert", "OK", () => {this.props.closeModal()});

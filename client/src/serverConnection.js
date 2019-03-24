@@ -35,7 +35,6 @@ class ServerConnect {
         */
         this.onConnected = undefined;
         this.socket.on("connected", () => {
-            console.log("connected successfully");
             this.socket.emit("join", "", this.currentRoom, true);
             this.onConnected();
         });
@@ -176,7 +175,6 @@ class ServerConnect {
      * @example login({username: "exampleUsername", password: "examplePassword"})
      */
     login(credentials, callback){
-        console.log("trying to log in");
         this.socket.emit('authenticate', credentials);
         this.socket.once('authenticationResponse', res => {
             callback(res);
@@ -271,7 +269,6 @@ class ServerConnect {
         let isAdult = this.currentMode == overTwelve;
         this.socket.emit('getTestsInWeek', date, this.loginToken, isAdult);
         this.socket.once('getTestsInWeekResponse', res => {
-            console.log({res});
             callback(res);
         });
     }

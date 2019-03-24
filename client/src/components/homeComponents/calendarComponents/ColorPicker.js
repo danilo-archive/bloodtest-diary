@@ -1,6 +1,7 @@
 import React from 'react';
 import { GithubPicker } from 'react-color';
 import {getServerConnect} from "./../../../serverConnection.js";
+import { openAlert } from '../../Alert.js';
 
 class ColorPicker extends React.Component {
 
@@ -14,21 +15,18 @@ class ColorPicker extends React.Component {
   }
 
   handleChangeComplete = (color) => {
-    console.log(`test: ${this.state.id}, color: ${color.hex}`);
     if (this.state.type === "patient"){
         this.serverConnect.changePatientColour(this.state.id, color.hex, res => {
-            console.log({res});
+            if (!res.success){openAlert("Something went wrong", "confirmationAlert", "ok", () => {return})}
         });
     }else{
         this.serverConnect.changeTestColour(this.state.id, color.hex, res => {
-            console.log({res});
+            if (!res.success){openAlert("Something went wrong", "confirmationAlert", "ok", () => {return})}
         });
     }
   };
 
   render() {
-    console.log(this.state.id);
-    console.log(this.state.type);  
     return(
         <GithubPicker
             onChangeComplete={ this.handleChangeComplete }

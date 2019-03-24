@@ -181,7 +181,6 @@ class Home extends Component {
   };
 
   jumpToWeek = day => {
-    console.log(getWeekDays(day));
     this.updateDashboard(getWeekDays(day));
   }
 
@@ -233,7 +232,6 @@ class Home extends Component {
 
   openEmailModal = () => {
     this.serverConnect.getOverdueReminderGroups(res => {
-      console.log(res);
       if (res.success) {
         this.setState({
           openEmailModal: true,

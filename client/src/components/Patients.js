@@ -182,7 +182,6 @@ class Patients extends React.Component {
 
     openEditModal = id => {
         this.serverConnect.requestPatientEditing(id, res => {
-            console.log(`id in openEditModal: ${id}`);
             if (res.token){
                 this.setState({selectedId: id, openEditModal: true, editToken: res.token});
             }else{
@@ -193,7 +192,6 @@ class Patients extends React.Component {
 
 
     onCloseEditModal = () => {
-        console.log("closing modal");
         this.serverConnect.discardPatientEditing(this.state.selectedId, this.state.editToken, res => {
             this.setState({selectedId: undefined, openEditModal: false, editToken: undefined});
         });
