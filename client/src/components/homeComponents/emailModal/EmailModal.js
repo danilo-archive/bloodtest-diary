@@ -16,9 +16,7 @@ const Container = styled.div`
   background: white;
 `;
 
-const Scroll = styled(ScrollBox)`
-  height: ${props => (!props.fullLength ? `27%` : `66%`)};
-`;
+
 export default class EmailModal extends Component {
   constructor(props) {
     super(props);
@@ -44,7 +42,7 @@ export default class EmailModal extends Component {
         };
       })
     };
-  }
+  };
 
   select = users => {
     if (users instanceof Array) {
@@ -60,6 +58,8 @@ export default class EmailModal extends Component {
       this.setState({ selected: [...this.state.selected, users] });
     }
   };
+
+
   deselect = users => {
     if (users instanceof Array) {
       this.setState({
@@ -75,16 +75,7 @@ export default class EmailModal extends Component {
       });
     }
   };
-  areAllIncluded(array1, array2) {
-    let count = 0;
-    array1.map(test => {
-      array2.find(test2 => test.testId === test2.testId)
-        ? (count += 1)
-        : (count += 0);
-    });
 
-    return count === array2.length;
-  }
   selectAll = (notified, checked) => {
     if (checked) {
       if (notified) {
@@ -227,7 +218,7 @@ export default class EmailModal extends Component {
                     this.setState({
                       selected: [
                         ...this.state.selected,
-                        ...this.state.notified.filter(
+                        ...this.state.attempted.filter(
                           patient => patient.id === id
                         )
                       ]
