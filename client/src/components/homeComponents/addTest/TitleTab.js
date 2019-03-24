@@ -7,6 +7,7 @@ import CloseTabIcon from "./CloseTabIcon";
 const TitleDiv = styled.div`
   width: 100%;
   height: 12%;
+  background: white;
   background: ${props => props.color || `#0d4e56`};
   display: flex;
   text-align: center;

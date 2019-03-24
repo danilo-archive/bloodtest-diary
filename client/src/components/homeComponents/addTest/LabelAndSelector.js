@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Label from "../../Label";
 import { integerCheck } from "../../../lib/inputChecker";
 import { Tooltip } from "react-tippy";
+
 const Container = styled.div`
   display: flex;
   flex-direction: row;
@@ -20,7 +21,10 @@ const Text = styled(Label)`
   transform: translate(0, 0);
 `;
 const Input = styled.input`
-  width: 20%;
+  width: 40%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 `;
 
 const Select = styled.select``;
@@ -28,7 +32,7 @@ export default props => {
   return (
     <Container>
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <div style={{ display: "flex", flexDirection: "row" }}>
+        <div style={{ display: "flex", flexDirection: "row", margin: "0 0 3% 0" }}>
           <Text noRepeat={props.noRepeat}>
             <>
               Repeat every:{"  "}

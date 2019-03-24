@@ -7,13 +7,14 @@ import HospitalSection from "./profileSections/HospitalSection";
 import {getServerConnect} from "../../serverConnection";
 import { openAlert } from "../Alert"
 import {emptyCheck, emailCheck} from "../../lib/inputChecker";
+import OptionSwitch from "./../switch/OptionSwitch";
 
 
 const Container = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  background: #f5f5f5;
+  background: white;
   align-items: center;
   padding: 1%;
 `;
@@ -44,7 +45,7 @@ const CloseButton = styled.button`
 
   height: 44px;
   min-width: 100px;
-  margin: 4%;
+  margin: 3%;
 
   :hover {
     background: #c8c8c8;
@@ -60,7 +61,7 @@ const SaveButton = styled.button`
   color: white;
   text-align: center;
   text-decoration: none;
-  margin: 4%;
+  margin: 3%;
   border-radius: 10px;
 
   height: 44px;
@@ -73,6 +74,19 @@ const SaveButton = styled.button`
   outline: none;
 `;
 
+const SwitchContainer = styled.div`
+  margin-top: 2%;
+`;
+
+const Hr = styled.hr`
+  border: 0;
+  clear: both;
+  display: block;
+  width: 96%;               
+  background-color: #839595;
+  height: 1px;
+`;
+
 
 class NewPatient extends Component {
 
@@ -80,7 +94,8 @@ class NewPatient extends Component {
         super(props);
         this.state = {
             noCarer: true,
-            localHospital: true
+            localHospital: true,
+            isAdult: "yes"
         };
         this.serverConnect = getServerConnect();
 
@@ -89,6 +104,9 @@ class NewPatient extends Component {
     checkValues () {
         if (emptyCheck(this.state.patientId)) {
             return {correct: false, message: "Patient Id is compulsory"};
+        }
+        if (this.props.allPatientsId.indexOf(this.state.patientId) > -1) {
+            return {correct: false, message: "Patient with this Id already exists"}
         }
         if (emptyCheck(this.state.patientName) || emptyCheck(this.state.patientSurname)) {
             return {correct: false, message: "Patient name and surname are compulsory"};
@@ -155,12 +173,12 @@ class NewPatient extends Component {
             }
         }
 
-        const {patientId, patientName, patientSurname, patientEmail, patientPhone} = this.state;
+        const {patientId, patientName, patientSurname, patientEmail, patientPhone, isAdult} = this.state;
         let newInfo = {
             patient_no: patientId, patient_name: patientName, patient_surname: patientSurname, patient_email: patientEmail, patient_phone: patientPhone,
             hospital_id: hospitalInfo.hospitalId, hospital_name: hospitalInfo.hospitalName, hospital_email: hospitalInfo.hospitalEmail, hospital_phone: hospitalInfo.hospitalPhone,
             carer_id: carerInfo.carerId, carer_name: carerInfo.carerName, carer_surname: carerInfo.carerSurname, carer_email: carerInfo.carerEmail, carer_phone: carerInfo.carerPhone,
-            relationship: carerInfo.carerRelationship
+            relationship: carerInfo.carerRelationship, isAdult: isAdult
         };
         console.log({newInfo});
         this.serverConnect.addPatient(newInfo, res => {
@@ -172,12 +190,11 @@ class NewPatient extends Component {
         });
     };
 
-
-
     render() {
         return (
             <Container>
                 <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
+                <Hr/>
                 <PatientSection
                     editable={true}
                     patientId={""}
@@ -195,6 +212,7 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                <Hr/>
                 <CarerSection
                     carerId={""} //TODO : generate this
                     carerRelationship={""}
@@ -214,6 +232,7 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                <Hr/>
                 <HospitalSection
                     hospitalId={""} //TODO : generate this
                     hospitalName={""}
@@ -229,6 +248,15 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                <Hr/>
+                <SwitchContainer>
+                    <OptionSwitch
+                        option1={"Under 12"}
+                        option2={"12 or older"}
+                        checked={true}
+                        onChange={() => this.setState(prevState => ({isAdult: prevState.isAdult === "yes" ? "no" : "yes"}))}
+                    />
+                </SwitchContainer>
 
                 <ButtonContainer>
                     <CloseButton onClick={this.props.closeModal}>Close</CloseButton>

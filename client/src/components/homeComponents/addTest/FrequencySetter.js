@@ -8,6 +8,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   z-index:2;
+  width: 90%;
 `;
 
 export default props => {
@@ -34,7 +35,7 @@ export default props => {
       />
       <TextRadioButton
         checked={props.noRepeat}
-        text="Do not repeat"
+        text="Does not repeat"
         onCheck={check => {
           return props.onNoRepeatChange(check);
         }}

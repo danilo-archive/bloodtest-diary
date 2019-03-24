@@ -7,13 +7,15 @@ const Container = styled.div`
     justify-content: center;
     align-content: center;
     flex-direction: row;
-    border: #ccc 1px solid;
     border-radius: 10px;
+    background: #eeeeee;
+    :hover {
+      background: #f2f2f2;
+    }
 `;
 
 const Field = styled.div`
   position: relative;
-  padding-left: 1%;
   width: 30%;
   min-width: 10%;
   margin: 0 2.5%;
@@ -22,7 +24,18 @@ const Field = styled.div`
   
   font-size: 125%;
   overflow: scroll;
-  display:flex;
+  display: flex;
+  justify-content:center;
+  align-content:center;
+  flex-direction:column;
+  
+`;
+
+const FieldText = styled.p`
+  margin: 0;
+  //TODO: Fix this
+  margin-top: 6px;
+  max-height: 30px;
 `;
 
 const DeleteButton = styled.button`
@@ -37,7 +50,6 @@ const DeleteButton = styled.button`
 
   :hover {
     background-color: #dc2836;
-    color: white;
     border-radius: 10px;
   }
   outline: none;
@@ -47,13 +59,13 @@ const DeleteButton = styled.button`
 export default class TestCell extends React.Component {
     render() {
         return (
-          <>
-            <Container >
-                <Field key={"due"} fontSize={"150%"}>{this.props.due}</Field>
-                <Field key={"notes"} fontSize={"150%"}>{this.props.notes}</Field>
-                <DeleteButton onClick={() => {this.props.deleteTest(this.props.testId)}}>Delete test</DeleteButton>
-            </Container>
-          </>
+            <>
+                <Container>
+                    <Field key={"due"} fontSize={"150%"}><FieldText>{this.props.due}</FieldText></Field>
+                    <Field key={"notes"} fontSize={"150%"}><FieldText>{this.props.notes}</FieldText></Field>
+                    <DeleteButton onClick={() => {this.props.deleteTest(this.props.testId)}}>Delete test</DeleteButton>
+                </Container>
+            </>
         );
     }
 }
