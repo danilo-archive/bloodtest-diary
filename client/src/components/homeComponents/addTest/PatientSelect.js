@@ -10,7 +10,7 @@ import ScrollBox from "../calendarComponents/ScrollBox";
 import { WaveLoading } from "styled-spinkit";
 
 const Container = styled.div`
-  height: 100%;
+  height: 90%;
   width: 49.8%;
   border-left: #f5f5f5f5 1px solid;
   background: white;
@@ -28,53 +28,6 @@ const ShowID = styled.div`
 const ShowIdWrap = styled.div`
   width: 50%;
   margin-left: 25%;
-`;
-
-const ButtonContainer = styled.div`
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  justify-content: center;
-`;
-
-const CloseButton = styled.button`
-  border: none;
-  background-color: #e7e7e7;
-  color: black;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 10px;
-
-  height: 44px;
-  min-width: 100px;
-  margin: 4%;
-
-  :hover {
-    background: #c8c8c8;
-    color: black;
-    border-radius: 10px;
-  }
-  outline: none;
-`;
-
-const AddButton = styled.button`
-  border: none;
-  background-color: #0b999d;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  margin: 4%;
-  border-radius: 10px;
-
-  height: 44px;
-  min-width: 100px;
-
-  :hover {
-    background-color: #018589;
-    color: white;
-  }
-  outline: none;
 `;
 
 const Hr = styled.hr`
@@ -183,10 +136,6 @@ export default class PatientSelect extends React.Component {
             </div>
           )}
         </ScrollBox>
-          <ButtonContainer>
-              <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
-              <AddButton onClick={this.props.onDoneClick}>Add test</AddButton>
-          </ButtonContainer>
       </Container>
     );
   }

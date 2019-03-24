@@ -14,7 +14,6 @@ const Container = styled.div`
 export default props => {
   return (
     <Container>
-      <br />
       <LabelAndSelector
         setFrequencyTooltip={props.setFrequencyTooltip}
         setOcurrencesTooltip={props.setOcurrencesTooltip}

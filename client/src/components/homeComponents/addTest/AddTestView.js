@@ -14,6 +14,54 @@ const DataContainer = styled.div`
   background: rgba(0, 0, 0, 0);
 `;
 
+const ButtonContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+  height: 10%;
+`;
+
+const CloseButton = styled.button`
+  border: none;
+  background-color: #e7e7e7;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 10px;
+
+  height: 44px;
+  min-width: 100px;
+  margin-right: 4%;
+
+  :hover {
+    background: #c8c8c8;
+    color: black;
+    border-radius: 10px;
+  }
+  outline: none;
+`;
+
+const AddButton = styled.button`
+  border: none;
+  background-color: #0b999d;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  margin-left: 4%;
+  border-radius: 10px;
+
+  height: 44px;
+  min-width: 100px;
+
+  :hover {
+    background-color: #018589;
+    color: white;
+  }
+  outline: none;
+`;
+
 export default class AddTestView extends React.Component {
   state = {
     open: true,
@@ -159,8 +207,6 @@ export default class AddTestView extends React.Component {
           <DataContainer>
             <PatientSelect
               patients={this.state.allPatients}
-              onDoneClick={this.onDoneClick}
-              closeModal={this.props.closeModal}
               onSelectClick={id => this.setState({ selectedID: id })}
             />
 
@@ -219,6 +265,10 @@ export default class AddTestView extends React.Component {
                 })
               }
             />
+            <ButtonContainer>
+              <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
+              <AddButton onClick={this.onDoneClick}>Add test</AddButton>
+            </ButtonContainer>
           </DataContainer>
         </div>
       </>
