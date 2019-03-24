@@ -141,7 +141,9 @@ export default class EmailModal extends Component {
             .reduce((a, b) => a + b),
           response: res.response,
           submitted: true,
-          awaitResponse: false
+          awaitResponse: false,
+          attempted: this.state.selected,
+          selected: []
         });
         this.props.handleError(res, "Failed sending some emails");
       }
@@ -173,31 +175,84 @@ export default class EmailModal extends Component {
         <Container>
           <Title onClose={this.props.closeModal}>Email Reminders</Title>
           {this.state.submitted ? (
-            <PatientSelect
-              stat={`${this.state.failedMails}/${this.state.selected.length}`}
-              selectAll={this.selectAll}
-              selected={this.state.selected}
-              direction="center"
-              patients={this.state.failedMails}
-              onSelectClick={(id, isAlreadyIncluded) => {
-                if (isAlreadyIncluded) {
-                  this.setState({
-                    selected: this.state.selected.filter(
-                      patient => patient.id !== id
-                    )
-                  });
-                } else {
-                  this.setState({
-                    selected: [
-                      ...this.state.selected,
-                      ...this.state.notified.filter(
-                        patient => patient.id === id
+            <>
+              <PatientSelect
+                stat={`${this.state.failedMails}/${
+                  this.state.attempted.length
+                }`}
+                selectAll={(_, checked) => {
+                  if (checked) {
+                    this.setState({
+                      selected: this.state.attempted.filter(test =>
+                        [
+                          ...this.state.response.failedBoth,
+                          ...this.state.response.failedPatient,
+                          ...this.state.response.failedHospital
+                        ].includes(test.id)
                       )
-                    ]
-                  });
+                    });
+                  } else {
+                    this.setState({ selected: [] });
+                  }
+                }}
+                selected={this.state.selected}
+                direction="center"
+                patients={
+                  this.state.response
+                    ? this.state.attempted.filter(test =>
+                        [
+                          ...this.state.response.failedBoth,
+                          ...this.state.response.failedPatient,
+                          ...this.state.response.failedHospital
+                        ].includes(test.id)
+                      )
+                    : []
                 }
-              }}
-            />
+                onSelectClick={(id, isAlreadyIncluded) => {
+                  if (isAlreadyIncluded) {
+                    this.setState({
+                      selected: this.state.selected.filter(
+                        patient => patient.id !== id
+                      )
+                    });
+                  } else {
+                    this.setState({
+                      selected: [
+                        ...this.state.selected,
+                        ...this.state.notified.filter(
+                          patient => patient.id === id
+                        )
+                      ]
+                    });
+                  }
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "0",
+                  left: "50%",
+                  display: "flex",
+                  transform: "translateX(-50%)",
+                  justifyContent: "center"
+                }}
+              >
+                <Button
+                  backgroundColor={"#f44336"}
+                  hoverColor={"#dc2836"}
+                  onClick={this.props.closeModal}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  backgroundColor={"#0b999d"}
+                  hoverColor={"#018589"}
+                  onClick={this.submit}
+                >
+                  Retry
+                </Button>
+              </div>
+            </>
           ) : (
             <>
               <PatientSelect
