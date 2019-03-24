@@ -31,7 +31,6 @@ export default props => {
     <>
       <TitleDiv color={props.color}>
         <TitleLabel>{props.children}</TitleLabel>
-        {props.main ? <CloseTabIcon close={props.onClose} /> : <></>}
       </TitleDiv>
     </>
   );
