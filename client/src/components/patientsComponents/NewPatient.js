@@ -102,33 +102,33 @@ class NewPatient extends Component {
 
     checkValues () {
         if (emptyCheck(this.state.patientId)) {
-            return {correct: false, message: "Patient Id is compulsory"};
+            return {correct: false, message: "Please provide the patient number first."};
         }
         if (this.props.allPatientsId.indexOf(this.state.patientId) > -1) {
             return {correct: false, message: "Patient with this Id already exists"}
         }
         if (emptyCheck(this.state.patientName) || emptyCheck(this.state.patientSurname)) {
-            return {correct: false, message: "Patient name and surname are compulsory"};
+            return {correct: false, message: "Please provide patient name and surname."};
         }
         if (!emailCheck(this.state.patientEmail)) {
-            return {correct: false, message: "Wrong format of patient's email"};
+            return {correct: false, message: "Invalid format of the patient's email."};
         }
 
         if (!this.state.noCarer) {
             if (emptyCheck(this.state.carerEmail)) {
-                return {correct: false, message: "Carer's email is compulsory"};
+                return {correct: false, message: "Please provide the carer's email."};
             }
             if (!emailCheck(this.state.carerEmail)) {
-                return {correct: false, message: "Wrong format of carer's email"};
+                return {correct: false, message: "Invalid format of the carer's email."};
             }
 
         }
         if (!this.state.localHospital) {
             if (emptyCheck(this.state.hospitalEmail)){
-                return {correct: false, message: "Hospital's email is compulsory"};
+                return {correct: false, message: "Please provide the hospital's email."};
             }
             if (!emailCheck(this.state.hospitalEmail)) {
-                return {correct: false, message: "Wrong format of hospital's email"};
+                return {correct: false, message: "Invalid format of the hospital's email."};
             }
 
         }
@@ -138,7 +138,7 @@ class NewPatient extends Component {
     onAddClick = () => {
         const result = this.checkValues();
         if (!result.correct) {
-            openAlert(result.message, "confirmationAlert", "Ok");
+            openAlert(result.message, "confirmationAlert", "OK");
             return;
         }
 
@@ -182,9 +182,9 @@ class NewPatient extends Component {
         console.log({newInfo});
         this.serverConnect.addPatient(newInfo, res => {
             if (res.success) {
-                openAlert("Patient added successfully", "confirmationAlert", "Ok", () => {this.props.closeModal()});
+                openAlert("Patient added successfully.", "confirmationAlert", "OK", () => {this.props.closeModal()});
             } else {
-                openAlert("An error occurred while adding patient", "confirmationAlert", "Ok");
+                openAlert("An error occurred while adding the patient.", "confirmationAlert", "OK");
             }
         });
     };

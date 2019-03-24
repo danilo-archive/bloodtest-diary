@@ -88,9 +88,9 @@ class Patients extends React.Component {
 
     handleError = (res, error) => {
         if (res.errorType === "authentication"){
-            openAlert("Authentication error", "confirmationAlert", "Go back to login", () => {this.logout()});
+            openAlert("Authentication failed.", "confirmationAlert", "Go back to login", () => {this.logout()});
         }else{
-            openAlert(`${error ? error : "Unknown error occurred"}`, "confirmationAlert", "Ok", () => {return});
+            openAlert(`${error ? error : "Unknown error occurred."}`, "confirmationAlert", "OK", () => {return});
         }
     };
 

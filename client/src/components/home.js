@@ -129,9 +129,9 @@ class Home extends Component {
   handleInvalidResponseError = (res, error) => {
     if (res.errorType === "authentication") {
       openAlert(
-        "Authentication with server failed",
+        "Authentication failed.",
         "confirmationAlert",
-        "Go back to Login",
+        "Go back to login",
         () => {
           this.logout();
         }
@@ -140,7 +140,7 @@ class Home extends Component {
       openAlert(
         `${error ? error : "Unknown error occurred"}`,
         "confirmationAlert",
-        "Ok",
+        "OK",
         () => {
           return;
         }
@@ -214,7 +214,7 @@ class Home extends Component {
       } else {
         this.handleInvalidResponseError(
           res,
-          "Somebody is already editing this test"
+          "Somebody is already editing this test."
         );
       }
     });
@@ -256,7 +256,7 @@ class Home extends Component {
       if (res.token){
           this.setState({editPatientId: id, openEditPatientModal: true, editPatientToken: res.token});
       }else{
-          this.handleError(res, "Somebody is already editing this patient");
+          this.handleError(res, "Somebody is already editing this patient.");
       }
     });
   }

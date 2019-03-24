@@ -179,8 +179,8 @@ export default class Credentials extends Component {
             });
           }
       }else{
-        openAlert("Somebody is editing this user already", "confirmationAlert",
-                   "Ok", () => {return});
+        openAlert("Somebody is already editing this user.", "confirmationAlert",
+                   "OK", () => {return});
       }
     });
 
@@ -191,8 +191,8 @@ export default class Credentials extends Component {
       if (res.success){
         this.showConfirmationMessage();
       }else{
-        openAlert("Something went wrong", "confirmationAlert",
-                   "Ok", () => {return});
+        openAlert("Something went wrong.", "confirmationAlert",
+                   "OK", () => {return});
       }
     });
     this.clearForm();
@@ -224,9 +224,9 @@ export default class Credentials extends Component {
     return (
       <Container>
 
-        <p className="credentialsTitle">My Credentials</p>
+        <p className="credentialsTitle">My credentials</p>
 
-        <InfoMessage className={""} message={"Database Updated Successfully" } show={this.state.showConfirmationMessage}/>
+        <InfoMessage className={""} message={"Database updated successfully" } show={this.state.showConfirmationMessage}/>
         <>
             <form onSubmit={this.onSaveEditUser} style={{ display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
               <div className="inputSection">
@@ -234,14 +234,14 @@ export default class Credentials extends Component {
                 <input id="emailInput" type="text" name="email" className="usersInput" value={this.state.email} onChange={this.handleCredentialUpdate} required/>
               </div>
               <div className="inputSection">
-                <div className="usersLabel">New Password:</div>
-                <input id="passwordInput" type="password" name="password" className="usersInput" value={this.state.password} onChange={this.handleCredentialUpdate} placeholder="Optional"/>
+                <div className="usersLabel">New password:</div>
+                <input id="passwordInput" type="password" name="password" className="usersInput" value={this.state.password} onChange={this.handleCredentialUpdate} placeholder="(optional)"/>
               </div>
               <div className="inputSection">
-                <div className="usersLabel">Confirm Password:</div>
-                <input id="confrimPasswordInput" type="password" name="confirmPassword" className="usersInput" value={this.state.confirmPassword} onChange={this.handleCredentialUpdate} placeholder="Optional"/>
+                <div className="usersLabel">Confirm password:</div>
+                <input id="confrimPasswordInput" type="password" name="confirmPassword" className="usersInput" value={this.state.confirmPassword} onChange={this.handleCredentialUpdate} placeholder="(optional)"/>
               </div>
-              <InfoMessage type={"error"} message={"Passwords Don't Match"} show={this.state.showErrorMessage}/>
+              <InfoMessage type={"error"} message={"Passwords must match!"} show={this.state.showErrorMessage}/>
               <ButtonContainer>
                   <CancelButton type="button" onClick={this.clearForm}>Cancel</CancelButton>
                   <input type="submit" className="saveButton" value="Save"></input>

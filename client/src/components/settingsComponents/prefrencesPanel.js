@@ -38,8 +38,8 @@ export default class PrefrencesPanel extends Component {
   render(){
     return (
       <Container>
-        <p className="prefrencesTitle">Prefrences</p>
-        <p className="message">Nothing to Show here.. D:</p>
+        <p className="prefrencesTitle">Preferences</p>
+        <p className="message">To be added...</p>
       </Container>
     )
   }

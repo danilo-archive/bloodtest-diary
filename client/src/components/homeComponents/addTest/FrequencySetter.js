@@ -35,7 +35,7 @@ export default props => {
       />
       <TextRadioButton
         checked={props.noRepeat}
-        text="Do not repeat"
+        text="Does not repeat"
         onCheck={check => {
           return props.onNoRepeatChange(check);
         }}

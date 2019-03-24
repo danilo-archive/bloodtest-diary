@@ -36,10 +36,10 @@ export default props => {
       }}
     >
       <Container>
-        <Label width={"120%"} noRepeat={props.noRepeat}>Repeat every</Label>
+        <Label width={"100%"} noRepeat={props.noRepeat}>Repeat every</Label>
         <Tooltip style={{height: "2rem"}}
           unmountHTMLWhenHide={true}
-          title="Please enter a number"
+          title="Please enter a number."
           open={props.tooltips.frequency}
           hideDelay={100}
           trigger="manual"
@@ -78,12 +78,12 @@ export default props => {
             return <option value={value.value}>{value.name}</option>;
           })}
         </select>
-        <Label width={"40%"} noRepeat={props.noRepeat} >
-          For
+        <Label width={"55%"} noRepeat={props.noRepeat} >
+          Repeat
         </Label>
         <Tooltip style={{height: "2rem"}}
           unmountHTMLWhenHide={true}
-          title="Please enter a number"
+          title="Please enter a number."
           open={props.tooltips.occurrences}
           hideDelay={100}
           trigger="manual"
@@ -110,12 +110,12 @@ export default props => {
             }}
           />
         </Tooltip>
-        <Label width={"50%"} noRepeat={props.noRepeat}>Times</Label>
+        <Label width={"50%"} noRepeat={props.noRepeat}>times</Label>
       </Container>
       <TextRadioButton
         checked={props.noRepeat}
         onCheck={props.onCheck}
-        text="Do not Repeat"
+        text="Does not repeat"
         style={{ margin: "auto" }}
       />
     </div>

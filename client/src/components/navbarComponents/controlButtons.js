@@ -70,13 +70,13 @@ export default class ControlButtons extends Component {
             return (
               <>
                 <div className={"patientsButton"} onClick={this.onPatientsClick}>Patients</div>
-                <div className={"signOutButton"} onClick={this.onSignoutClick}>Sign Out</div>
+                <div className={"signOutButton"} onClick={this.onSignoutClick}>Sign out</div>
               </>
             );
           case 'Patients':
             return (
               <>
-                <div className={"signOutButton"} onClick={this.onSignoutClick}>Sign Out</div>
+                <div className={"signOutButton"} onClick={this.onSignoutClick}>Sign out</div>
               </>
             );
           default:

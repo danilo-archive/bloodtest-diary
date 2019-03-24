@@ -143,11 +143,11 @@ export default class EditTestView extends React.Component {
         console.log(res);
         if (res.response.insertId != undefined) {
           openAlert(
-            `A new test had been automatically scheduled for the ${formatDatabaseDate(
+            `A new test has been automatically scheduled for on ${formatDatabaseDate(
               res.response.new_date
             )}.`,
             "confirmationAlert",
-            "Ok",
+            "OK",
             () => {
               this.props.closeModal();
             }
@@ -156,7 +156,7 @@ export default class EditTestView extends React.Component {
           this.props.closeModal();
         }
       } else {
-        openAlert("Something went wrong", "confirmationAlert", "Ok", () => {
+        openAlert("Something went wrong.", "confirmationAlert", "OK", () => {
           this.props.closeModal();
         });
       }
@@ -179,9 +179,9 @@ export default class EditTestView extends React.Component {
           res => {
             if (res.success) {
               openAlert(
-                "Test successfully unscheduled",
+                "Test successfully unscheduled.",
                 "confirmationAlert",
-                "Ok",
+                "OK",
                 () => {
                   this.props.closeModal();
                 }
@@ -209,11 +209,11 @@ export default class EditTestView extends React.Component {
           }}
         >
           <TitleTab onClose={this.props.closeModal} main={true}>
-            Edit Appointment
+            Edit appointment
           </TitleTab>
           <div style={{ padding: "1rem 1rem" }}>
             <InfoBox
-              label={"Full Name"}
+              label={"Full name:"}
               text={this.state.patient.name}
               icon="arrow-circle-right"
               onClick={() => {
@@ -241,7 +241,7 @@ export default class EditTestView extends React.Component {
               ``
             )}
             <InfoBox
-              label={"Due"}
+              label={"Due date:"}
               text={this.state.test.date.dueDate}
               icon="edit"
               onClick={() => this.setState({ showCalendar: true })}
@@ -348,7 +348,7 @@ export default class EditTestView extends React.Component {
                 }
               />
               <ButtonsContainer>
-                <Button backgroundColor={"#0b999d"} hoverColor={"#018589"} onClick={this.saveTest}>Save Changes</Button>
+                <Button backgroundColor={"#0b999d"} hoverColor={"#018589"} onClick={this.saveTest}>Save changes</Button>
                 <Button backgroundColor={"#f44336"} hoverColor={"#dc2836"} onClick={this.unscheduleTest}>Unschedule test</Button>
                 <Button backgroundColor={"#aaaaaa"} hoverColor={"#c8c8c8"} onClick={this.props.closeModal}>Close</Button>
               </ButtonsContainer>
