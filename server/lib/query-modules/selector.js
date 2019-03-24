@@ -129,7 +129,7 @@ async function getSortedOverdueWeeks(isAdult) {
              From Test NATURAL JOIN Patient where
              ((completed_date IS NULL AND due_date < CURDATE() AND completed_status='no')
              OR (completed_date = CURDATE() AND due_date < CURDATE()))
-             AND isAdult='${adult}' ORDER BY Monday,patient_name,patient_surname ASC;`;
+             AND isAdult='${adult}' ORDER BY due_date,patient_name,patient_surname ASC;`;
     const response = await selectQueryDatabase(sql);
     if (response.success == false) {
         return response;
