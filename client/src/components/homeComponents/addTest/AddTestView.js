@@ -65,6 +65,7 @@ const AddButton = styled.button`
 
 const Hr = styled.hr`
   width: 99%;
+  background: white;
 `;
 
 export default class AddTestView extends React.Component {
