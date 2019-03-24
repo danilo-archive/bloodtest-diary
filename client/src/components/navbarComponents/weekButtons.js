@@ -17,7 +17,6 @@ const Container = styled.div`
 const PreviousArrow = styled.img`
     width: 50%;
     cursor: pointer;
-    transition: width 0.3s;
     opacity: 0.75;
     :hover {
       opacity: 1;
@@ -28,7 +27,6 @@ const NextArrow = styled.img`
     width: 50%;
     cursor: pointer;
     transform: rotate(180deg);
-    transition: 0.3s;
     opacity: 0.75;
     :hover {
       opacity: 1;
