@@ -29,6 +29,13 @@ align-items: center;
   margin-left: 20px;
   margin-right: 10px;
   margin-top: -7px;
+  transition: 0.3s;
+  opacity: 0.75;
+  
+  :hover {
+    height: 41px;
+    opacity: 1;
+  }
 }
 
 .calendar-icon:not(:placeholder-shown) + .label {

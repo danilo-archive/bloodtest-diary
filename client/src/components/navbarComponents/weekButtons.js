@@ -20,8 +20,8 @@ const PreviousArrow = styled.img`
     transition: width 0.3s;
     opacity: 0.75;
     :hover {
-      width: 53%;
       opacity: 1;
+      width: 53%;
     }
 `;
 
@@ -32,8 +32,8 @@ const NextArrow = styled.img`
     transition: 0.3s;
     opacity: 0.75;
     :hover {
-      width: 53%;
       opacity: 1;
+      width: 53%;
     }
 `;
 
