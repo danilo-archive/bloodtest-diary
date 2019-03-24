@@ -765,7 +765,7 @@ function sortPatinetProperties(patientInfo)
       if (objectProperties[i].startsWith("hospital")) {
           hospital[objectProperties[i]] = patientInfo[objectProperties[i]];
       }
-      if (objectProperties[i].startsWith("patient") ||objectProperties[i] == "additional_info") {
+      if (objectProperties[i].startsWith("patient") ||objectProperties[i] == "additional_info" || objectProperties[i] == "isAdult") {
           patient[objectProperties[i]] = patientInfo[objectProperties[i]];
       }
   }
