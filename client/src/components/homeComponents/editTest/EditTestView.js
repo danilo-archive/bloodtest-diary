@@ -215,10 +215,7 @@ export default class EditTestView extends React.Component {
             <InfoBox
               label={"Full name:"}
               text={this.state.patient.name}
-              icon="arrow-circle-right"
-              onClick={() => {
-                alert("This is supposed to open the patient view");
-              }}
+              icon={undefined}
             />
             {this.state.showCalendar ? (
               <CalendarTable
