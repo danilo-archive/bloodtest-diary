@@ -95,7 +95,7 @@ class NewPatient extends Component {
         this.state = {
             noCarer: true,
             localHospital: true,
-            isAdult: false
+            isAdult: "yes"
         };
         this.serverConnect = getServerConnect();
 
@@ -253,7 +253,8 @@ class NewPatient extends Component {
                     <OptionSwitch
                         option1={"Under 12"}
                         option2={"12 or older"}
-                        onChange={() => this.setState({isAdult: !this.state.isAdult})}
+                        checked={true}
+                        onChange={() => this.setState(prevState => ({isAdult: prevState.isAdult === "yes" ? "no" : "yes"}))}
                     />
                 </SwitchContainer>
 

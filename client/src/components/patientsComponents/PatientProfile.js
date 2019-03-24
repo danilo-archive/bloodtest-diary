@@ -281,7 +281,6 @@ class PatientProfile extends Component {
             }
         }
 
-
         const {patientId, editToken, patientName, patientSurname, patientEmail, patientPhone, isAdult} = this.state;
         let newInfo = {
             patient_no: patientId, patient_name: patientName, patient_surname: patientSurname, patient_email: patientEmail, patient_phone: patientPhone,
@@ -298,8 +297,6 @@ class PatientProfile extends Component {
             }
         });
     };
-
-
 
     render() {
         if (this.state.ready && this.state.readyTest) {
@@ -372,7 +369,7 @@ class PatientProfile extends Component {
                             option1={"Under 12"}
                             option2={"12 or older"}
                             checked={this.state.isAdult}
-                            onChange={() => this.setState({isAdult: !this.state.isAdult})}
+                            onChange={() => this.setState(prevState => ({isAdult: prevState.isAdult === "yes" ? "no" : "yes"}))}
                         />
                     </SwitchContainer>
                     <ButtonContainer>
