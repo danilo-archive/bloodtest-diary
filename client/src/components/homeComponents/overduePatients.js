@@ -71,7 +71,7 @@ class OverduePatients extends React.Component {
                 style={{
                   position: "absolute",
                   transform: "translate(-50%,-50%)",
-                  right: "0",
+                  right: "2%",
                   top: "50%"
                 }}
               />
