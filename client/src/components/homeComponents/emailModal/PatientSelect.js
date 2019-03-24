@@ -112,9 +112,11 @@ export default class PatientSelect extends React.Component {
         <div style={{ display: "flex", justifyContent: "center" }}>
           <TextRadioButton
             text="Select All"
-            checked={this.props.patients.every(patient =>
-              this.props.selected.find(p => p.id === patient.id)
-            )}
+            checked={
+              this.props.patients.every(patient =>
+                this.props.selected.find(p => p.id === patient.id)
+              ) && this.props.patients.length !== 0
+            }
             onCheck={checked => {
               if (checked) {
                 this.setState({
