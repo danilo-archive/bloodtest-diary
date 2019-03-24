@@ -238,7 +238,7 @@ export default class EmailModal extends Component {
               <div
                 style={{
                   position: "absolute",
-                  bottom: "0",
+                  bottom: "2%",
                   left: "50%",
                   display: "flex",
                   transform: "translateX(-50%)",
@@ -320,7 +320,7 @@ export default class EmailModal extends Component {
               <div
                 style={{
                   position: "absolute",
-                  bottom: "0",
+                  bottom: "2%",
                   left: "50%",
                   display: "flex",
                   transform: "translateX(-50%)",
