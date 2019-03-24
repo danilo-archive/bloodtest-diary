@@ -35,6 +35,7 @@ export default styled.div`
   }
   &:hover::after {
     transform: scale(1);
-    bottom: 100%;
+    bottom: 110%;
+    left: -13%;
   }
 `;

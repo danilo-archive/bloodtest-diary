@@ -33,7 +33,7 @@ export default props => {
         onClick={props.onClick}
       >
         <Label
-          style={{ left: "51%", top: "63%" }}
+          style={props.labelStyle}
           fontSize={props.fontSize || "23px"}
         >
           {props.text ? props.text : ``}

@@ -140,7 +140,6 @@ export default class Credentials extends Component {
 
   init = () => {
     this.serverConnect.getCurrentUser( res => {
-      console.log(res);
       if (res.success){
         this.setState({ username: res.response[0].username, email: res.response[0].recovery_email});
       }

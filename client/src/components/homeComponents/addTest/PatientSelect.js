@@ -69,7 +69,6 @@ export default class PatientSelect extends React.Component {
         <TitleTab color="#0b999d">Patient</TitleTab>
         <br />
         <SearchBar onChange={value => this.filter(value)} />
-        <br />
         <ShowID
           checked={this.state.showID}
           onChange={() => this.setState({ showID: !this.state.showID })}

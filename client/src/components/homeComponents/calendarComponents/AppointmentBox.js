@@ -104,7 +104,21 @@ function sendReminder(test){
                                  : `This patient was never contacted about this test. Do you want to send an email?`;
   openAlert(text, "optionAlert",
             "No", () => {return},
-            "Yes", () => {console.log("sending email")});
+            "Yes", () => {
+              if (isPastDate(test.dueDate)){
+                serverConnect.sendOverdueReminders(test.test_id, res => {
+                  if (!res.success){
+                    openAlert("An error occurred during email sending", "confirmationAlert", "Ok", () => {return});
+                  }
+                });
+              }else{
+                serverConnect.sendNormalReminders(test.test_id, res => {
+                  if (!res.success){
+                    openAlert("An error occurred during email sending", "confirmationAlert", "Ok", () => {return});
+                  }
+                });
+              }
+            });
 }
 
 const RightClickMenu = props => {
@@ -115,7 +129,7 @@ const RightClickMenu = props => {
            </Test>
            <Item onClick={() => {props.editPatient(props.patientNo)}}>Patient profile</Item>
            <Separator />
-           <Item onClick={() => sendReminder(props.test)}>Send reminder</Item>
+           <Item disabled={props.completed} onClick={() => sendReminder(props.test)}>Send reminder</Item>
            <Separator />
            <Submenu label="Patient colour">
              <Submenu label="Choose colour">
@@ -165,7 +179,6 @@ const spec = {
     }
   },
   canDrag(props, monitor){
-      console.log(props.section);
     return (props.section !== "overdue");
   }
 }
@@ -220,8 +233,6 @@ class AppointmentBox extends React.Component {
   render() {
     const {isDragging, connectDragSource} = this.props;
     const menuId = `${this.props.id}_${this.props.section}`; //MUST BE UNIQUE
-    console.log(menuId);
-    console.log(this.props.patient_colour)
     return connectDragSource(
       <div>
       <RightClickMenu editPatient={this.props.editPatient} test={this.props.test} id={menuId} patientNo={this.props.patient_no} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>

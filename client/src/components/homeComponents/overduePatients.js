@@ -32,14 +32,21 @@ const Wrapper = styled.div`
   align-self: stretch;
 
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+ 
 `;
 
 const Container = styled.div`
   margin: 3px;
-  padding: 0%;
+  padding: 0;
   width: auto;
   height: 100%;
   overflow: hidden;
+`;
+
+const ScrollBoxCustom = styled(ScrollBox)`
+  ::-webkit-scrollbar:vertical {
+      display: initial;
+    }
 `;
 
 class OverduePatients extends React.Component {
@@ -52,7 +59,6 @@ class OverduePatients extends React.Component {
   }
 
   render() {
-    console.log(this.props.anytimeAppointments);
     return (
       <>
       <Wrapper>
@@ -72,13 +78,13 @@ class OverduePatients extends React.Component {
                 style={{
                   position: "absolute",
                   transform: "translate(-50%,-50%)",
-                  right: "0",
+                  right: "2%",
                   top: "50%"
                 }}
               />
             </Tooltip>
           </WeekDaySection>
-          <ScrollBox>
+          <ScrollBoxCustom>
               {this.props.anytimeAppointments.map( group => {
                   if(group.tests.length !== 0){
                       return (
@@ -96,7 +102,7 @@ class OverduePatients extends React.Component {
                 }
             })}
             <div style={{ width: "100%", height: "45px" }} />
-          </ScrollBox>
+          </ScrollBoxCustom>
         </Container>
       </Wrapper>  
       </>

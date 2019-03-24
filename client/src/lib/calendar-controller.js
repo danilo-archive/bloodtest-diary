@@ -49,8 +49,6 @@ function getCurrentWeek(){
     monday.setHours(0, 0, 0, 0);
     monday.setDate(monday.getDate() - monday.getDay() + 1);
     let restOfWeek = getNextDates("1-D:5", monday);
-    console.log("controller:");
-    console.log([monday].concat(restOfWeek));
     return [monday].concat(restOfWeek);
 }
 

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import dateformat from "dateformat";
 
 const Container = styled.div`
     display: flex;
@@ -61,7 +62,7 @@ export default class TestCell extends React.Component {
         return (
             <>
                 <Container>
-                    <Field key={"due"} fontSize={"150%"}><FieldText>{this.props.due}</FieldText></Field>
+                    <Field key={"due"} fontSize={"150%"}><FieldText>{dateformat(this.props.due, "dS mmm yyyy")}</FieldText></Field>
                     <Field key={"notes"} fontSize={"150%"}><FieldText>{this.props.notes}</FieldText></Field>
                     <DeleteButton onClick={() => {this.props.deleteTest(this.props.testId)}}>Delete test</DeleteButton>
                 </Container>

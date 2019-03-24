@@ -181,7 +181,6 @@ class Home extends Component {
   };
 
   jumpToWeek = day => {
-    console.log(getWeekDays(day));
     this.updateDashboard(getWeekDays(day));
   }
 
@@ -233,7 +232,6 @@ class Home extends Component {
 
   openEmailModal = () => {
     this.serverConnect.getOverdueReminderGroups(res => {
-      console.log(res);
       if (res.success) {
         this.setState({
           openEmailModal: true,
@@ -256,7 +254,7 @@ class Home extends Component {
       if (res.token){
           this.setState({editPatientId: id, openEditPatientModal: true, editPatientToken: res.token});
       }else{
-          this.handleError(res, "Somebody is already editing this patient.");
+          this.handleInvalidResponseError(res, "Somebody is already editing this patient.");
       }
     });
   }

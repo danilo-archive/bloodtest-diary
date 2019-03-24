@@ -14,7 +14,6 @@ const SearchDiv = styled.div`
   width: 90%;
   height: 80%;
   background: white;
-  box-shadow: 1px 1px 10px grey;
   border: 0px;
 
   padding: 0.5rem;
