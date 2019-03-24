@@ -20,7 +20,7 @@ const hd = new Holidays('GB');
  * @param {date} startingDate the starting date from which to calculate the next date
  */
 function getNextDueDate(frequency, startingDate) {
-    if (startingDate === undefined ||
+    if (typeof startingDate === 'undefined' ||
         frequency === undefined ||
         frequency === null ||
         frequency.split('-').length != 2 ||
