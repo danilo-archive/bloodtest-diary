@@ -138,7 +138,7 @@ class Home extends Component {
       );
     } else {
       openAlert(
-        `${error ? error : "Unknown error occurred"}`,
+        `${error ? error : "Unknown error occurred."}`,
         "confirmationAlert",
         "OK",
         () => {

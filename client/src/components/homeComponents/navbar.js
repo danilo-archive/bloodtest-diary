@@ -9,6 +9,7 @@ import OptionSwitch from "../switch/OptionSwitch";
 import { getServerConnect } from "../../serverConnection.js";
 import DownloadLink from "react-download-link";
 import dateformat from "dateformat";
+import { openAlert } from "./../Alert.js";
 
 const Wrapper = styled.div`
   border: #839595 0px solid;
@@ -174,7 +175,14 @@ class Navbar extends React.Component {
         });
       }
       else {
-        console.log(res);
+        openAlert(
+          `${"Report could not be generated."}`,
+          "confirmationAlert",
+          "OK",
+          () => {
+            return;
+          }
+        );
       }
     });
   }

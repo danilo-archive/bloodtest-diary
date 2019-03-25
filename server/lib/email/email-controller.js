@@ -18,6 +18,7 @@ const email_sender = require('./email-sender');
 const authenticator = require('./../authenticator.js');
 const crypto = require("crypto");
 const logger = require('./../logger');
+const dateformat = require('dateformat');
 
 /**
  * Send reminders for overdue tests.
@@ -40,7 +41,7 @@ const logger = require('./../logger');
  *            }
  **/
 async function sendOverdueReminders(testIDs, actionUsername) {
-    return await send(testIDs, actionUsername, email_sender.sendOverdueReminderToPatient, email_sender.sendOverdueReminderToHospital);
+    return await send(testIDs, actionUsername, email_sender.sendOverdueReminderToPatient, email_sender.sendOverdueReminderToHospital, true);
 }
 
 /**
@@ -64,7 +65,7 @@ async function sendOverdueReminders(testIDs, actionUsername) {
  *            }
  **/
 async function sendNormalReminders(testIDs, actionUsername) {
-    return await send(testIDs, actionUsername, email_sender.sendReminderToPatient, email_sender.sendReminderToHospital);
+    return await send(testIDs, actionUsername, email_sender.sendReminderToPatient, email_sender.sendReminderToHospital, false);
 }
 
 /**
@@ -87,7 +88,7 @@ async function sendNormalReminders(testIDs, actionUsername) {
  *             }
  *            }
  **/
-async function send(testIDs, actionUsername, patientFunction, hospitalFunction) {
+async function send(testIDs, actionUsername, patientFunction, hospitalFunction, isOvedue) {
     const failedBoth = [];
     const failedPatient = [];
     const failedHospital = [];
@@ -130,7 +131,25 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction) 
             carer: carer
         };
 
-        const pat_ok = await patientFunction(emailInfo);
+        let contactPatient = false;
+        if (isOvedue) {
+            // check if this patient has already been contacted
+            if (test.last_reminder === null) {
+                contactPatient = true;
+            }
+            else {
+                const date_1 = dateformat(test.last_reminder, "yyyymmdd");
+                const date_2 = dateformat(new Date(), "yyyymmdd");
+                if (date_1 === date_2) {
+                    contactPatient = false;
+                }
+            }
+        }
+
+        let pat_ok = true;
+        if (contactPatient) {
+            pat_ok = await patientFunction(emailInfo);
+        }
 
         let hos_ok = true;
         if (hospital !== null) {
