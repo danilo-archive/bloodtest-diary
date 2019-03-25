@@ -295,8 +295,12 @@ function checkMultipleQueriesStatus(queries) {
 * @param {String} data - date for data to be retrived
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/
-async function getDueTestsInMonth(date=dateformat(new Date(),"yyyymmdd")){
-  const sql = `Select Count(*) as Number From Test Where Month(due_date)=Month(${date});`
+async function getDueTests(isMonthly,date=dateformat(new Date(),"yyyymmdd")){
+  let sql = `Select Count(*) as Number From Test Where Year(due_date)=Year(${mysql.escape(date)})`
+  if(isMonthly){
+    sql += `AND Month(due_date)=Month(${mysql.escape(date)})`;
+  }
+  sql += ";"
   return await selectQueryDatabase(sql);
 }
 
@@ -305,8 +309,12 @@ async function getDueTestsInMonth(date=dateformat(new Date(),"yyyymmdd")){
 * @param {String} data - date for data to be retrived
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/
-async function getCompletedOnTimeInMonth(date=dateformat(new Date(),"yyyymmdd")){
-  const sql = `Select Count(*) as Number From Test Where completed_date<=due_date AND Month(due_date)=Month(${date});`
+async function getCompletedOnTime(isMonthly,date=dateformat(new Date(),"yyyymmdd")){
+  let sql = `Select Count(*) as Number From Test Where completed_date<=due_date AND Year(due_date)=Year(${mysql.escape(date)})`
+  if(isMonthly){
+    sql += `AND Month(due_date)=Month(${mysql.escape(date)})`;
+  }
+  sql += ";"
   return await selectQueryDatabase(sql);
 }
 
@@ -315,8 +323,12 @@ async function getCompletedOnTimeInMonth(date=dateformat(new Date(),"yyyymmdd"))
 * @param {String} data - date for data to be retrived
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/
-async function getCompletedLateInMonth(date=dateformat(new Date(),"yyyymmdd")){
-  const sql = `Select Count(*) as Number From Test Where due_date<completed_date AND Month(completed_date)=Month(${date});`
+async function getCompletedLate(isMonthly,date=dateformat(new Date(),"yyyymmdd")){
+  let sql = `Select Count(*) as Number From Test Where due_date<completed_date AND Year(completed_date)=Year(${mysql.escape(date)})`;
+  if(isMonthly){
+    sql += ` AND Month(completed_date)=Month(${mysql.escape(date)});`
+  }
+  sql += ";"
   return await selectQueryDatabase(sql);
 }
 
@@ -325,8 +337,12 @@ async function getCompletedLateInMonth(date=dateformat(new Date(),"yyyymmdd")){
 * @param {String} data - date for data to be retrived
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/
-async function getNumberOfRemindersSent(date=dateformat(new Date(),"yyyymmdd")){
-  const sql = `Select Sum(reminders_sent) as Number From Test Where Month(due_date)=Month(${date});`
+async function getNumberOfRemindersSent(isMonthly,date=dateformat(new Date(),"yyyymmdd")){
+  let sql = `Select Sum(reminders_sent) as Number From Test Where Year(due_date)=Year(${mysql.escape(date)})`
+  if(isMonthly){
+    sql += `AND Month(due_date)=Month(${mysql.escape(date)})`;
+  }
+  sql += ";"
   return await selectQueryDatabase(sql);
 }
 
@@ -357,9 +373,9 @@ module.exports = {
     getSortedOverdueWeeks,
     getOverdueReminderGroups,
     getPatientEditedTests,
-    getDueTestsInMonth,
-    getCompletedOnTimeInMonth,
-    getCompletedLateInMonth,
+    getDueTests,
+    getCompletedOnTime,
+    getCompletedLate,
     getNumberOfRemindersSent,
     getPatientsNumber,
     //Helper functions - for tests only

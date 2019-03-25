@@ -24,17 +24,16 @@ const tokenConroller = require('./query-modules/token-controller')
  * @param {date} date
  * @returns {JSON} {success:Boolean, response:JSON}
  */
-async function getReport(date, isMonthly) {
+async function getReport(isMonthly,date) {
     date = dateformat(date, "yyyymmdd");
-    let thisMonth = await selector.getDueTestsInMonth(date, isMonthly);
-    let completedOnTime = await selector.getCompletedOnTimeInMonth(date, isMonthly);
-    let completedLate = await selector.getCompletedLateInMonth(date, isMonthly);
-    let remindersSent = await selector.getNumberOfRemindersSent(date, isMonthly);
+    let thisMonth = await selector.getDueTests(isMonthly,date);
+    let completedOnTime = await selector.getCompletedOnTime(isMonthly,date);
+    let completedLate = await selector.getCompletedLate(isMonthly,date);
+    let remindersSent = await selector.getNumberOfRemindersSent(isMonthly,date);
     let children = await selector.getPatientsNumber(false);
     let adults = await selector.getPatientsNumber(true);
 
     try {
-        console.log(thisMonth)
         thisMonth = thisMonth.response[0].Number;
         completedOnTime = completedOnTime.response[0].Number;
         completedLate = completedLate.response[0].Number;
@@ -43,7 +42,6 @@ async function getReport(date, isMonthly) {
         adults = adults.response[0].Number;
     }
     catch(err) {
-        console.log(err);
         return {success: false};
     }
 
@@ -257,7 +255,6 @@ async function editPatient(newInfo, token, actionUsername) {
  */
 async function editPatientExtended(newInfo, token, actionUsername) {
     const patientResponse = await getPatient(newInfo.patient_no);
-    console.log(newInfo);
     if (!patientResponse.success) {
         return patientResponse;
     }

@@ -1077,6 +1077,64 @@ describe("Other functionality", function(){
       response.response.error.should.equal("STUBBED ERROR")
     })
   })
+  context("Check if Patients' Tests are Being Edited", function(){
+    let spy;
+    beforeEach(()=>{
+      spy = sinon.spy(queryController.getReport);
+    })
+    it("Error in getting report - all queries fail(Date specified/Monthly)", async function(){
+
+      const selector={
+        selectQueryDatabase: async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+        getDueTests:async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+        getCompletedOnTime:async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+        getCompletedLate:async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+        getNumberOfRemindersSent:async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+        getPatientsNumber:async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+      }
+      queryController.__set__("selector",selector)
+      const response = await spy(true,"2019-03-04");
+      response.success.should.equal(false);
+    })
+    it("Error in getting report - all queries fail(Date specified/Yearly)", async function(){
+
+      const selector={
+        selectQueryDatabase: async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+        getDueTests:async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+        getCompletedOnTime:async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+        getCompletedLate:async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+        getNumberOfRemindersSent:async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+        getPatientsNumber:async function(){
+          return {success:false, response:{error:"STUBBED ERROR"}}
+        },
+      }
+      queryController.__set__("selector",selector)
+      const response = await spy(false,"2019-03-04");
+      response.success.should.equal(false);
+    })
+  })
 })
 
 function resetQueryController(){

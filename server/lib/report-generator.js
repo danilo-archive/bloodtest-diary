@@ -27,7 +27,7 @@ async function getReport(month, year, actionUsername) {
     if (date === undefined) {
         return { success: false, response: "Report could not be generated." };
     }
-    const res = await queryController.getReport(date, isMonthly);
+    const res = await queryController.getReport(isMonthly, date);
     if (!res.success) {
         return { success: false, response: "Report could not be generated." };
     }
