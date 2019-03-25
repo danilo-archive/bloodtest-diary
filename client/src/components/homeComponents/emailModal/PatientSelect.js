@@ -146,6 +146,17 @@ export default class PatientSelect extends React.Component {
             <>
               {this.state.patients.map(patient => (
                 <PatientBox
+                  failed={
+                    this.props.direction === "center"
+                      ? this.props.response.failedBoth.includes(patient.id)
+                        ? "Failed to contact patient and hospital"
+                        : this.props.response.failedHospital.includes(
+                            patient.id
+                          )
+                        ? "Failed to contact hospital"
+                        : "Failed to contact patient"
+                      : false
+                  }
                   key={patient.id}
                   patientName={patient.name}
                   lastReminder={patient.lastReminder}

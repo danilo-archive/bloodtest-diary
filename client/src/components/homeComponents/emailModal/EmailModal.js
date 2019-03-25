@@ -16,7 +16,6 @@ const Container = styled.div`
   background: white;
 `;
 
-
 export default class EmailModal extends Component {
   constructor(props) {
     super(props);
@@ -42,7 +41,7 @@ export default class EmailModal extends Component {
         };
       })
     };
-  };
+  }
 
   select = users => {
     if (users instanceof Array) {
@@ -58,7 +57,6 @@ export default class EmailModal extends Component {
       this.setState({ selected: [...this.state.selected, users] });
     }
   };
-
 
   deselect = users => {
     if (users instanceof Array) {
@@ -120,7 +118,7 @@ export default class EmailModal extends Component {
     }
     this.setState({ awaitResponse: true });
     let idList = this.state.selected.map(patient => patient.id);
-    this.serverConnect.sendReminders(idList, res => {
+    this.serverConnect.sendOverdueReminders(idList, res => {
       console.log(res);
       if (res.success) {
         openAlert(
@@ -179,6 +177,7 @@ export default class EmailModal extends Component {
                 stat={`${this.state.failedMails}/${
                   this.state.attempted.length
                 }`}
+                response={this.state.response}
                 selectAll={(_, checked) => {
                   if (checked) {
                     this.setState({

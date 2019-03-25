@@ -61,6 +61,11 @@ export default props => {
   return (
     <>
       <Box>
+        {props.failed && props.showID ? (
+          <TimePill>{props.failed}</TimePill>
+        ) : (
+          ``
+        )}
         {props.patientName}
         <SelectButton
           selected={props.selected}
