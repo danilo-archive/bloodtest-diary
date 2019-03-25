@@ -38,25 +38,6 @@ const TableContainer = styled.div`
     flex-shrink: 1;
 `;
 
-const Button = styled.button`
-  border: none;
-  margin-bottom: 1%;
-  color: white;
-  padding: 7px 12px;
-  border-radius: 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 130%;
-  font-weight: 200;
-  background-color: #0b989d;
-  word-break: break-word;
-  outline: none;
-  :hover {
-    background: #018589;
-  }
-`;
-
 const modalStyles = {
   border: `solid 0 black`
 };
