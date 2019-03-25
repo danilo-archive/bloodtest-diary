@@ -23,6 +23,7 @@
     "react-dnd": "^7.0.2",
     "react-dnd-html5-backend": "^7.0.2",
     "react-dom": "^16.8.1",
+    "react-download-link": "^2.2.0",
     "react-fittext": "^1.0.0",
     "react-responsive-modal": "^3.6.0",
     "react-router-dom": "^4.3.1",

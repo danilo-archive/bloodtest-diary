@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
+import { getServerConnect } from "../../serverConnection.js";
+import DownloadLink from "react-download-link";
 
 const Container = styled.div`
 
@@ -60,18 +62,23 @@ export default class ControlButtons extends Component {
 
     constructor(props){
         super(props);
+        this.state = {
+          html: undefined
+        }
         this.onPatientsClick = props.onPatientsClick;
         this.onSignoutClick = props.onSignoutClick;
-        this.onDownloadClick = props.onDownloadClick;
+        //this.onDownloadClick = props.onDownloadClick;
     }
 
     getButtons() {
+      const download = this.getDownloadButton();
+
         switch(this.props.page) {
           case 'Dashboard':
             return (
               <>
                 <div className={"patientsButton"} onClick={this.onPatientsClick}>Patients</div>
-                <div className={"patientsButton"} onClick={this.onDownloadClick}>Download&nbsp;report</div>
+                {download}
                 <div className={"signOutButton"} onClick={this.onSignoutClick}>Sign out</div>
               </>
             );
@@ -84,6 +91,45 @@ export default class ControlButtons extends Component {
           default:
             return null;
         }
+    }
+
+    getDownloadButton = () => {
+      if (this.state.html === undefined) {
+        return (
+          <div className={"patientsButton"} onClick={this.onGenerateClick}>Generate&nbsp;report</div>
+        );
+      }
+      else {
+        return (
+            <div className={"patientsButton"} onClick={this.onDownloadClick}>
+              <DownloadLink
+                  filename="Monthly_Report.html"
+                  exportFile={() => this.state.html}>
+                      
+              </DownloadLink>
+            </div>
+        );
+      }
+    }
+
+    onDownloadClick = () => {
+      this.setState({
+        html: undefined
+      });
+    }
+
+    onGenerateClick = () => {
+      let this_ = this;
+      getServerConnect().generateMonthlyReport("March", (res) => {
+        if (res.success) {
+          this_.setState({
+            html: res.html
+          });
+        }
+        else {
+          console.log(res);
+        }
+      });
     }
 
     render(){
