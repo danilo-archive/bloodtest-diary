@@ -49,7 +49,10 @@ export default class ControlButtons extends Component {
             );
           case 'Patients':
             return (
-                <ControlButton marginTop={"48px"} onClick={this.props.onSignoutClick}>Sign out</ControlButton>
+              <>
+                <ControlButton disabled marginTop={"10px"} onClick={this.props.onPatientsClick}>Patients</ControlButton>
+                <ControlButton marginTop={"10px"} onClick={this.props.onSignoutClick}>Sign out</ControlButton>
+              </>
             );
           default:
             return null;
