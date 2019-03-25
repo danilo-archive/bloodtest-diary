@@ -148,7 +148,27 @@ const buttonStyle = {
   ':hover':{
     color: 'black'
   }
-}
+};
+
+const AddPatientButton = styled.button`
+  border: none;
+  margin-bottom: 4px;
+  margin-right: 2%;
+  color: white;
+  padding: 7px 12px;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 130%;
+  font-weight: 200;
+  background-color: #0b989d;
+  word-break: break-word;
+  outline: none;
+  :hover {
+    background: #018589;
+  }
+`;
 
 class Navbar extends React.Component {
 
@@ -255,6 +275,7 @@ class Navbar extends React.Component {
               onRefreshClick={this.props.refresh}
             />
             <BottomSide>
+              <AddPatientButton onClick={this.props.openAddModal}>Add patient</AddPatientButton>
               <OptionSwitch
                 checked={this.props.over12}
                 onChange={this.props.setUnder12}

@@ -51,7 +51,6 @@ const Button = styled.button`
   font-weight: 200;
   background-color: #0b989d;
   word-break: break-word;
-  font-family: "Rajdhani",sans-serif;
   outline: none;
   :hover {
     background: #018589;
@@ -223,8 +222,9 @@ class Patients extends React.Component {
                             onHomeClick={this.onHomeClick}
                             onSignoutClick={this.logout}
                             refresh={this.refresh}
+                            openAddModal={this.openAddModal}
                           />
-                        <Button onClick={this.openAddModal}>Add patient</Button>
+
                         <TableContainer>
                             <PatientsTable
                                 shownPatients={this.state.shownPatients}
