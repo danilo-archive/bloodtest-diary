@@ -290,6 +290,57 @@ function checkMultipleQueriesStatus(queries) {
     return { success: true, response: data };
 }
 
+/**
+* Get number of test due in month
+* @param {String} data - date for data to be retrived
+* @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
+**/
+async function getDueTestsInMonth(date=dateformat(new Date(),"yyyymmdd")){
+  const sql = `Select Count(*) as Number From Test Where Month(due_date)=Month(${date});`
+  return await selectQueryDatabase(sql);
+}
+
+/**
+* Get number of completed tests on time in month
+* @param {String} data - date for data to be retrived
+* @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
+**/
+async function getCompletedOnTimeInMonth(date=dateformat(new Date(),"yyyymmdd")){
+  const sql = `Select Count(*) as Number From Test Where completed_date<=due_date AND Month(due_date)=Month(${date});`
+  return await selectQueryDatabase(sql);
+}
+
+/**
+* Get number of completed tests in month
+* @param {String} data - date for data to be retrived
+* @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
+**/
+async function getCompletedLateInMonth(date=dateformat(new Date(),"yyyymmdd")){
+  const sql = `Select Count(*) as Number From Test Where due_date<completed_date AND Month(completed_date)=Month(${date});`
+  return await selectQueryDatabase(sql);
+}
+
+/**
+* Get sum of all reminders send in month
+* @param {String} data - date for data to be retrived
+* @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
+**/
+async function getNumberOfRemindersSent(date=dateformat(new Date(),"yyyymmdd")){
+  const sql = `Select Sum(reminders_sent) as Number From Test Where Month(due_date)=Month(${date});`
+  return await selectQueryDatabase(sql);
+}
+
+/**
+* Get number of patients in database
+* @param {Boolean} isAdult - if the number of patients to be retrived should be for adult patients
+* @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
+**/
+async function getPatientsNumber(isAdult=true){
+  isAdult = (isAdult) ? "yes" : "no";
+  const sql = `Select Count(*) as Number From Patient Where isAdult='${isAdult}';`
+  return await selectQueryDatabase(sql);
+}
+
 module.exports = {
     //SELECTS
     getPatient,
@@ -306,6 +357,11 @@ module.exports = {
     getSortedOverdueWeeks,
     getOverdueReminderGroups,
     getPatientEditedTests,
+    getDueTestsInMonth,
+    getCompletedOnTimeInMonth,
+    getCompletedLateInMonth,
+    getNumberOfRemindersSent,
+    getPatientsNumber,
     //Helper functions - for tests only
     selectQueryDatabase
   }

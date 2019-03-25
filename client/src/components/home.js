@@ -138,7 +138,7 @@ class Home extends Component {
       );
     } else {
       openAlert(
-        `${error ? error : "Unknown error occurred"}`,
+        `${error ? error : "Unknown error occurred."}`,
         "confirmationAlert",
         "OK",
         () => {
@@ -200,6 +200,13 @@ class Home extends Component {
 
   onAddTestCloseModal = () => {
     this.setState({ openAddTestModal: false, selectedDate: undefined });
+  };
+
+  onDownloadClick = () => {
+    
+    this.serverConnect.generateMonthlyReport("March", (res) => {
+      
+    });
   };
 
   onEditTestOpenModal = testId => {
@@ -298,6 +305,7 @@ class Home extends Component {
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
                     onSignoutClick={this.logout}
+                    onDownloadClick={this.onDownloadClick}
                     refresh={this.refresh}
                   />
                 <BottomSideDash>

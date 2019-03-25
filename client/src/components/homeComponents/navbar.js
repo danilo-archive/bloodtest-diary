@@ -6,6 +6,10 @@ import ControlButtons from "./../navbarComponents/controlButtons.js";
 import WeekButtons from "./../navbarComponents/weekButtons.js";
 import NavHeader from "./../navbarComponents/navHeader.js";
 import OptionSwitch from "../switch/OptionSwitch";
+import { getServerConnect } from "../../serverConnection.js";
+import DownloadLink from "react-download-link";
+import dateformat from "dateformat";
+import { openAlert } from "./../Alert.js";
 
 const Wrapper = styled.div`
   border: #839595 0px solid;
@@ -70,6 +74,7 @@ const CalenderControls = styled.div`
   width: auto;
 
   margin-right: 1%;
+  margin-left: 1%;
 
   overflow: hidden;
 
@@ -79,14 +84,135 @@ const CalenderControls = styled.div`
   justify-content: flex-end;
 `;
 
+const DownloadBox = styled.div`
+  height: 100%;
+  width: 30%;
+  position: relative;
+  bottom: 7px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
+  
+  color: #646464;
+  font-size: 130%;
+  
+`;
+
+const ControlButton = styled.div`
+  position: relative;
+  margin-top: "0"
+  border: solid 0px #97a9a9;
+  background-color: ;
+  width: auto;
+  height: 31px;
+  margin-right:44px;
+  cursor: pointer;
+  outline:none;
+  align-self: flex-end;
+  :hover{
+    color: black;
+  }
+`;
+
+const ControlLabel = styled.div`
+  position: relative;
+  margin-top: ${props => props.marginTop ? props.marginTop : "0"}
+  border: solid 0px #97a9a9;
+  background-color: ;
+  color: black;
+  width: 170px;
+  height: 31px;
+  margin-right:44px;
+  cursor: pointer;
+  outline:none;
+  align-self: flex-end;
+`;
+
 const patientToggleStyle = {
   position: 'relative',
   bottom: '6px',
 };
 
+const buttonStyle = {
+  position: "relative",
+  "margin": "0 10px 0 0",
+  border: 'solid 0px #97a9a9',
+  'background-color': '',
+  width: 'auto',
+  height: '31px',
+  cursor: 'pointer',
+  outline:'none',
+  'align-self': 'flex-end',
+  color: '#646464',
+  ':hover':{
+    color: 'black'
+  }
+}
+
 class Navbar extends React.Component {
 
+  constructor(props){
+    super(props);
+    this.state = {
+      html: undefined
+    }
+  }
+
+  onDownloadClick = () => {
+    this.setState({
+      html: undefined
+    });
+  }
+
+  onGenerateClick = () => {
+    let this_ = this;
+    getServerConnect().generateMonthlyReport("March", (res) => {
+      const time = dateformat(new Date(), "HH:MM:ss");
+      if (res.success) {
+        this_.setState({
+          html: res.html,
+          time: time
+        });
+      }
+      else {
+        openAlert(
+          `${"Report could not be generated."}`,
+          "confirmationAlert",
+          "OK",
+          () => {
+            return;
+          }
+        );
+      }
+    });
+  }
+
+  getDownloadButton = () => {
+    if (this.state.html === undefined) {
+      return (
+        <DownloadBox>
+        <ControlButton onClick={this.onGenerateClick}>Generate&nbsp;report</ControlButton>
+        </DownloadBox>
+      );
+    }
+    else {
+      return (
+        <DownloadBox>
+            <ControlLabel>Report&nbsp;generated&nbsp;({this.state.time}):</ControlLabel>
+            <DownloadLink
+                style={buttonStyle}
+                filename="Monthly_Report.html"
+                exportFile={() => this.state.html}>      
+            </DownloadLink>
+            <ControlButton onClick={this.onGenerateClick}>Generate&nbsp;new</ControlButton>
+        </DownloadBox>
+      );
+    }
+  }
+
   getNavbar() {
+    const download = this.getDownloadButton();
     switch (this.props.page) {
       case "Dashboard":
         return (
@@ -97,6 +223,7 @@ class Navbar extends React.Component {
               onRefreshClick={this.props.refresh}
             />
             <BottomSide>
+              {download}
               <CalenderControls>
                 <OptionSwitch
                   checked={this.props.over12}
@@ -114,6 +241,7 @@ class Navbar extends React.Component {
                 page={this.props.page}
                 onPatientsClick={this.props.onPatientsClick}
                 onSignoutClick={this.props.onSignoutClick}
+                onDownloadClick={this.props.onDownloadClick}
               />
             </BottomSide>
           </>

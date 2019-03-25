@@ -38,6 +38,10 @@ const ControlButton = styled.div`
 
 export default class ControlButtons extends Component {
 
+    constructor(props){
+        super(props);
+    }
+
     getButtons() {
         switch(this.props.page) {
           case 'Dashboard':
