@@ -25,8 +25,14 @@ const SearchDiv = styled.div`
 const Bar = styled.input.attrs({ type: "text" })`
   width: 90%;
   height: 80%;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
+  padding-left: 2%;
   border: solid 0.5px rgba(204, 204, 204, 1);
+  font-size: 90%;
+  ::-webkit-input-placeholder {
+    font-size: 60%;
+    color: #b0b0b0;
+  }
 `;
 
 export default class SearchBar extends React.Component {
