@@ -85,10 +85,7 @@ const patientToggleStyle = {
 };
 
 class Navbar extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
+  
   getNavbar() {
     switch (this.props.page) {
       case "Dashboard":
