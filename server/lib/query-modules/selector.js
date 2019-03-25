@@ -351,7 +351,7 @@ async function getNumberOfRemindersSent(isMonthly,date=dateformat(new Date(),"yy
 * @param {Boolean} isAdult - if the number of patients to be retrived should be for adult patients
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/
-async function getPatientsNumber(isAdult=true){
+async function getPatientsNumber(isAdult){
   isAdult = (isAdult) ? "yes" : "no";
   const sql = `Select Count(*) as Number From Patient Where isAdult='${isAdult}';`
   return await selectQueryDatabase(sql);
