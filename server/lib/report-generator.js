@@ -7,7 +7,7 @@
  */
 
 module.exports = {
-    getMonthlyReport
+  getReport
 }
 
 const queryController =  require('./query-controller');
@@ -21,8 +21,8 @@ const actionLogger = require('./action-logger');
  * @param {string} actionUsername User who requested the report
  * @returns {JSON} {success:Boolean, html: string} 
  */
-async function getMonthlyReport(month, actionUsername) {
-    const date = getDate(month);
+async function getReport(month, year, actionUsername) {
+    const date = getDate(month, year);
     if (date === undefined) {
         return {success:false, response: "Report could not be generated."};
     }
@@ -124,7 +124,7 @@ async function getMonthlyReport(month, actionUsername) {
  * @param {string} month
  * @returns {Date}
  */
-function getDate(month) {
+function getDate(month, year) {
     const date = new Date();
     switch(month) {
         case "January": date.setMonth(0); break;
@@ -141,5 +141,6 @@ function getDate(month) {
         case "December": date.setMonth(11); break;
         default: return undefined;
     }
+    date.setFullYear(year);
     return date;
 }

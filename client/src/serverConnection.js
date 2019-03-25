@@ -496,9 +496,13 @@ class ServerConnect {
         });
     }
 
-    generateMonthlyReport(month, callback) {
-        this.socket.emit("generateMonthlyReport", month, this.loginToken);
-        this.socket.once("generateMonthlyReportResponse", res => {
+    /**
+     * @param {string} month - Full name of the month in english, or null if generating report for the whole year.
+     * @param {string} year - Year we are fetching from.
+     */
+    generateReport(month, year, callback) {
+        this.socket.emit("generateReport", month, year, this.loginToken);
+        this.socket.once("generateReportResponse", res => {
             callback(res);
         });
     }

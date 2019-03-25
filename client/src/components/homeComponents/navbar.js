@@ -159,15 +159,10 @@ class Navbar extends React.Component {
     }
   }
 
-  onDownloadClick = () => {
-    this.setState({
-      html: undefined
-    });
-  }
-
   onGenerateClick = () => {
     let this_ = this;
-    getServerConnect().generateMonthlyReport("March", (res) => {
+    // TODO: remove hard coded values
+    getServerConnect().generateReport("March", "2019", (res) => {
       const time = dateformat(new Date(), "HH:MM:ss");
       if (res.success) {
         this_.setState({
@@ -176,6 +171,9 @@ class Navbar extends React.Component {
         });
       }
       else {
+        this_.setState({
+          html: undefined,
+        });
         openAlert(
           `${"Report could not be generated."}`,
           "confirmationAlert",
@@ -241,7 +239,6 @@ class Navbar extends React.Component {
                 page={this.props.page}
                 onPatientsClick={this.props.onPatientsClick}
                 onSignoutClick={this.props.onSignoutClick}
-                onDownloadClick={this.props.onDownloadClick}
               />
             </BottomSide>
           </>

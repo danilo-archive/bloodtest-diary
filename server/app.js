@@ -763,18 +763,22 @@ io.on('connection',function(socket)
         socket.emit("sendNormalRemindersResponse", response);
     });
 
-    socket.on('generateMonthlyReport', async (month, accessToken) => {
+    /**
+     * @param {string} month - Full name of the month in english, or null if generating report for the whole year.
+     * @param {string} year - Year we are fetching from.
+     */
+    socket.on('generateReport', async (month, year, accessToken) => {
         if (!accessToken) {
-            socket.emit("generateMonthlyReportResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            socket.emit("generateReportResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
         }
         const username = await authenticator.verifyToken(accessToken);
         if (!username) {
-            socket.emit("generateMonthlyReportResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            socket.emit("generateReportResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
             return;
         }
-        const res = await reportGenerator.getMonthlyReport(month, username);
-        socket.emit("generateMonthlyReportResponse", res);
+        const res = await reportGenerator.getReport(month, year, username);
+        socket.emit("generateReportResponse", res);
     });
 
 });
