@@ -9,6 +9,7 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
 `;
+
 const Option = styled(Label)`
   position: relative;
   transform: translate(0, 0);
@@ -20,7 +21,7 @@ const Option = styled(Label)`
 
 export default props => {
   return (
-    <Container>
+    <Container style={props.style}>
       <Option>{props.option1}</Option>
       <Switch checked={props.checked} onToggleClick={props.onChange} />
       <Option>{props.option2}</Option>
