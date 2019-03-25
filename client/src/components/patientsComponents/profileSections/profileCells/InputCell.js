@@ -68,7 +68,6 @@ class InputCell extends React.Component {
     }
 
     render() {
-        //TODO : improve this
         if (this.props.disabled === true) {
             return (
                 <Container>

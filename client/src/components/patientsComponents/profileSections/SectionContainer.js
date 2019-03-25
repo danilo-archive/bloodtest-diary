@@ -7,7 +7,7 @@ const Container = styled.div`
   width: 80%;
   
   background: white;
-  max-height: 225px;
+  max-height: 300px;
   display: flex;
   height: 10%;
 `;
@@ -36,7 +36,6 @@ export default class SectionContainer extends React.Component {
     render() {
         return (
             <Container>
-
                 <ContentContainer>
                     <TitleContainer>
                         <SectionTitle>{this.props.title}</SectionTitle>
