@@ -17,24 +17,38 @@ describe("Test queries", function(){
   let test3_id;
   let test4_id;
   let test5_id;
-  let test6_id;
-  const nowDate = new Date();
-  nowDate.setMinutes(nowDate.getMinutes() + 30);
-  const expires = dateFormat(nowDate, "yyyymmddHHMMss");
   //Insert:
   //4 patients: 3 adults, 1 kid
   //1 hospital
   //1 carer
   //1 user
   //5 tests
+  const test5={
+    patient_no:'Patient2TEST',
+    due_date:'20180319',
+    frequency:'1-W'
+  }
+  const test4 ={
+    patient_no:'Patient1TEST',
+    due_date:'20190319',
+    frequency:'1-W',
+    completed_status:'in review'
+  }
+  const test3={
+    patient_no:'Patient2TEST',
+    due_date:'20190321',
+    frequency:'1-W'
+  }
+  const test2 = {
+    patient_no:'Patient1TEST',
+    due_date:'20190319',
+    frequency:'1-W',
+    completed_status:'yes'
+  }
+  const test1 ={patient_no:'Patient1TEST',due_date:'20190322',frequency:'1-W'}
   before(async () => {
       const database = new Database(databaseConfig);
-      await database.query("DELETE FROM ActionLog WHERE username LIKE 'USERNAME%TEST'")
-      await database.query("DELETE FROM EditTokens WHERE token LIKE 'TOKEN%TEST'")
-      await database.query("DELETE FROM User WHERE username LIKE 'USERNAME%TEST'")
-      await database.query("DELETE FROM Carer WHERE carer_name LIKE 'Carer%TEST'")
-      await database.query("DELETE FROM Hospital WHERE hospital_name LIKE 'Hospital%TEST'")
-      await database.query("DELETE FROM Patient WHERE patient_no LIKE 'Patient%TEST'")
+      await runDeletes(database)
       await database.query("INSERT INTO Hospital (hospital_name, hospital_email) VALUES ('Hospital1TEST', 'test@email')").then((result) => {
                       hospital_id = result.insertId;
       })
@@ -47,32 +61,26 @@ describe("Test queries", function(){
       await database.query("INSERT INTO Patient (patient_no, patient_name, patient_surname) VALUES ('Patient3TEST', 'testName3', 'testSurname3')")
       await database.query(`INSERT INTO Patient (patient_no, patient_name, patient_surname,carer_id,hospital_id) VALUES ('Patient4TEST', 'testName4', 'testSurname4',${carer_id},${hospital_id})`)
       await database.query(`INSERT INTO Patient (patient_no, patient_name, patient_surname,isAdult) VALUES ('Patient5TEST', 'testName4', 'testSurname4',"no")`)
-      await database.query(`INSERT INTO Test (patient_no,due_date,frequency) VALUES ('Patient1TEST','20190322','1-W')`).then((result) => {
+      await database.query(`INSERT INTO Test (patient_no,due_date,frequency) VALUES ('${test1.patient_no}','${test1.due_date}','${test1.frequency}')`).then((result) => {
                       test1_id = result.insertId;
       })
-      await database.query(`INSERT INTO Test (patient_no,due_date,frequency,completed_status) VALUES ('Patient1TEST','20190319','1-W','yes')`).then((result) => {
+      await database.query(`INSERT INTO Test (patient_no,due_date,frequency,completed_status) VALUES ('${test2.patient_no}','${test2.due_date}','${test2.frequency}','${test2.completed_status}')`).then((result) => {
                       test2_id = result.insertId;
       })
-      await database.query(`INSERT INTO Test (patient_no,due_date,frequency) VALUES ('Patient2TEST','20190321','1-W')`).then((result) => {
+      await database.query(`INSERT INTO Test (patient_no,due_date,frequency) VALUES ('${test3.patient_no}','${test3.due_date}','${test3.frequency}')`).then((result) => {
                       test3_id = result.insertId;
       })
-      await database.query(`INSERT INTO Test (patient_no,due_date,frequency,completed_status) VALUES ('Patient1TEST','20190319','1-W','in review')`).then((result) => {
+      await database.query(`INSERT INTO Test (patient_no,due_date,frequency,completed_status) VALUES ('${test4.patient_no}','${test4.due_date}','${test4.frequency}','${test4.completed_status}')`).then((result) => {
                       test4_id = result.insertId;
       })
-      await database.query(`INSERT INTO Test (patient_no,due_date,frequency) VALUES ('Patient2TEST','20180319','1-W')`).then((result) => {
+      await database.query(`INSERT INTO Test (patient_no,due_date,frequency) VALUES ('${test5.patient_no}','${test5.due_date}','${test5.frequency}')`).then((result) => {
                       test5_id = result.insertId;
       })
-      await database.query(`INSERT INTO EditTokens VALUES ('TOKEN2TEST', 'Test', ${test1_id}, ` + expires + `)`)
       await database.close();
   });
   after(async () => {
         const database = new Database(databaseConfig);
-        await database.query("DELETE FROM ActionLog WHERE username LIKE 'USERNAME%TEST'")
-        await database.query("DELETE FROM EditTokens WHERE token LIKE 'TOKEN%TEST'")
-        await database.query("DELETE FROM User WHERE username LIKE 'USERNAME%TEST'")
-        await database.query("DELETE FROM Carer WHERE carer_name LIKE 'Carer%TEST'")
-        await database.query("DELETE FROM Hospital WHERE hospital_name LIKE 'Hospital%TEST'")
-        await database.query("DELETE FROM Patient WHERE patient_no LIKE 'Patient%TEST'")
+        await runDeletes(database)
         await database.close();
   });
   context("Selects", function(){
@@ -248,7 +256,22 @@ describe("Test queries", function(){
       const response = await queryController.getOverdueReminderGroups(false);
       response.success.should.equal(true);
     })
-
+    it("Get Report (Unspecified date/Yearly)", async function(){
+      const response = await queryController.getMonthlyReport(false);
+      response.success.should.equal(true);
+    })
+    it("Get Report (Unspecified date/Monthly)", async function(){
+      const response = await queryController.getMonthlyReport(true);
+      response.success.should.equal(true);
+    })
+    it("Get Report (Specified date/Monthly)", async function(){
+      const response = await queryController.getMonthlyReport(true,new Date("2019-03-19"));
+      response.success.should.equal(true);
+    })
+    it("Get Report (Specified date/Yearly)", async function(){
+      const response = await queryController.getMonthlyReport(false,new Date("2019-03-19"));
+      response.success.should.equal(true);
+    })
   })
   context("Inserts",function(){
     it("Add User2", async function(){
@@ -385,3 +408,12 @@ describe("Test queries", function(){
     })
   })
 })
+
+async function runDeletes(database){
+  await database.query("DELETE FROM ActionLog WHERE username LIKE 'USERNAME%TEST'")
+  await database.query("DELETE FROM EditTokens WHERE token LIKE 'TOKEN%TEST'")
+  await database.query("DELETE FROM User WHERE username LIKE 'USERNAME%TEST'")
+  await database.query("DELETE FROM Carer WHERE carer_name LIKE 'Carer%TEST'")
+  await database.query("DELETE FROM Hospital WHERE hospital_name LIKE 'Hospital%TEST'")
+  await database.query("DELETE FROM Patient WHERE patient_no LIKE 'Patient%TEST'")
+}
