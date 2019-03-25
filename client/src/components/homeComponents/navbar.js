@@ -81,7 +81,7 @@ const CalenderControls = styled.div`
 
 const patientToggleStyle = {
   position: 'relative',
-  bottom: '34px',
+  bottom: '10px',
 };
 
 class Navbar extends React.Component {
