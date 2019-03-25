@@ -123,7 +123,7 @@ function sendReminder(test){
 
 const RightClickMenu = props => {
     return(
-        <Menu id={props.id} style={{position: "absolute", zIndex: "4", fontSize: "1rem"}}>
+        <Menu id={props.id} style={{position: "absolute", zIndex: "11", fontSize: "1rem"}}>
         <Test>
            <Item onClick={() => {props.editTest(props.testId)}}>Edit</Item>
            </Test>

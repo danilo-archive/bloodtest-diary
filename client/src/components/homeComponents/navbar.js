@@ -74,6 +74,7 @@ const CalenderControls = styled.div`
   width: auto;
 
   margin-right: 1%;
+  margin-left: 1%;
 
   overflow: hidden;
 
@@ -87,7 +88,7 @@ const DownloadBox = styled.div`
   height: 100%;
   width: 30%;
   position: relative;
-  bottom: 7px
+  bottom: 7px;
   display: flex;
   flex-direction: row;
   align-items: center;
