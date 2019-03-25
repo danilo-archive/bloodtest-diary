@@ -19,7 +19,7 @@ const Container = styled.div`
   align-self: stretch;
 `;
 
-const SignoutButton = styled.div`
+const ControlButton = styled.div`
   position: relative;
   margin-top: ${props => props.marginTop ? props.marginTop : "0"}
   border: solid 0px #97a9a9;
@@ -36,24 +36,6 @@ const SignoutButton = styled.div`
 `;
 
 
-const PatientsButton = styled.div`
-  position: relative;
-  margin-top: ${props => props.marginTop ? props.marginTop : "0"}
-  border: solid 0px #97a9a9;
-  background-color: ;
-  width: 100px;
-  height: 31px;
-  margin-right: 44px;
-  border-radius:  0;
-  cursor: pointer;
-  outline:none;
-  align-self: flex-end;
-  :hover{
-    color: black;
-  }
-`;
-
-
 export default class ControlButtons extends Component {
 
     getButtons() {
@@ -61,13 +43,13 @@ export default class ControlButtons extends Component {
           case 'Dashboard':
             return (
               <>
-                <PatientsButton marginTop={"10px"} onClick={this.props.onPatientsClick}>Patients</PatientsButton>
-                <SignoutButton marginTop={"10px"} onClick={this.props.onSignoutClick}>Sign out</SignoutButton>
+                <ControlButton marginTop={"10px"} onClick={this.props.onPatientsClick}>Patients</ControlButton>
+                <ControlButton marginTop={"10px"} onClick={this.props.onSignoutClick}>Sign out</ControlButton>
               </>
             );
           case 'Patients':
             return (
-                <SignoutButton marginTop={"48px"} onClick={this.props.onSignoutClick}>Sign out</SignoutButton>
+                <ControlButton marginTop={"48px"} onClick={this.props.onSignoutClick}>Sign out</ControlButton>
             );
           default:
             return null;
