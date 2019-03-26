@@ -40,7 +40,7 @@ export default class AdditionalInfoSection extends React.Component {
         );
         return (
             <SectionContainer
-                title={"Additional info"}
+                title={"Additional information"}
                 content={content}
             />
         );
