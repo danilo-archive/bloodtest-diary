@@ -1,5 +1,4 @@
 import React from 'react';
-import './DayCell.css';
 import {isSelected} from '../../lib/calendar-functions.js';
 
 const DayCell = props => {

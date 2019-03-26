@@ -75,7 +75,7 @@ export default class PatientSection extends React.Component {
             return (
                 <>
                     <SectionContainer
-                        title={"Patient's tests"}
+                        title={"Patient's outstanding tests"}
                         content={content}
                     />
                 </>
@@ -84,7 +84,7 @@ export default class PatientSection extends React.Component {
             return (
                 <>
                     <SectionContainer
-                        title={"Patient's tests"}
+                        title={"Patient's outstanding tests"}
                         content={emptyTest}
                     />
                 </>
