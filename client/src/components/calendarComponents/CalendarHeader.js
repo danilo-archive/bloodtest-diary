@@ -1,5 +1,4 @@
 import React from 'react';
-import './CalendarHeader.css';
 import styled from "styled-components";
 
 const Td = styled.td`

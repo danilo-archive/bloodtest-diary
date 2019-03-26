@@ -5,6 +5,7 @@ import PatientSection from "./profileSections/PatientSection";
 import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
 import TestSection from "./profileSections/TestSection";
+import AdditionalInfoSection from "./profileSections/AdditionalInfoSection";
 import OptionSwitch from "./../switch/OptionSwitch"
 
 import {getServerConnect} from "../../serverConnection";
@@ -193,6 +194,7 @@ class PatientProfile extends Component {
                     hospitalEmail: info.hospital_email,
                     hospitalPhone: info.hospital_phone,
                     isAdult: info.isAdult,
+                    additionalInfo: info.additional_info,
 
                     noCarer: info.carer_id ? false : true,
                     localHospital: info.hospital_id ? false : true,
@@ -283,14 +285,15 @@ class PatientProfile extends Component {
             }
         }
 
-        const {patientId, editToken, patientName, patientSurname, patientEmail, patientPhone, isAdult} = this.state;
+        const {patientId, editToken, patientName, patientSurname, patientEmail, patientPhone, isAdult, additionalInfo} = this.state;
         let newInfo = {
             patient_no: patientId, patient_name: patientName, patient_surname: patientSurname, patient_email: patientEmail, patient_phone: patientPhone,
             hospital_id: hospitalInfo.hospitalId, hospital_name: hospitalInfo.hospitalName, hospital_email: hospitalInfo.hospitalEmail, hospital_phone: hospitalInfo.hospitalPhone,
             carer_id: carerInfo.carerId, carer_name: carerInfo.carerName, carer_surname: carerInfo.carerSurname, carer_email: carerInfo.carerEmail, carer_phone: carerInfo.carerPhone,
-            relationship: carerInfo.carerRelationship, isAdult: isAdult
+            relationship: carerInfo.carerRelationship, isAdult: isAdult, additional_info: additionalInfo
         };
-        //TODO : save patient "age"
+        console.log(newInfo);
+
         this.serverConnect.editPatient(patientId, newInfo, editToken, res => {
             if (res.success) {
                 openAlert("Patient details updated successfully.", "confirmationAlert", "OK", () => {this.props.closeModal()});
@@ -364,6 +367,15 @@ class PatientProfile extends Component {
                     <TestSection
                         tests={this.state.testsData}
                         deleteTest={this.onDeleteTestClick}
+                    />
+                    <Hr/>
+                    <AdditionalInfoSection
+                        additionalInfo={this.state.additionalInfo}
+                        onChange={additionalInfo => {
+                            this.setState({
+                                additionalInfo: additionalInfo.additionalInfo
+                            })
+                        }}
                     />
                     <Hr/>
                     <SwitchContainer>

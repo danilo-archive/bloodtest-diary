@@ -11,7 +11,6 @@ height: 11px;
 width: 200px;
 display: flex;
 margin-left: 10px;
-font-family: "Rajdhani", sans-serif;
 color: black;
 align-items: center;
 
