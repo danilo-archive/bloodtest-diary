@@ -12,7 +12,7 @@ import dateformat from "dateformat";
 import { openAlert } from "./../Alert.js";
 
 const Wrapper = styled.div`
-  border: #839595 0px solid;
+  border: #839595 0 solid;
 
   background-color: white;
 
@@ -34,8 +34,8 @@ const Wrapper = styled.div`
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 `;
 const Container = styled.div`
-  border: red 0px solid;
-  padding: 0%;
+  border: red 0 solid;
+  padding: 0;
   width: auto;
   height: 100%;
 
@@ -51,8 +51,8 @@ const Container = styled.div`
 `;
 
 const BottomSide = styled.div`
-  border: green 0px solid;
-  padding: 0%;
+  border: green 0 solid;
+  padding: 0;
 
   height: 100%;
   width: auto;
@@ -67,8 +67,8 @@ const BottomSide = styled.div`
 `;
 
 const CalenderControls = styled.div`
-  border: green 0px solid;
-  padding: 0%;
+  border: green 0 solid;
+  padding: 0;
 
   height: 100%;
   width: auto;
@@ -101,9 +101,8 @@ const DownloadBox = styled.div`
 
 const ControlButton = styled.div`
   position: relative;
-  margin-top: "0"
-  border: solid 0px #97a9a9;
-  background-color: ;
+  margin-top: 0;
+  border: solid 0 #97a9a9;
   width: auto;
   height: 31px;
   margin-right:44px;
@@ -118,8 +117,7 @@ const ControlButton = styled.div`
 const ControlLabel = styled.div`
   position: relative;
   margin-top: ${props => props.marginTop ? props.marginTop : "0"}
-  border: solid 0px #97a9a9;
-  background-color: ;
+  border: solid 0 #97a9a9;
   color: black;
   width: 170px;
   height: 31px;
@@ -148,7 +146,7 @@ const buttonStyle = {
   ':hover':{
     color: 'black'
   }
-}
+};
 
 class Navbar extends React.Component {
 
@@ -184,7 +182,7 @@ class Navbar extends React.Component {
         );
       }
     });
-  }
+  };
 
   getDownloadButton = () => {
     if (this.state.html === undefined) {
@@ -207,7 +205,7 @@ class Navbar extends React.Component {
         </DownloadBox>
       );
     }
-  }
+  };
 
   getNavbar() {
     const download = this.getDownloadButton();
