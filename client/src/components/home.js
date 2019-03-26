@@ -1,3 +1,13 @@
+/**
+ * This file represents the main component of the main page of the app.
+ * The home component can be seen as the root of all the compoenents on the main page screen
+ * Here is where all the connections regarding the tests visualization happen.
+ * This module is intensively documented throughout.
+ * @module Home
+ * @author Jacopo Madaluni
+ * @version 0.0.2
+ */
+
 import React, { Component } from "react";
 import styled from "styled-components";
 import Modal from "./Modal";
@@ -24,7 +34,7 @@ import {
   getNextWeek
 } from "../lib/calendar-controller";
 import { getServerConnect } from "../serverConnection.js";
-import { group, getNumberOfTestsInGroup } from "../lib/overdue-controller.js";
+import { getNumberOfTestsInGroup } from "../lib/overdue-controller.js";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DragDropContext } from "react-dnd";
 import CustomDragLayer from "./homeComponents/CustomDragLayer.js";
@@ -95,17 +105,27 @@ class Home extends Component {
       editPatientToken: undefined
     };
   }
-
+  /**
+   * Initializes the panels and the callbacks for the first time
+   */
   componentDidMount = () => {
     this.initOverduePanel();
     this.updateDashboard();
     this.initCallbacks();
   };
 
+  /**
+   * Initializes all the callbacks for the server connection
+   */
   initCallbacks() {
     this.initOnTestAdded();
   }
 
+  /**
+   * Sets the behaviour for when a test is added in the database.
+   * This allowes real time update with the other clients.
+   * This method is yet to be optimized.
+   */
   initOnTestAdded() {
     this.serverConnect.setOnTestAdded(newTest => {
       this.updateDashboard();
@@ -113,6 +133,9 @@ class Home extends Component {
     });
   }
 
+  /**
+   * Initializes the overdue column of the dashboard
+   */
   initOverduePanel() {
     this.serverConnect.getOverdueTests(res => {
       if (res.success) {
@@ -126,6 +149,9 @@ class Home extends Component {
     });
   }
 
+  /**
+   * Main error handler, analizes the response and gives the best error message possible.
+   */
   handleInvalidResponseError = (res, error) => {
     if (res.errorType === "authentication") {
       openAlert(
@@ -148,6 +174,11 @@ class Home extends Component {
     }
   };
 
+  /**
+   * Updates the main dashboard.
+   * @param newWeek The week in which the dashboard must be initialized.
+   * If undefined it will use the week already cached in the state of the component
+   */
   updateDashboard = (newWeek = undefined) => {
     let monday = newWeek ? newWeek[0] : this.state.weekDays[0];
     newWeek = newWeek ? newWeek : this.state.weekDays;
@@ -165,50 +196,77 @@ class Home extends Component {
     });
   };
 
+  /**
+   * Refreshes all the dashboard and relative overdue section.
+   */
   refresh = event => {
     this.updateDashboard();
     this.initOverduePanel();
   };
 
+  /**
+   * Event handler for the "go to patients page" button
+   */
   onPatientsClick = event => {
     this.props.history.push("patients");
   };
 
+  /**
+   * Event handler for the "sign out" button
+   */
   logout = event => {
     this.serverConnect.logout(res => {
       this.props.history.replace("");
     });
   };
 
+  /**
+   * Jumps to the week of the choosen day and updates the dashboard.
+   */
   jumpToWeek = day => {
     this.updateDashboard(getWeekDays(day));
   }
 
+  /**
+   * Event handler for the "next week" button
+   */
   handleNext = event => {
     let nextWeek = getNextWeek([...this.state.weekDays]);
     this.updateDashboard(nextWeek);
   };
-
+  /**
+   * Event handler for the "previous week" button
+   */
   handlePrevious = event => {
     let previousWeek = getPreviousWeek([...this.state.weekDays]);
     this.updateDashboard(previousWeek);
   };
 
+  /**
+   * Triggered when the add test modal must be opened
+   */
   onAddTestOpenModal = selectedDate => {
     this.setState({ openAddTestModal: true, selectedDate });
   };
 
+  /**
+   * Triggered when the add test modal must be closed
+   */
   onAddTestCloseModal = () => {
     this.setState({ openAddTestModal: false, selectedDate: undefined });
   };
 
-  onDownloadClick = () => {
-    
+  /**
+   * Listener for the download report button
+   */
+  onDownloadClick = () => {    
     this.serverConnect.generateMonthlyReport("March", (res) => {
-      
     });
   };
 
+  /**
+   * Triggered when the edit test modal must be opened
+   */
   onEditTestOpenModal = testId => {
     this.serverConnect.requestTestEditing(testId, res => {
       if (res.success) {
@@ -226,6 +284,9 @@ class Home extends Component {
     });
   };
 
+  /**
+   * Triggered when the edit test modal must be closed
+   */
   onEditTestCloseModal = () => {
     const { editToken, editTestId } = this.state;
     this.serverConnect.discardTestEditing(editTestId, editToken, res => {
@@ -237,6 +298,9 @@ class Home extends Component {
     });
   };
 
+  /**
+   * Triggered when the email modal must be opened
+   */
   openEmailModal = () => {
     this.serverConnect.getOverdueReminderGroups(res => {
       if (res.success) {
@@ -252,10 +316,16 @@ class Home extends Component {
     });
   };
 
+  /**
+   * Triggered when the email modal must be closed
+   */
   onEmailCloseModal = () => {
     this.setState({ openEmailModal: false });
   };
 
+  /**
+   * Triggered when the patient profile modal must be opened
+   */
   openEditPatientModal = id => {
     this.serverConnect.requestPatientEditing(id, res => {
       if (res.token){
@@ -266,6 +336,9 @@ class Home extends Component {
     });
   }
 
+  /**
+   * Triggered when the patient profile modal must be closed
+   */
   onCloseEditPatientModal = () => {
     this.serverConnect.discardPatientEditing(this.state.editPatientId, this.state.editPatientToken, res => {
       this.setState({editPatientId: undefined, openEditPatientModal: false, editPatientToken: undefined});
@@ -409,4 +482,3 @@ const modalStyles = {
 };
 
 export default DragDropContext(HTML5Backend)(Home);
-//export default Home;
