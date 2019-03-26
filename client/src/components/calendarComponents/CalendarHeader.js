@@ -1,23 +1,28 @@
 import React from 'react';
 import styled from "styled-components";
 
-const Td = styled.td`
+const Arrow = styled.button`
+
+    font-size: 100%;
+    padding: 0;
+    border: none;
+    margin: 0;
     color: white;
     background-color: #0b989d;
-    :hover {
-      color: white;
-      background-color: #0b989d;
+
+    &:hover {
+        width: 100%;
+        color: #0b989d;
+        background-color: white;
+        border-radius: 10px
     }
 `;
 
-const Button = styled.button`
-    background-color: transparent;
-    color: white;
-    
-    :hover {
-    color: #0b989d;
-    background-color: white;
-}
+
+const Header = styled.tr`
+  text-align: center;
+  color: white;
+  font-size: 120%;
 `;
 
 const monthNames = ["January",
@@ -57,17 +62,15 @@ function getMonthAndYear(date){
 
 const CalendarHeader = props => {
     return(
-        <tr className={'header'}>
+        <Header className={'header'}>
             <td colSpan={arrowColSpan}>
-                <button className={'arrow'}
-                        onClick={() => props.prevMonth()}>&lt;</button>
+                <Arrow onClick={() => props.prevMonth()}>&lt;</Arrow>
             </td>
             <td colSpan={monthColSpan}>{getMonthAndYear(props.currentDate)}</td>
             <td colSpan={arrowColSpan}>
-                <button className={'arrow'}
-                        onClick={() => props.nextMonth()}>&gt;</button>
+                <Arrow onClick={() => props.nextMonth()}>&gt;</Arrow>
             </td>
-        </tr>
+        </Header>
     )
 }
 
