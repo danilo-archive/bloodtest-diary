@@ -1,3 +1,12 @@
+/**
+ * This compoenent represents the left column of the main dashboard.
+ * This section shows all the outstanding tests in the database, sorted from most overdue
+ * to least overdue.
+ * @module overduePatients
+ * @author Alvaro Rausell, Jacopo Madaluni
+ * @version 0.0.2
+ */
+
 import React from "react";
 import styled from "styled-components";
 

@@ -1,3 +1,12 @@
+/**
+ * This components represents the navbar in both the main page and the home page.
+ * The navbar contains all the control buttons of the app.
+ * @module Navbar
+ * @author Emilio Pascarelli
+ * @version 0.0.2
+ */
+
+
 import React from "react";
 import styled from "styled-components";
 

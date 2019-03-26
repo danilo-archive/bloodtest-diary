@@ -1,3 +1,11 @@
+/**
+ * This compoenent gets rendered when the AppointmentBox.js component gets dragged.
+ * Renders a simplified rotated version of the appointment box
+ * @module AppointmentBoxDragPreview
+ * @author Jacopo Madaluni
+ * @version 0.0.2
+ */
+
 import React from 'react'
 import AppointmentBox from './AppointmentBox.js';
 

@@ -1,3 +1,12 @@
+/**
+ * This component renders a colour picker.
+ * The colour picker is taken from the REACT Colour free licensed library.
+ * The colour picker is the standard GitHub colour picker
+ * @module ColorPicker
+ * @author Jacopo Madaluni
+ * @version 0.0.2
+ */
+
 import React from 'react';
 import { GithubPicker } from 'react-color';
 import {getServerConnect} from "./../../../serverConnection.js";

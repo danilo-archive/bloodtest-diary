@@ -1,3 +1,15 @@
+/**
+ * This compoenent represents a single appointment box, a single test in the dashboard.
+ * The box shows a status circle, name and surname of the patient and two buttons for either complete the test or edit it.
+ * This compoenent also provides a handy right click menu to access more features or shortcuts.
+ * 
+ * This compoenent is a DRAG SOURCE. This component can be dragged and dropped in any canedar card of the dashboard, 
+ * exception made for the overdue section. 
+ * @module AppointmentBox
+ * @author Alvaro Rausell, Jacopo Madaluni
+ * @version 0.0.2
+ */
+
 import React from "react";
 import styled from "styled-components";
 import StatusCircle from "./StatusCircle";
@@ -99,6 +111,10 @@ const Test = styled.div`
   }
 `;
 
+/**
+ * This function asks the server to send a reminder to the patient of this test
+ * @param {JSON} test 
+ */
 function sendReminder(test){
   let text = test.last_reminder ? `This patient was last contacted on ${dateformat(test.last_reminder, "dS mmm yyyy")}. Do you want to send another email?`
                                  : `This patient was never contacted about this test. Do you want to send an email?`;
@@ -121,6 +137,10 @@ function sendReminder(test){
             });
 }
 
+/**
+ * Right click menu component
+ * @param {REACT props} props 
+ */
 const RightClickMenu = props => {
     return(
         <Menu id={props.id} style={{position: "absolute", zIndex: "11", fontSize: "1rem"}}>
@@ -154,6 +174,7 @@ const mapping = {
     "in review": "inReview"
 }
 
+// ------------------------- DRAG & DROP CONFIGURATIONS -----------------------------------
 const spec = {
   beginDrag(props){
     return {
@@ -191,6 +212,7 @@ function collect(connect, monitor){
 
   }
 }
+// ------------------------------------------------------------
 
 class AppointmentBox extends React.Component {
   constructor(props) {
@@ -198,6 +220,9 @@ class AppointmentBox extends React.Component {
     this.serverConnect = getServerConnect();
   }
 
+  /**
+   * Disappears if being dragged to only show as a drag preview
+   */
   componentDidMount(){
     const {connectDragPreview} = this.props;
     if (connectDragPreview){

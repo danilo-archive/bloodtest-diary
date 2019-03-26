@@ -1,3 +1,10 @@
+/**
+ * Component that renders the month and day of a calendar day
+ * @module MonthDaySection
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import React from "react";
 import styled from "styled-components";
 
