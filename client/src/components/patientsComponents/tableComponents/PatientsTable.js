@@ -1,3 +1,9 @@
+/**
+ * Class renders Table with patient data.
+ *
+ * @author Jakub Cerven
+ */
+
 import React from "react";
 import styled from 'styled-components';
 
@@ -56,8 +62,6 @@ class PatientsTable extends React.Component {
     constructor(props){
         super(props);
     }
-
-
 
     number_filter = value => {
         this.props.filterNumber(value);
