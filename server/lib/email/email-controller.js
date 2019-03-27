@@ -215,7 +215,7 @@ async function recoverPassword(username) {
     if (!user.success) {
         return user;
     }
-    if (user.response[0].length == 0) {
+    if (user.response.length == 0) {
         return { success: false, response: "No user found!" }
     }
     const token = await query_controller.requestEditing("User", username, username);
