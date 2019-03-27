@@ -7,7 +7,7 @@ import FilterCell from "./FilterCell.js";
 const TableContainer = styled.div`
   padding: 0.5%;
   width: 100%;
-  height: 78%;
+  height: 93.6%; //exact size as home
   background: #ffffff;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   overflow: hidden;
@@ -26,7 +26,7 @@ const TableHeader = styled.thead`
 
 const TableBody = styled.tbody`
     display: block;
-    max-height: 87%; //change this to increase height of table
+    max-height: 87%; 
     overflow-y: scroll;
     
     ::-webkit-scrollbar:vertical {
