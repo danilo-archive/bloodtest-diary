@@ -261,7 +261,7 @@ export default class Report extends Component {
         return (
             <Container>
                 <TitleContainer>
-                    <Title>Create report</Title>
+                    <Title>Create Report</Title>
                 </TitleContainer>
                 <ContentContainer>
                     <SelectContainer>
