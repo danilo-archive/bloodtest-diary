@@ -1,15 +1,19 @@
 import React from "react";
 import styled from "styled-components";
+import { ModalProvider } from "styled-react-modal";
+import Modal from "./../Modal";
 
 import DatePicker from "./../navbarComponents/searchBar.js";
 import ControlButtons from "./../navbarComponents/controlButtons.js";
 import WeekButtons from "./../navbarComponents/weekButtons.js";
 import NavHeader from "./../navbarComponents/navHeader.js";
+import Report from "../navbarComponents/Report";
 import OptionSwitch from "../switch/OptionSwitch";
 import { getServerConnect } from "../../serverConnection.js";
 import DownloadLink from "react-download-link";
 import dateformat from "dateformat";
 import { openAlert } from "./../Alert.js";
+
 
 const Wrapper = styled.div`
   border: #839595 0 solid;
@@ -18,10 +22,7 @@ const Wrapper = styled.div`
 
   margin-bottom: 1%;
 
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 0.5%;
-  padding-right: 0.5%;
+  padding: 10px 0.5%;
 
   min-height: 150px;
   max-height: 150px;
@@ -86,42 +87,38 @@ const CalenderControls = styled.div`
 
 const DownloadBox = styled.div`
   height: 100%;
-  width: 30%;
+  background: #0b989d;
+  padding: 7px 12px;
+  border-radius: 10px;
+  text-align: center;
   position: relative;
   bottom: 7px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  text-align: center;
   
-  color: #646464;
+  color: white;
   font-size: 130%;
   
+  :hover {
+    background: #018589;
+  }
 `;
 
 const ControlButton = styled.div`
   position: relative;
   margin-top: 0;
-  border: solid 0 #97a9a9;
-  width: auto;
-  height: 31px;
-  margin-right:44px;
   cursor: pointer;
   outline:none;
   align-self: flex-end;
-  :hover{
-    color: black;
-  }
 `;
 
 const ControlLabel = styled.div`
   position: relative;
   margin-top: ${props => props.marginTop ? props.marginTop : "0"}
-  border: solid 0 #97a9a9;
-  color: black;
-  width: 170px;
   height: 31px;
-  margin-right:44px;
+  background: #0b989d;
+  margin-right: 5px;
   cursor: pointer;
   outline:none;
   align-self: flex-end;
@@ -134,61 +131,43 @@ const patientToggleStyle = {
 
 const buttonStyle = {
   position: "relative",
-  "margin": "0 10px 0 0",
-  border: 'solid 0px #97a9a9',
-  'background-color': '',
+  margin: "0 10px 0 0",
+  background: '#0b989d',
   width: 'auto',
   height: '31px',
   cursor: 'pointer',
   outline:'none',
-  'align-self': 'flex-end',
-  color: '#646464',
-  ':hover':{
-    color: 'black'
-  }
+  alignSelf: 'flex-end',
 };
+
+const modalStyles = {
+    border: `solid 0 black`
+};
+
 
 class Navbar extends React.Component {
 
   constructor(props){
     super(props);
     this.state = {
-      html: undefined
-    }
+      html: undefined,
+      openReportModal: false,
+    };
   }
 
-  onGenerateClick = () => {
-    let this_ = this;
-    // TODO: remove hard coded values
-    getServerConnect().generateReport("March", "2019", (res) => {
-      const time = dateformat(new Date(), "HH:MM:ss");
-      if (res.success) {
-        this_.setState({
-          html: res.html,
-          time: time
-        });
-      }
-      else {
-        this_.setState({
-          html: undefined,
-        });
-        openAlert(
-          `${"Report could not be generated."}`,
-          "confirmationAlert",
-          "OK",
-          () => {
-            return;
-          }
-        );
-      }
-    });
+  openReportModal = () => {
+    this.setState({ openReportModal: true });
   };
 
-  getDownloadButton = () => {
+  closeReportModal = () => {
+    this.setState( {openReportModal: false });
+  };
+
+  /*getDownloadButton = () => {
     if (this.state.html === undefined) {
       return (
         <DownloadBox>
-        <ControlButton onClick={this.onGenerateClick}>Generate&nbsp;report</ControlButton>
+          <ControlButton onClick={this.onGenerateClick}>Generate&nbsp;report</ControlButton>
         </DownloadBox>
       );
     }
@@ -196,30 +175,31 @@ class Navbar extends React.Component {
       return (
         <DownloadBox>
             <ControlLabel>Report&nbsp;generated&nbsp;({this.state.time}):</ControlLabel>
-            <DownloadLink
-                style={buttonStyle}
-                filename="Monthly_Report.html"
-                exportFile={() => this.state.html}>      
-            </DownloadLink>
+              <DownloadLink
+                  style={buttonStyle}
+                  filename="Monthly_Report.html"
+                  exportFile={() => this.state.html}
+              />
             <ControlButton onClick={this.onGenerateClick}>Generate&nbsp;new</ControlButton>
         </DownloadBox>
       );
     }
-  };
+  };*/
 
   getNavbar() {
-    const download = this.getDownloadButton();
     switch (this.props.page) {
       case "Dashboard":
         return (
-          <>
+          <ModalProvider>
             <NavHeader
               title={this.props.page}
               onHomeClick={this.props.onHomeClick}
               onRefreshClick={this.props.refresh}
             />
             <BottomSide>
-              {download}
+              <DownloadBox>
+                <ControlButton onClick={this.openReportModal}>Generate&nbsp;report</ControlButton>
+              </DownloadBox>
               <CalenderControls>
                 <OptionSwitch
                   checked={this.props.over12}
@@ -239,7 +219,16 @@ class Navbar extends React.Component {
                 onSignoutClick={this.props.onSignoutClick}
               />
             </BottomSide>
-          </>
+              <Modal
+                  open={this.state.openReportModal}
+                  onClose={this.closeReportModal}
+                  showCloseIcon={false}
+                  style={modalStyles}
+                  center
+              >
+                  <Report/>
+              </Modal>
+          </ModalProvider>
         );
       case "Patients":
         return (
