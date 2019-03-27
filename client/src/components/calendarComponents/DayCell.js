@@ -14,7 +14,8 @@ const Day = styled.button`
   padding: 0;
 
   &:hover {
-      color: #0b989d;
+    color: #0b989d;
+    background-color: white;
   }
 
   & .current{
