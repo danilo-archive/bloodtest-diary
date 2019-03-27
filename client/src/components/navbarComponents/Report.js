@@ -251,7 +251,7 @@ export default class Report extends Component {
                     this.createFileName();
                 } else {
                     this.setState({html: undefined});
-                    openAlert(`${"Report could not be generated."}`, "confirmationAlert", "OK", () => {return});
+                    this.props.handleError(res, "Report could not be generated.");
                 }
             });
         }

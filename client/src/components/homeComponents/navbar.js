@@ -160,6 +160,7 @@ class Navbar extends React.Component {
                             center
                         >
                             <Report
+                                handleError={this.props.handleError}
                                 closeModal={this.closeReportModal}
                             />
                         </Modal>
