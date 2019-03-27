@@ -23,6 +23,7 @@ const Header = styled.tr`
   text-align: center;
   color: white;
   font-size: 120%;
+  font-weight: bold;
 `;
 
 const monthNames = ["January",
