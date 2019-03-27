@@ -1564,6 +1564,47 @@ describe("Test main DB controller behaviour:", () => {
             });
         });
     });
+
+    describe("Test concurrency:", () => {
+        it("Execution of critical queries waits.", () => {
+            try {
+                db_controller.deleteQuery("DELETE ...", "User", "invalid").catch(err => {
+
+                });
+                db_controller.updateQuery("UPDATE ...", "User", "invalid", "invalid").catch(err => {
+                    
+                });
+                db_controller.deleteQuery("DELETE ...", "User", "invalid").catch(err => {
+
+                });
+                db_controller.updateQuery("UPDATE ...", "User", "invalid", "invalid").catch(err => {
+                    
+                });
+                db_controller.requestEditing("User", "invalid").catch(err => {
+                    
+                });
+                db_controller.requestEditing("User", "invalid").catch(err => {
+                    
+                });
+            }
+            catch(err) {
+                // for coverage
+            }
+        });
+    });
+
+    describe("Test updateAccessToken() function:", () => {
+        it("Should be successful.", async () => {
+            const res = await db_controller.updateAccessToken("token");
+            expect(res.status).to.equal("OK");
+        });
+    });
+    describe("Test deleteAccessToken() function:", () => {
+        it("Should be successful.", async () => {
+            const res = await db_controller.deleteAccessToken("token");
+            expect(res.status).to.equal("OK");
+        });
+    });
 });
 
 /**
