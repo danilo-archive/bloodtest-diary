@@ -1,8 +1,42 @@
 import React, { Component } from "react";
-import "./Calendar.css";
 import { getCalendar } from "../../lib/calendar-functions.js";
 import DayCell from "./DayCell.js";
 import CalendarHeader from "./CalendarHeader.js";
+import styled from "styled-components";
+
+const Calendar = styled.table`
+
+  position: absolute;
+  width: 300px;
+  height: auto;
+  left: 50%;
+  background-color: #0b989d;
+  margin: 0;
+  margin-top: 20px;
+  padding-bottom: 1%;
+  padding-top: 1%;
+  padding-right: 1%;
+  padding-left: 1%;
+  table-layout: fixed;
+  border-radius: 20px;
+  white-space: nowrap;
+  opacity: 1;
+  box-shadow: 10px 10px 50px;
+  z-index: 11;
+
+  & td {
+    padding: 10px;
+  }
+`;
+
+
+const Day = styled.th`
+  padding: 15px;
+  color: #0b989d;
+  background-color: white;
+  line-height: 0;
+  text-align: left;
+`;
 
 const HALF_MONTH = 15;
 const weekDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
@@ -112,10 +146,9 @@ class CalendarTable extends Component {
   render() {
     return (
       this.state.isVisible && (
-        <table
+        <Calendar
           ref={node => this.node = node}
           style={this.props.style}
-          className={'calendar'}
           cellPadding={0}
           cellSpacing={0}
         >
@@ -128,9 +161,9 @@ class CalendarTable extends Component {
             <tr>
               {weekDays.map(day => {
                 return (
-                  <th key={day} className={'day-of-the-week'}>
+                  <Day key={day}>
                     {day}
-                  </th>
+                  </Day>
                 );
               })}
             </tr>
@@ -159,7 +192,7 @@ class CalendarTable extends Component {
               );
             })}
           </tbody>
-        </table>
+        </Calendar>
       )
     );
   }

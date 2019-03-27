@@ -4,10 +4,12 @@ import styled from "styled-components";
 import PatientSection from "./profileSections/PatientSection";
 import CarerSection from "./profileSections/CarerSection";
 import HospitalSection from "./profileSections/HospitalSection";
+import AdditionalInfoSection from "./profileSections/AdditionalInfoSection";
 import {getServerConnect} from "../../serverConnection";
 import { openAlert } from "../Alert"
 import {emptyCheck, emailCheck} from "../../lib/inputChecker";
 import OptionSwitch from "./../switch/OptionSwitch";
+
 
 
 const Container = styled.div`
@@ -173,12 +175,12 @@ class NewPatient extends Component {
             }
         }
 
-        const {patientId, patientName, patientSurname, patientEmail, patientPhone, isAdult} = this.state;
+        const {patientId, patientName, patientSurname, patientEmail, patientPhone, isAdult, additionalInfo} = this.state;
         let newInfo = {
             patient_no: patientId, patient_name: patientName, patient_surname: patientSurname, patient_email: patientEmail, patient_phone: patientPhone,
             hospital_id: hospitalInfo.hospitalId, hospital_name: hospitalInfo.hospitalName, hospital_email: hospitalInfo.hospitalEmail, hospital_phone: hospitalInfo.hospitalPhone,
             carer_id: carerInfo.carerId, carer_name: carerInfo.carerName, carer_surname: carerInfo.carerSurname, carer_email: carerInfo.carerEmail, carer_phone: carerInfo.carerPhone,
-            relationship: carerInfo.carerRelationship, isAdult: isAdult
+            relationship: carerInfo.carerRelationship, isAdult: isAdult, additional_info: additionalInfo
         };
         this.serverConnect.addPatient(newInfo, res => {
             if (res.success) {
@@ -244,6 +246,15 @@ class NewPatient extends Component {
                             hospitalName: hospital.hospitalName,
                             hospitalEmail: hospital.hospitalEmail,
                             hospitalPhone: hospital.hospitalPhone
+                        })
+                    }}
+                />
+                <Hr/>
+                <AdditionalInfoSection
+                    additionalInfo={this.state.additionalInfo}
+                    onChange={additionalInfo => {
+                        this.setState({
+                            additionalInfo: additionalInfo.additionalInfo
                         })
                     }}
                 />
