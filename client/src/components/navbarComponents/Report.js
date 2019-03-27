@@ -173,7 +173,9 @@ export default class Report extends Component {
             html: undefined,
             monthSelected: "January",
             wholeYear: false,
-            fileName: ""
+            fileName: "",
+            yearSelected: undefined,
+            time: undefined
         };
 
         this.handleSelectChange = this.handleSelectChange.bind(this);
@@ -214,13 +216,15 @@ export default class Report extends Component {
     onGenerateClick = () => {
         const result = this.checkValues();
         if (!result.correct) {
-            openAlert(result.message, "confirmationAlert", "Ok");
+            openAlert(result.message, "confirmationAlert", "OK");
         } else {
-            // TODO: remove hard coded values
-            getServerConnect().generateReport("March", "2019", (res) => {
+          console.log(this.state)
+            getServerConnect().generateReport((this.state.wholeYear) ? null : this.state.monthSelected, this.state.yearSelected, (res) => {
+                const time = dateformat(new Date(), "HH:MM:ss");
                 if (res.success) {
                     this.setState({
                         html: res.html,
+                        time: time
                     });
                     this.createFileName();
                 } else {
@@ -270,11 +274,11 @@ export default class Report extends Component {
                         <LabelContainer>
                             <Label htmlFor={"whole_year_checkbox_alert"}>Generate report for the whole year</Label>
                         </LabelContainer>
-                        <RadioButton id={"whole_year_checkbox_alert"} onClick={() => {this.setState({ wholeYear: !this.state.wholeText})}}/>
+                        <RadioButton id={"whole_year_checkbox_alert"} onClick={() => {this.setState({ wholeYear: !this.state.wholeYear})}}/>
                     </CheckboxContainer>
                     { this.state.html != null ?
                     <DownloadContainer>
-                        <DownloadText>New report was generated</DownloadText>
+                        <DownloadText>New report was generated ({this.state.time})</DownloadText>
                         <DownloadLink
                             filename={this.state.fileName}
                             exportFile={() => this.state.html}
