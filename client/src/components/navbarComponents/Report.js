@@ -4,6 +4,7 @@ import {getServerConnect} from "../../serverConnection";
 import dateformat from "dateformat";
 import {openAlert} from "../Alert";
 import { integerCheck, emptyCheck } from "./../../lib/inputChecker";
+import DownloadLink from "react-download-link";
 
 const Container = styled.div`
   display: flex;
@@ -12,14 +13,6 @@ const Container = styled.div`
   background: white;
   align-items: center;
   padding: 3%;
-`;
-
-const ContentContainer = styled.div`
-  width: 80%;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  justify-content: center;
 `;
 
 const TitleContainer = styled.div`
@@ -32,6 +25,18 @@ const Title = styled.p`
   font-size: 150%;
   margin: 0;
   width: 100%;
+`;
+
+const ContentContainer = styled.div`
+  width: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+  
+  .hidden {
+    visibility: hidden;
+  }
 `;
 
 const SelectContainer = styled.div`
@@ -60,8 +65,13 @@ const LabelContainer = styled.div`
 `;
 
 const Input = styled.input`
+  padding: 1% 4%;
+  margin: 0.5% 0 1%;
+  display: block;
   width: 100%;
   border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 `;
 
 const RadioButton = styled.input.attrs({ type: "checkbox" })`
@@ -99,33 +109,19 @@ const RadioButton = styled.input.attrs({ type: "checkbox" })`
   }
 `;
 
+const DownloadContainer = styled.div`
+`;
+
+const DownloadText = styled.p`
+
+`;
+
 const ButtonContainer = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
   justify-content: center;
-`;
-
-const DeleteButton = styled.button`
-  border: none;
-  background-color: #f44336;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 10px;
-  margin: 3%;
-  font-size: 130%;
-
-  height: 44px;
-  min-width: 100px;
-
-  :hover {
-    background-color: #dc2836;
-    color: white;
-    border-radius: 10px;
-  }
-  outline: none;
 `;
 
 const CloseButton = styled.button`
@@ -149,7 +145,7 @@ const CloseButton = styled.button`
   outline: none;
 `;
 
-const SaveButton = styled.button`
+const GenerateButton = styled.button`
   border: none;
   background-color: #0b999d;
   color: white;
@@ -177,6 +173,7 @@ export default class Report extends Component {
             html: undefined,
             monthSelected: "January",
             wholeYear: false,
+            fileName: ""
         };
 
         this.handleSelectChange = this.handleSelectChange.bind(this);
@@ -185,19 +182,30 @@ export default class Report extends Component {
 
     handleSelectChange(e) {
         this.setState({ monthSelected: e.target.value});
-        console.log(e.target.value);
     };
 
     handleInputChange(e) {
         this.setState({ yearSelected: e.target.value });
-        console.log(e.target.value);
+    }
+
+    createFileName() {
+        let fileName;
+        const prefix = "Blood_Test_Diary_Report_";
+        if (this.state.wholeYear) {
+            fileName = prefix + this.state.yearSelected + ".html";
+            this.setState({ fileName: fileName});
+        } else {
+            fileName = prefix + this.state.yearSelected + "_" + this.state.monthSelected + ".html";
+            this.setState({ fileName: fileName});
+        }
     }
 
     checkValues() {
         if (emptyCheck(this.state.yearSelected)) {
             return {correct: false, message: "Please type in a year."};
         }
-        if (!integerCheck(this.state.yearSelected)) {
+        // We expect that system does not have records from 1949
+        if (!integerCheck(this.state.yearSelected) || (this.state.yearSelected < 1950)) {
             return {correct: false, message: "Please enter a valid year."}
         }
         return {correct: true}
@@ -207,30 +215,25 @@ export default class Report extends Component {
         const result = this.checkValues();
         if (!result.correct) {
             openAlert(result.message, "confirmationAlert", "Ok");
+        } else {
+            // TODO: remove hard coded values
+            getServerConnect().generateReport("March", "2019", (res) => {
+                if (res.success) {
+                    this.setState({
+                        html: res.html,
+                    });
+                    this.createFileName();
+                } else {
+                    this.setState({
+                        html: undefined,
+                    });
+                    openAlert(`${"Report could not be generated."}`, "confirmationAlert", "OK", () => {
+                            return
+                        }
+                    );
+                }
+            });
         }
-        // TODO: remove hard coded values
-        getServerConnect().generateReport("March", "2019", (res) => {
-            const time = dateformat(new Date(), "HH:MM:ss");
-            if (res.success) {
-                this.setState({
-                    html: res.html,
-                    time: time
-                });
-            }
-            else {
-                this.setState({
-                    html: undefined,
-                });
-                openAlert(
-                    `${"Report could not be generated."}`,
-                    "confirmationAlert",
-                    "OK",
-                    () => {
-                        return;
-                    }
-                );
-            }
-        });
     };
 
     render(){
@@ -260,18 +263,27 @@ export default class Report extends Component {
                         </select>
                     </SelectContainer>
                     <InputContainer>
-                        <Label htmlFor={"input_year_alert"}>Type in year</Label>
+                        <Label htmlFor={"input_year_alert"}>Type in the year</Label>
                         <Input id={"input_year_alert"} onChange={this.handleInputChange}/>
                     </InputContainer>
                     <CheckboxContainer>
                         <LabelContainer>
-                            <Label htmlFor={"whole_year_checkbox_alert"}>Generate report for whole year</Label>
+                            <Label htmlFor={"whole_year_checkbox_alert"}>Generate report for the whole year</Label>
                         </LabelContainer>
                         <RadioButton id={"whole_year_checkbox_alert"} onClick={() => {this.setState({ wholeYear: !this.state.wholeText})}}/>
                     </CheckboxContainer>
+                    { this.state.html != null ?
+                    <DownloadContainer>
+                        <DownloadText>New report was generated</DownloadText>
+                        <DownloadLink
+                            filename={this.state.fileName}
+                            exportFile={() => this.state.html}
+                        />
+                    </DownloadContainer>
+                    : null}
                     <ButtonContainer>
-                        <SaveButton onClick={this.onGenerateClick}>Generate Report</SaveButton>
-                        <CloseButton onClick={this.props.onClose}>Close</CloseButton>
+                        <GenerateButton onClick={this.onGenerateClick}>Generate Report</GenerateButton>
+                        <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                     </ButtonContainer>
                 </ContentContainer>
             </Container>

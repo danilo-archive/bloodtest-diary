@@ -160,10 +160,10 @@ class Navbar extends React.Component {
   };
 
   closeReportModal = () => {
-    this.setState( {openReportModal: false });
+    this.setState( { openReportModal: false });
   };
 
-  /*getDownloadButton = () => {
+  getDownloadButton = () => {
     if (this.state.html === undefined) {
       return (
         <DownloadBox>
@@ -184,7 +184,7 @@ class Navbar extends React.Component {
         </DownloadBox>
       );
     }
-  };*/
+  };
 
   getNavbar() {
     switch (this.props.page) {
@@ -226,7 +226,9 @@ class Navbar extends React.Component {
                   style={modalStyles}
                   center
               >
-                  <Report/>
+                  <Report
+                    closeModal={this.closeReportModal}
+                  />
               </Modal>
           </ModalProvider>
         );
