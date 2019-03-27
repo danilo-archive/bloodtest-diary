@@ -1,3 +1,9 @@
+/**
+ * Class renders on test of patient.
+ *
+ * @author Jakub Cerven, Jacopo Madaluni
+ */
+
 import React from "react";
 import styled from "styled-components";
 import dateformat from "dateformat";
