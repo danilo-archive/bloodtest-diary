@@ -12,7 +12,7 @@ const Container = styled.div`
   flex-direction: column;
   background: white;
   align-items: center;
-  max-width: 600px;
+  max-width: 500px;
 `;
 
 const TitleContainer = styled.div`
