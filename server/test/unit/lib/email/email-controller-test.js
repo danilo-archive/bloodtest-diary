@@ -8,6 +8,10 @@ chai.use(sinonChai);
 const emailController = rewire("./../../../../lib/email/email-controller");
 
 describe("Test email controller:", () => {
+    const pastDate = new Date();
+    pastDate.setFullYear(2018);
+    const futureDate = new Date();
+    futureDate.setFullYear(futureDate.getFullYear() + 1);
 
     describe("> Password Recovery Functionality", function () {
         context("Recovery password email", function () {
@@ -29,7 +33,7 @@ describe("Test email controller:", () => {
             it("Cannot find user due to lack of user with this username - (STUBBED)", async function () {
                 const query_controller = {
                     getUser: async function () {
-                        return { success: true, response: [[]] }
+                        return { success: true, response: [] }
                     }
                 }
                 emailController.__set__("query_controller", query_controller)
@@ -162,7 +166,7 @@ describe("Test email controller:", () => {
                     return "token";
                 },
                 getTest: async function() {
-                    return { response: [{ some: "info"}] };
+                    return { response: [{ last_reminder: pastDate}] };
                 },
                 getPatient: async function() {
                     return { response: [{
@@ -195,7 +199,7 @@ describe("Test email controller:", () => {
                     return "token";
                 },
                 getTest: async function() {
-                    return { response: [{ some: "info"}] };
+                    return { response: [{ last_reminder: pastDate }] };
                 },
                 getCarer: async function() {
                     return { response: [{ some: "info"}] };
@@ -238,59 +242,109 @@ describe("Test email controller:", () => {
             expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
             expect(called).to.be.false;
         });
-    });
-    it("Should fail for patient.", async () => {
-        let called = false;
-        const query_controller = {
-            requestEditing: async function() {
-                return "token";
-            },
-            getTest: async function() {
-                return { response: [{ some: "info"}] };
-            },
-            getCarer: async function() {
-                return { response: [{ some: "info"}] };
-            },
-            getHospital: async function() {
-                return { response: [{ some: "info"}] };
-            },
-            getPatient: async function() {
-                return { response: [{
-                    carer_id: 5,
-                    hospital_id: 15
-                }] };
-            },
-            returnToken: async function() {
-                called = true;
-            },
-            updateLastReminder: async function() {
-                return {success: false, err: "stubbed error"}
+        it("Should fail for hospital.", async () => {
+            let called = false;
+            const query_controller = {
+                requestEditing: async function() {
+                    return "token";
+                },
+                getTest: async function() {
+                    return { response: [{ last_reminder: futureDate }] };
+                },
+                getCarer: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getHospital: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getPatient: async function() {
+                    return { response: [{
+                        carer_id: 5,
+                        hospital_id: 15
+                    }] };
+                },
+                returnToken: async function() {
+                    called = true;
+                },
+                updateLastReminder: async function() {
+                    return {success: false, err: "stubbed error"}
+                }
+            };
+            const email_sender = {
+                sendOverdueReminderToPatient: async function() {
+                    return true;
+                },
+                sendOverdueReminderToHospital: async function() {
+                    return false;
+                }
             }
-        };
-        const email_sender = {
-            sendOverdueReminderToPatient: async function() {
-                return false;
-            },
-            sendOverdueReminderToHospital: async function() {
-                return true;
+            emailController.__set__("query_controller", query_controller);
+            emailController.__set__("email_sender", email_sender);
+            const res = await emailController.sendOverdueReminders([404]);
+            const shouldBe = {
+                success: false,
+                response: {
+                    failedBoth: [],
+                    failedPatient: [],
+                    failedHospital: [404]
+                }
+            };
+            expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
+            expect(called).to.be.false;
+        });
+        it("Should fail for patient.", async () => {
+            let called = false;
+            const query_controller = {
+                requestEditing: async function() {
+                    return "token";
+                },
+                getTest: async function() {
+                    return { response: [{last_reminder: pastDate}] };
+                },
+                getCarer: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getHospital: async function() {
+                    return { response: [{ some: "info"}] };
+                },
+                getPatient: async function() {
+                    return { response: [{
+                        carer_id: 5,
+                        hospital_id: 15
+                    }] };
+                },
+                returnToken: async function() {
+                    called = true;
+                },
+                updateLastReminder: async function() {
+                    return {success: false, err: "stubbed error"}
+                }
+            };
+            const email_sender = {
+                sendOverdueReminderToPatient: async function() {
+                    return false;
+                },
+                sendOverdueReminderToHospital: async function() {
+                    return true;
+                }
             }
-        }
-        emailController.__set__("query_controller", query_controller);
-        emailController.__set__("email_sender", email_sender);
-        const res = await emailController.sendOverdueReminders([404]);
-        const shouldBe = {
-            success: false,
-            response: {
-                failedBoth: [],
-                failedPatient: [404],
-                failedHospital: []
-            }
-        };
-        expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
-        expect(called).to.be.true;
+            emailController.__set__("query_controller", query_controller);
+            emailController.__set__("email_sender", email_sender);
+            const res = await emailController.sendOverdueReminders([404]);
+            const shouldBe = {
+                success: false,
+                response: {
+                    failedBoth: [],
+                    failedPatient: [404],
+                    failedHospital: []
+                }
+            };
+            expect(JSON.stringify(res)).to.equal(JSON.stringify(shouldBe));
+            expect(called).to.be.true;
+        });
     });
 
-    describe("> Test send overdue reminders:", () => {
+    describe("> Test send normal reminders:", () => {
         it("Should fail for both (not sent)", async () => {
             let called = false;
             const query_controller = {
@@ -298,7 +352,7 @@ describe("Test email controller:", () => {
                     return "token";
                 },
                 getTest: async function() {
-                    return { response: [{ some: "info"}] };
+                    return { response: [{ last_reminder: null}] };
                 },
                 getCarer: async function() {
                     return { response: [{ some: "info"}] };
@@ -343,4 +397,3 @@ describe("Test email controller:", () => {
         });
     });
 });
-
