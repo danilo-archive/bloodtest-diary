@@ -26,6 +26,11 @@ async function getFullPatientInfo(patient_no) {
     return await selectQueryDatabase(sql);
 }
 
+/**
+ * Get patient edited tests at the moment
+ * @param {string} patient_no the patient number
+ * @return {JSON} - {success:Boolean response:Array or Error}
+ */
 async function getPatientEditedTests(patientid){
   const sql = `Select test_id From Test Where patient_no = ${mysql.escape(patientid)}
   AND test_id IN (Select table_key From EditTokens Where table_name = "Test");`;
@@ -292,6 +297,7 @@ function checkMultipleQueriesStatus(queries) {
 
 /**
 * Get number of test due in month
+* @param {Boolean} isMonthly - is the report monthly (true) or yearly (false)
 * @param {String} data - date for data to be retrived
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/
@@ -306,6 +312,7 @@ async function getDueTests(isMonthly,date=dateformat(new Date(),"yyyymmdd")){
 
 /**
 * Get number of completed tests on time in month
+* @param {Boolean} isMonthly - is the report monthly (true) or yearly (false)
 * @param {String} data - date for data to be retrived
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/
@@ -320,6 +327,7 @@ async function getCompletedOnTime(isMonthly,date=dateformat(new Date(),"yyyymmdd
 
 /**
 * Get number of completed tests in month
+* @param {Boolean} isMonthly - is the report monthly (true) or yearly (false)
 * @param {String} data - date for data to be retrived
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/
@@ -334,6 +342,7 @@ async function getCompletedLate(isMonthly,date=dateformat(new Date(),"yyyymmdd")
 
 /**
 * Get sum of all reminders send in month
+* @param {Boolean} isMonthly - is the report monthly (true) or yearly (false)
 * @param {String} data - date for data to be retrived
 * @return {JSON} result of query {success:Boolean response: if true -> {[{Number}]}} else {Error}
 **/

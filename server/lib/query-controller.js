@@ -34,7 +34,6 @@ async function getMonthlyReport(isMonthly,date) {
     let adults = await selector.getPatientsNumber(true);
 
     try {
-        console.log(thisMonth)
         thisMonth = thisMonth.response[0].Number;
         completedOnTime = completedOnTime.response[0].Number;
         completedLate = completedLate.response[0].Number;
@@ -43,7 +42,6 @@ async function getMonthlyReport(isMonthly,date) {
         adults = adults.response[0].Number;
     }
     catch(err) {
-        console.log(err);
         return {success: false};
     }
 
