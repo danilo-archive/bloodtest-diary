@@ -5,12 +5,14 @@ import PatientRow from "./PatientRow.js";
 import FilterCell from "./FilterCell.js";
 
 const TableContainer = styled.div`
-  padding: 0.5%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: calc(0.5% + 3px);
+  padding-right: calc(0.5% + 3px);
   width: 100%;
-  height: 93.6%; //exact size as home
+  height: auto
   background: #ffffff;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-  overflow: hidden;
 `;
 
 const Table = styled.table`
@@ -26,13 +28,13 @@ const TableHeader = styled.thead`
 
 const TableBody = styled.tbody`
     display: block;
-    max-height: 87%; 
+    height: calc(100% - 80px);
     overflow-y: scroll;
-    
+
     ::-webkit-scrollbar:vertical {
       display: initial;
     }
-    
+
 `;
 
 const TableHead = styled.th`
@@ -84,7 +86,7 @@ class PatientsTable extends React.Component {
             <TableContainer>
                 <Table>
                     <TableHeader>
-                    <TableRow>
+                    <TableRow style={{height: "50px"}}>
                         <TableHead>Patient number</TableHead>
                         <TableHead>Patient name</TableHead>
                         <TableHead>Patient surname</TableHead>

@@ -93,10 +93,10 @@ const DownloadBox = styled.div`
   flex-direction: row;
   align-items: center;
   text-align: center;
-  
+
   color: #646464;
   font-size: 130%;
-  
+
 `;
 
 const ControlButton = styled.div`
@@ -156,15 +156,16 @@ const AddPatientButton = styled.button`
   margin-right: 2%;
   color: white;
   padding: 7px 12px;
-  border-radius: 10px;
+  border-radius: 5px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 130%;
+  font-size: 120%;
   font-weight: 200;
   background-color: #0b989d;
   word-break: break-word;
   outline: none;
+  cursor: pointer;
   :hover {
     background: #018589;
   }
@@ -223,7 +224,7 @@ class Navbar extends React.Component {
             <DownloadLink
                 style={buttonStyle}
                 filename="Monthly_Report.html"
-                exportFile={() => this.state.html}>      
+                exportFile={() => this.state.html}>
             </DownloadLink>
             <ControlButton onClick={this.onGenerateClick}>Generate&nbsp;new</ControlButton>
         </DownloadBox>

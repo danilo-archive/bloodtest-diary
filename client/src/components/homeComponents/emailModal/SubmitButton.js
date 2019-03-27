@@ -8,7 +8,7 @@ const Container = styled.div`
   height: 70px;
 
   background: #0d4e56;
-  border-radius: 10px 0 0 0;
+  border-radius: 5px 0 0 0;
   font-size: 29px;
   float: right;
   display: flex;

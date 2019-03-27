@@ -15,16 +15,24 @@ import OptionSwitch from "./../switch/OptionSwitch";
 const Container = styled.div`
   display: flex;
   width: 100%;
+  height: calc(100vh - 130px);
+  overflow: scroll;
   flex-direction: column;
   background: white;
   align-items: center;
-  padding: 1%;
+
+  ::-webkit-scrollbar:vertical {
+    display: initial;
+  }
 `;
 
 const PatientProfileTitle = styled.p`
   text-align: center;
-  font-size: 175%;
-  font-weight: bold;
+  width: auto;
+  font-size: 170%;
+  color: #eee;
+  background-color: #0d4e56;
+  padding: 5px;
   margin: 0;
 `;
 
@@ -34,6 +42,7 @@ const ButtonContainer = styled.div`
   align-content: flex-start;
   justify-content: center;
   width: 100%;
+
 `;
 
 
@@ -43,16 +52,15 @@ const CloseButton = styled.button`
   color: black;
   text-align: center;
   text-decoration: none;
-  border-radius: 10px;
+  border-radius: 5px;
 
   height: 44px;
   min-width: 100px;
   margin: 3%;
-
+  cursor: pointer;
   :hover {
     background: #c8c8c8;
     color: black;
-    border-radius: 10px;
   }
   outline: none;
 `;
@@ -64,11 +72,11 @@ const SaveButton = styled.button`
   text-align: center;
   text-decoration: none;
   margin: 3%;
-  border-radius: 10px;
+  border-radius: 5px;
 
   height: 44px;
   min-width: 100px;
-
+  cursor: pointer;
   :hover {
     background-color: #018589;
     color: white;
@@ -77,16 +85,18 @@ const SaveButton = styled.button`
 `;
 
 const SwitchContainer = styled.div`
-  margin-top: 2%;
+  margin-top: 3%;
+  padding-left: 8px;
 `;
 
 const Hr = styled.hr`
   border: 0;
   clear: both;
-  display: block;
-  width: 96%;               
+  width: 90%;
   background-color: #839595;
   height: 1px;
+  margin-top: 1%;
+  margin-bottom: 1%;
 `;
 
 
@@ -193,9 +203,10 @@ class NewPatient extends Component {
 
     render() {
         return (
+          <>
+            <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
             <Container>
-                <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
-                <Hr/>
+                <div style ={{height: "auto", width: "auto", "margin-top":" 10px"}}>
                 <PatientSection
                     editable={true}
                     patientId={""}
@@ -213,7 +224,11 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                </div>
+                <div style ={{height: "auto", width: "100%"}}>
                 <Hr/>
+                </div>
+                <div style ={{height: "auto", width: "auto"}}>
                 <CarerSection
                     carerId={""} //TODO : generate this
                     carerRelationship={""}
@@ -233,7 +248,11 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                </div>
+                <div style ={{height: "auto", width: "100%"}}>
                 <Hr/>
+                </div>
+                <div style ={{height: "auto", width: "auto"}}>
                 <HospitalSection
                     hospitalId={""} //TODO : generate this
                     hospitalName={""}
@@ -249,7 +268,11 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                </div>
+                <div style ={{height: "auto", width: "100%"}}>
                 <Hr/>
+                </div>
+                <div style ={{height: "auto", width: "auto"}}>
                 <AdditionalInfoSection
                     additionalInfo={this.state.additionalInfo}
                     onChange={additionalInfo => {
@@ -258,7 +281,10 @@ class NewPatient extends Component {
                         })
                     }}
                 />
+                </div>
+                <div style ={{height: "auto", width: "100%"}}>
                 <Hr/>
+                </div>
                 <SwitchContainer>
                     <OptionSwitch
                         option1={"Under 12"}
@@ -272,8 +298,8 @@ class NewPatient extends Component {
                     <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                     <SaveButton onClick={this.onAddClick}>Add patient</SaveButton>
                 </ButtonContainer>
-
             </Container>
+            </>
         );
     }
 }

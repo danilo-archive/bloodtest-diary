@@ -4,7 +4,8 @@ import TestCell from "./profileCells/TestCell";
 import SectionContainer from "./SectionContainer"
 
 const Container = styled.div`
-  width: 95%;
+  width: 100%;
+  margin: 2%;
 `;
 
 const EmptyContainer = styled.div`
@@ -22,7 +23,7 @@ const Field = styled.div`
   margin: 0 2.5%;
   height: 100%;
   color: inherit;
-  
+
   font-size: 125%;
   overflow: scroll;
   display: flex;
