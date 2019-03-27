@@ -31,7 +31,7 @@ describe("Test email controller:", () => {
             it("Cannot find user due to lack of user with this username - (STUBBED)", async function () {
                 const query_controller = {
                     getUser: async function () {
-                        return { success: true, response: [[]] }
+                        return { success: true, response: [] }
                     }
                 }
                 emailController.__set__("query_controller", query_controller)
@@ -345,4 +345,3 @@ describe("Test email controller:", () => {
         });
     });
 });
-
