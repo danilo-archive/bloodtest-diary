@@ -96,7 +96,6 @@ class ServerConnect {
     initSession(token, callback){
         this.setLoginToken(token);
         callback();
-        this.setLoginToken("");
     }
     /**
     * Set the current authentication token.
