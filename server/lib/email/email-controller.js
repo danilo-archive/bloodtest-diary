@@ -140,10 +140,6 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction, 
             else {
                 const date_1 = dateformat(test.last_reminder, "yyyymmdd");
                 const date_2 = dateformat(new Date(), "yyyymmdd");
-                console.log("==============");
-                console.log(emailInfo);
-                console.log(date_1)
-                console.log(date_2)
                 if (date_1 === date_2) {
                     contactPatient = false;
                 }
