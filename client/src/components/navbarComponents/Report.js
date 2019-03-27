@@ -73,9 +73,23 @@ const Input = styled.input`
   padding: 1% 4%;
   margin: 0.5% 0 1%;
   display: block;
+  height: 25px;
   width: 100%;
   border: 1px solid #ccc;
   border-radius: 4px;
+  outline: none;
+  box-sizing: border-box;
+`;
+
+const Select = styled.select`
+  padding: 1% 4%;
+  margin: 0.5% 0 1%;
+  display: block;
+  height: 25px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
   box-sizing: border-box;
 `;
 
@@ -254,7 +268,7 @@ export default class Report extends Component {
                         <LabelContainer>
                             <Label htmlFor={"select_month_alert"}>Select month</Label>
                         </LabelContainer>
-                        <select id={"select_month_alert"} onChange={this.handleSelectChange}>
+                        <Select id={"select_month_alert"} onChange={this.handleSelectChange}>
                             <option value="January">January</option>
                             <option value="February">February</option>
                             <option value="March">March</option>
@@ -267,7 +281,7 @@ export default class Report extends Component {
                             <option value="October">October</option>
                             <option value="November">November</option>
                             <option value="December">December</option>
-                        </select>
+                        </Select>
                     </SelectContainer>
                     <InputContainer>
                         <Label htmlFor={"input_year_alert"}>Type in the year</Label>
