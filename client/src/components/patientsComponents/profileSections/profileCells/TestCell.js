@@ -39,9 +39,7 @@ const Field = styled.div`
 `;
 
 const FieldText = styled.p`
-  margin: 0;
-  //TODO: Fix this
-  margin-top: 6px;
+  margin: 6px 0 0;
   max-height: 30px;
 `;
 

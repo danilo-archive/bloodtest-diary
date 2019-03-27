@@ -42,9 +42,8 @@ const TableBody = styled.tbody`
 `;
 
 const TableHead = styled.th`
-    width: 16.66%;  //TODO : change this to number of 100/columns
+    width: 16.66%; // this number must be equal to 100/number of columns
     padding: 10px;
-    //word-break: break-all;
     color: white;
     background: #0d4e56;
     text-align: left;
