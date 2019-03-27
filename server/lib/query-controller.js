@@ -24,7 +24,7 @@ const tokenConroller = require('./query-modules/token-controller')
  * @param {date} date
  * @returns {JSON} {success:Boolean, response:JSON}
  */
-async function getMonthlyReport(isMonthly,date) {
+async function getReport(isMonthly,date) {
     date = dateformat(date, "yyyymmdd");
     let thisMonth = await selector.getDueTests(isMonthly,date);
     let completedOnTime = await selector.getCompletedOnTime(isMonthly,date);
@@ -826,7 +826,7 @@ module.exports = {
     getTestWithinWeek,
     getSortedOverdueWeeks,
     getOverdueReminderGroups,
-    getMonthlyReport,
+    getReport,
     //INSERTS
     addTest,
     addUser,

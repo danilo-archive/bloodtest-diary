@@ -1080,7 +1080,7 @@ describe("Other functionality", function(){
   context("Check if Patients' Tests are Being Edited", function(){
     let spy;
     beforeEach(()=>{
-      spy = sinon.spy(queryController.getMonthlyReport);
+      spy = sinon.spy(queryController.getReport);
     })
     it("Error in getting report - all queries fail(Date specified/Monthly)", async function(){
 

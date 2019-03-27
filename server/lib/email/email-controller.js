@@ -88,7 +88,7 @@ async function sendNormalReminders(testIDs, actionUsername) {
  *             }
  *            }
  **/
-async function send(testIDs, actionUsername, patientFunction, hospitalFunction, isOvedue) {
+async function send(testIDs, actionUsername, patientFunction, hospitalFunction, isOverdue) {
     const failedBoth = [];
     const failedPatient = [];
     const failedHospital = [];
@@ -132,7 +132,7 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction, 
         };
 
         let contactPatient = false;
-        if (isOvedue) {
+        if (isOverdue) {
             // check if this patient has already been contacted
             if (test.last_reminder === null) {
                 contactPatient = true;
@@ -140,10 +140,20 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction, 
             else {
                 const date_1 = dateformat(test.last_reminder, "yyyymmdd");
                 const date_2 = dateformat(new Date(), "yyyymmdd");
+                console.log("==============");
+                console.log(emailInfo);
+                console.log(date_1)
+                console.log(date_2)
                 if (date_1 === date_2) {
                     contactPatient = false;
                 }
+                else {
+                    contactPatient = true;
+                }
             }
+        }
+        else {
+            contactPatient = true;
         }
 
         let pat_ok = true;

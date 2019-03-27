@@ -257,19 +257,19 @@ describe("Test queries", function(){
       response.success.should.equal(true);
     })
     it("Get Report (Unspecified date/Yearly)", async function(){
-      const response = await queryController.getMonthlyReport(false);
+      const response = await queryController.getReport(false);
       response.success.should.equal(true);
     })
     it("Get Report (Unspecified date/Monthly)", async function(){
-      const response = await queryController.getMonthlyReport(true);
+      const response = await queryController.getReport(true);
       response.success.should.equal(true);
     })
     it("Get Report (Specified date/Monthly)", async function(){
-      const response = await queryController.getMonthlyReport(true,new Date("2019-03-19"));
+      const response = await queryController.getReport(true,new Date("2019-03-19"));
       response.success.should.equal(true);
     })
     it("Get Report (Specified date/Yearly)", async function(){
-      const response = await queryController.getMonthlyReport(false,new Date("2019-03-19"));
+      const response = await queryController.getReport(false,new Date("2019-03-19"));
       response.success.should.equal(true);
     })
   })
