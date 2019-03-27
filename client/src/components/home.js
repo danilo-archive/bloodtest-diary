@@ -291,6 +291,7 @@ class Home extends Component {
               />
               <RightSideDash>
                   <Navbar
+                    handleError={this.handleInvalidResponseError}
                     over12={!this.state.under12}
                     setUnder12={check => {
                       check

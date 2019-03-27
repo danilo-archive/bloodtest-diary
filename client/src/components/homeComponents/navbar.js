@@ -196,14 +196,7 @@ class Navbar extends React.Component {
         });
       }
       else {
-        openAlert(
-          `${"Report could not be generated."}`,
-          "confirmationAlert",
-          "OK",
-          () => {
-            return;
-          }
-        );
+        this.props.handleError(res, "Report could not be generated");
       }
     });
   }

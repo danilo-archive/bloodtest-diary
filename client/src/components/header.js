@@ -9,6 +9,7 @@ import close from "../resources/images/close.png"
 import settings from "../resources/images/settings.png"
 import OfflineScreen from "./OfflineScreen.js";
 import SettingsPanel from "./SettingsPanel.js";
+import {openAlert} from "./Alert.js";
 import {getServerConnect} from "../serverConnection.js";
 
 import Alert from "./Alert.js"
@@ -34,7 +35,33 @@ class Header extends Component {
       });
   }
 
+  logout = () => {
+    this.serverConnect.logout(res => {
+      this.props.history.replace("");
+    });
+  };
 
+  handleInvalidResponseError = (res, error) => {
+    if (res.errorType === "authentication") {
+      openAlert(
+        "Authentication failed.",
+        "confirmationAlert",
+        "Go back to login",
+        () => {
+          this.logout();
+        }
+      );
+    } else {
+      openAlert(
+        `${error ? error : "Unknown error occurred."}`,
+        "confirmationAlert",
+        "OK",
+        () => {
+          return;
+        }
+      );
+    }
+  };
 
   /**
   * @param {String} room : possible rooms: login_page, main_page, patients_page
@@ -76,7 +103,7 @@ class Header extends Component {
                        <img className={"headerIcon"} src={settings} alt={"Settings Button"}/>
                    </div>
                    <div className="dropdown-content">
-                    <SettingsPanel isAdmin={this.state.admin} currentPage={this.state.currentPage}/>
+                    <SettingsPanel handleError={this.handleInvalidResponseError} isAdmin={this.state.admin} currentPage={this.state.currentPage}/>
                   </div>
                </div>
                <div className="button" id="min-button">
