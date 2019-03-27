@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {getServerConnect} from "../../serverConnection";
 import dateformat from "dateformat";
 import {openAlert} from "../Alert";
+import { integerCheck, emptyCheck } from "./../../lib/inputChecker";
 
 const Container = styled.div`
   display: flex;
@@ -10,7 +11,7 @@ const Container = styled.div`
   flex-direction: column;
   background: white;
   align-items: center;
-  padding: 1%;
+  padding: 3%;
 `;
 
 const ContentContainer = styled.div`
@@ -98,28 +99,115 @@ const RadioButton = styled.input.attrs({ type: "checkbox" })`
   }
 `;
 
+const ButtonContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+`;
+
+const DeleteButton = styled.button`
+  border: none;
+  background-color: #f44336;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 10px;
+  margin: 3%;
+  font-size: 130%;
+
+  height: 44px;
+  min-width: 100px;
+
+  :hover {
+    background-color: #dc2836;
+    color: white;
+    border-radius: 10px;
+  }
+  outline: none;
+`;
+
+const CloseButton = styled.button`
+  border: none;
+  background-color: #e7e7e7;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 130%;
+
+  height: 44px;
+  min-width: 100px;
+  margin: 3%;
+
+  :hover {
+    background: #c8c8c8;
+    color: black;
+    border-radius: 10px;
+  }
+  outline: none;
+`;
+
+const SaveButton = styled.button`
+  border: none;
+  background-color: #0b999d;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  margin: 3%;
+  border-radius: 10px;
+  font-size: 130%;
+
+  height: 44px;
+  min-width: 100px;
+
+  :hover {
+    background-color: #018589;
+    color: white;
+  }
+  outline: none;
+`;
+
 export default class Report extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            html: undefined,
+            monthSelected: "January",
+            wholeYear: false,
+        };
+
         this.handleSelectChange = this.handleSelectChange.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     };
 
     handleSelectChange(e) {
         this.setState({ monthSelected: e.target.value});
+        console.log(e.target.value);
     };
 
     handleInputChange(e) {
         this.setState({ yearSelected: e.target.value });
+        console.log(e.target.value);
     }
 
-    handleCheckboxChange(e) {
-        this.setState( { wholeYear: e.target.value} );
-    }
+    checkValues() {
+        if (emptyCheck(this.state.yearSelected)) {
+            return {correct: false, message: "Please type in a year."};
+        }
+        if (!integerCheck(this.state.yearSelected)) {
+            return {correct: false, message: "Please enter a valid year."}
+        }
+        return {correct: true}
+    };
 
     onGenerateClick = () => {
+        const result = this.checkValues();
+        if (!result.correct) {
+            openAlert(result.message, "confirmationAlert", "Ok");
+        }
         // TODO: remove hard coded values
         getServerConnect().generateReport("March", "2019", (res) => {
             const time = dateformat(new Date(), "HH:MM:ss");
@@ -179,8 +267,12 @@ export default class Report extends Component {
                         <LabelContainer>
                             <Label htmlFor={"whole_year_checkbox_alert"}>Generate report for whole year</Label>
                         </LabelContainer>
-                        <RadioButton id={"whole_year_checkbox_alert"} onChange={this.handleCheckboxChange}/>
+                        <RadioButton id={"whole_year_checkbox_alert"} onClick={() => {this.setState({ wholeYear: !this.state.wholeText})}}/>
                     </CheckboxContainer>
+                    <ButtonContainer>
+                        <SaveButton onClick={this.onGenerateClick}>Generate Report</SaveButton>
+                        <CloseButton onClick={this.props.onClose}>Close</CloseButton>
+                    </ButtonContainer>
                 </ContentContainer>
             </Container>
         )
