@@ -18,29 +18,27 @@ const Day = styled.button`
     background-color: white;
   }
 
-  & .current{
+  &.current{
       font-size: 100%;
       font-weight: bold;
   }
 
-  & .not-current {
+  &.not-current {
       font-size: 75%;
   }
 
-  & .selected {
+  &.selected {
       background-color: #133952;
+      &:hover {
+        background-color: aqua;
+    }
   }
 
-  & .selected:hover {
-      background-color: aqua;
-  }
-
-  & .not-selected {
+  &.not-selected {
       background-color: inherit;
-  }
-
-  & .not-selected:hover {
-      background-color: #133952;
+      &:hover {
+        background-color: #133952;
+    }
   }
 `;
 
