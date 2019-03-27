@@ -34,10 +34,25 @@ describe("Select queries tests", function(){
     test(selector.getUser,testUsername);
   });
   context("Get All Users", function(){
-    test(selector.getAllUsers,);
+    test(selector.getAllUsers);
   });
   context("Get Full Patient Info", function(){
     test(selector.getFullPatientInfo,"P400");
+  });
+  context("Get Completed On Time (NO SECOND PARAMETER)", function(){
+    test(selector.getCompletedOnTime,true);
+  });
+  context("Get Due Tssts (NO SECOND PARAMETER)", function(){
+    test(selector.getDueTests,true);
+  });
+  context("Get Completed Late (NO SECOND PARAMETER)", function(){
+    test(selector.getCompletedLate,true);
+  });
+  context("Get Number Of Reminders Sent (NO SECOND PARAMETER)", function(){
+    test(selector.getNumberOfRemindersSent,true);
+  });
+  context("Get Patients Number", function(){
+    test(selector.getPatientsNumber);
   });
   context("Get Full Test Info", function(){
     test(selector.getTestInfo,"400");
@@ -170,8 +185,7 @@ describe("Select queries tests", function(){
       response.response.error.should.equal("stubbed error");
     });
   });
-
-  describe("Get overdue reminder groups:", () => {
+  context("Get Overdue Reminder Groups", function(){
     it ("Should return false.", async () => {
       const dbController = {
         selectQuery: async function() {

@@ -6,7 +6,7 @@
  * @version 0.0.1
  */
 
-//the logger has to be required before anything else so that the right output file path is specified 
+//the logger has to be required before anything else so that the right output file path is specified
 const logger = require('./lib/logger')
 logger.changeOption("outputFilePath", __dirname + "/logs")
 
@@ -68,7 +68,7 @@ io.on('connection',function(socket)
             }
             socket.join(room);
             logger.info(`Socket ${socket.id} joined ${room}`);
-            socket.emit("joined", room);          
+            socket.emit("joined", room);
         }
     });
 
@@ -89,7 +89,7 @@ io.on('connection',function(socket)
         if (res) {
             accessToken = await authenticator.registerNewUsername(credentials.username);
         }
-        logger.info("access token: " + accessToken); // TODO: return to user
+        logger.info("access token: " + accessToken);
         logger.info(`Authentication ${res ? "successful" : "unsuccessful"}`);
         if (res) {
             res = {success:true, accessToken: accessToken};
@@ -149,7 +149,7 @@ io.on('connection',function(socket)
     *@param {String} date of type "yyyy-mm-dd"
     *@param {Boolean} anydayTestsOnly - if unscheduled test to return
     **/
-    //TODO: PASS "isAdult" VARIABLE (BOOLEAN) FROM THE UI
+
     socket.on('getTestsInWeek',async (date, accessToken,isAdult=true) => {
         const username = await getUsername(socket, "getTestsInWeekResponse", accessToken);
         if (!username){return}
@@ -291,8 +291,6 @@ io.on('connection',function(socket)
         const response = await queryController.addUser(newUser, username);
         if (response.success){
             socket.emit("addUserResponse", {success: true, response: response.response});
-            // TODO: do we need this?
-            //io.in("patients_page").emit("patientEdited", newPatient.patient_no, newPatient);
         }else{
             socket.emit("addUserResponse", {success: false});
         }
@@ -531,8 +529,6 @@ io.on('connection',function(socket)
         logger.info(response);
         if (response.success){
             socket.emit("editUserResponse", {success: true, response: response.response});
-            // TODO: do we need this?
-            //io.in("patients_page").emit("patientEdited", newPatient.patient_no, newPatient);
         }else{
             socket.emit("editUserResponse", {success: false});
         }
@@ -542,7 +538,6 @@ io.on('connection',function(socket)
     // OTHER
     // ==============
 
-     //TODO: ADD CLIENT CONNECTION HERE
     //PARAMETER - (STRING) USERNAME TO CHANGE PASSWORD
     socket.on('passwordRecoverRequest', async (username) => {
         const passwordResponse = await email_controller.recoverPassword(username);
@@ -570,7 +565,11 @@ io.on('connection',function(socket)
         const response = await email_controller.sendNormalReminders(testID, username);
         socket.emit("sendNormalRemindersResponse", response);
     });
-
+    
+    /**
+     * @param {string} month - Full name of the month in english, or null if generating report for the whole year.
+     * @param {string} year - Year we are fetching from.
+     */
     socket.on('generateMonthlyReport', async (month, accessToken) => {
         const username = await getUsername(socket, "generateMonthlyReportResponse", accessToken);
         if (!username){return}
