@@ -12,7 +12,7 @@ const Container = styled.div`
   flex-direction: column;
   background: white;
   align-items: center;
-  padding: 3%;
+  max-width: 600px;
 `;
 
 const TitleContainer = styled.div`
@@ -22,9 +22,12 @@ const TitleContainer = styled.div`
 
 const Title = styled.p`
   text-align: center;
-  font-size: 150%;
   margin: 0;
-  width: 100%;
+  width: auto;
+  font-size: 170%;
+  color: #eee;
+  background-color: #0d4e56;
+  padding: 5px;
 `;
 
 const ContentContainer = styled.div`
@@ -58,6 +61,8 @@ const CheckboxContainer = styled.div`
 `;
 
 const Label = styled.label`
+  font-weight: 200;
+  font-size: 125%;
 `;
 
 const LabelContainer = styled.div`
@@ -110,10 +115,14 @@ const RadioButton = styled.input.attrs({ type: "checkbox" })`
 `;
 
 const DownloadContainer = styled.div`
+  text-align: center;
 `;
 
 const DownloadText = styled.p`
-
+  text-align: center;
+  font-size: 125%;
+  font-weight: 200;
+  margin: 0;
 `;
 
 const ButtonContainer = styled.div`
@@ -219,18 +228,11 @@ export default class Report extends Component {
             // TODO: remove hard coded values
             getServerConnect().generateReport("March", "2019", (res) => {
                 if (res.success) {
-                    this.setState({
-                        html: res.html,
-                    });
+                    this.setState({html: res.html});
                     this.createFileName();
                 } else {
-                    this.setState({
-                        html: undefined,
-                    });
-                    openAlert(`${"Report could not be generated."}`, "confirmationAlert", "OK", () => {
-                            return
-                        }
-                    );
+                    this.setState({html: undefined});
+                    openAlert(`${"Report could not be generated."}`, "confirmationAlert", "OK", () => {return});
                 }
             });
         }
