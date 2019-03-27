@@ -205,14 +205,14 @@ class Home extends Component {
   };
 
   /**
-   * Event handler for the "go to patients page" button
+   * Event handler for the "go to patients page" button.
    */
   onPatientsClick = event => {
     this.props.history.push("patients");
   };
 
   /**
-   * Event handler for the "sign out" button
+   * Event handler for the "sign out" button.
    */
   logout = event => {
     this.serverConnect.logout(res => {
