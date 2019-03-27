@@ -565,17 +565,17 @@ io.on('connection',function(socket)
         const response = await email_controller.sendNormalReminders(testID, username);
         socket.emit("sendNormalRemindersResponse", response);
     });
-    
+
     /**
      * @param {string} month - Full name of the month in english, or null if generating report for the whole year.
      * @param {string} year - Year we are fetching from.
      */
-    socket.on('generateMonthlyReport', async (month, accessToken) => {
-        const username = await getUsername(socket, "generateMonthlyReportResponse", accessToken);
+    socket.on('generateReport', async (month, year, accessToken) => {
+        const username = await getUsername(socket, "generateReportResponse", accessToken);
         if (!username){return}
         
-        const res = await reportGenerator.getMonthlyReport(month, username);
-        socket.emit("generateMonthlyReportResponse", res);
+        const res = await reportGenerator.getReport(month, year, username);
+        socket.emit("generateReportResponse", res);
     });
 
 });
