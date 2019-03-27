@@ -11,7 +11,7 @@ const logger = require('./lib/logger')
 logger.changeOption("outputFilePath", __dirname + "/logs")
 
 const app = require('express')();
-const http = require('http').Server(app);
+const http = require('http').Server(app); // require('https) to change to https connection
 const io = require('socket.io')(http);
 
 const queryController = require('./lib/query-controller.js');
@@ -26,6 +26,20 @@ const reportGenerator = require('./lib/report-generator');
 http.listen(port);
 
 // to broadcast in room => io.in("room").emit("change", json);
+
+
+async function getUsername(socket, responseCode, accessToken){
+    if (!accessToken) {
+        socket.emit(responseCode, { success:false, errorType:"authentication", response: "Authentication required." });
+        return null;
+    }
+    const username = await authenticator.verifyToken(accessToken);
+    if (!username) {
+        socket.emit(responseCode, { success:false, errorType:"authentication", response: "Invalid credentials." });
+        return null;
+    }
+    return username;
+}
 
 io.on('connection',function(socket)
 {
@@ -107,30 +121,17 @@ io.on('connection',function(socket)
     // ==============
 
     socket.on('getAllPatients', async (accessToken,isAdult=true) => {
-        if (!accessToken) {
-            socket.emit("getAllPatientsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getAllPatientsResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "getAllPatientsResponse", accessToken);
+        if (!username){return}
+        console.log(username);
 
         const response = await queryController.getAllPatients(isAdult);
         socket.emit("getAllPatientsResponse", {success: true, response: response.response});
     });
 
     socket.on("getFullPatientInfo", async (patientId, accessToken) => {
-        if (!accessToken) {
-            socket.emit("getFullPatientInfoResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getFullPatientInfoResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "getFullPatientInfoResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.getFullPatientInfo(patientId);
         socket.emit("getFullPatientInfoResponse", {success: true, response: response.response});
@@ -138,15 +139,8 @@ io.on('connection',function(socket)
 
 
     socket.on('getNextTestsOfPatient', async (patientId, accessToken) => {
-        if (!accessToken) {
-            socket.emit("getNextTestsOfPatientResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getNextTestsOfPatientResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "getNextTestsOfPatientResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.getNextTestsOfPatient(patientId);
         socket.emit('getNextTestsOfPatientResponse', response);
@@ -158,78 +152,40 @@ io.on('connection',function(socket)
     **/
     //TODO: PASS "isAdult" VARIABLE (BOOLEAN) FROM THE UI
     socket.on('getTestsInWeek',async (date, accessToken,isAdult=true) => {
-        if (!accessToken) {
-            socket.emit("getTestsInWeekResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getTestsInWeekResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "getTestsInWeekResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.getTestWithinWeek(date,isAdult);
         socket.emit('getTestsInWeekResponse', {success: true, response: response.response});
     });
 
-    //TODO: PASS "isAdult" VARIABLE (BOOLEAN) FROM THE UI
     socket.on('getOverdueTests', async (accessToken,isAdult=true) => {
-        if (!accessToken) {
-            socket.emit("getOverdueTestsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getOverdueTestsResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "getOverdueTestsResponse", accessToken);
+        if (!username){return}
 
-        //const response = await queryController.getOverdueGroups();
         const response = await queryController.getSortedOverdueWeeks(isAdult);
         socket.emit('getOverdueTestsResponse', {success: true, response: response.response});
     });
 
     socket.on('getTestInfo', async (testId, accessToken) => {
-        if (!accessToken) {
-            socket.emit("getTestInfoResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getTestInfoResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "getTestInfoResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.getTestInfo(testId);
         socket.emit("getTestInfoResponse", response);
     });
 
-    //TODO: PASS "isAdult" VARIABLE (BOOLEAN) FROM THE UI
     socket.on('getOverdueReminderGroups', async (accessToken,isAdult=true) => {
-        if (!accessToken) {
-            socket.emit("getOverdueReminderGroupsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getOverdueReminderGroupsResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "getOverdueReminderGroupsResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.getOverdueReminderGroups(isAdult);
         socket.emit("getOverdueReminderGroupsResponse", response);
     });
 
     socket.on('getUser', async (accessToken, user=undefined) => {
-        if (!accessToken) {
-            socket.emit("getUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "getUserResponse", accessToken);
+        if (!username){return}
 
         if (user === undefined) {
             // User can retrieve their info.
@@ -262,15 +218,8 @@ io.on('connection',function(socket)
     });
 
     socket.on('getAllUsers', async (accessToken) => {
-        if (!accessToken) {
-            socket.emit("getAllUsersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("getAllUsersResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "getAllUsersResponse", accessToken);
+        if (!username){return}
 
         let canRetrieve = false;
         try {
@@ -296,15 +245,8 @@ io.on('connection',function(socket)
 
     socket.on("addTest", async (patientId, date, notes, frequency, occurrences, accessToken) => {
         logger.debug("New info: ", date, notes, "f: "+frequency, "o: "+occurrences);
-        if (!accessToken) {
-            socket.emit("addTestResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("addTestResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "addTestResponse", accessToken);
+        if (!username){return}
 
         const test = {patient_no:patientId, due_date:date, notes:notes, frequency:frequency, occurrences:occurrences}
         const response = await queryController.addTest(test, username);
@@ -318,15 +260,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("addPatient", async (newPatient, accessToken) => {
-        if (!accessToken) {
-            socket.emit("addPatientResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("addPatientResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "addPatientResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.addPatientExtended(newPatient, username);
         if (response.success){
@@ -338,15 +273,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("addUser", async (newUser, accessToken) => {
-        if (!accessToken) {
-            socket.emit("addUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("addUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "addUserResponse", accessToken);
+        if (!username){return}
         let canInsert = false;
         try {
             const admin = (await queryController.getUser(username)).response[0];
@@ -377,15 +305,8 @@ io.on('connection',function(socket)
     // ==============
 
     socket.on("requestTestEditToken", async (testId, accessToken) => {
-        if (!accessToken) {
-            socket.emit("requestTestEditTokenResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("requestTestEditTokenResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "requestTestEditTokenResponse", accessToken);
+        if (!username){return}
 
         let response = await queryController.requestEditing("Test", testId, username);
         if (response) {
@@ -399,15 +320,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("requestPatientEditToken", async (patientId, accessToken) => {
-        if (!accessToken) {
-            socket.emit("requestPatientEditTokenResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("requestPatientEditTokenResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "requestPatientEditTokenResponse", accessToken);
+        if (!username){return}
 
         let response = await queryController.requestEditing("Patient", patientId, username);
         if (response) {
@@ -420,15 +334,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("requestUserEditToken", async (user, accessToken) => {
-        if (!accessToken) {
-            socket.emit("requestUserEditTokenResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("requestUserEditTokenResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "requestUserEditTokenResponse", accessToken);
+        if (!username){return}
 
         let canRequest = false;
         try {
@@ -456,45 +363,24 @@ io.on('connection',function(socket)
     });
 
     socket.on("discardTestEditing", async (id, token, accessToken) => {
-        if (!accessToken) {
-            socket.emit("discardTestEditingResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("discardTestEditingResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "discardTestEditingResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.returnToken("Test", id, token, username);
         socket.emit("discardTestEditingResponse", response);
     });
 
     socket.on("discardPatientEditing", async (id, token, accessToken) => {
-        if (!accessToken) {
-            socket.emit("discardPatientEditingResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("discardPatientEditingResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "discardPatientEditingResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.returnToken("Patient", id, token, username);
         socket.emit("discardPatientEditingResponse", response);
     });
 
     socket.on("discardUserEditing", async (id, token, accessToken) => {
-        if (!accessToken) {
-            socket.emit("discardUserEditingResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("discardUserEditingResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "discardUserEditingResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.returnToken("User", id, token, username);
         socket.emit("discardUserEditingResponse", response);
@@ -505,15 +391,8 @@ io.on('connection',function(socket)
     // ==============
 
     socket.on("deletePatient", async (patientId, token, accessToken) => {
-        if (!accessToken) {
-            socket.emit("deletePatientResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("deletePatientResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "deletePatientResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.deletePatient(patientId, token, username);
         logger.debug(response)
@@ -527,15 +406,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("unscheduleTest", async (testId, token, accessToken) => {
-        if (!accessToken) {
-            socket.emit("unscheduleTestResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("unscheduleTestResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "unscheduleTestResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.unscheduleTest(testId, token, username);
         if (response.success){
@@ -552,15 +424,8 @@ io.on('connection',function(socket)
     // ==============
 
     socket.on('testStatusChange', async (testId, newStatus, accessToken) => {
-        if (!accessToken) {
-            socket.emit("testStatusChangeResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("testStatusChangeResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "testStatusChangeResponse", accessToken);
+        if (!username){return}
 
         const test = {testId: testId, newStatus: newStatus}
         const response = await queryController.changeTestStatus(test, username);
@@ -574,15 +439,8 @@ io.on('connection',function(socket)
 
     socket.on("editTest", async (testId, newInfo, token, accessToken) => {
         logger.debug("New info: ", newInfo);
-        if (!accessToken) {
-            socket.emit("editTestResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("editTestResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "editTestResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.editTest(testId, newInfo, token, username);
         logger.info({response});
@@ -597,15 +455,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("changeTestDueDate", async (testId, newDate, accessToken) => {
-        if (!accessToken) {
-            socket.emit("changeTestDueDateResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("changeTestDueDateResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "changeTestDueDateResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.changeTestDueDate(testId, newDate, username);
         if (response.success){
@@ -617,15 +468,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("editPatient", async (patientId, newInfo, token, accessToken) => {
-        if (!accessToken) {
-            socket.emit("editPatientResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("editPatientResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "editPatientResponse", accessToken);
+        if (!username){return}
 
         logger.info(token);
         const response = await queryController.editPatientExtended(newInfo, token, username);
@@ -641,15 +485,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("changeTestColour", async (testId, newColour, accessToken) => {
-        if (!accessToken) {
-            socket.emit("changeTestColourResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("changeTestColourResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "changeTestColourResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.changeTestColour(testId, newColour, username);
         if (response.success){
@@ -661,15 +498,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("changePatientColour", async (patientNo, newColour, accessToken) => {
-        if (!accessToken) {
-            socket.emit("changePatientColourResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("changePatientColourResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "changePatientColourResponse", accessToken);
+        if (!username){return}
 
         const response = await queryController.changePatientColour(patientNo, newColour, username);
         logger.info(response)
@@ -682,15 +512,8 @@ io.on('connection',function(socket)
     });
 
     socket.on("editUser", async (newData, token, accessToken) => {
-        if (!accessToken) {
-            socket.emit("editUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("editUserResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "editUserResponse", accessToken);
+        if (!username){return}
         let canEdit = false;
         try {
             const admin = (await queryController.getUser(username)).response[0];
@@ -729,15 +552,9 @@ io.on('connection',function(socket)
     });
 
     socket.on('sendOverdueReminders', async (testID, accessToken) => {
-        if (!accessToken) {
-            socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "sendOverdueRemindersResponse", accessToken);
+        if (!username){return}
+
         if (!Array.isArray(testID)) {
             testID = [testID];
         }
@@ -746,15 +563,8 @@ io.on('connection',function(socket)
     });
 
     socket.on('sendNormalReminders', async (testID, accessToken) => {
-        if (!accessToken) {
-            socket.emit("sendNormalRemindersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("sendNormalRemindersResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "sendNormalRemindersResponse", accessToken);
+        if (!username){return}
 
         if (!Array.isArray(testID)) {
             testID = [testID];
@@ -764,15 +574,9 @@ io.on('connection',function(socket)
     });
 
     socket.on('generateMonthlyReport', async (month, accessToken) => {
-        if (!accessToken) {
-            socket.emit("generateMonthlyReportResponse", { success:false, errorType:"authentication", response: "Authentication required." });
-            return;
-        }
-        const username = await authenticator.verifyToken(accessToken);
-        if (!username) {
-            socket.emit("generateMonthlyReportResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
-            return;
-        }
+        const username = await getUsername(socket, "generateMonthlyReportResponse", accessToken);
+        if (!username){return}
+        
         const res = await reportGenerator.getMonthlyReport(month, username);
         socket.emit("generateMonthlyReportResponse", res);
     });
