@@ -123,7 +123,6 @@ io.on('connection',function(socket)
     socket.on('getAllPatients', async (accessToken,isAdult=true) => {
         const username = await getUsername(socket, "getAllPatientsResponse", accessToken);
         if (!username){return}
-        console.log(username);
 
         const response = await queryController.getAllPatients(isAdult);
         socket.emit("getAllPatientsResponse", {success: true, response: response.response});
@@ -244,7 +243,6 @@ io.on('connection',function(socket)
     // ==============
 
     socket.on("addTest", async (patientId, date, notes, frequency, occurrences, accessToken) => {
-        logger.debug("New info: ", date, notes, "f: "+frequency, "o: "+occurrences);
         const username = await getUsername(socket, "addTestResponse", accessToken);
         if (!username){return}
 
