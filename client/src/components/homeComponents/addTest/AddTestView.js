@@ -219,7 +219,6 @@ export default class AddTestView extends React.Component {
             <DateSelectorSection
               onCalendarClose={this.onCalendarClose}
               frequency={this.state.frequency.timeAmount}
-              occurrences={this.state.frequency.occurrences}
               tooltips={{
                 frequency: this.state.tooltips.frequency,
                 occurrences: this.state.tooltips.occurrences
