@@ -7,7 +7,7 @@
  */
 
 import React from 'react'
-import { DragLayer, XYCoord } from 'react-dnd'
+import { DragLayer } from 'react-dnd'
 import AppointmentBoxDragPreview from './calendarComponents/AppointmentBoxDragPreview';
 
 // original 32

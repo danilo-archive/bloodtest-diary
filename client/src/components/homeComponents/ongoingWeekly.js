@@ -47,11 +47,6 @@ const spec = {
 
 class OngoingWeekly extends React.Component {
 
-  constructor(props){
-      super(props);
-  }
-
-
   render() {
     const { connectDropTarget, hovered, item} = this.props;
     const backgroundColor = hovered ? "#dbfffc" : "white";
@@ -70,7 +65,6 @@ class OngoingWeekly extends React.Component {
             <AppointmentSection
               type="Appointments"
               appointments={this.props.anytimeAppointments}
-              section={"ongoing"}
               editTest={this.props.editTest}
               editPatient={this.props.editPatient}
               handleError={this.props.handleError}

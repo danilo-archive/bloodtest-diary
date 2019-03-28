@@ -65,9 +65,6 @@ const spec = {
 // ----------------------------------------------------------
 
 class CalendarDay extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     const { connectDropTarget, hovered } = this.props;

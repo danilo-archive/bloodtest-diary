@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
-import { withRouter, Redirect, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
 const crypto = require('crypto');
 

@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import Title from "./Title";
-import ScrollBox from "../calendarComponents/ScrollBox";
-import TestBox from "./TestBox";
 import Button from "../editTest/Button";
-import { inherits } from "util";
 import { openAlert } from "./../../Alert.js";
 import { getServerConnect } from "./../../../serverConnection.js";
 import PatientSelect from "./PatientSelect";

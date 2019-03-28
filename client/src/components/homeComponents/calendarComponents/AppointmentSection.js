@@ -12,7 +12,6 @@ import styled from "styled-components";
 import AppointmentSectionHeader from "./AppointmentSectionHeader";
 import AppointmentBox from "./AppointmentBox";
 import VerticalLine from "./VerticalLine";
-import { DropTarget } from "react-dnd";
 import formatDate from "dateformat";
 
 const AppointmentSection = styled.div`

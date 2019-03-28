@@ -60,10 +60,6 @@ const TableRow = styled.tr`
 
 class PatientsTable extends React.Component {
 
-    constructor(props){
-        super(props);
-    }
-
     number_filter = value => {
         this.props.filterNumber(value);
     };

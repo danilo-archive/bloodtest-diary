@@ -17,24 +17,20 @@ import OverduePatients from "./homeComponents/overduePatients";
 import WeeklyCalendar from "./homeComponents/weeklyCalendar";
 import OngoingWeekly from "./homeComponents/ongoingWeekly";
 import AddTest from "./homeComponents/addTest/AddTestView";
-import VerticalLine from "./homeComponents/calendarComponents/VerticalLine";
 import LoadingAnimation from "./loadingScreen/loadingAnimation";
 import { openAlert } from "./Alert.js";
 import EmailModal from "./homeComponents/emailModal/EmailModal.js";
-import ColorPicker from "./homeComponents/calendarComponents/ColorPicker.js";
 
 import EditTest from "./homeComponents/editTest/EditTestView";
 import PatientProfile from "./patientsComponents/PatientProfile.js";
 import {
-  getNextDates,
-  getMondayOfWeek,
   getCurrentWeek,
   getWeekDays,
   getPreviousWeek,
   getNextWeek
 } from "../lib/calendar-controller";
 import { getServerConnect } from "../serverConnection.js";
-import { group, getNumberOfTestsInGroup } from "../lib/overdue-controller.js";
+import { getNumberOfTestsInGroup } from "../lib/overdue-controller.js";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DragDropContext } from "react-dnd";
 import CustomDragLayer from "./homeComponents/CustomDragLayer.js";
@@ -482,4 +478,3 @@ const modalStyles = {
 };
 
 export default DragDropContext(HTML5Backend)(Home);
-//export default Home;

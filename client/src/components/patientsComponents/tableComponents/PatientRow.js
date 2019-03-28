@@ -45,12 +45,6 @@ const Button = styled.button`
 
 export default class PatientRow extends React.Component{
 
-    constructor(props){
-        super(props);
-
-        //this.onEditClick = this.onEditClick.bind(this);
-    }
-
     onEditClick = event => {
         this.props.openEditModal(this.props.patient_no);
     };

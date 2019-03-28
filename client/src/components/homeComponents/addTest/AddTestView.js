@@ -235,7 +235,6 @@ export default class AddTestView extends React.Component {
                 })
               }
               showCalendar={this.state.showCalendar}
-              noRepeat={this.state.frequency.noRepeat}
               occurrences={this.state.frequency.occurrences}
               timeAmount={this.state.frequency.timeAmount}
               timeUnit={this.state.frequency.timeUnit}

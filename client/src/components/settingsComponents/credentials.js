@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
 import {getServerConnect} from "../../serverConnection.js";
-import Select from 'react-select';
 import InfoMessage from './infoMessage';
-import refresh from "../../resources/images/refresh.png"
-import { openAlert } from '../Alert.js';
 
 const crypto = require('crypto');
 
@@ -161,7 +158,7 @@ export default class Credentials extends Component {
     event.preventDefault();
     this.serverConnect.requestUserEditing(this.state.username, res => {
       if (res.success){
-          if (this.state.password == this.state.confirmPassword && this.state.password !== "") {
+          if (this.state.password === this.state.confirmPassword && this.state.password !== "") {
             let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
             let newData = {username: this.state.username, hashed_password: hash, recovery_email: this.state.email};
             this.updateDatabase(newData, res.token);

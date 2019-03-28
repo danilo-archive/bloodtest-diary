@@ -35,11 +35,6 @@ const NextArrow = styled.img`
 
 
 export default class WeekButtons extends Component {
-
-    constructor(props){
-        super(props);
-    }
-
     render(){
       return (
         <Container>

@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
-import { withRouter, Redirect, Link } from 'react-router-dom'
-
-const crypto = require('crypto');
+import { withRouter } from 'react-router-dom'
 
 const Container = styled.div`
   border: solid 0px red;

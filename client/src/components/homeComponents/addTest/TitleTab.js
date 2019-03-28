@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-
 import Label from "../../Label";
-import CloseTabIcon from "./CloseTabIcon";
 
 const TitleDiv = styled.div`
   width: 100%;

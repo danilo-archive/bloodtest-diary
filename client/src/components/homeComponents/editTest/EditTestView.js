@@ -10,18 +10,10 @@ import Button from "./Button";
 import dateformat from "dateformat";
 import { openAlert } from "./../../Alert.js";
 import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
-import PatientProfile from "../../patientsComponents/PatientProfile";
-import { Tooltip } from "react-tippy";
 
 const dueDateField = 1;
 const completedDateField = 2;
 
-const DataContainer = styled.div`
-  position: relative;
-  width: 45rem;
-  height: 80px;
-  background: rgba(0, 0, 0, 0);
-`;
 const SetterValues = [
   { value: "D", name: "Days" },
   { value: "W", name: "Weeks" },

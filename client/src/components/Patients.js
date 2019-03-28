@@ -5,7 +5,7 @@
  * @author Jakub Cerven
  */
 
-import React, { Component } from "react";
+import React from "react";
 import styled from "styled-components";
 import { ModalProvider } from "styled-react-modal";
 import Modal from "./PatientModal";
