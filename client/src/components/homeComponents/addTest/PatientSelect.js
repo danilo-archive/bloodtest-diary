@@ -52,7 +52,7 @@ export default class PatientSelect extends React.Component {
     this.setState({
       patients: this.props.patients
         .filter(
-          patient => patient.name.includes(value) || patient.id.includes(value)
+          patient => patient.name.toLowerCase().includes(value.toLowerCase()) || patient.id.toLowerCase().includes(value.toLowerCase())
         )
         .slice(0, 30)
     });
