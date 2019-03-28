@@ -55,6 +55,7 @@ To check ```path/to/app.js```:
 It is advised to install editor extensions which will allow to check for errors automatically.
 VSCode: [vscode-eslint](https://github.com/Microsoft/vscode-eslint)
 Atom: [linter-eslint](https://atom.io/packages/linter-eslint)
+
 #### Mocha, Chai, and Instanbul
 
 To recursively run tests in ```server/```:<br>
@@ -65,7 +66,7 @@ To recursively run tests in ```server/```:<br>
 To recursively run tests in ```client/```<br>
 ```
     $ cd client
-    $ npm test -- --recursive
+    $ npm test
 ```
 
 <hr>
@@ -97,15 +98,17 @@ The configuration file is ```server/config/email_config.json```
         "service": "yahoo",
         "secure": false,
         "auth": {
-            "user": "danilodelbusso@yahoo.com",
-            "pass": "jJ825&j9yBRA"
+            "user": "example@yahoo.com",
+            "pass": "password"
         },
         "logger": true
     }
+    /.../
 }
 ```
 
 for info on usage and possible additional settings, go to [nodemailer.com](https://nodemailer.com/smtp/)
+
 ## Languages & tools
 
 - [NodeJS](https://nodejs.org) is used for the back-end.
@@ -119,6 +122,8 @@ for info on usage and possible additional settings, go to [nodemailer.com](https
 - [mysql](https://www.npmjs.com/package/mysql) for managing and creating a relational database
 - [mocha-sinon](https://www.npmjs.com/package/mocha-sinon) used for integration between mocha and sinon, allowing for automatic cleanup of spies
 - [proxyquire](https://www.npmjs.com/package/proxyquire) used to proxy nodejs's require in order to make overriding dependencies
+- [mjml] (https://mjml.io/) used for email formatting
+
 <hr>
 
 ## Authors
