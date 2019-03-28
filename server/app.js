@@ -734,6 +734,7 @@ io.on('connection',function(socket)
     /**
      * @param {string} month - Full name of the month in english, or null if generating report for the whole year.
      * @param {string} year - Year we are fetching from.
+     * @param {String} accessToken The authentication token
      */
     socket.on('generateReport', async (month, year, accessToken) => {
         const username = await getUsername(socket, "generateReportResponse", accessToken);
