@@ -199,8 +199,6 @@ class PatientProfile extends Component {
     loadPatient() {
         this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
             if (res.success) {
-                const info = res.response[0];
-                console.log(info);
                 this.setState({
                     patientName: info.patient_name,
                     patientSurname: info.patient_surname,

@@ -85,9 +85,6 @@ export default class EmailModal extends Component {
       }
     } else {
       if (notified) {
-        console.log("====================================");
-        console.log("Removing notified");
-        console.log("====================================");
         this.setState({
           selected: this.state.selected.filter(patient =>
             this.state.notNotified.find(
@@ -117,7 +114,6 @@ export default class EmailModal extends Component {
     this.setState({ awaitResponse: true });
     let idList = this.state.selected.map(patient => patient.id);
     this.serverConnect.sendOverdueReminders(idList, res => {
-      console.log(res);
       if (res.success) {
         openAlert(
           "All selected patients were contacted successfully.",
@@ -284,9 +280,6 @@ export default class EmailModal extends Component {
                 patients={this.state.notNotified}
                 onSelectClick={(id, isAlreadyIncluded) => {
                   if (isAlreadyIncluded) {
-                    console.log("====================================");
-                    console.log("Adding");
-                    console.log("====================================");
                     this.setState({
                       selected: this.state.selected.filter(
                         patient => patient.id !== id
