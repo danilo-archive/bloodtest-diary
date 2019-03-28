@@ -42,12 +42,14 @@ const Dashboard = styled.div`
   width: auto;
   position: relative;
   top: 20px;
-  padding: 1% 1% 1% 1%;
+  padding: 1% 1% 1% 1%; 
 
   display: flex;
   flex-direction: row;
   align-items: flex-end;
+  overflow-x: scroll;
 `;
+
 const RightSideDash = styled.div`
   border: red 0 solid;
   height: 100%;
