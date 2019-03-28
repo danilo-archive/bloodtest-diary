@@ -12,6 +12,7 @@ import { WaveLoading } from "styled-spinkit";
 const Container = styled.div`
   position: relative;
   height: 592px;
+  min-width: 635px;
   width: 100%;
   background: white;
 `;
