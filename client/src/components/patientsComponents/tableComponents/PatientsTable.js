@@ -130,7 +130,7 @@ class PatientsTable extends React.Component {
                             openEditModal = {this.props.openEditModal}
                         />
                     ))}
-                    <div style={{width:"100%", height: "20px"}}/>
+                        <tr><td/></tr>
                     </TableBody>
                 </Table>
             </TableContainer>
