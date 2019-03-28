@@ -54,7 +54,6 @@ describe("Insert queries tests", function(){
     context("Add new Patient", function(){
       let spy;
       beforeEach(()=>{
-          //TODO : delete JSON
           spy = sinon.spy(inserter.addPatient);
       })
       it("Should accept new patient (STUBBED)", async function() {
@@ -67,7 +66,6 @@ describe("Insert queries tests", function(){
     context("Add new Hospital", function(){
       let spy;
       beforeEach(()=>{
-          //TODO : delete JSON
           spy = sinon.spy(inserter.addHospital);
       })
       it("Should accept new hospital (STUBBED)", async function() {
@@ -80,7 +78,6 @@ describe("Insert queries tests", function(){
     context("Add new Carer", function(){
       let spy;
       beforeEach(()=>{
-          //TODO : delete JSON
           spy = sinon.spy(inserter.addCarer);
       })
       it("Should accept new carer (STUBBED)", async function() {
