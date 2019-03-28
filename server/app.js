@@ -6,7 +6,7 @@
  * @version 0.0.1
  */
 
-//the logger has to be required before anything else so that the right output file path is specified 
+//the logger has to be required before anything else so that the right output file path is specified
 const logger = require('./lib/logger')
 logger.changeOption("outputFilePath", __dirname + "/logs")
 
@@ -54,7 +54,7 @@ io.on('connection',function(socket)
             }
             socket.join(room);
             logger.info(`Socket ${socket.id} joined ${room}`);
-            socket.emit("joined", room);          
+            socket.emit("joined", room);
         }
     });
 
@@ -75,7 +75,7 @@ io.on('connection',function(socket)
         if (res) {
             accessToken = await authenticator.registerNewUsername(credentials.username);
         }
-        logger.info("access token: " + accessToken); // TODO: return to user
+        logger.info("access token: " + accessToken);
         logger.info(`Authentication ${res ? "successful" : "unsuccessful"}`);
         if (res) {
             res = {success:true, accessToken: accessToken};
@@ -427,8 +427,6 @@ io.on('connection',function(socket)
         const response = await queryController.addUser(newUser, username);
         if (response.success){
             socket.emit("addUserResponse", {success: true, response: response.response});
-            // TODO: do we need this?
-            //io.in("patients_page").emit("patientEdited", newPatient.patient_no, newPatient);
         }else{
             socket.emit("addUserResponse", {success: false});
         }
@@ -860,8 +858,6 @@ io.on('connection',function(socket)
         logger.info(response);
         if (response.success){
             socket.emit("editUserResponse", {success: true, response: response.response});
-            // TODO: do we need this?
-            //io.in("patients_page").emit("patientEdited", newPatient.patient_no, newPatient);
         }else{
             socket.emit("editUserResponse", {success: false});
         }
@@ -925,18 +921,22 @@ io.on('connection',function(socket)
         socket.emit("sendNormalRemindersResponse", response);
     });
 
-    socket.on('generateMonthlyReport', async (month, accessToken) => {
+    /**
+     * @param {string} month - Full name of the month in english, or null if generating report for the whole year.
+     * @param {string} year - Year we are fetching from.
+     */
+    socket.on('generateReport', async (month, year, accessToken) => {
         if (!accessToken) {
-            socket.emit("generateMonthlyReportResponse", { success:false, errorType:"authentication", response: "Authentication required." });
+            socket.emit("generateReportResponse", { success:false, errorType:"authentication", response: "Authentication required." });
             return;
         }
         const username = await authenticator.verifyToken(accessToken);
         if (!username) {
-            socket.emit("generateMonthlyReportResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
+            socket.emit("generateReportResponse", { success:false, errorType:"authentication", response: "Invalid credentials." });
             return;
         }
-        const res = await reportGenerator.getMonthlyReport(month, username);
-        socket.emit("generateMonthlyReportResponse", res);
+        const res = await reportGenerator.getReport(month, year, username);
+        socket.emit("generateReportResponse", res);
     });
 
 });

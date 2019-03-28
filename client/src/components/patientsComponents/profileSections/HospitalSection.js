@@ -1,3 +1,9 @@
+/**
+ * Class renders hospital section of patient.
+ *
+ * @author Jakub Cerven
+ */
+
 import React from "react";
 import InputCell from "./profileCells/InputCell";
 import SectionContainer from "./SectionContainer";
@@ -10,6 +16,9 @@ class HospitalSection extends React.Component {
         this.onInputChange = this.onInputChange.bind(this);
     }
 
+    /**
+     * Stores values of input fields.
+     */
     onInputChange() {
         const hospitalName = document.getElementById("hospital_name").value;
         const hospitalEmail = document.getElementById("hospital_email").value;

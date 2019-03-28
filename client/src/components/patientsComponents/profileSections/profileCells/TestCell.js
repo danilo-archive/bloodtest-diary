@@ -1,3 +1,9 @@
+/**
+ * Class renders on test of patient.
+ *
+ * @author Jakub Cerven, Jacopo Madaluni
+ */
+
 import React from "react";
 import styled from "styled-components";
 import dateformat from "dateformat";
@@ -33,9 +39,7 @@ const Field = styled.div`
 `;
 
 const FieldText = styled.p`
-  margin: 0;
-  //TODO: Fix this
-  margin-top: 6px;
+  margin: 6px 0 0;
   max-height: 30px;
 `;
 

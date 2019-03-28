@@ -1,3 +1,9 @@
+/**
+ * Class renders content of modal that is used for editing patient.
+ *
+ * @author Jakub Cerven
+ */
+
 import React, { Component } from "react";
 import styled from "styled-components";
 
@@ -135,6 +141,9 @@ class PatientProfile extends Component {
 
     }
 
+    /**
+     * Deletes patient and closes modal, if patient is not deleted displays alert.
+     */
     deletePatient = () => {
         this.serverConnect.deletePatient(this.state.patientId, this.state.editToken, res => {
             if (res.success){
@@ -148,14 +157,25 @@ class PatientProfile extends Component {
         });
     };
 
+    /**
+     * Opens alert asking user if patient should be deleted.
+     */
     deleteOption = () => {
         openAlert("Are you sure you want to delete this patient?", "optionAlert", "Yes", this.deletePatient, "No", () => {return});
     };
 
+    /**
+     * Display alert and calls deleteTest upon being called.
+     * @param testId of test to be deleted
+     */
     onDeleteTestClick = testId => {
         openAlert("Are you sure you want to delete this test?", "optionAlert", "Yes", () => {this.deleteTest(testId)}, "No", () => {return});
     };
 
+    /**
+     * Unscheduled test.
+     * @param testId of test to be deleted
+     */
     deleteTest = testId => {
         this.serverConnect.requestTestEditing(testId, res => {
             if (res.token){
@@ -173,6 +193,9 @@ class PatientProfile extends Component {
         });
     };
 
+    /**
+     * Loads patient info.
+     */
     loadPatient() {
         this.serverConnect.getFullPatientInfo(this.state.patientId, res => {
             if (res.success) {
@@ -196,8 +219,8 @@ class PatientProfile extends Component {
                     isAdult: info.isAdult,
                     additionalInfo: info.additional_info,
 
-                    noCarer: info.carer_id ? false : true,
-                    localHospital: info.hospital_id ? false : true,
+                    noCarer: !info.carer_id,
+                    localHospital: !info.hospital_id,
                     ready: true
                 });
             } else {
@@ -206,6 +229,9 @@ class PatientProfile extends Component {
         });
     }
 
+    /**
+     * Loads patient tests.
+     */
     loadTests() {
         this.serverConnect.getNextTestsOfPatient(this.state.patientId, res => {
             if (res.success){
@@ -220,6 +246,10 @@ class PatientProfile extends Component {
         });
     }
 
+    /**
+     * Checks if new data of patient are valid.
+     * @returns {*} if values are correct and message to display if not
+     */
     checkValues () {
         if (emptyCheck(this.state.patientName) || emptyCheck(this.state.patientSurname)) {
             return {correct: false, message: "Please provide patient name and surname."};
@@ -248,6 +278,9 @@ class PatientProfile extends Component {
         return {correct : true};
     }
 
+    /**
+     * Saves new patient data.
+     */
     onSaveClick = () => {
         const result = this.checkValues();
         if (!result.correct) {

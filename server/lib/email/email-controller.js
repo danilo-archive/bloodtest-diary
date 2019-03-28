@@ -88,7 +88,7 @@ async function sendNormalReminders(testIDs, actionUsername) {
  *             }
  *            }
  **/
-async function send(testIDs, actionUsername, patientFunction, hospitalFunction, isOvedue) {
+async function send(testIDs, actionUsername, patientFunction, hospitalFunction, isOverdue) {
     const failedBoth = [];
     const failedPatient = [];
     const failedHospital = [];
@@ -132,7 +132,7 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction, 
         };
 
         let contactPatient = false;
-        if (isOvedue) {
+        if (isOverdue) {
             // check if this patient has already been contacted
             if (test.last_reminder === null) {
                 contactPatient = true;
@@ -143,7 +143,13 @@ async function send(testIDs, actionUsername, patientFunction, hospitalFunction, 
                 if (date_1 === date_2) {
                     contactPatient = false;
                 }
+                else {
+                    contactPatient = true;
+                }
             }
+        }
+        else {
+            contactPatient = true;
         }
 
         let pat_ok = true;
@@ -205,7 +211,7 @@ async function recoverPassword(username) {
     if (!user.success) {
         return user;
     }
-    if (user.response[0].length == 0) {
+    if (user.response.length == 0) {
         return { success: false, response: "No user found!" }
     }
     const token = await query_controller.requestEditing("User", username, username);

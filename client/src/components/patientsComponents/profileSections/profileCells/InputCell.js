@@ -1,3 +1,8 @@
+/**
+ * Class renders input elements of different types depending on the parent props.
+ *
+ */
+
 import React from "react";
 import styled from "styled-components";
 

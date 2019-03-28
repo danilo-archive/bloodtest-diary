@@ -1,3 +1,9 @@
+/**
+ * Class renders contents of add patient modal.
+ *
+ * @author Jakub Cerven
+ */
+
 import React, {Component} from "react";
 import styled from "styled-components";
 
@@ -103,6 +109,10 @@ class NewPatient extends Component {
 
     }
 
+    /**
+     * Checks if new data of patient are valid.
+     * @returns {*} if values are correct and message to display if not
+     */
     checkValues () {
         if (emptyCheck(this.state.patientId)) {
             return {correct: false, message: "Please provide the patient number first."};
@@ -138,6 +148,9 @@ class NewPatient extends Component {
         return {correct : true};
     }
 
+    /**
+     * Saves data of new patient.
+     */
     onAddClick = () => {
         const result = this.checkValues();
         if (!result.correct) {

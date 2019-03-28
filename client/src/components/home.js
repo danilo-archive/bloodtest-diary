@@ -34,7 +34,7 @@ import {
   getNextWeek
 } from "../lib/calendar-controller";
 import { getServerConnect } from "../serverConnection.js";
-import { getNumberOfTestsInGroup } from "../lib/overdue-controller.js";
+import { group, getNumberOfTestsInGroup } from "../lib/overdue-controller.js";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DragDropContext } from "react-dnd";
 import CustomDragLayer from "./homeComponents/CustomDragLayer.js";
@@ -205,14 +205,14 @@ class Home extends Component {
   };
 
   /**
-   * Event handler for the "go to patients page" button
+   * Event handler for the "go to patients page" button.
    */
   onPatientsClick = event => {
     this.props.history.push("patients");
   };
 
   /**
-   * Event handler for the "sign out" button
+   * Event handler for the "sign out" button.
    */
   logout = event => {
     this.serverConnect.logout(res => {
@@ -259,7 +259,7 @@ class Home extends Component {
   /**
    * Listener for the download report button
    */
-  onDownloadClick = () => {    
+  onDownloadClick = () => {
     this.serverConnect.generateMonthlyReport("March", (res) => {
     });
   };
@@ -334,7 +334,7 @@ class Home extends Component {
           this.handleInvalidResponseError(res, "Somebody is already editing this patient.");
       }
     });
-  }
+  };
 
   /**
    * Triggered when the patient profile modal must be closed
@@ -343,7 +343,7 @@ class Home extends Component {
     this.serverConnect.discardPatientEditing(this.state.editPatientId, this.state.editPatientToken, res => {
       this.setState({editPatientId: undefined, openEditPatientModal: false, editPatientToken: undefined});
     });
-  }
+  };
 
   render() {
     if (this.state.dashboardReady && this.state.overdueReady) {
@@ -482,3 +482,4 @@ const modalStyles = {
 };
 
 export default DragDropContext(HTML5Backend)(Home);
+//export default Home;
