@@ -12,7 +12,6 @@ async function requestEditing(table, id, actionUsername) {
     const data = await databaseController.requestEditing(table, id).then(data => {
         return data;
     });
-    // TODO: return token + expiration
     if (data.status == "OK") {
         actionLogger.logOther(actionUsername,table,id,"Request for editing was approved.");
         return data.response.token;

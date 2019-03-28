@@ -393,7 +393,6 @@ class PatientProfile extends Component {
                         hospitalEmail={this.state.hospitalEmail}
                         hospitalPhone={this.state.hospitalPhone}
                         localHospital={this.state.localHospital}
-                        //TODO : maybe find different way of doing this
                         onHospitalClick={() => this.setState({localHospital: !this.state.localHospital})}
                         onChange={hospital => {
                             this.setState({
