@@ -222,7 +222,7 @@ export default class Credentials extends Component {
 
         <InfoMessage className={""} message={"Database updated successfully" } show={this.state.showConfirmationMessage}/>
         <>
-            <form onSubmit={this.onSaveEditUser} style={{ display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+            <form onSubmit={this.onSaveEditUser} style={{ display: "flex",   "flexDirection": "column", "justifyContent": "center", "alignItems": "center"}}>
               <div className="inputSection">
                 <div className="usersLabel">Email:</div>
                 <input id="emailInput" type="text" name="email" className="usersInput" value={this.state.email} onChange={this.handleCredentialUpdate} required/>
