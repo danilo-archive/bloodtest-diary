@@ -5,10 +5,11 @@
 
 The module is based on functionalities offered by [nodemailer](https://nodemailer.com/about/).<br>
 There are multiple wrapper functions:
-* `sendReminderEmailToPatient`
-* `sendReminderEmailToHospital`
-* `sendOverdueTestReminderToPatient`
-* `sendOverdueTestReminderToHospital`
+* `sendReminderToPatient`
+* `sendReminderToHospital`
+* `sendOverdueReminderToPatient`
+* `sendOverdueReminderToHospital`
+* `sendPasswordRecoveryEmail`
 
 There functions have the purpose of helping the module user to send a specific
 type of email without having to pass too many parameters.<br> 
@@ -45,8 +46,6 @@ To know how to modify the `email_condig.json` file in order to use another email
 
 The email sends an email **for each** test corresponding to a *testID* in the *testIDs* parameter.
 Depending on the `emailGeneratorFunction` function, a different email will be sent.
-#### `getEmailInfo`
-This is the core of the email generation. It fetches the information from the database. It will return null if any of the database queries either fail or return an empty set. 
 
 ### email-generator.js`
 

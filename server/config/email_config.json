@@ -2,7 +2,7 @@
     "transporter": {
         "service": "Yahoo",
         "auth": {
-            "user": "amateurs.bluejs@yahoo.com",
+            "user": "bloodtestdiary@yahoo.com",
             "pass": "AmazingBluejs8"
         }
     },
