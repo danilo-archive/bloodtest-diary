@@ -28,15 +28,16 @@ const Button = styled.button`
   border: none;
   color: white;
   padding: 7px 12px;
-  border-radius: 10px;
+  border-radius: 5px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 130%;
+  font-size: 120%;
   font-weight: 200;
   background-color: #0b989d;
   word-break: break-word;
   outline: none;
+  cursor: pointer;
   :hover {
     background: #018589;
   }

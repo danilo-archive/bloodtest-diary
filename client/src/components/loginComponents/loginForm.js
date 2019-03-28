@@ -76,6 +76,7 @@ const InputSection = styled.div`
     width: 100%;
     height: 100%;
     color: #eee;
+    font-size: 105%;
   }
 
   .hidden {
@@ -124,7 +125,7 @@ const RecoveryLabel = styled.p`
   cursor: pointer;
   text-align: center;
 
-  
+
 
   &:hover {
     color: #0b999d;
@@ -138,7 +139,7 @@ const ErrorLabel = styled.p`
   cursor: default;
   text-align: center;
 
-  
+
 `;
 
 
@@ -172,7 +173,7 @@ class LoginForm extends Component {
               this.serverConnect.initSession(res.accessToken, () => {
                 this.props.history.push("home");
               });
-              
+
           }else{
               this.showLoginErrorMessage();
           }

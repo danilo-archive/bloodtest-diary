@@ -10,9 +10,6 @@ const jsonController = require("../lib/json-controller.js");
 const maxWindowWidth = 1400;
 const maxWindowHeight = 800;
 
-const maxSplashwWidth = 400;
-const maxSplashHeight = 500;
-
 let width = 0;
 let height = 0;
 
@@ -30,18 +27,18 @@ app.on('ready', () => {
 
 function getWindowSize(axis) {
   if (axis === "width") {
-    return (width*0.7 > maxWindowWidth) ? maxWindowWidth : width*0.7;
+    return (width*0.75 > maxWindowWidth) ? maxWindowWidth : width*0.75;
   } else if (axis === "height") {
-    return (height*0.75 > maxWindowHeight) ? maxWindowHeight : height*0.75;
+    return (height*0.7 > maxWindowHeight) ? maxWindowHeight : height*0.7;
   }
   return null;
 }
 
 function getSplashSize(axis) {
   if (axis === "width") {
-    return (width*0.15 > maxSplashwWidth) ? maxSplashwWidth : width*0.15;
+    return 275;
   } else if (axis === "height") {
-    return (height*0.4 > maxSplashHeight) ? maxSplashHeight : height*0.4;
+    return 375;
   }
   return null;
 }

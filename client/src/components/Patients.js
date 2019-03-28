@@ -22,26 +22,24 @@ import {openAlert} from "./Alert";
 
 const Container = styled.div`
   border: blue 0 solid;
-    height: calc(103vh - 88px);
-    width: auto;
-    position: relative;
-    top: 20px;
-    padding: 1% 1% 1% 1%;
-
+  height: calc(103vh - 88px);
+  width: auto;
+  position: relative;
+  top: 20px;
+  padding: 1% 1% 1% 1%;
 
   background: rgb(244,249,253);
+
+  display: flex;
+  flex-direction: column;
 `;
 
 
 const TableContainer = styled.div`
-    height: 80%;
-    width: 100%;
+    height: auto;
+    width: auto;
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: stretch ;
-
-    flex-grow: 1;
+    flex-grow: 5;
     flex-shrink: 1;
 `;
 
@@ -238,6 +236,7 @@ class Patients extends React.Component {
             return (
                 <ModalProvider>
                     <Container>
+                    <div>
                           <Navbar
                             over12={!this.state.under12}
                             setUnder12={check => {
@@ -253,7 +252,7 @@ class Patients extends React.Component {
                             refresh={this.refresh}
                             openAddModal={this.openAddModal}
                           />
-
+                          </div>
                         <TableContainer>
                             <PatientsTable
                                 shownPatients={this.state.shownPatients}

@@ -17,11 +17,13 @@ const TableHead = styled.th`
 
 const Input = styled.input.attrs({ type: "text" })`
   width: 100%;
-  font-weight: 100;
+  font-weight: bold;
   background-color: inherit;
   ::-webkit-input-placeholder {
-    font-size: 80%;
-    color: #b0b0b0;
+    font-size: 95%;
+    color: #646464;
+    font-weight: bold;
+
   }
 `;
 

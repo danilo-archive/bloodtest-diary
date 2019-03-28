@@ -10,9 +10,9 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   margin: 0.5% 0;
-  padding: 0.5%;
-  width: 80%;
-  
+  padding: 0.5% 3.5%;
+  width: auto;
+
   background: white;
   max-height: 300px;
   display: flex;

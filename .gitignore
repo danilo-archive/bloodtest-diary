@@ -335,7 +335,7 @@ fastlane/readme.md
 
 # Visual Studio and Visual Studio Code
 
-*.vs 
+*.vs
 *.vscode
 
 0ity=echo*

@@ -10,11 +10,10 @@ import dateformat from "dateformat";
 
 const Container = styled.div`
     display: flex;
-    margin: 1.5%;
     justify-content: center;
     align-content: center;
     flex-direction: row;
-    border-radius: 10px;
+    border-radius: 5px;
     background: #eeeeee;
     :hover {
       background: #f2f2f2;
@@ -23,19 +22,19 @@ const Container = styled.div`
 
 const Field = styled.div`
   position: relative;
-  width: 30%;
+  width: 50%;
   min-width: 10%;
   margin: 0 2.5%;
   height: 100%;
   color: inherit;
-  
+
   font-size: 125%;
   overflow: scroll;
   display: flex;
   justify-content:center;
   align-content:center;
   flex-direction:column;
-  
+
 `;
 
 const FieldText = styled.p`
@@ -49,13 +48,12 @@ const DeleteButton = styled.button`
   color: white;
   text-align: center;
   text-decoration: none;
-  border-radius: 10px;
+  border-radius: 5px;
   margin-left: auto;
   margin-right: 0;
 
   :hover {
     background-color: #dc2836;
-    border-radius: 10px;
   }
   outline: none;
 `;
