@@ -243,7 +243,7 @@ class NewPatient extends Component {
                 </div>
                 <div style ={{height: "auto", width: "auto"}}>
                 <CarerSection
-                    carerId={""} //TODO : generate this
+                    carerId={""}
                     carerRelationship={""}
                     carerName={""}
                     carerSurname={""}
@@ -267,7 +267,7 @@ class NewPatient extends Component {
                 </div>
                 <div style ={{height: "auto", width: "auto"}}>
                 <HospitalSection
-                    hospitalId={""} //TODO : generate this
+                    hospitalId={""}
                     hospitalName={""}
                     hospitalEmail={""}
                     hospitalPhone={""}
