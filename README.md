@@ -106,8 +106,19 @@ The configuration file is ```server/config/email_config.json```
     /.../
 }
 ```
-
 for info on usage and possible additional settings, go to [nodemailer.com](https://nodemailer.com/smtp/)
+
+# Instructions for running
+
+To run the application follow these steps:
+
+1. First a database needs to be set up. For this use `schema.sql` and `insert.sql` files in `server/database/` folder.
+2. You might have to configure some files in `server/config/` folder.
+3. Then go to `server/` folder and first run `npm install` command. Then run `npm start`. The server is now running.
+4. Now you have two options for running the application. You can simply run the .exe file provided in `builds/` folder and continue from step 7.
+5. Another option is running it in development mode. Go to `client/` folder and run `npm i`.
+6. Then run `npm run electron-dev`.
+7. The application is now running. If the application does not automatically connect to the server, you can update the IP and port in the top right corner.
 
 ## Languages & tools
 
