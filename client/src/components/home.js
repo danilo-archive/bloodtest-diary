@@ -1,6 +1,6 @@
 /**
  * This file represents the main component of the main page of the app.
- * The home component can be seen as the root of all the compoenents on the main page screen
+ * The home component can be seen as the root of all the components on the main page screen
  * Here is where all the connections regarding the tests visualization happen.
  * This module is intensively documented throughout.
  * @module Home
@@ -119,7 +119,7 @@ class Home extends Component {
 
   /**
    * Sets the behaviour for when a test is added in the database.
-   * This allowes real time update with the other clients.
+   * This allows real time update with the other clients.
    * This method is yet to be optimized.
    */
   initOnTestAdded() {
@@ -146,7 +146,7 @@ class Home extends Component {
   }
 
   /**
-   * Main error handler, analizes the response and gives the best error message possible.
+   * Main error handler, analyzes the response and gives the best error message possible.
    */
   handleInvalidResponseError = (res, error) => {
     if (res.errorType === "authentication") {
@@ -217,7 +217,7 @@ class Home extends Component {
   };
 
   /**
-   * Jumps to the week of the choosen day and updates the dashboard.
+   * Jumps to the week of the chosen day and updates the dashboard.
    */
   jumpToWeek = day => {
     this.updateDashboard(getWeekDays(day));
@@ -320,7 +320,7 @@ class Home extends Component {
   };
 
   /**
-   * Triggered when the patient profile modal must be opened
+   * Triggered when the patient profile modal must be opened.
    */
   openEditPatientModal = id => {
     this.serverConnect.requestPatientEditing(id, res => {
@@ -333,7 +333,7 @@ class Home extends Component {
   };
 
   /**
-   * Triggered when the patient profile modal must be closed
+   * Triggered when the patient profile modal must be closed.
    */
   onCloseEditPatientModal = () => {
     this.serverConnect.discardPatientEditing(this.state.editPatientId, this.state.editPatientToken, res => {

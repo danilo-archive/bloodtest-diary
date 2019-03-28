@@ -315,19 +315,22 @@ export default class EmailModal extends Component {
                   justifyContent: "center"
                 }}
               >
-                <Button
-                  backgroundColor={"#f44336"}
-                  hoverColor={"#dc2836"}
-                  onClick={this.props.closeModal}
-                >
-                  Cancel
-                </Button>
+
                 <Button
                   backgroundColor={"#0b999d"}
                   hoverColor={"#018589"}
                   onClick={this.submit}
                 >
                   Send reminders
+                </Button>
+
+                <Button
+                    backgroundColor={"#e7e7e7"}
+                    hoverColor={"#c8c8c8"}
+                    fontColor={"black"}
+                    onClick={this.props.closeModal}
+                >
+                  Cancel
                 </Button>
               </div>
             </>

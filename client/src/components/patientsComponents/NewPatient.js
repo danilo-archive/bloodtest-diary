@@ -308,8 +308,8 @@ class NewPatient extends Component {
                 </SwitchContainer>
 
                 <ButtonContainer>
-                    <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                     <SaveButton onClick={this.onAddClick}>Add patient</SaveButton>
+                    <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                 </ButtonContainer>
             </Container>
             </>

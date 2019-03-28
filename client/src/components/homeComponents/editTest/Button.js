@@ -3,7 +3,7 @@ import styled from "styled-components";
 export default styled.button`
   border: none;
   background-color: ${props => props.backgroundColor};
-  color: white;
+  color: ${props => props.fontColor || "white"};
   text-align: center;
   text-decoration: none;
   font-size: 130%;
@@ -15,7 +15,7 @@ export default styled.button`
 
   :hover {
     background-color: ${props => props.hoverColor};
-    color: white;
+    color: ${props => props.fontColor || "white"};
     border-radius: 10px;
   }
   outline: none;
