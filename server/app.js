@@ -86,6 +86,11 @@ io.on('connection',function(socket)
         socket.emit('authenticationResponse', res);
     });
 
+    /**
+     * Logout end point
+     * Logs out a user
+     * @param {String} accessToken The token given at the moment of authentication
+     */
     socket.on("logout", async (accessToken) => {
         if (!accessToken) {
             // REQUIRE TOKEN.
@@ -106,6 +111,11 @@ io.on('connection',function(socket)
     // GETTERS
     // ==============
 
+    /**
+     * Emits a response with all the patients in the database
+     * @param {String} accessToken The authentication token
+     * @param {Boolean} isAdult If true only patients over 12 will be included
+     */
     socket.on('getAllPatients', async (accessToken,isAdult=true) => {
         if (!accessToken) {
             socket.emit("getAllPatientsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -121,6 +131,11 @@ io.on('connection',function(socket)
         socket.emit("getAllPatientsResponse", {success: true, response: response.response});
     });
 
+    /**
+     * Emits a response with all  the information regarding a patient
+     * @param {String} patientId The id of the patient
+     * @param {String} accessToken The authentication token
+     */
     socket.on("getFullPatientInfo", async (patientId, accessToken) => {
         if (!accessToken) {
             socket.emit("getFullPatientInfoResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -136,7 +151,11 @@ io.on('connection',function(socket)
         socket.emit("getFullPatientInfoResponse", {success: true, response: response.response});
     });
 
-
+    /**
+     * Emits a response with all the next non completed tests of a patient
+     * @param {String} patientId The id of the patient
+     * @param {String} accessToken The authentication token
+     */
     socket.on('getNextTestsOfPatient', async (patientId, accessToken) => {
         if (!accessToken) {
             socket.emit("getNextTestsOfPatientResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -153,10 +172,12 @@ io.on('connection',function(socket)
     });
 
     /**
-    *@param {String} date of type "yyyy-mm-dd"
-    *@param {Boolean} anydayTestsOnly - if unscheduled test to return
+     * Emits a response with all tests in the dashboard given a particular date
+     * This does not include data for the outstanding column
+     * @param {String} date of type "yyyy-mm-dd"
+     * @param {String} accessToken The authentication token
+     * @param {Boolean} isAdult If true only tests of patients over 12 are included
     **/
-    //TODO: PASS "isAdult" VARIABLE (BOOLEAN) FROM THE UI
     socket.on('getTestsInWeek',async (date, accessToken,isAdult=true) => {
         if (!accessToken) {
             socket.emit("getTestsInWeekResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -172,7 +193,11 @@ io.on('connection',function(socket)
         socket.emit('getTestsInWeekResponse', {success: true, response: response.response});
     });
 
-    //TODO: PASS "isAdult" VARIABLE (BOOLEAN) FROM THE UI
+    /**
+     * Emits a response with the data for the overdue column
+     * @param {String} accessToken The authentication token
+     * @param {Boolean} isAdult If true only tests of patients over 12 are included
+     */
     socket.on('getOverdueTests', async (accessToken,isAdult=true) => {
         if (!accessToken) {
             socket.emit("getOverdueTestsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -189,6 +214,11 @@ io.on('connection',function(socket)
         socket.emit('getOverdueTestsResponse', {success: true, response: response.response});
     });
 
+    /**
+     * Emits a response with all the info of a test
+     * @param {int} testId the id of the test
+     * @param {String} accessToken The authentication token 
+     */
     socket.on('getTestInfo', async (testId, accessToken) => {
         if (!accessToken) {
             socket.emit("getTestInfoResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -204,7 +234,11 @@ io.on('connection',function(socket)
         socket.emit("getTestInfoResponse", response);
     });
 
-    //TODO: PASS "isAdult" VARIABLE (BOOLEAN) FROM THE UI
+    /**
+     * Emits a response with the groups for the overdue column in dashboard. 
+     * @param {String} accessToken The authentication token
+     * @param {Boolean} isAdult If true only tests of patients over 12 are included
+     */
     socket.on('getOverdueReminderGroups', async (accessToken,isAdult=true) => {
         if (!accessToken) {
             socket.emit("getOverdueReminderGroupsResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -220,6 +254,11 @@ io.on('connection',function(socket)
         socket.emit("getOverdueReminderGroupsResponse", response);
     });
 
+    /**
+     * Emits a response with the information about a user
+     * @param {String} accessToken The authentication token
+     * @param {String} user The username of the user
+     */
     socket.on('getUser', async (accessToken, user=undefined) => {
         if (!accessToken) {
             socket.emit("getUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -261,6 +300,10 @@ io.on('connection',function(socket)
         socket.emit("getUserResponse", response);
     });
 
+    /**
+     * Emits a response with all the users in the database. Only available to admins
+     * @param {String} accessToken The authentication token
+     */
     socket.on('getAllUsers', async (accessToken) => {
         if (!accessToken) {
             socket.emit("getAllUsersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -294,6 +337,15 @@ io.on('connection',function(socket)
     // ADDING
     // ==============
 
+    /**
+     * End point to add a test to the database
+     * @param {String} patientId The id of the patient
+     * @param {String} date The due date yyyy-mm-dd
+     * @param {String} notes Additional notes
+     * @param {String} frequency The frequency encoding
+     * @param {int} occurrences The number of tests yet to schedule
+     * @param {String} accessToken The authentication token
+     */
     socket.on("addTest", async (patientId, date, notes, frequency, occurrences, accessToken) => {
         logger.debug("New info: ", date, notes, "f: "+frequency, "o: "+occurrences);
         if (!accessToken) {
@@ -317,6 +369,11 @@ io.on('connection',function(socket)
         }
     });
 
+    /**
+     * End point to add a new patient to the database
+     * @param {JSON} newPatient The new patient info
+     * @param {String} accessToken The authentication token
+     */
     socket.on("addPatient", async (newPatient, accessToken) => {
         if (!accessToken) {
             socket.emit("addPatientResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -337,6 +394,11 @@ io.on('connection',function(socket)
         }
     });
 
+    /**
+     * End point to add a new user to the database
+     * @param {JSON} newUser The info of the new user
+     * @param {String} accessToken The authentication token
+     */
     socket.on("addUser", async (newUser, accessToken) => {
         if (!accessToken) {
             socket.emit("addUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -376,6 +438,11 @@ io.on('connection',function(socket)
     // EDIT TOKEN EXCHANGE
     // ==============
 
+    /**
+     * Requests a token to edit a test
+     * @param {int} testId The id of the test to be edited
+     * @param {String} accessToken The authentication token
+     */
     socket.on("requestTestEditToken", async (testId, accessToken) => {
         if (!accessToken) {
             socket.emit("requestTestEditTokenResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -398,6 +465,11 @@ io.on('connection',function(socket)
 
     });
 
+    /**
+     * Requests a token to edit a patient
+     * @param {String} patientId The id of the patient to be edited
+     * @param {String} accessToken The authentication token
+     */
     socket.on("requestPatientEditToken", async (patientId, accessToken) => {
         if (!accessToken) {
             socket.emit("requestPatientEditTokenResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -419,6 +491,11 @@ io.on('connection',function(socket)
         socket.emit("requestPatientEditTokenResponse", response);
     });
 
+    /**
+     * Requests a token to edit an user
+     * @param user The username of the user to be edited
+     * @param {String} accessToken The authentication token
+     */
     socket.on("requestUserEditToken", async (user, accessToken) => {
         if (!accessToken) {
             socket.emit("requestUserEditTokenResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -455,6 +532,12 @@ io.on('connection',function(socket)
         socket.emit("requestUserEditTokenResponse", response);
     });
 
+    /**
+     * Destroyes a Test edit token
+     * @param {int} id The id of the test the token was requested for
+     * @param {String} token The token to be destroyed
+     * @param {String} accessToken The authentication token
+     */
     socket.on("discardTestEditing", async (id, token, accessToken) => {
         if (!accessToken) {
             socket.emit("discardTestEditingResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -470,6 +553,12 @@ io.on('connection',function(socket)
         socket.emit("discardTestEditingResponse", response);
     });
 
+    /**
+     * Destroyes a Patient edit token
+     * @param {String} id The id of the patient the token was requested for
+     * @param {String} token The token to be destroyed
+     * @param {String} accessToken The authentication token
+     */
     socket.on("discardPatientEditing", async (id, token, accessToken) => {
         if (!accessToken) {
             socket.emit("discardPatientEditingResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -485,6 +574,12 @@ io.on('connection',function(socket)
         socket.emit("discardPatientEditingResponse", response);
     });
 
+    /**
+     * Destroyes a User edit token
+     * @param {String} id The username of the user the token was requested for
+     * @param {String} token The token to destroy
+     * @param {String} accessToken The authentication token
+     */
     socket.on("discardUserEditing", async (id, token, accessToken) => {
         if (!accessToken) {
             socket.emit("discardUserEditingResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -503,7 +598,12 @@ io.on('connection',function(socket)
     // ==============
     // DELETING
     // ==============
-
+    /**
+     * Deletes a patient and all related info from the database
+     * @param {String} patientId The id of the patient to be deleted
+     * @param {String} token An edit token for that patient
+     * @param {String} accessToken The authentication token
+     */
     socket.on("deletePatient", async (patientId, token, accessToken) => {
         if (!accessToken) {
             socket.emit("deletePatientResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -526,6 +626,12 @@ io.on('connection',function(socket)
         }
     });
 
+    /**
+     * Deletes a test from the database
+     * @param {int} testId The id of the test to be deleted
+     * @param {String} token An edit token for that test
+     * @param {String} accessToken The authentication token
+     */
     socket.on("unscheduleTest", async (testId, token, accessToken) => {
         if (!accessToken) {
             socket.emit("unscheduleTestResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -551,6 +657,12 @@ io.on('connection',function(socket)
     // UPDATING
     // ==============
 
+    /**
+     * Changes the completed_status of a test
+     * @param {int} testId The id of the test to modify
+     * @param {String} newStatus The new status of the test
+     * @param {String} accessToken The authentication token
+     */
     socket.on('testStatusChange', async (testId, newStatus, accessToken) => {
         if (!accessToken) {
             socket.emit("testStatusChangeResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -572,6 +684,13 @@ io.on('connection',function(socket)
         }
     });
 
+    /**
+     * Edits a test with the new information
+     * @param {int} testId The id of the test to be modified
+     * @param {JSON} newInfo The new (possibly partial) information
+     * @param {String} token An edit token for that test
+     * @param {String} accessToken The authentication token
+     */
     socket.on("editTest", async (testId, newInfo, token, accessToken) => {
         logger.debug("New info: ", newInfo);
         if (!accessToken) {
@@ -596,6 +715,12 @@ io.on('connection',function(socket)
         }
     });
 
+    /**
+     * Changes a test's due_date
+     * @param {int} testId The id of the test to modify
+     * @param {String} newDate The new due date yyyy-mm-dd
+     * @param {String} accessToken The authentication token
+     */
     socket.on("changeTestDueDate", async (testId, newDate, accessToken) => {
         if (!accessToken) {
             socket.emit("changeTestDueDateResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -616,6 +741,13 @@ io.on('connection',function(socket)
         }
     });
 
+    /**
+     * Edits a patient with the new info
+     * @param {String} patientId The id of the patient to modify
+     * @param {Json} newInfo The new (possibly patial) info of the patient
+     * @param {String} token An edit token for that patient
+     * @param {String} accessToken The authentication token
+     */
     socket.on("editPatient", async (patientId, newInfo, token, accessToken) => {
         if (!accessToken) {
             socket.emit("editPatientResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -640,6 +772,12 @@ io.on('connection',function(socket)
 
     });
 
+    /**
+     * Changes the colour of a test
+     * @param {int} testId The id of the test to modify
+     * @param {String} newColour The new colour in hex code
+     * @param {String} accessToken The authentication token
+     */
     socket.on("changeTestColour", async (testId, newColour, accessToken) => {
         if (!accessToken) {
             socket.emit("changeTestColourResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -660,6 +798,12 @@ io.on('connection',function(socket)
         }
     });
 
+    /**
+     * Changes the colour of a patient
+     * @param {String} patientNo The id of the patient to modify
+     * @param {String} newColour The new colour in hex code
+     * @param {String} accessToken The authentication token
+     */
     socket.on("changePatientColour", async (patientNo, newColour, accessToken) => {
         if (!accessToken) {
             socket.emit("changePatientColourResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -681,6 +825,12 @@ io.on('connection',function(socket)
         }
     });
 
+    /**
+     * Edits a user with the new info
+     * @param {JSON} newData The new (possibly partial) info of the user
+     * @param {String} token An edit token for that user
+     * @param {String} accessToken The authentication token
+     */
     socket.on("editUser", async (newData, token, accessToken) => {
         if (!accessToken) {
             socket.emit("editUserResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -721,13 +871,20 @@ io.on('connection',function(socket)
     // OTHER
     // ==============
 
-     //TODO: ADD CLIENT CONNECTION HERE
-    //PARAMETER - (STRING) USERNAME TO CHANGE PASSWORD
+    /**
+     * Password recovery end point
+     * @param {String} username The username of that guy who forgot the password
+     */
     socket.on('passwordRecoverRequest', async (username) => {
         const passwordResponse = await email_controller.recoverPassword(username);
         socket.emit('passwordRecoverResponse', passwordResponse);
     });
 
+    /**
+     * Sends overdue reminders to the patients of the sent tests
+     * @param {List<int>} testId The LIST of the ids of the tests whose patients must be contacted
+     * @param {String} accessToken The authentication token
+     */
     socket.on('sendOverdueReminders', async (testID, accessToken) => {
         if (!accessToken) {
             socket.emit("sendOverdueRemindersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
@@ -745,6 +902,11 @@ io.on('connection',function(socket)
         socket.emit("sendOverdueRemindersResponse", response);
     });
 
+    /**
+     * Sends reminders to the patients of the sent tests
+     * @param {List<int>} testId The LIST of the ids of the tests whose patients must be contacted
+     * @param {String} accessToken The authentication token
+     */
     socket.on('sendNormalReminders', async (testID, accessToken) => {
         if (!accessToken) {
             socket.emit("sendNormalRemindersResponse", { success:false, errorType:"authentication", response: "Authentication required." });
