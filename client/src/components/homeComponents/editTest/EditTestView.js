@@ -394,7 +394,7 @@ export default class EditTestView extends React.Component {
               <ButtonsContainer>
                 <Button backgroundColor={"#0b999d"} hoverColor={"#018589"} onClick={this.saveTest}>Save changes</Button>
                 <Button backgroundColor={"#f44336"} hoverColor={"#dc2836"} onClick={this.unscheduleTest}>Unschedule test</Button>
-                <Button backgroundColor={"#aaaaaa"} hoverColor={"#c8c8c8"} onClick={this.props.closeModal}>Close</Button>
+                <Button backgroundColor={"#e7e7e7"} hoverColor={"#c8c8c8"} fontColor={"black"} onClick={this.props.closeModal}>Close</Button>
               </ButtonsContainer>
             </div>
           </div>
