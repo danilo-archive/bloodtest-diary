@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
 import {getServerConnect} from "../../serverConnection.js";
-import Select from 'react-select';
 import InfoMessage from './infoMessage';
-import refresh from "../../resources/images/refresh.png"
-import { openAlert } from '../Alert.js';
 
 const crypto = require('crypto');
 
@@ -161,7 +158,7 @@ export default class Credentials extends Component {
     event.preventDefault();
     this.serverConnect.requestUserEditing(this.state.username, res => {
       if (res.success){
-          if (this.state.password == this.state.confirmPassword && this.state.password !== "") {
+          if (this.state.password === this.state.confirmPassword && this.state.password !== "") {
             let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
             let newData = {username: this.state.username, hashed_password: hash, recovery_email: this.state.email};
             this.updateDatabase(newData, res.token);
@@ -178,8 +175,7 @@ export default class Credentials extends Component {
             });
           }
       }else{
-        openAlert("Somebody is already editing this user.", "confirmationAlert",
-                   "OK", () => {return});
+        this.props.handleError(res, "Somebody is already editing this user.")
       }
     });
 
@@ -190,8 +186,7 @@ export default class Credentials extends Component {
       if (res.success){
         this.showConfirmationMessage();
       }else{
-        openAlert("Something went wrong.", "confirmationAlert",
-                   "OK", () => {return});
+        this.props.handleError(res);
       }
     });
     this.clearForm();
@@ -227,7 +222,7 @@ export default class Credentials extends Component {
 
         <InfoMessage className={""} message={"Database updated successfully" } show={this.state.showConfirmationMessage}/>
         <>
-            <form onSubmit={this.onSaveEditUser} style={{ display: "flex",   "flex-direction": "column", "justify-content": "center", "align-items": "center"}}>
+            <form onSubmit={this.onSaveEditUser} style={{ display: "flex",   "flexDirection": "column", "justifyContent": "center", "alignItems": "center"}}>
               <div className="inputSection">
                 <div className="usersLabel">Email:</div>
                 <input id="emailInput" type="text" name="email" className="usersInput" value={this.state.email} onChange={this.handleCredentialUpdate} required/>

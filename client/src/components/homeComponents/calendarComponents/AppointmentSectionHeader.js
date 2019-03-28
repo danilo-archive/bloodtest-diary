@@ -1,3 +1,10 @@
+/**
+ * A simple header for an appointment section
+ * @module AppointmentSectionHeader
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import styled from "styled-components";
 import React from "react";
 

@@ -1,6 +1,9 @@
-import React, { Component } from "react";
-import Header from "./header.js";
+/**
+ * Test class 
+ * Not actually used
+ */
 
+import React, { Component } from "react";
 import EditTestView from "./homeComponents/editTest/EditTestView.js";
 
 class App extends Component {

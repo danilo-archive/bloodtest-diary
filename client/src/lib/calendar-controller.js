@@ -103,7 +103,7 @@ function getPreviousWeek(week){
  */
 function getNextDates(frequency, startingDate) {
     const f = frequency.split(':');
-    if (f.length != 2 || f[1] < 0) {
+    if (f.length !== 2 || f[1] < 0) {
         //console.error("The frequency format is wrong.")
         return [];
     }

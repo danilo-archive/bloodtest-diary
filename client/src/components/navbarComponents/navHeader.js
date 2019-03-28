@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
-
-import Label from "./../Label";
 import refresh from "../../resources/images/refresh.png"
 
 const Container = styled.div`
@@ -71,9 +69,6 @@ const RefreshButton = styled.div`
 `;
 
 export default class NavHeader extends Component {
-    constructor(props){
-        super(props);
-    }
 
     render(){
       return (

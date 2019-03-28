@@ -1,10 +1,17 @@
+/**
+ * Class renders additional info for patient.
+ * Content of this section is meant to be used and notes and miscellaneous information.
+ *
+ * @author Jakub Cerven
+ */
+
 import React from "react";
 import styled from "styled-components";
 import SectionContainer from "./SectionContainer";
 
-const TextArea = styled.textarea` 
-  width: 94%;
-  height: 175px;
+const TextArea = styled.textarea`
+  width:  450px;
+  height: 120px;
   margin: 1%;
   resize: none;
   padding: 3%;

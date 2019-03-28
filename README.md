@@ -55,6 +55,7 @@ To check ```path/to/app.js```:
 It is advised to install editor extensions which will allow to check for errors automatically.
 VSCode: [vscode-eslint](https://github.com/Microsoft/vscode-eslint)
 Atom: [linter-eslint](https://atom.io/packages/linter-eslint)
+
 #### Mocha, Chai, and Instanbul
 
 To recursively run tests in ```server/```:<br>
@@ -65,7 +66,7 @@ To recursively run tests in ```server/```:<br>
 To recursively run tests in ```client/```<br>
 ```
     $ cd client
-    $ npm test -- --recursive
+    $ npm test
 ```
 
 <hr>
@@ -97,15 +98,28 @@ The configuration file is ```server/config/email_config.json```
         "service": "yahoo",
         "secure": false,
         "auth": {
-            "user": "danilodelbusso@yahoo.com",
-            "pass": "jJ825&j9yBRA"
+            "user": "example@yahoo.com",
+            "pass": "password"
         },
         "logger": true
     }
+    /.../
 }
 ```
-
 for info on usage and possible additional settings, go to [nodemailer.com](https://nodemailer.com/smtp/)
+
+# Instructions for running
+
+To run the application follow these steps:
+
+1. First a database needs to be set up. For this use `schema.sql` and `insert.sql` files in `server/database/` folder.
+2. You might have to configure some files in `server/config/` folder.
+3. Then go to `server/` folder and first run `npm install` command. Then run `npm start`. The server is now running.
+4. Now you have two options for running the application. You can simply run the .exe file provided in `builds/` folder and continue from step 7.
+5. Another option is running it in development mode. Go to `client/` folder and run `npm i`.
+6. Then run `npm run electron-dev`.
+7. The application is now running. If the application does not automatically connect to the server, you can update the IP and port in the top right corner.
+
 ## Languages & tools
 
 - [NodeJS](https://nodejs.org) is used for the back-end.
@@ -119,6 +133,8 @@ for info on usage and possible additional settings, go to [nodemailer.com](https
 - [mysql](https://www.npmjs.com/package/mysql) for managing and creating a relational database
 - [mocha-sinon](https://www.npmjs.com/package/mocha-sinon) used for integration between mocha and sinon, allowing for automatic cleanup of spies
 - [proxyquire](https://www.npmjs.com/package/proxyquire) used to proxy nodejs's require in order to make overriding dependencies
+- [mjml] (https://mjml.io/) used for email formatting
+
 <hr>
 
 ## Authors

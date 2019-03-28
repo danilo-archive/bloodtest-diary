@@ -1,3 +1,10 @@
+/**
+ * 
+ * @module DateText
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import React from "react";
 
 import Label from "../../Label";

@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import Modal from "react-responsive-modal";
 import "../styles/PatientModal.css";
 

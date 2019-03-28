@@ -18,19 +18,6 @@ function daysBetweenDates(date1, date2){
     return distance;
 }
 
-// TODO to be tested
-function weeksBetweenDates(date1, date2){
-    return Math.floor(daysBetweenDates(date1, date2))/7;
-}
-// TODO to be tested
-function monthsBetweenDates(date1, date2){
-    return Math.floor(daysBetweenDates(date1, date2)/30);
-}
-// TODO to be tested
-function yearsBetweenDates(date1, date2){
-    return Math.floor(daysBetweenDates(date1, date2)/365);
-}
-
 /**
 * Returns a sorted list in descending order based on
 * how much time each test has been overdue for.
@@ -68,43 +55,6 @@ function sortByOverdueTime(tests, left, right){
 }
 
 
-/**
-* Groups the list of tests based on whether they spent 1 year+, months,
-* or weeks overdue.
-* @param {List[Date]} tests The list of overdue tests
-* @return {List[JSON]} A list of groups with the relative list of tests.
-*/
-function group(tests, testDay=undefined){
-    //TODO do be tested
-    const today = testDay ? testDay : new Date();
-    let sortedTests = sortByOverdueTime(tests, 0, tests.length - 1);
-    let groups = [{class: "Year+", tests: []}, {class: "6+ months", tests: []},{class: "1-6 months", tests: []},
-                  {class: "2-4 weeks", tests: []}, {class: "Less than 2 weeks", tests: []}];
-
-    var i = 0;
-    while (i < sortedTests.length && yearsBetweenDates(sortedTests[i].due_date, today) > 0){
-        groups[0].tests = groups[0].tests.concat(sortedTests[i]);
-        i++;
-    }
-    while (i < sortedTests.length && monthsBetweenDates(sortedTests[i].due_date, today) > 6){
-        groups[1].tests = groups[1].tests.concat(sortedTests[i]);
-        i++;
-    }
-    while (i < sortedTests.length && monthsBetweenDates(sortedTests[i].due_date, today) >= 1){
-        groups[2].tests = groups[2].tests.concat(sortedTests[i]);
-        i++;
-    }
-    while (i < sortedTests.length && weeksBetweenDates(sortedTests[i].due_date, today) >= 2){
-        groups[3].tests = groups[3].tests.concat(sortedTests[i]);
-        i++;
-    }
-    while (i < sortedTests.length){
-        groups[4].tests = groups[4].tests.concat(sortedTests[i]);
-        i++;
-    }
-    return groups;
-}
-
 function getNumberOfTestsInGroup(group){
     var length = 0;
     for(var i = 0 ; i < group.length ; i++){
@@ -113,16 +63,10 @@ function getNumberOfTestsInGroup(group){
     return length;
 }
 
-function testGroup(tests){
-    let today = new Date(2019, 2, 1);
-    return group(tests, today);
-}
 
 
 module.exports = {
     daysBetweenDates,
     sortByOverdueTime,
-    group,
-    getNumberOfTestsInGroup,
-    testGroup
+    getNumberOfTestsInGroup
 }

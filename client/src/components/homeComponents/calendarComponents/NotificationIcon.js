@@ -1,3 +1,11 @@
+/**
+ * Green circle icon with a label inside.
+ * Used to show how many tests there are in a section.
+ * @module NotificationIcon
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import React from "react";
 import styled from "styled-components";
 

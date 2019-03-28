@@ -1,3 +1,14 @@
+/**
+ * This component represents a single calendar day in the dashboard.
+ * There are 5 calendar days, each one representing a day in the week
+ * 
+ * This component is a DROP TARGET, AppointmentBoxes can be dropped on this compoenent.
+ * @module CalendarDay
+ * @author Alvaro Rausell, Jacopo Madaluni
+ * @version 0.0.2
+ */
+
+
 import React from "react";
 import styled from "styled-components";
 
@@ -35,6 +46,7 @@ const monthNames = [
   "Dec"
 ];
 
+// ----------------------------- DRAG & DROP CONFIGURATIONS ------------------------------
 function collect(connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget(),
@@ -50,11 +62,9 @@ const spec = {
   },
   hover: function(props, monitor, component) {}
 };
+// ----------------------------------------------------------
 
 class CalendarDay extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     const { connectDropTarget, hovered } = this.props;

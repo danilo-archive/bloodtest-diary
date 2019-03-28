@@ -1,3 +1,10 @@
+/**
+ * 
+ * @module AppointmentInfo
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import styled from "styled-components";
 import React from "react";
 

@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
-import { withRouter, Redirect, Link } from 'react-router-dom'
-
-const crypto = require('crypto');
+import { withRouter } from 'react-router-dom'
+import { openAlert } from '../Alert';
 
 const Container = styled.div`
   border: solid 0px red;
@@ -192,7 +191,8 @@ class ResetPassword extends Component {
                 this.props.onCancel()
             }, 5000);
           }else{
-            this.props.onCancel()
+            openAlert("The password was not sent, an error occurred", "confirmationAlert",
+            "OK", () => {this.props.onCancel()}); 
           }
     });
     this.clearForm();

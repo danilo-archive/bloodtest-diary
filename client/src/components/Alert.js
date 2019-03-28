@@ -111,7 +111,6 @@ export default class Alert extends Component {
             />
           );
         default:
-          //TODO : catch this
           return null;
       }
   }

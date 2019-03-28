@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import Title from "./Title";
-import ScrollBox from "../calendarComponents/ScrollBox";
-import TestBox from "./TestBox";
 import Button from "../editTest/Button";
-import { inherits } from "util";
 import { openAlert } from "./../../Alert.js";
 import { getServerConnect } from "./../../../serverConnection.js";
 import PatientSelect from "./PatientSelect";
@@ -12,7 +9,8 @@ import { WaveLoading } from "styled-spinkit";
 const Container = styled.div`
   position: relative;
   height: 592px;
-  width: 635px;
+  min-width: 635px;
+  width: 100%;
   background: white;
 `;
 
@@ -87,9 +85,6 @@ export default class EmailModal extends Component {
       }
     } else {
       if (notified) {
-        console.log("====================================");
-        console.log("Removing notified");
-        console.log("====================================");
         this.setState({
           selected: this.state.selected.filter(patient =>
             this.state.notNotified.find(
@@ -119,7 +114,6 @@ export default class EmailModal extends Component {
     this.setState({ awaitResponse: true });
     let idList = this.state.selected.map(patient => patient.id);
     this.serverConnect.sendOverdueReminders(idList, res => {
-      console.log(res);
       if (res.success) {
         openAlert(
           "All selected patients were contacted successfully.",
@@ -286,9 +280,6 @@ export default class EmailModal extends Component {
                 patients={this.state.notNotified}
                 onSelectClick={(id, isAlreadyIncluded) => {
                   if (isAlreadyIncluded) {
-                    console.log("====================================");
-                    console.log("Adding");
-                    console.log("====================================");
                     this.setState({
                       selected: this.state.selected.filter(
                         patient => patient.id !== id
@@ -317,19 +308,22 @@ export default class EmailModal extends Component {
                   justifyContent: "center"
                 }}
               >
-                <Button
-                  backgroundColor={"#f44336"}
-                  hoverColor={"#dc2836"}
-                  onClick={this.props.closeModal}
-                >
-                  Cancel
-                </Button>
+
                 <Button
                   backgroundColor={"#0b999d"}
                   hoverColor={"#018589"}
                   onClick={this.submit}
                 >
                   Send reminders
+                </Button>
+
+                <Button
+                    backgroundColor={"#e7e7e7"}
+                    hoverColor={"#c8c8c8"}
+                    fontColor={"black"}
+                    onClick={this.props.closeModal}
+                >
+                  Cancel
                 </Button>
               </div>
             </>

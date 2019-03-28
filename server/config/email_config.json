@@ -2,8 +2,8 @@
     "transporter": {
         "service": "Yahoo",
         "auth": {
-            "user": "bloods.diary@yahoo.com",
-            "pass": "67156816486"
+            "user": "bloodtestdiary@yahoo.com",
+            "pass": "AmazingBluejs8"
         }
     },
     "content": {

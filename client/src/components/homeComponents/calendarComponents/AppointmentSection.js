@@ -1,10 +1,17 @@
+/**
+ * This component holds all the AppointmentBoxes for a relative section in the dashboard.
+ * This component maps all the tests passed as props to AppointmentBoxes
+ * @module AppointmentSection
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import React from "react";
 import styled from "styled-components";
 
 import AppointmentSectionHeader from "./AppointmentSectionHeader";
 import AppointmentBox from "./AppointmentBox";
 import VerticalLine from "./VerticalLine";
-import { DropTarget } from "react-dnd";
 import formatDate from "dateformat";
 
 const AppointmentSection = styled.div`

@@ -43,6 +43,7 @@
 
   button {
       font-family: Rajdhani, sans-serif;
+      cursor: pointer;
   }
 
   ::-webkit-scrollbar {

@@ -1,3 +1,12 @@
+/**
+ * This compoenent represents the right column in the main dashboard.
+ * In this section are kept all the tests that are not schedule on any particular day of the week.
+ * This component is a DROP TARGET. Appointment boxes can be dropped in this section.
+ * @module ongoingWeekly
+ * @author Alvaro Rausell, Jacopo Madaluni
+ * @version 0.0.2
+ */
+
 import React from "react";
 import styled from "styled-components";
 
@@ -17,6 +26,7 @@ const Container = styled.div`
   
 `;
 
+//----------------- DRAG AND DROP PROTOCOLS ------------------------
 function collect(connect, monitor){
   return {
     connectDropTarget: connect.dropTarget(),
@@ -33,13 +43,9 @@ const spec = {
   hover: function(props, monitor, component){
   }
 }
+//-----------------------------------------
 
 class OngoingWeekly extends React.Component {
-
-  constructor(props){
-      super(props);
-  }
-
 
   render() {
     const { connectDropTarget, hovered, item} = this.props;
@@ -59,7 +65,6 @@ class OngoingWeekly extends React.Component {
             <AppointmentSection
               type="Appointments"
               appointments={this.props.anytimeAppointments}
-              section={"ongoing"}
               editTest={this.props.editTest}
               editPatient={this.props.editPatient}
               handleError={this.props.handleError}

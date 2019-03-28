@@ -4,10 +4,9 @@ import Login from "./components/login.js";
 import Home from "./components/home.js";
 import Header from "./components/header.js";
 import Patients from "./components/Patients.js";
-import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 
-import { Route, Link, BrowserRouter as Router, Switch } from "react-router-dom";
+import { Route, BrowserRouter as Router } from "react-router-dom";
 
 
 

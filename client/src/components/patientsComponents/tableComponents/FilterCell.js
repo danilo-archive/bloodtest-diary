@@ -1,3 +1,9 @@
+/**
+ * Class renders TableHead which servers as filter for given attribute.
+ *
+ * @author Jakub Cerven
+ */
+
 import React from "react";
 import styled from "styled-components";
 
@@ -11,11 +17,13 @@ const TableHead = styled.th`
 
 const Input = styled.input.attrs({ type: "text" })`
   width: 100%;
-  font-weight: 100;
+  font-weight: bold;
   background-color: inherit;
   ::-webkit-input-placeholder {
-    font-size: 80%;
-    color: #b0b0b0;
+    font-size: 95%;
+    color: #646464;
+    font-weight: bold;
+
   }
 `;
 

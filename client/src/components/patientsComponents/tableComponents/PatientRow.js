@@ -1,3 +1,9 @@
+/**
+ * Class renders one row of patient data.
+ *
+ * @author
+ */
+
 import React from "react";
 import styled from "styled-components";
 
@@ -22,27 +28,22 @@ const Button = styled.button`
   border: none;
   color: white;
   padding: 7px 12px;
-  border-radius: 10px;
+  border-radius: 5px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 130%;
+  font-size: 120%;
   font-weight: 200;
   background-color: #0b989d;
   word-break: break-word;
   outline: none;
+  cursor: pointer;
   :hover {
     background: #018589;
   }
 `;
 
 export default class PatientRow extends React.Component{
-
-    constructor(props){
-        super(props);
-
-        //this.onEditClick = this.onEditClick.bind(this);
-    }
 
     onEditClick = event => {
         this.props.openEditModal(this.props.patient_no);

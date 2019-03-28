@@ -4,7 +4,6 @@ import {getServerConnect} from "../../serverConnection.js";
 import Select from 'react-select';
 import InfoMessage from './infoMessage';
 import refresh from "../../resources/images/refresh.png"
-import { openAlert } from '../Alert.js';
 
 const crypto = require('crypto');
 
@@ -319,7 +318,7 @@ export default class UsersPanel extends Component {
         }));
         this.setState({allUsers: users});
       }else{
-        //TODO error check
+        this.props.handleError(res);
       }
     });
   }
@@ -352,8 +351,7 @@ export default class UsersPanel extends Component {
         if (res.success){
           this.setState({selectedOption , username: selectedOption.label, editToken: res.token, disabled: true, email: selectedOption.value, adminChecked: selectedOption.isAdmin});
         }else{
-          openAlert("Somebody is already editing this user.", "confirmationAlert",
-          "OK", () => {return});
+          this.props.handleError(res, "Somebody is already editing this user.")
         }
       });
 
@@ -370,7 +368,7 @@ export default class UsersPanel extends Component {
 
  onSaveEditUser = (event) => {
    event.preventDefault();
-   if (this.state.password == this.state.confirmPassword && this.state.password !== "") {
+   if (this.state.password === this.state.confirmPassword && this.state.password !== "") {
      let hash = crypto.createHash('sha256').update(this.state.password).digest('hex');
      let newData = {username: this.state.username, hashed_password: hash, isAdmin: this.state.adminChecked ? "yes" : "no", recovery_email: this.state.email};
      this.updateDatabase(newData);
@@ -394,8 +392,8 @@ export default class UsersPanel extends Component {
       this.showConfirmationMessage();
       this.getUsers();
      }else{
-      openAlert("Something went wrong.", "confirmationAlert",
-                 "OK", () => {return});
+      this.props.handleError(res);
+    
      }
    });
  }
@@ -411,8 +409,7 @@ export default class UsersPanel extends Component {
             this.showConfirmationMessage();
             this.getUsers();
           }else{
-            openAlert("Something went wrong, make sure username is not already used.", "confirmationAlert",
-                       "OK", () => {return});
+            this.props.handleError(res, "Something went wrong, make sure username is not already used.")
           }
        });
    } else {

@@ -1,11 +1,18 @@
+/**
+ * This class renders one section of add/edit patient modal.
+ * It requires title as text and actual html code that it will place into ContentContainer.
+ *
+ * @author Jakub Cerven
+ */
+
 import React from "react";
 import styled from 'styled-components'
 
 const Container = styled.div`
   margin: 0.5% 0;
-  padding: 0.5%;
-  width: 80%;
-  
+  padding: 0.5% 3.5%;
+  width: auto;
+
   background: white;
   max-height: 300px;
   display: flex;

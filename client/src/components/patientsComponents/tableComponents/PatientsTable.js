@@ -1,3 +1,9 @@
+/**
+ * Class renders Table with patient data.
+ *
+ * @author Jakub Cerven
+ */
+
 import React from "react";
 import styled from 'styled-components';
 
@@ -5,12 +11,14 @@ import PatientRow from "./PatientRow.js";
 import FilterCell from "./FilterCell.js";
 
 const TableContainer = styled.div`
-  padding: 0.5%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: calc(0.5% + 3px);
+  padding-right: calc(0.5% + 3px);
   width: 100%;
-  height: 93.6%; //exact size as home
+  height: auto
   background: #ffffff;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-  overflow: hidden;
 `;
 
 const Table = styled.table`
@@ -26,19 +34,18 @@ const TableHeader = styled.thead`
 
 const TableBody = styled.tbody`
     display: block;
-    max-height: 87%; 
+    height: calc(100% - 80px);
     overflow-y: scroll;
-    
+
     ::-webkit-scrollbar:vertical {
       display: initial;
     }
-    
+
 `;
 
 const TableHead = styled.th`
-    width: 16.66%;  //TODO : change this to number of 100/columns
+    width: 16.66%; // this number must be equal to 100/number of columns
     padding: 10px;
-    //word-break: break-all;
     color: white;
     background: #0d4e56;
     text-align: left;
@@ -52,12 +59,6 @@ const TableRow = styled.tr`
 `;
 
 class PatientsTable extends React.Component {
-
-    constructor(props){
-        super(props);
-    }
-
-
 
     number_filter = value => {
         this.props.filterNumber(value);
@@ -84,7 +85,7 @@ class PatientsTable extends React.Component {
             <TableContainer>
                 <Table>
                     <TableHeader>
-                    <TableRow>
+                    <TableRow style={{height: "50px"}}>
                         <TableHead>Patient number</TableHead>
                         <TableHead>Patient name</TableHead>
                         <TableHead>Patient surname</TableHead>
@@ -129,7 +130,7 @@ class PatientsTable extends React.Component {
                             openEditModal = {this.props.openEditModal}
                         />
                     ))}
-                    <div style={{width:"100%", height: "20px"}}/>
+                        <tr><td/></tr>
                     </TableBody>
                 </Table>
             </TableContainer>

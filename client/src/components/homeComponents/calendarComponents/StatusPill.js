@@ -1,3 +1,10 @@
+/**
+ * This component renders the pill that appears together with the status circle
+ * @module StatusPill
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import styled, { keyframes } from "styled-components";
 
 const combinations = {

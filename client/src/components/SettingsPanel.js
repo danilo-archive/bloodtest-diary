@@ -39,9 +39,9 @@ export default class SettingsPanel extends Component {
         if (this.props.isAdmin){
           return (
             <>
-              <UsersPanel/>
+              <UsersPanel handleError={this.props.handleError}/>
               <Divider />
-              <Credentials/>
+              <Credentials handleError={this.props.handleError}/>
               <Divider />
               <PrefrencesPanel/>
             </>
@@ -49,7 +49,7 @@ export default class SettingsPanel extends Component {
         }else{
           return (
             <>
-              <Credentials/>
+              <Credentials handleError={this.props.handleError}/>
               <Divider />
               <PrefrencesPanel/>
             </>

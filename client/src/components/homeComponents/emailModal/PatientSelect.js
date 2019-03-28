@@ -8,7 +8,6 @@ import Switch from "../../switch/Switch";
 import PatientBox from "./PatientBox";
 import ScrollBox from "../calendarComponents/ScrollBox";
 import { WaveLoading } from "styled-spinkit";
-import Button from "../editTest/Button";
 import dateformat from "dateformat";
 import TextRadioButton from "../editTest/TextRadioButton";
 
@@ -39,22 +38,7 @@ const ShowID = styled.div`
   display: flex;
   justify-content: center;
 `;
-const DoneButton = styled.button`
-  appearance: none;
-  width: 100%;
-  height: 10%;
-  top: 0;
-  left: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  background: #0d4e56;
-  font-size: 1.25rem;
-  cursor: pointer;
-  outline: none;
-  border-radius: 0;
-`;
+
 export default class PatientSelect extends React.Component {
   state = {
     showID: true,
