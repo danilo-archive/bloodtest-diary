@@ -29,7 +29,8 @@ export default styled.div`
 
 
   &::after {
-    content: '${props => props.type}';
+    white-space: nowrap;
+    content: '${props => props.type !== "inReview" ? props.type : "In review"}';
     position: absolute;
     border-radius: 5px;
     font-size: 80%;
