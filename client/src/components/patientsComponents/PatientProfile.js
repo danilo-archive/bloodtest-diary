@@ -342,7 +342,7 @@ class PatientProfile extends Component {
               <>
                 <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
                 <Container>
-                    <div style ={{height: "auto", width: "auto", "margin-top":" 10px"}}>
+                    <div style ={{height: "auto", width: "auto", marginTop:" 10px"}}>
                     <PatientSection
                         patientId={this.state.patientId}
                         patientName={this.state.patientName}

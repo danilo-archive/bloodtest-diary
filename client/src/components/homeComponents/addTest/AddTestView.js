@@ -31,10 +31,10 @@ const CloseButton = styled.button`
   text-align: center;
   text-decoration: none;
   border-radius: 10px;
-
   height: 44px;
   min-width: 100px;
-  margin-right: 4%;
+  margin-left: 4%;
+  
 
   :hover {
     background: #c8c8c8;
@@ -50,7 +50,7 @@ const AddButton = styled.button`
   color: white;
   text-align: center;
   text-decoration: none;
-  margin-left: 4%;
+  margin-right: 4%;
   border-radius: 10px;
 
   height: 44px;
@@ -271,8 +271,8 @@ export default class AddTestView extends React.Component {
             />
             <Hr/>
             <ButtonContainer>
-              <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
               <AddButton onClick={this.onDoneClick}>Add test</AddButton>
+              <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
             </ButtonContainer>
           </DataContainer>
         </div>

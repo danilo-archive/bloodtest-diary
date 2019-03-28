@@ -219,7 +219,7 @@ class NewPatient extends Component {
           <>
             <PatientProfileTitle>{this.props.purpose}</PatientProfileTitle>
             <Container>
-                <div style ={{height: "auto", width: "auto", "margin-top":" 10px"}}>
+                <div style ={{height: "auto", width: "auto", marginTop:" 10px"}}>
                 <PatientSection
                     editable={true}
                     patientId={""}
@@ -308,8 +308,8 @@ class NewPatient extends Component {
                 </SwitchContainer>
 
                 <ButtonContainer>
-                    <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                     <SaveButton onClick={this.onAddClick}>Add patient</SaveButton>
+                    <CloseButton onClick={this.props.closeModal}>Close</CloseButton>
                 </ButtonContainer>
             </Container>
             </>
