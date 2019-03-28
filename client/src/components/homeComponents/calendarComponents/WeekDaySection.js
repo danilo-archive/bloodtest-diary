@@ -1,3 +1,11 @@
+/**
+ * This component renders the top most part of a calendar day.
+ * It renders the day label of the calendar day
+ * @module WeekDaySection
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import React from "react";
 import styled from "styled-components";
 

@@ -1,3 +1,10 @@
+/**
+ * Class renders content of Report modal.
+ * Class generates report for specific time period and allows saving of this report.
+ *
+ * @author Jakub Cerven
+ */
+
 import React, { Component } from 'react';
 import styled from "styled-components";
 import {getServerConnect} from "../../serverConnection";
@@ -205,14 +212,25 @@ export default class Report extends Component {
         this.handleInputChange = this.handleInputChange.bind(this);
     };
 
+    /**
+     * Retrieves data from select element.
+     * @param e
+     */
     handleSelectChange(e) {
         this.setState({ monthSelected: e.target.value});
     };
 
+    /**
+     * Retrieves data from input element.
+     * @param e
+     */
     handleInputChange(e) {
         this.setState({ yearSelected: e.target.value });
     }
 
+    /**
+     * Creates FileName depending on user choice of month/year combination.
+     */
     createFileName() {
         let fileName;
         const prefix = "Blood_Test_Diary_Report_";
@@ -225,6 +243,10 @@ export default class Report extends Component {
         }
     }
 
+    /**
+     * Checks if year is valid.
+     * @returns {*} if values are correct and message to display if not
+     */
     checkValues() {
         if (emptyCheck(this.state.yearSelected)) {
             return {correct: false, message: "Please type in a year."};
@@ -236,6 +258,11 @@ export default class Report extends Component {
         return {correct: true}
     };
 
+    /**
+     * Generates report based on values given by user.
+     * Timestamp of this generation of data and actual report is stored.
+     * If report is not retrieved error message is displayed.
+     */
     onGenerateClick = () => {
         const result = this.checkValues();
         if (!result.correct) {

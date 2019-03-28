@@ -1,3 +1,11 @@
+/**
+ * This component represents a whole invisible layer on top of the whole app.
+ * This allowes custom drag previews to be rendered on top of the app while components are being dragged.
+ * @module CustomDragLayer
+ * @author Jacopo Madaluni
+ * @version 0.0.2
+ */
+
 import React from 'react'
 import { DragLayer, XYCoord } from 'react-dnd'
 import AppointmentBoxDragPreview from './calendarComponents/AppointmentBoxDragPreview';

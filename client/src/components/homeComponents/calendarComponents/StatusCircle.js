@@ -1,3 +1,10 @@
+/**
+ * This component renders the status circle of every appointment box
+ * @module StatusCircle
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import styled from "styled-components";
 
 const combinations = {

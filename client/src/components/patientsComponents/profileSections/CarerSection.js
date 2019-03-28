@@ -1,3 +1,9 @@
+/**
+ * Class renders carer section of patient.
+ *
+ * @author Jakub Cerven
+ */
+
 import React from "react";
 import InputCell from "./profileCells/InputCell";
 import SectionContainer from "./SectionContainer";
@@ -10,6 +16,9 @@ export default class CarerSection extends React.Component {
         this.onInputChange = this.onInputChange.bind(this);
     }
 
+    /**
+     * Stores values of input fields.
+     */
     onInputChange() {
         const carerRelationship = document.getElementById("carer_relationship").value;
         const carerName = document.getElementById("carer_name").value;

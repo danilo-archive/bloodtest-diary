@@ -1,3 +1,11 @@
+/**
+ * A single icon component.
+ * There can be three kind of icons in the app.
+ * @module Icon
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import React from "react";
 import styled from "styled-components";
 

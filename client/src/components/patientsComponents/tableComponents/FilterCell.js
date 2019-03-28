@@ -1,3 +1,9 @@
+/**
+ * Class renders TableHead which servers as filter for given attribute.
+ *
+ * @author Jakub Cerven
+ */
+
 import React from "react";
 import styled from "styled-components";
 

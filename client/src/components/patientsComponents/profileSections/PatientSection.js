@@ -1,3 +1,9 @@
+/**
+ * Class renders patient info section of patient.
+ *
+ * @author Jakub Cerven
+ */
+
 import React from "react";
 import InputCell from "./profileCells/InputCell";
 import SectionContainer from "./SectionContainer"
@@ -15,6 +21,9 @@ export default class PatientSection extends React.Component {
         this.editable = !this.props.editable;
     }
 
+    /**
+     * Stores values of input fields.
+     */
     onInputChange() {
         const patientId = document.getElementById("patient_id").value;
         const patientName = document.getElementById("patient_name").value;

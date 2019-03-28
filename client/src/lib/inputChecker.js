@@ -7,7 +7,6 @@
 
 const intRegex = /^\+?(0|[1-9]\d*)$/;
 const characterRegex = /^[a-zA-Z]+$/;
-//TODO : maybe add more sophisticated regular expression
 const emailRegex = /\S+@\S+\.\S+/;
 
 

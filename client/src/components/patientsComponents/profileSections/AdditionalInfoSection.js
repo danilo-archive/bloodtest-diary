@@ -1,3 +1,10 @@
+/**
+ * Class renders additional info for patient.
+ * Content of this section is meant to be used and notes and miscellaneous information.
+ *
+ * @author Jakub Cerven
+ */
+
 import React from "react";
 import styled from "styled-components";
 import SectionContainer from "./SectionContainer";

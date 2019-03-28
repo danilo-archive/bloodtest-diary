@@ -339,3 +339,5 @@ fastlane/readme.md
 *.vscode
 
 0ity=echo*
+
+dist/

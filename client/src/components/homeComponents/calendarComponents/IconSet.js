@@ -1,3 +1,10 @@
+/**
+ * A set of x incos displayed as an inline-block
+ * @module IconSet
+ * @author Alvaro Rausell
+ * @version 0.0.2
+ */
+
 import React from "react";
 
 import Icon from "./Icon";

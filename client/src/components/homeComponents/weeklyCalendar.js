@@ -1,3 +1,12 @@
+/**
+ * This compoenent represents the main calendar of the main dashboard.
+ * It holds 5 calendar days. One for each day of the week
+ * @module WeeklyCalendar
+ * @author Alvaro Rausell, Jacopo Madaluni
+ * @version 0.0.2
+ */
+
+
 import React from "react";
 import styled from "styled-components";
 import CalendarDay from "./calendarComponents/CalendarDay";

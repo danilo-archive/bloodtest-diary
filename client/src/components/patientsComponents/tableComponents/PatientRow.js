@@ -1,3 +1,9 @@
+/**
+ * Class renders one row of patient data.
+ *
+ * @author
+ */
+
 import React from "react";
 import styled from "styled-components";
 
