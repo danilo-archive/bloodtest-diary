@@ -161,7 +161,7 @@ describe("Test queries", function(){
     it("Get all user", async function(){
       const response = await queryController.getAllUsers();
       response.success.should.equal(true);
-      (response.response.length>1).should.equal(true);
+      (response.response.length>0).should.equal(true);
     })
     it("Get test1", async function(){
       const response = await queryController.getTest(test1_id);
@@ -411,7 +411,7 @@ describe("Test queries", function(){
 
 async function runDeletes(database){
   await database.query("DELETE FROM ActionLog WHERE username LIKE 'USERNAME%TEST'")
-  await database.query("DELETE FROM EditTokens WHERE token LIKE 'TOKEN%TEST'")
+  await database.query("DELETE FROM EditTokens;")
   await database.query("DELETE FROM User WHERE username LIKE 'USERNAME%TEST'")
   await database.query("DELETE FROM Carer WHERE carer_name LIKE 'Carer%TEST'")
   await database.query("DELETE FROM Hospital WHERE hospital_name LIKE 'Hospital%TEST'")
