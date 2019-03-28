@@ -152,7 +152,7 @@ class PatientProfile extends Component {
                     this.props.closeModal();
                 });
             }else{
-                openAlert("Something went wrong while deleting the patient.", "confirmationAlert", "OK", () => {return});
+                this.props.handleError(res);
             }
         });
     };
@@ -331,7 +331,7 @@ class PatientProfile extends Component {
             if (res.success) {
                 openAlert("Patient details updated successfully.", "confirmationAlert", "OK", () => {this.props.closeModal()});
             } else {
-                openAlert("An error occurred while updating the patient.", "confirmationAlert", "OK");
+                this.props.handleError(res);
             }
         });
     };

@@ -178,8 +178,7 @@ export default class Credentials extends Component {
             });
           }
       }else{
-        openAlert("Somebody is already editing this user.", "confirmationAlert",
-                   "OK", () => {return});
+        this.props.handleError(res, "Somebody is already editing this user.")
       }
     });
 
@@ -190,8 +189,7 @@ export default class Credentials extends Component {
       if (res.success){
         this.showConfirmationMessage();
       }else{
-        openAlert("Something went wrong.", "confirmationAlert",
-                   "OK", () => {return});
+        this.props.handleError(res);
       }
     });
     this.clearForm();

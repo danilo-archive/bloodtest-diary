@@ -199,7 +199,7 @@ class NewPatient extends Component {
             if (res.success) {
                 openAlert("Patient added successfully.", "confirmationAlert", "OK", () => {this.props.closeModal()});
             } else {
-                openAlert("An error occurred while adding the patient.", "confirmationAlert", "OK");
+                this.props.handleError(res);
             }
         });
     };

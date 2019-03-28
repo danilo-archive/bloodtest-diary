@@ -319,7 +319,7 @@ export default class UsersPanel extends Component {
         }));
         this.setState({allUsers: users});
       }else{
-        //TODO error check
+        this.props.handleError(res);
       }
     });
   }
@@ -352,8 +352,7 @@ export default class UsersPanel extends Component {
         if (res.success){
           this.setState({selectedOption , username: selectedOption.label, editToken: res.token, disabled: true, email: selectedOption.value, adminChecked: selectedOption.isAdmin});
         }else{
-          openAlert("Somebody is already editing this user.", "confirmationAlert",
-          "OK", () => {return});
+          this.props.handleError(res, "Somebody is already editing this user.")
         }
       });
 
@@ -394,8 +393,8 @@ export default class UsersPanel extends Component {
       this.showConfirmationMessage();
       this.getUsers();
      }else{
-      openAlert("Something went wrong.", "confirmationAlert",
-                 "OK", () => {return});
+      this.props.handleError(res);
+    
      }
    });
  }
@@ -411,8 +410,7 @@ export default class UsersPanel extends Component {
             this.showConfirmationMessage();
             this.getUsers();
           }else{
-            openAlert("Something went wrong, make sure username is not already used.", "confirmationAlert",
-                       "OK", () => {return});
+            this.props.handleError(res, "Something went wrong, make sure username is not already used.")
           }
        });
    } else {

@@ -30,11 +30,11 @@ class ColorPicker extends React.Component {
   handleChangeComplete = (color) => {
     if (this.state.type === "patient"){
         this.serverConnect.changePatientColour(this.state.id, color.hex, res => {
-            if (!res.success){openAlert("Something went wrong", "confirmationAlert", "ok", () => {return})}
+            if (!res.success){this.props.handleError(res)}
         });
     }else{
-        this.serverConnect.changeTestColour(this.state.id, color.hex, res => {
-            if (!res.success){openAlert("Something went wrong", "confirmationAlert", "ok", () => {return})}
+        this.serverConnect.changeTestColour(this.state.id, color.hex, res2 => {
+            if (!res2.success){this.props.handleError(res2)}
         });
     }
   };

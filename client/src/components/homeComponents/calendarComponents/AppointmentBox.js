@@ -153,15 +153,15 @@ const RightClickMenu = props => {
            <Separator />
            <Submenu label="Patient colour">
              <Submenu label="Choose colour">
-                <ColorPicker id={props.patientNo} type={"patient"}/>
+                <ColorPicker handleError={props.handleError} id={props.patientNo} type={"patient"}/>
              </Submenu>
-             <Item  onClick={() => {serverConnect.changePatientColour(props.patientNo, null, res => {return})}}>Remove colour</Item>
+             <Item  onClick={() => {serverConnect.changePatientColour(props.patientNo, null, res => {if(!res.success){props.handleError(res)}})}}>Remove colour</Item>
            </Submenu>
            <Submenu label="Test colour">
              <Submenu label="Choose colour">
-                <ColorPicker id={props.testId} type={"test"}/>
+                <ColorPicker handleError={props.handleError} id={props.testId} type={"test"}/>
              </Submenu>
-             <Item onClick={() => {serverConnect.changeTestColour(props.testId, null, res => {return})}}>Remove colour</Item>
+             <Item onClick={() => {serverConnect.changeTestColour(props.testId, null, res => {if(!res.success){props.handleError(res)}})}}>Remove colour</Item>
            </Submenu>
 
         </Menu>
@@ -260,7 +260,16 @@ class AppointmentBox extends React.Component {
     const menuId = `${this.props.id}_${this.props.section}`; //MUST BE UNIQUE
     return connectDragSource(
       <div>
-      <RightClickMenu editPatient={this.props.editPatient} test={this.props.test} id={menuId} patientNo={this.props.patient_no} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
+      <RightClickMenu 
+        handleError={this.props.handleError}
+        editPatient={this.props.editPatient} 
+        test={this.props.test} 
+        id={menuId} 
+        patientNo={this.props.patient_no} 
+        testId={this.props.id} 
+        completed={this.props.type !== "no"} 
+        openColorPicker={this.props.openColorPicker} 
+        editTest={this.props.editTest}/>
       <MenuProvider id={menuId}>
         <Container default_colour={this.props.default_colour} patient_colour={this.props.patient_colour} test_colour={this.props.test_colour} isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
