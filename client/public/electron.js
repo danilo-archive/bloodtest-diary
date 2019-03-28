@@ -51,7 +51,7 @@ function setScreenSize() {
 function createWindows() {
 
   mainWindow = new BrowserWindow({width: getWindowSize("width"), height: getWindowSize("height"), backgroundColor: '#f4f9fd', frame: false, resizable: true, show: false, minWidth : 300,
-  minHeight : 300});
+  minHeight : 300, icon: __dirname + '/assets/logo.png',});
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : './public/index.html');
   mainWindow.on('closed', () => mainWindow = null);
 
