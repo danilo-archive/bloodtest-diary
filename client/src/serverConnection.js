@@ -4,7 +4,7 @@
  * protocol need by every component of the UI
  * The socket connection can be created by using the only method available to the public (getServerConnect())
  * which will return a ServerConnect object. That object represent a socket connection and will be
- * univoque and shared between all client components.
+ * unique and shared between all client components.
  * Every protocol will be available through this object.
  * @module serverConnection
  * @author Danilo Del Busso, Mateusz Nowak, Jacopo Madaluni
@@ -320,7 +320,7 @@ class ServerConnect {
         });
     }
     /**
-     * Requests a token to edit the choosen test, calls the callback with the response.
+     * Requests a token to edit the chosen test, calls the callback with the response.
      * @param {int} testId The id of the test
      * @param {function} callback
      */
@@ -331,7 +331,7 @@ class ServerConnect {
         });
     }
     /**
-     * Requests a token to edit the choosen patient, calls the callback with the response.
+     * Requests a token to edit the chosen patient, calls the callback with the response.
      * @param {String} patientId The id of the patient
      * @param {function} callback
      */
@@ -343,7 +343,7 @@ class ServerConnect {
     }
     
     /**
-     * Requests a token to edit the choosen user.
+     * Requests a token to edit the chosen user.
      * @param {String} username The username of the user 
      * @param {Function} callback 
      */
@@ -368,7 +368,7 @@ class ServerConnect {
         });
     }
     /**
-     * Requests the distruction of the token previously received to edit a patient, calls the callback with the response.
+     * Requests the destruction of the token previously received to edit a patient, calls the callback with the response.
      * @param {int} patientId The id of the patient
      * @param {String} token The token to destroy.
      * @param {function} callback
@@ -381,7 +381,7 @@ class ServerConnect {
     }
 
     /**
-     * Requests the distruction of the token previously received to edit a user.
+     * Requests the destruction of the token previously received to edit a user.
      * @param {String} username The username of the user 
      * @param {String} token The token to destroy
      * @param {Function} callback 
@@ -431,7 +431,7 @@ class ServerConnect {
     }
 
     /**
-    * Thim method emits a request to add a test into the database, calls the callback with the response
+    * This method emits a request to add a test into the database, calls the callback with the response
     * @param {String} patientId The number of the patient that has to take the test.
     * @param {Date} date The first due date of the test
     * @param {String} notes Additional info about the test
@@ -448,7 +448,7 @@ class ServerConnect {
     }
 
     /**
-    * Thim method emits a request to add a test into the database, calls the callback with the response
+    * This method emits a request to add a test into the database, calls the callback with the response
     * @param {int} testId The id of the test to be changed.
     * @param {String} newStatus The new status of the test
     * @example var statusExample = "completed" // Read db manual for more info
@@ -461,7 +461,7 @@ class ServerConnect {
         });
     }
     /**
-    * Thim method emits a request to change a test due date, calls the callback with the response
+    * This method emits a request to change a test due date, calls the callback with the response
     * @param {int} testId The id of the test to be changed.
     * @param {Date} newDate The new status of the test
     * @param {function} callback
@@ -474,7 +474,7 @@ class ServerConnect {
     }
 
     /**
-    * Thim method emits a request to edit a test into the database, calls the callback with the response.
+    * This method emits a request to edit a test into the database, calls the callback with the response.
     * @param {int} testId The id of the test to be changed.
     * @param {JSON} newData All the information about the test
     * @param {String} token The token that grants editing priviledges.
@@ -539,7 +539,7 @@ class ServerConnect {
     }
 
     /**
-     * Requests to send the overdue remiders for the relative tests
+     * Requests to send the overdue reminders for the relative tests
      * @param {List<int>} testIds The list of tests whose patients must be contacted
      * @param {Function} callback 
      */
@@ -550,7 +550,7 @@ class ServerConnect {
         });
     }
     /**
-     * Requests to send remiders for the relative tests
+     * Requests to send reminders for the relative tests
      * @param {List<int>} testId The list of tests whose patients must be contacted
      * @param {Function} callback 
      */
