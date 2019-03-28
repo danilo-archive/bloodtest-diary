@@ -1,11 +1,12 @@
 /**
- * Controller functions to get dates using a frequency foramt
+ * Controller functions to get dates using a frequency format
  * @module calendar-controller
  * @author Danilo Del Busso
  * @version 0.0.1
  */
 const Holidays = require('date-holidays');
 const hd = new Holidays('GB');
+const formatDate = new require("dateformat");
 
 function isPastDate(date){
     let today = new Date();
@@ -15,14 +16,32 @@ function isPastDate(date){
 }
 
 /**
+*@param dateString a date of the form "20190323"
+*/
+function formatDatabaseDate(dateString){
+    const year = dateString.slice(0,4);
+    const month = dateString.slice(4,6);
+    const day = dateString.slice(6,8);
+    return formatDate(`${year}-${month}-${day}`, "dS mmm yyyy")
+}
+
+/**
  * Gets the date object of the monday of the relative week
  * @param {Date} date any day of any week
  * @returns {Date} relative monday date
  */
 function getMondayOfWeek(date){
+    let offset = date.getDay() === 0 ? -7 : 0;
     let toReturn = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    toReturn.setDate(toReturn.getDate() - toReturn.getDay() + 1);
+    toReturn.setDate(toReturn.getDate() - toReturn.getDay() + 1 + offset);
     return toReturn;
+}
+
+function getWeekDays(day){
+    let monday = getMondayOfWeek(day);
+    monday.setHours(0, 0, 0, 0);
+    let restOfWeek = getNextDates("1-D:5", monday);
+    return [monday].concat(restOfWeek);
 }
 
 function getCurrentWeek(){
@@ -30,8 +49,6 @@ function getCurrentWeek(){
     monday.setHours(0, 0, 0, 0);
     monday.setDate(monday.getDate() - monday.getDay() + 1);
     let restOfWeek = getNextDates("1-D:5", monday);
-    console.log("controller:");
-    console.log([monday].concat(restOfWeek));
     return [monday].concat(restOfWeek);
 }
 
@@ -46,12 +63,14 @@ function getNextWeek(week){
     let wednesday = week[2];
     let thursday = week[3];
     let friday = week[4];
+    let saturday = week[5];
     monday.setDate(monday.getDate() + 7);
     tuesday.setDate(tuesday.getDate() + 7);
     wednesday.setDate(wednesday.getDate() + 7);
     thursday.setDate(thursday.getDate() + 7);
     friday.setDate(friday.getDate() + 7);
-    return [monday, tuesday, wednesday, thursday, friday];
+    saturday.setDate(saturday.getDate() + 7);
+    return [monday, tuesday, wednesday, thursday, friday, saturday];
 }
 
 /**
@@ -65,12 +84,14 @@ function getPreviousWeek(week){
     let wednesday = week[2];
     let thursday = week[3];
     let friday = week[4];
+    let saturday = week[5];
     monday.setDate(monday.getDate() - 7);
     tuesday.setDate(tuesday.getDate() - 7);
     wednesday.setDate(wednesday.getDate() - 7);
     thursday.setDate(thursday.getDate() - 7);
     friday.setDate(friday.getDate() - 7);
-    return [monday, tuesday, wednesday, thursday, friday];
+    saturday.setDate(saturday.getDate() - 7);
+    return [monday, tuesday, wednesday, thursday, friday, saturday];
 }
 
 /**
@@ -194,9 +215,11 @@ function stringIsInteger(str) {
 module.exports = {
     isHoliday,
     isPastDate,
+    getWeekDays,
     getNextWeek,
     getCurrentWeek,
     getPreviousWeek,
     getMondayOfWeek,
-    getNextDates
+    getNextDates,
+    formatDatabaseDate
 }

@@ -1,50 +1,72 @@
 import React from "react";
 import styled from "styled-components";
-import InfoCell from "./InfoCell.js";
+import dateformat from "dateformat";
 
 const Container = styled.div`
-  display: flex;
-  border: #839595 1px solid;
-  border-radius: 10px;
-  margin: 1.5%;
+    display: flex;
+    margin: 1.5%;
+    justify-content: center;
+    align-content: center;
+    flex-direction: row;
+    border-radius: 10px;
+    background: #eeeeee;
+    :hover {
+      background: #f2f2f2;
+    }
 `;
 
 const Field = styled.div`
   position: relative;
-  padding-left: 1%;
   width: 30%;
   min-width: 10%;
   margin: 0 2.5%;
   height: 100%;
   color: inherit;
-  font-family: "Rajdhani", sans-serif;
-  font-size: ${props => props.fontSize ? props.fontSize : "200%"};
+  
+  font-size: 125%;
   overflow: scroll;
-  display:flex;
-  align-items: center;
+  display: flex;
+  justify-content:center;
+  align-content:center;
+  flex-direction:column;
+  
 `;
 
-const DeleteButton = styled.div`
-    background: red;
-    width: 50px;
-    height: 30px;
-    margin-top: 10px;
-    margin-left: 22%;
-    margin-right: .2%;
+const FieldText = styled.p`
+  margin: 0;
+  //TODO: Fix this
+  margin-top: 6px;
+  max-height: 30px;
+`;
+
+const DeleteButton = styled.button`
+  border: none;
+  background-color: #f44336;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: 0;
+
+  :hover {
+    background-color: #dc2836;
     border-radius: 10px;
+  }
+  outline: none;
 `;
 
 
 export default class TestCell extends React.Component {
     render() {
         return (
-          <>
-            <Container >
-                <Field key={"due"} fontSize={"150%"}>{this.props.due}</Field>
-                <Field key={"notes"} fontSize={"150%"}>{this.props.notes}</Field>
-                <DeleteButton />
-            </Container>
-          </>
+            <>
+                <Container>
+                    <Field key={"due"} fontSize={"150%"}><FieldText>{dateformat(this.props.due, "dS mmm yyyy")}</FieldText></Field>
+                    <Field key={"notes"} fontSize={"150%"}><FieldText>{this.props.notes}</FieldText></Field>
+                    <DeleteButton onClick={() => {this.props.deleteTest(this.props.testId)}}>Delete test</DeleteButton>
+                </Container>
+            </>
         );
     }
 }

@@ -10,12 +10,10 @@ const Container = styled.div`
   flex-direction: row;
   white-space: nowrap;
   align-items: center;
-  margin: 0 1rem;
-  cursor: pointer;
+  margin: 1rem 1rem 0 .4rem;
 
   & > p {
     margin-left: 5px;
-    user-select: none;
   }
 `;
 const RadioLabel = styled(Label)`
@@ -26,9 +24,9 @@ const RadioLabel = styled(Label)`
 
 const TextRadioButton = props => {
   return (
-    <Container onClick={props.onCheck}>
+    <Container>
       <RadioButton checked={props.checked} onCheck={props.onCheck} />
-      <RadioLabel checked={props.checked}>{props.text}</RadioLabel>
+      <RadioLabel checked={props.checked}>{props.text.charAt(0).toUpperCase() + props.text.slice(1)}</RadioLabel>
     </Container>
   );
 };

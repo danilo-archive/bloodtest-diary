@@ -1,22 +1,22 @@
 import styled from "styled-components";
 
-export default styled.div`
-  width: ${props => (props.save ? `20rem` : `15rem`)};
-  height: 5rem;
-  background: ${props => (props.save ? `#5BC714` : `#D10505`)};
-  transition: 250ms;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Rajdhani", sans-serif;
-  user-select: none;
+export default styled.button`
+  border: none;
+  background-color: ${props => props.backgroundColor};
   color: white;
-  font-size: 35px;
-  white-space: nowrap;
-  &:hover {
-    background: ${props => (props.save ? `#469b0d` : `#a00303`)};  }
-  &:active {
-    background: ${props => (props.save ? `#387c0b` : `#680101`)};  }
+  text-align: center;
+  text-decoration: none;
+  font-size: 130%;
+  border-radius: 10px;
+  margin-left: 1%;
+  margin-right: 1%;
+  height: 44px;
+  min-width: 100px;
 
+  :hover {
+    background-color: ${props => props.hoverColor};
+    color: white;
+    border-radius: 10px;
   }
+  outline: none;
 `;

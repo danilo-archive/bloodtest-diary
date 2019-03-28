@@ -4,12 +4,11 @@ import LoadingScreen from "./loadingScreen/LoadingScreen.js";
 
 const Screen = styled.div`
   position:absolute;
-  top: 28px;
   overflow:hidden;
   height: 100vh;
   width: 100vw;
-  background-color: ${props => (props.disabled ? `rgb(0, 0, 0, 0.7)` : ` rgb(0, 0, 0, 0.0)`)};
-  z-index: ${props => (props.disabled ? `100` : `0`)};
+  background-color: rgb(0, 0, 0, 0.7);
+  z-index: 1002;
 `;
 
 export default class OfflineScreen extends Component {
@@ -19,7 +18,7 @@ export default class OfflineScreen extends Component {
             return (
                 <>
                   <LoadingScreen />
-                  <Screen disabled = {true}/>
+                  <Screen/>
                 </>
             )
         } else {

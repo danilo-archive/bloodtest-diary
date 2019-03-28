@@ -8,13 +8,19 @@ import {getServerConnect} from "../../../serverConnection.js";
 import {isPastDate} from "../../../lib/calendar-controller.js";
 import { DragSource } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
+import {openAlert} from "../../Alert.js";
+import { formatDatabaseDate } from "./../../../lib/calendar-controller.js";
+import { Menu, Item, Separator, Submenu, MenuProvider } from 'react-contexify';
+import 'react-contexify/dist/ReactContexify.min.css';
+import ColorPicker from "./ColorPicker";
+import dateformat from "dateformat";
 
 const serverConnect = getServerConnect();
 const Container = styled.div`
   opacity: ${props => props.isDragging ? 0 : 1}
   display: block;
   position: relative;
-  background-color: ${props => (props.tentative ? `#c1c1c1` : `white`)};
+  background-color: ${props => (props.test_colour ? props.test_colour : (props.patient_colour ? props.patient_colour : props.default_colour))};
 
   margin-top: 3.5%;
   margin-bottom: 3.5%;
@@ -83,7 +89,64 @@ const Container = styled.div`
         margin-left: 7px;
         margin-right: 7px;
       }
+
 `;
+
+
+const Test = styled.div`
+  &:hover {
+    background-color: red;
+  }
+`;
+
+function sendReminder(test){
+  let text = test.last_reminder ? `This patient was last contacted on ${dateformat(test.last_reminder, "dS mmm yyyy")}. Do you want to send another email?`
+                                 : `This patient was never contacted about this test. Do you want to send an email?`;
+  openAlert(text, "optionAlert",
+            "No", () => {return},
+            "Yes", () => {
+              if (isPastDate(test.dueDate)){
+                serverConnect.sendOverdueReminders(test.test_id, res => {
+                  if (!res.success){
+                    openAlert("An error occurred during email sending", "confirmationAlert", "Ok", () => {return});
+                  }
+                });
+              }else{
+                serverConnect.sendNormalReminders(test.test_id, res => {
+                  if (!res.success){
+                    openAlert("An error occurred during email sending", "confirmationAlert", "Ok", () => {return});
+                  }
+                });
+              }
+            });
+}
+
+const RightClickMenu = props => {
+    return(
+        <Menu id={props.id} style={{position: "absolute", zIndex: "11", fontSize: "1rem"}}>
+        <Test>
+           <Item onClick={() => {props.editTest(props.testId)}}>Edit</Item>
+           </Test>
+           <Item onClick={() => {props.editPatient(props.patientNo)}}>Patient profile</Item>
+           <Separator />
+           <Item disabled={props.completed} onClick={() => sendReminder(props.test)}>Send reminder</Item>
+           <Separator />
+           <Submenu label="Patient colour">
+             <Submenu label="Choose colour">
+                <ColorPicker id={props.patientNo} type={"patient"}/>
+             </Submenu>
+             <Item  onClick={() => {serverConnect.changePatientColour(props.patientNo, null, res => {return})}}>Remove colour</Item>
+           </Submenu>
+           <Submenu label="Test colour">
+             <Submenu label="Choose colour">
+                <ColorPicker id={props.testId} type={"test"}/>
+             </Submenu>
+             <Item onClick={() => {serverConnect.changeTestColour(props.testId, null, res => {return})}}>Remove colour</Item>
+           </Submenu>
+
+        </Menu>
+    );
+}
 
 const mapping = {
     "yes":"completed",
@@ -98,14 +161,20 @@ const spec = {
       test_id: props.id,
       completed_status: props.type,
       patient_name: props.name,
-      dueDate: props.dueDate
+      dueDate: props.dueDate,
+      default_colour: props.default_colour,
+      patient_colour: props.patient_colour,
+      test_colour: props.test_colour
     };
   },
   endDrag(props, monitor, component){
     if (monitor.didDrop()){
       const newDate = monitor.getDropResult().newDate;
       if (newDate){
-        serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate);
+        serverConnect.changeTestDueDate(props.id, monitor.getDropResult().newDate, res => {
+            if (!res.success){
+                props.handleError(res, "Somebody is already editing this test.")    }
+        });
       }
     }
   },
@@ -150,16 +219,26 @@ class AppointmentBox extends React.Component {
   }
 
   onStatusClick = status => {
-    this.serverConnect.changeTestStatus(this.props.id, status);
+    this.serverConnect.changeTestStatus(this.props.id, status, res => {
+        if (res.success){
+            if (res.response.insertId != undefined){
+                openAlert(`A new test was automatically scheduled on ${formatDatabaseDate(res.response.new_date)}.`, "confirmationAlert", "OK");
+            }
+        }else{
+            this.props.handleError(res, "Somebody is already editing this test.")
+        }
+    });
   };
 
   render() {
     const {isDragging, connectDragSource} = this.props;
+    const menuId = `${this.props.id}_${this.props.section}`; //MUST BE UNIQUE
     return connectDragSource(
       <div>
-        <Container isDragging={isDragging} tentative={this.props.tentative}>
+      <RightClickMenu editPatient={this.props.editPatient} test={this.props.test} id={menuId} patientNo={this.props.patient_no} testId={this.props.id} completed={this.props.type !== "no"} openColorPicker={this.props.openColorPicker} editTest={this.props.editTest}/>
+      <MenuProvider id={menuId}>
+        <Container default_colour={this.props.default_colour} patient_colour={this.props.patient_colour} test_colour={this.props.test_colour} isDragging={isDragging} tentative={this.props.tentative}>
           {this.props.tentative ? <TimePill status={this.props.type}>Tentative</TimePill> : ``}
-
           <StatusCircle
             type={this.props.tentative ? "tentative" : this.formatStatus(this.props.type,  this.props.dueDate)}
           />
@@ -168,8 +247,12 @@ class AppointmentBox extends React.Component {
               onStatusClick={this.props.tentative ? () => {} : this.onStatusClick}
               editTest={this.props.editTest}
               testId={this.props.id}
+              handleError={this.props.handleError}
           />
+
         </Container>
+        </MenuProvider>
+
       </div>
     );
   }

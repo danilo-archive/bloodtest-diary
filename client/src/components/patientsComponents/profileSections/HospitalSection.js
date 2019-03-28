@@ -1,21 +1,6 @@
 import React from "react";
-import styled from "styled-components";
-import InfoCell from "./profileCells/InfoCell";
 import InputCell from "./profileCells/InputCell";
 import SectionContainer from "./SectionContainer";
-
-const Container = styled.div`
-  margin: 1% 10%;
-  padding: 1%;
-  border: #839595 3px solid;
-  border-radius: 10px;
-  width: 80%;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  justify-content: center;
-  background: white;
-`;
 
 class HospitalSection extends React.Component {
 
@@ -37,15 +22,16 @@ class HospitalSection extends React.Component {
         const content = (
             <>
                 <InputCell
-                    field={"Name"}
+                    field={"Name:"}
                     value={this.props.hospitalName}
                     id={"hospital_name"}
                     disabled={this.props.localHospital}
                     onChange={this.onInputChange}
+                    placeholder={"(optional)"}
                 />
 
                 <InputCell
-                    field={"Email"}
+                    field={"Email:"}
                     value={this.props.hospitalEmail}
                     id={"hospital_email"}
                     disabled={this.props.localHospital}
@@ -53,15 +39,16 @@ class HospitalSection extends React.Component {
                 />
 
                 <InputCell
-                    field={"Phone"}
+                    field={"Phone:"}
                     value={this.props.hospitalPhone}
                     id={"hospital_phone"}
                     disabled={this.props.localHospital}
                     onChange={this.onInputChange}
+                    placeholder={"(optional)"}
                 />
 
                 <InputCell
-                    field={"This hospital"}
+                    field={"This is our patient:"}
                     value={this.props.localHospital}
                     id={"is_local"}
                     type={"checkbox"}
@@ -71,7 +58,7 @@ class HospitalSection extends React.Component {
         );
         return (
             <SectionContainer
-                title={"Hospital info"}
+                title={"Hospital details"}
                 content={content}
             />
         );

@@ -20,6 +20,7 @@ module.exports = {
 const  mysql = require('mysql');
 const db_controller = require('./db_controller/db-controller');
 const dateFormat = require('dateformat');
+const logger = require('./logger');
 
 /** 
  * If true, it will output to the console, otherwise it will not output anything.
@@ -84,7 +85,7 @@ function logDelete(username, tableName, entryID, message = undefined, callback =
  *                          as it needs to explain what happened.
  * @param {function} Optional action, called with the result of insertQuery.
  */
-function logOther(username, tableName, entryID, message = undefined, callback = undefined) {
+function logOther(username, tableName, entryID, message, callback = undefined) {
     if (message === undefined) {
         throw new Error("Invalid use of a logger function.");
     }
@@ -126,23 +127,18 @@ function log(type, username, tableName, entryID, message = undefined, callback =
     db_controller.insertQuery(sql)
     .then((result) => {
         if (showConsoleOutput) {
+            message = (message === "NULL") ? "No message." : message;
             if (s.length > 0 && result.status === "OK") {
-                console.log("Successful log: user " + username + " " + s + " " + tableName + "(" + entryID + ").");
+                logger.info("Log: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message);
             }
             else if (s.length > 0) {
-                console.log("===========================");
-                console.log("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "):");
-                console.log(result.err);
-                console.log("===========================");
+                logger.error("ERROR logging: user " + username + " " + s + " " + tableName + "(" + entryID + "): " + message + ". Error: " + JSON.stringify(result.err));
             }
             else if (result.status === "OK") {
-                console.log("Successful log: user " + username + " committed other action: " + message);
+                logger.info("Log: user " + username + " committed other action: " + message);
             }
             else {
-                console.log("===========================");
-                console.log("ERROR logging: user " + username + " committed other action: " + message);
-                console.log(result.err);
-                console.log("===========================");
+                logger.error("ERROR logging: user " + username + " committed other action: " + message + ". Error: " + JSON.stringify(result.err));
             }
         }
 

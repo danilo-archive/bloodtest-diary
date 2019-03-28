@@ -8,8 +8,9 @@
  * @see module:token-generator
  */
 
+require('./../../../../lib/logger').changeOption("consoleOutput", false)
 const expect = require("chai").expect;
-const id_gen = require("../../../../lib/db_controller/token-generator");
+const tokenGenerator = require("../../../../lib/db_controller/token-generator");
 
 /**
  * Generates and compares 10000 tokens.
@@ -21,7 +22,7 @@ function testUniqueness() {
     const all = [];
 
     for (let i = 1; i < 10001; i++) {
-        all.push(id_gen.generateToken());
+        all.push(tokenGenerator.generateToken());
         if (i % 100 === 0) {
             process.stdout.clearLine();
             process.stdout.cursorTo(0);
@@ -67,11 +68,20 @@ function testUniqueness() {
 }
 
 describe("Test token generator:", () => {
-    describe("> Test uniqueness of tokens", () => {
+    describe("> Test uniqueness of tokens:", () => {
 
         it("Should return true - all tokens are unique.", (done) => {
             expect(testUniqueness()).to.be.true;
             done();
-        }).timeout(3000);
+        }).timeout(5000);
+    });
+
+    describe("> Test login token:", () => {
+        it("Should be long enough.", () => {
+            const token = tokenGenerator.generateLoginToken();
+            expect(token.length).to.be.greaterThan(20);
+        });
     });
 });
+
+require('./../../../../lib/logger').deleteLogFile();

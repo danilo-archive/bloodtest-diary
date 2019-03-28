@@ -1,4 +1,1 @@
-{
-    "ip":"http://localhost",
-    "port":3265
-}
+{"ip":"http%3A%2F%2Flocalhost","port":"3265"}

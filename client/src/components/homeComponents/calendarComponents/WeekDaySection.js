@@ -20,13 +20,13 @@ const WeekDaySection = props => {
     <>
       <WeekDayDiv>
         <NotificationIcon
+          labelStyle={{left: "48%", top: "56%"}}
           text={props.notificationNumber}
           top="50%"
           left="12%"
         />
-          <Label style={{ left: "50%", top: "50%" }}>
-            {props.dayName}
-          </Label>
+        <Label style={{ left: "50%", top: "50%" }}>{props.dayName}</Label>
+        {props.children}
       </WeekDayDiv>
     </>
   );

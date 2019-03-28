@@ -5,6 +5,7 @@ import WeekDaySection from "./calendarComponents/WeekDaySection";
 import ScrollBox from "./calendarComponents/ScrollBox";
 import AppointmentSection from "./calendarComponents/AppointmentSection";
 import { DropTarget } from "react-dnd";
+import "../../styles/ongoingWeekly.css";
 
 const Container = styled.div`
   margin: 3px;
@@ -13,10 +14,10 @@ const Container = styled.div`
   height: 100%;
   overflow: hidden;
   background: ${props => props.background ? props.background : "white"};
+  
 `;
 
 function collect(connect, monitor){
-  console.log(monitor.isOver());
   return {
     connectDropTarget: connect.dropTarget(),
     hovered: monitor.isOver(),
@@ -44,7 +45,7 @@ class OngoingWeekly extends React.Component {
     const { connectDropTarget, hovered, item} = this.props;
     const backgroundColor = hovered ? "#dbfffc" : "white";
     return connectDropTarget(
-      <div style={{background: backgroundColor}}>
+     <div className="ongoingWeekly">
         <Container background={backgroundColor}>
           <WeekDaySection
             notificationNumber={
@@ -52,19 +53,22 @@ class OngoingWeekly extends React.Component {
                 ? this.props.notificationNumber
                 : "0"
             }
-            dayName={"This Week"}
+            dayName={"This week"}
           />
-          <ScrollBox style={{background: backgroundColor}}>
+          <ScrollBox>
             <AppointmentSection
-              background = {backgroundColor}
               type="Appointments"
               appointments={this.props.anytimeAppointments}
+              section={"ongoing"}
               editTest={this.props.editTest}
+              editPatient={this.props.editPatient}
+              handleError={this.props.handleError}
+              section={"ongoing"}
             />
-            <div style={{background: backgroundColor, width:"100%",height:"45px"}}/>
-            </ScrollBox>
+            <div style={{width:"100%",height:"45px"}}/>
+          </ScrollBox>
         </Container>
-      </div>
+    </div>
     );
   }
 }

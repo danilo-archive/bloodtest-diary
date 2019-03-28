@@ -5,8 +5,10 @@ import TextRadioButton from "./TextRadioButton";
 const Container = styled.div`
   display: flex;
   justify-content: center;
+  margin: 0 0 1rem 0;
 `;
 
+// TODO how much would capitalising this break?
 const status = ["completed", "in review", "pending"];
 export default props => {
   return (

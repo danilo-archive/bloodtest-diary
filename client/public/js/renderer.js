@@ -1,4 +1,5 @@
 const remote = require('electron').remote;
+const { app } = require('electron').remote;
 
 (function handleWindowControls() {
     document.onreadystatechange = () => {
@@ -13,6 +14,7 @@ const remote = require('electron').remote;
         const maxButton = document.getElementById('max-button');
         const closeButton = document.getElementById('close-button');
 
+
         minButton.addEventListener("click", event => {
             window.minimize();
         });
@@ -25,5 +27,6 @@ const remote = require('electron').remote;
         closeButton.addEventListener("click", event => {
             window.close();
         });
+
     }
 })();

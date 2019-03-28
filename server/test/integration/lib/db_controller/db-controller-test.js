@@ -48,7 +48,7 @@ describe("Test main DB controller behaviour:", () => {
             const nowDate = new Date();
             nowDate.setMinutes(nowDate.getMinutes() + 30);
             const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-            await database.query("INSERT INTO TokenControl " + 
+            await database.query("INSERT INTO EditTokens " + 
                                 "VALUES ('test_token_S', 'Patient', 'test_no_S2', " + expires + ")")
                         .catch((err) => {
                             printSetupError(err);
@@ -240,7 +240,7 @@ describe("Test main DB controller behaviour:", () => {
                         .catch((err) => {
                             printSetupError(err);
                         });
-            await database.query("DELETE FROM TokenControl WHERE token = 'test_token_S'")
+            await database.query("DELETE FROM EditTokens WHERE token = 'test_token_S'")
                         .catch((err) => {
                             printSetupError(err);
                         });        
@@ -649,7 +649,7 @@ describe("Test main DB controller behaviour:", () => {
                             const nowDate = new Date();
                             nowDate.setMinutes(nowDate.getMinutes() + 30);
                             const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-                            database.query("INSERT INTO TokenControl VALUES " +
+                            database.query("INSERT INTO EditTokens VALUES " +
                                         "('test_token_D', 'Patient', 'test_no_D5', " + expires + ")")
                         })
                         .catch((err) => {
@@ -674,7 +674,7 @@ describe("Test main DB controller behaviour:", () => {
                                 const database1 = new Database(databaseConfig);
                                 database1.query(sql)
                                 .then(() => {
-                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_token_D'")
+                                    database1.query("DELETE FROM EditTokens WHERE token = 'test_token_D'")
                                     .catch((err) => {
                                         printSetupError(err);
                                     });
@@ -703,7 +703,7 @@ describe("Test main DB controller behaviour:", () => {
                             const nowDate = new Date();
                             nowDate.setSeconds(nowDate.getSeconds() - 1);
                             const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-                            database.query("INSERT INTO TokenControl VALUES " +
+                            database.query("INSERT INTO EditTokens VALUES " +
                                         "('test_tokenD', 'Patient', 'test_no_D6', " + expires + ")")
                         })
                         .catch((err) => {
@@ -729,7 +729,7 @@ describe("Test main DB controller behaviour:", () => {
                                 const database1 = new Database(databaseConfig);
                                 database1.query(sql)
                                 .then(() => {
-                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_tokenD'")
+                                    database1.query("DELETE FROM EditTokens WHERE token = 'test_tokenD'")
                                     .catch((err) => {
                                         printSetupError(err);
                                     });
@@ -762,7 +762,7 @@ describe("Test main DB controller behaviour:", () => {
                             const nowDate = new Date();
                             nowDate.setMinutes(nowDate.getMinutes() + 30);
                             const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-                            database.query("INSERT INTO TokenControl VALUES " +
+                            database.query("INSERT INTO EditTokens VALUES " +
                                         "('test_token_U1', 'Patient', 'testNo_U1', " + expires + ")")
                         })
                         .catch((err) => {
@@ -787,7 +787,7 @@ describe("Test main DB controller behaviour:", () => {
                                     expect(result[0].patient_name).to.equal("U1 - updated");
                                 })
                                 .then(() => {
-                                    database2.query("SELECT * FROM TokenControl WHERE token = 'test_token_U1'")
+                                    database2.query("SELECT * FROM EditTokens WHERE token = 'test_token_U1'")
                                     .then((result) => {
                                         expect(result.length).to.equal(0);
                                         done();
@@ -810,7 +810,7 @@ describe("Test main DB controller behaviour:", () => {
                                 const database1 = new Database(databaseConfig);
                                 database1.query("DELETE FROM Patient WHERE patient_no = 'testNo_U1'")
                                 .then(() => {
-                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_token_U1'")
+                                    database1.query("DELETE FROM EditTokens WHERE token = 'test_token_U1'")
                                     .catch((err) => {
                                         printSetupError(err);
                                     });
@@ -839,7 +839,7 @@ describe("Test main DB controller behaviour:", () => {
                             const nowDate = new Date();
                             nowDate.setMinutes(nowDate.getMinutes() + 30);
                             const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-                            database.query("INSERT INTO TokenControl VALUES " +
+                            database.query("INSERT INTO EditTokens VALUES " +
                                         "('test_token_U2', 'Patient', 'testNo_U2', " + expires + ")")
                         })
                         .catch((err) => {
@@ -862,7 +862,7 @@ describe("Test main DB controller behaviour:", () => {
                                 const database1 = new Database(databaseConfig);
                                 database1.query("DELETE FROM Patient WHERE patient_no = 'testNo_U2'")
                                 .then(() => {
-                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_token_U2'")
+                                    database1.query("DELETE FROM EditTokens WHERE token = 'test_token_U2'")
                                     .catch((err) => {
                                         printSetupError(err);
                                     });
@@ -891,7 +891,7 @@ describe("Test main DB controller behaviour:", () => {
                             const nowDate = new Date();
                             nowDate.setSeconds(nowDate.getSeconds() - 1);
                             const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-                            database.query("INSERT INTO TokenControl VALUES " +
+                            database.query("INSERT INTO EditTokens VALUES " +
                                         "('test_token_U3', 'Patient', 'testNo_U3', " + expires + ")")
                         })
                         .catch((err) => {
@@ -914,7 +914,7 @@ describe("Test main DB controller behaviour:", () => {
                                 const database1 = new Database(databaseConfig);
                                 database1.query("DELETE FROM Patient WHERE patient_no = 'testNo_U3'")
                                 .then(() => {
-                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_token_U3'")
+                                    database1.query("DELETE FROM EditTokens WHERE token = 'test_token_U3'")
                                     .catch((err) => {
                                         printSetupError(err);
                                     });
@@ -943,7 +943,7 @@ describe("Test main DB controller behaviour:", () => {
                             const nowDate = new Date();
                             nowDate.setSeconds(nowDate.getSeconds() + 30);
                             const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-                            database.query("INSERT INTO TokenControl VALUES " +
+                            database.query("INSERT INTO EditTokens VALUES " +
                                         "('test_token_U4', 'Patient', 'testNo_U4', " + expires + ")")
                         })
                         .catch((err) => {
@@ -966,7 +966,7 @@ describe("Test main DB controller behaviour:", () => {
                                 const database1 = new Database(databaseConfig);
                                 database1.query("DELETE FROM Patient WHERE patient_no = 'testNo_U4'")
                                 .then(() => {
-                                    database1.query("DELETE FROM TokenControl WHERE token = 'test_token_U4'")
+                                    database1.query("DELETE FROM EditTokens WHERE token = 'test_token_U4'")
                                     .catch((err) => {
                                         printSetupError(err);
                                     });
@@ -1099,9 +1099,6 @@ describe("Test main DB controller behaviour:", () => {
                                 const tokenExpire = new Date(result.response.expires);
                                 const actualExpire = dateFormat(tokenExpire, "yyyymmddHHMM");
                                 expect(actualExpire).to.equal(shouldExpire);
-
-                                const shouldStartWith = dateFormat(new Date(), "yyyymmddHHMM");
-                                expect(result.response.token.startsWith(shouldStartWith)).to.be.true;
                             })
                             .catch((err) => {
                                 error = err;
@@ -1111,7 +1108,7 @@ describe("Test main DB controller behaviour:", () => {
     
                                 database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R'")
                                 .then(() => {
-                                    database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R'")
+                                    database1.query("DELETE FROM EditTokens WHERE table_key = 'test_no_R'")
                                     .catch((err) => {
                                         printSetupError(err);
                                     });
@@ -1142,7 +1139,7 @@ describe("Test main DB controller behaviour:", () => {
                             const nowDate = new Date();
                             nowDate.setMinutes(nowDate.getMinutes() + 30);
                             const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-                            database.query("INSERT INTO TokenControl VALUES " +
+                            database.query("INSERT INTO EditTokens VALUES " +
                                     "('token_R', 'Patient', 'test_no_R1', " + expires + ")")
                         })
                         .catch((err) => {
@@ -1166,7 +1163,7 @@ describe("Test main DB controller behaviour:", () => {
 
                             database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R1'")
                             .then(() => {
-                                database1.query("DELETE FROM TokenControl WHERE token = 'token_R'")
+                                database1.query("DELETE FROM EditTokens WHERE token = 'token_R'")
                                 .catch((err) => {
                                     printSetupError(err);
                                 });
@@ -1196,7 +1193,7 @@ describe("Test main DB controller behaviour:", () => {
                             const nowDate = new Date();
                             nowDate.setMinutes(nowDate.getMinutes() - 30);
                             const expires = dateFormat(nowDate, "yyyymmddHHMMss");
-                            database.query("INSERT INTO TokenControl VALUES " +
+                            database.query("INSERT INTO EditTokens VALUES " +
                                     "('token_R2', 'Patient', 'test_no_R2', " + expires + ")")
                         })
                         .catch((err) => {
@@ -1217,14 +1214,11 @@ describe("Test main DB controller behaviour:", () => {
                                 const tokenExpire = new Date(result.response.expires);
                                 const actualExpire = dateFormat(tokenExpire, "yyyymmddHHMM");
                                 expect(actualExpire).to.equal(shouldExpire);
-
-                                const shouldStartWith = dateFormat(new Date(), "yyyymmddHHMM");
-                                expect(result.response.token.startsWith(shouldStartWith)).to.be.true;
                             })
                             .then(() => {
                                 // previous token should be deleted
                                 const database2 = new Database(databaseConfig);
-                                database2.query("SELECT * FROM TokenControl WHERE token = 'token_R2'")
+                                database2.query("SELECT * FROM EditTokens WHERE token = 'token_R2'")
                                 .then((result) => {
                                     expect(result.length).to.equal(0);
                                 })
@@ -1243,7 +1237,7 @@ describe("Test main DB controller behaviour:", () => {
     
                                 database1.query("DELETE FROM Patient WHERE patient_no = 'test_no_R2'")
                                 .then(() => {
-                                    database1.query("DELETE FROM TokenControl WHERE table_key = 'test_no_R2'")
+                                    database1.query("DELETE FROM EditTokens WHERE table_key = 'test_no_R2'")
                                     .catch((err) => {
                                         printSetupError(err);
                                     });
@@ -1290,7 +1284,7 @@ describe("Test main DB controller behaviour:", () => {
                 const date = new Date();
                 date.setMinutes(date.getMinutes() + 10);
                 const expires = dateFormat(date, "yyyymmddHHMMss");
-                database.query("INSERT INTO TokenControl VALUES " + 
+                database.query("INSERT INTO EditTokens VALUES " + 
                     "('ref_token', 'Patient', 'rand_id', '" + expires + "')")
                     .catch((err) => {
                         printSetupError(err);
@@ -1308,9 +1302,6 @@ describe("Test main DB controller behaviour:", () => {
                             const tokenExpire = new Date(result.response.expires);
                             const actualExpire = dateFormat(tokenExpire, "yyyymmddHHMM");
                             expect(actualExpire).to.equal(shouldExpire);
-
-                            const shouldStartWith = dateFormat(new Date(), "yyyymmddHHMM");
-                            expect(result.response.token.startsWith(shouldStartWith)).to.be.true;
                         })
                         .catch((err) => {
                             error = err;
@@ -1318,7 +1309,7 @@ describe("Test main DB controller behaviour:", () => {
                         .then(() => {
                             // check if previous token has been deleted
                             const database1 = new Database(databaseConfig);
-                            database1.query("SELECT * FROM TokenControl WHERE table_name = 'Patient' AND table_key = 'rand_id'")
+                            database1.query("SELECT * FROM EditTokens WHERE table_name = 'Patient' AND table_key = 'rand_id'")
                             .then((result) => {
                                 expect(result.length).to.equal(1);
                             })
@@ -1327,7 +1318,7 @@ describe("Test main DB controller behaviour:", () => {
                             })
                             .then(() => {
                                 // clean DB
-                                database1.query("DELETE FROM TokenControl WHERE table_name = 'Patient' AND table_key = 'rand_id'")
+                                database1.query("DELETE FROM EditTokens WHERE table_name = 'Patient' AND table_key = 'rand_id'")
                                 .catch((err) => {
                                     error = err;
                                 }).then(() => {
@@ -1347,7 +1338,7 @@ describe("Test main DB controller behaviour:", () => {
                 const date = new Date();
                 date.setMinutes(date.getMinutes() - 10);
                 const expires = dateFormat(date, "yyyymmddHHMMss");
-                database.query("INSERT INTO TokenControl VALUES " + 
+                database.query("INSERT INTO EditTokens VALUES " + 
                     "('ref2_token', 'Patient', 'rand_id2', '" + expires + "')")
                     .catch((err) => {
                         printSetupError(err);
@@ -1366,7 +1357,7 @@ describe("Test main DB controller behaviour:", () => {
                         .then(() => {
                             // check if previous token has been deleted
                             const database1 = new Database(databaseConfig);
-                            database1.query("SELECT * FROM TokenControl WHERE table_name = 'Patient' AND table_key = 'rand_id2'")
+                            database1.query("SELECT * FROM EditTokens WHERE table_name = 'Patient' AND table_key = 'rand_id2'")
                             .then((result) => {
                                 expect(result.length).to.equal(0);
                             })
@@ -1375,7 +1366,7 @@ describe("Test main DB controller behaviour:", () => {
                             })
                             .then(() => {
                                 // clean DB
-                                database1.query("DELETE FROM TokenControl WHERE table_name = 'Patient' AND table_key = 'rand_id2'")
+                                database1.query("DELETE FROM EditTokens WHERE table_name = 'Patient' AND table_key = 'rand_id2'")
                                 .catch((err) => {
                                     error = err;
                                 }).then(() => {
@@ -1415,7 +1406,7 @@ describe("Test main DB controller behaviour:", () => {
                 const date = new Date();
                 date.setMinutes(date.getMinutes() + 10);
                 const expires = dateFormat(date, "yyyymmddHHMMss");
-                database.query("INSERT INTO TokenControl VALUES " + 
+                database.query("INSERT INTO EditTokens VALUES " + 
                     "('ref3_token', 'Patient', 'rand_id3', '" + expires + "')")
                     .catch((err) => {
                         printSetupError(err);
@@ -1434,7 +1425,7 @@ describe("Test main DB controller behaviour:", () => {
                         .then(() => {
                             // check if previous token has been deleted
                             const database1 = new Database(databaseConfig);
-                            database1.query("SELECT * FROM TokenControl WHERE table_name = 'Patient' AND table_key = 'rand_id3'")
+                            database1.query("SELECT * FROM EditTokens WHERE table_name = 'Patient' AND table_key = 'rand_id3'")
                             .then((result) => {
                                 expect(result.length).to.equal(0);
                             })
@@ -1443,7 +1434,7 @@ describe("Test main DB controller behaviour:", () => {
                             })
                             .then(() => {
                                 // clean DB
-                                database1.query("DELETE FROM TokenControl WHERE table_name = 'Patient' AND table_key = 'rand_id3'")
+                                database1.query("DELETE FROM EditTokens WHERE table_name = 'Patient' AND table_key = 'rand_id3'")
                                 .catch((err) => {
                                     error = err;
                                 }).then(() => {
@@ -1571,6 +1562,47 @@ describe("Test main DB controller behaviour:", () => {
                     done();
                 });
             });
+        });
+    });
+
+    describe("Test concurrency:", () => {
+        it("Execution of critical queries waits.", () => {
+            try {
+                db_controller.deleteQuery("DELETE ...", "User", "invalid").catch(err => {
+
+                });
+                db_controller.updateQuery("UPDATE ...", "User", "invalid", "invalid").catch(err => {
+                    
+                });
+                db_controller.deleteQuery("DELETE ...", "User", "invalid").catch(err => {
+
+                });
+                db_controller.updateQuery("UPDATE ...", "User", "invalid", "invalid").catch(err => {
+                    
+                });
+                db_controller.requestEditing("User", "invalid").catch(err => {
+                    
+                });
+                db_controller.requestEditing("User", "invalid").catch(err => {
+                    
+                });
+            }
+            catch(err) {
+                // for coverage
+            }
+        });
+    });
+
+    describe("Test updateAccessToken() function:", () => {
+        it("Should be successful.", async () => {
+            const res = await db_controller.updateAccessToken("token");
+            expect(res.status).to.equal("OK");
+        });
+    });
+    describe("Test deleteAccessToken() function:", () => {
+        it("Should be successful.", async () => {
+            const res = await db_controller.deleteAccessToken("token");
+            expect(res.status).to.equal("OK");
         });
     });
 });

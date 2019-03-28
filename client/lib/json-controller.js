@@ -12,7 +12,8 @@
 */
 module.exports = {
     getJSON,
-    isJSON
+    isJSON,
+    writeServerConfigFile
 }
 
 const fs = require('fs');
@@ -34,9 +35,17 @@ function getJSON(path) {
     }
 }
 
+function writeServerConfigFile(json){
+    let toWrite = JSON.stringify(json);
+    console.log(toWrite);
+    fs.writeFile('src/server_connect_config.json', toWrite, 'utf8', err => {
+        console.log(err);
+    });
+}
+
 /**
  * Check if the data is a properly formatted JSON file
- * @param {string} data 
+ * @param {string} data
  * @return {JSON} null if the data was not a properly formatted JSON object, the data in JSON if otherwise
  */
 function isJSON(data) {

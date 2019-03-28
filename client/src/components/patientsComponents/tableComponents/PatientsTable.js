@@ -4,9 +4,19 @@ import styled from 'styled-components';
 import PatientRow from "./PatientRow.js";
 import FilterCell from "./FilterCell.js";
 
+const TableContainer = styled.div`
+  padding: 0.5%;
+  width: 100%;
+  height: 93.6%; //exact size as home
+  background: #ffffff;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  overflow: hidden;
+`;
+
 const Table = styled.table`
   width: 100%;
   height: 100%;
+  border-spacing: 0;
 `;
 
 const TableHeader = styled.thead`
@@ -16,8 +26,13 @@ const TableHeader = styled.thead`
 
 const TableBody = styled.tbody`
     display: block;
-    max-height: 80%; //change this to increase height of table
+    max-height: 87%; 
     overflow-y: scroll;
+    
+    ::-webkit-scrollbar:vertical {
+      display: initial;
+    }
+    
 `;
 
 const TableHead = styled.th`
@@ -25,13 +40,9 @@ const TableHead = styled.th`
     padding: 10px;
     //word-break: break-all;
     color: white;
-    border-collapse: collapse;
-    background: #0b989d;
-    :first-child {
-      border-left: none;
-    }
-    border-left: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+    background: #0d4e56;
+    text-align: left;
+    font-weight: normal;
 `;
 
 const TableRow = styled.tr`
@@ -44,118 +55,84 @@ class PatientsTable extends React.Component {
 
     constructor(props){
         super(props);
-        this.state = {
-            patients: props.allPatients,
-        }
     }
 
+
+
     number_filter = value => {
-        if (value == "") { this.setState({patients: this.props.allPatients})}
-        else{
-            this.setState({
-              patients: this.props.allPatients.filter(
-                patient => patient.patient_no.includes(value)
-              )
-            });
-        }
+        this.props.filterNumber(value);
     };
 
     name_filter = value => {
-        if (value == "") { this.setState({patients: this.props.allPatients})}
-        else{
-            this.setState({
-              patients: this.props.allPatients.filter(
-                patient => patient.patient_name ? patient.patient_name.includes(value) : false
-              )
-            });
-        }
+        this.props.filterName(value);
     };
 
     surname_filter = value => {
-        if (value == "") { this.setState({patients: this.props.allPatients})}
-        else{
-            this.setState({
-              patients: this.props.allPatients.filter(
-                patient => patient.patient_surname ? patient.patient_surname.includes(value) : false
-              )
-            });
-        }
+        this.props.filterSurname(value);
     };
 
     email_filter = value => {
-        if (value == "") { this.setState({patients: this.props.allPatients})}
-        else{
-            this.setState({
-              patients: this.props.allPatients.filter(
-                patient => patient.patient_email ? patient.patient_email.includes(value) : false
-              )
-            });
-        }
+        this.props.filterEmail(value);
     };
 
     phone_filter = value => {
-        if (value == "") { this.setState({patients: this.props.allPatients})}
-        else{
-            this.setState({
-              patients: this.props.allPatients.filter(
-                patient => patient.patient_phone ? patient.patient_phone.includes(value) : false
-              )
-            });
-        }
+        this.props.filterPhone(value);
     };
 
     render() {
-        //TODO : change class names
         return (
-            <Table>
-                <TableHeader>
-                <TableRow>
-                    <TableHead>Patient number</TableHead>
-                    <TableHead>Patient name</TableHead>
-                    <TableHead>Patient surname</TableHead>
-                    <TableHead>Patient email</TableHead>
-                    <TableHead>Patient phone</TableHead>
-                    <TableHead></TableHead>
-                </TableRow>
-                <TableRow>
-                    <FilterCell
-                        onChange={value => this.number_filter(value)}
-                        placeholder={"Search numbers ..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.name_filter(value)}
-                        placeholder={"Search names ..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.surname_filter(value)}
-                        placeholder={"Search surnames ..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.email_filter(value)}
-                        placeholder={"Search emails ..."}
-                    />
-                    <FilterCell
-                        onChange={value => this.phone_filter(value)}
-                        placeholder={"Search phones ..."}
-                    />
-                    <FilterCell
-                    />
-                </TableRow>
-                </TableHeader>
-                <TableBody>
-                {this.state.patients.map(patient => (
-                    <PatientRow
-                        key={patient.patient_no}
-                        patient_no = {patient.patient_no}
-                        patient_name = {patient.patient_name}
-                        patient_surname = {patient.patient_surname}
-                        patient_email = {patient.patient_email}
-                        patient_phone = {patient.patient_phone}
-                        openModal = {this.props.openModal}
-                    />
-                ))}
-                </TableBody>
-            </Table>
+            <TableContainer>
+                <Table>
+                    <TableHeader>
+                    <TableRow>
+                        <TableHead>Patient number</TableHead>
+                        <TableHead>Patient name</TableHead>
+                        <TableHead>Patient surname</TableHead>
+                        <TableHead>Patient email</TableHead>
+                        <TableHead>Patient phone</TableHead>
+                        <TableHead/>
+                    </TableRow>
+                    <TableRow>
+                        <FilterCell
+                            onChange={value => this.number_filter(value)}
+                            placeholder={"Search numbers..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.name_filter(value)}
+                            placeholder={"Search names..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.surname_filter(value)}
+                            placeholder={"Search surnames..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.email_filter(value)}
+                            placeholder={"Search emails..."}
+                        />
+                        <FilterCell
+                            onChange={value => this.phone_filter(value)}
+                            placeholder={"Search phones..."}
+                        />
+                        <FilterCell
+                        />
+                    </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                    {this.props.shownPatients.map(patient => (
+                        <PatientRow
+                            key={patient.patient_no}
+                            patient_no = {patient.patient_no}
+                            patient_name = {patient.patient_name}
+                            patient_surname = {patient.patient_surname}
+                            patient_email = {patient.patient_email}
+                            patient_phone = {patient.patient_phone}
+                            openEditModal = {this.props.openEditModal}
+                        />
+                    ))}
+                    <div style={{width:"100%", height: "20px"}}/>
+                    </TableBody>
+                </Table>
+            </TableContainer>
         );
     }
 }

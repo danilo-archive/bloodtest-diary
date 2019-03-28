@@ -131,34 +131,44 @@ describe("Test not frequency formats", function () {
 });
 
 describe("Test week handling", function() {
-    const testDays = [ (new Date(2019, 01, 20)), (new Date(2019, 02, 1)), (new Date(2019, 05, 20))];
+    const testDays = [ (new Date(2019, 1, 20)), (new Date(2019, 2, 1)), (new Date(2019, 5, 20)),  (new Date(2019, 2, 24)), 
+                       (new Date(2019, 2, 31)), (new Date(2019, 3, 12))];
     it ("Should return the correct monday date given any date", function(){
         let results = [];
         testDays.forEach( day => {
-            let monday = calendar_controller.getMondayOfWeek(day);
+            const monday = calendar_controller.getMondayOfWeek(day);
             results = results.concat(monday);
         });
 
         results[0].getDate().should.equal(18);
-        results[0].getMonth().should.equal(01);
+        results[0].getMonth().should.equal(1);
         results[0].getFullYear().should.equal(2019);
         results[1].getDate().should.equal(25);
-        results[1].getMonth().should.equal(01);
+        results[1].getMonth().should.equal(1);
         results[1].getFullYear().should.equal(2019);
         results[2].getDate().should.equal(17);
-        results[2].getMonth().should.equal(05);
+        results[2].getMonth().should.equal(5);
         results[2].getFullYear().should.equal(2019);
+        results[3].getDate().should.equal(18);
+        results[3].getMonth().should.equal(2);
+        results[3].getFullYear().should.equal(2019);
+        results[4].getDate().should.equal(25);
+        results[4].getMonth().should.equal(2);
+        results[4].getFullYear().should.equal(2019);
+        results[5].getDate().should.equal(8);
+        results[5].getMonth().should.equal(3);
+        results[5].getFullYear().should.equal(2019);
 
     });
 
     it ("Should return the correct previous week given a well formed week", function() {
 
-        const weekTest1 = [(new Date(2019, 01, 25)), (new Date(2019, 01, 26)), (new Date(2019, 01, 27)),
-                           (new Date(2019, 01, 28)), (new Date(2019, 02, 1))];
-        const weekTest2 = [(new Date(2019, 02, 25)), (new Date(2019, 02, 26)), (new Date(2019, 02, 27)),
-                           (new Date(2019, 02, 28)), (new Date(2019, 02, 29))];
+        const weekTest1 = [(new Date(2019, 1, 25)), (new Date(2019, 1, 26)), (new Date(2019, 1, 27)),
+                           (new Date(2019, 1, 28)), (new Date(2019, 2, 1)), (new Date(2019,2,2))];
+        const weekTest2 = [(new Date(2019, 2, 25)), (new Date(2019, 2, 26)), (new Date(2019, 2, 27)),
+                           (new Date(2019, 2, 28)), (new Date(2019, 2, 29)), (new Date(2019, 2, 30))];
 
-        var result1 = [];
+        let result1 = [];
         calendar_controller.getPreviousWeek(weekTest1).forEach(day => {
             day = new Date(day.getFullYear(), day.getMonth(), day.getDate());
             result1 = result1.concat(day);
@@ -179,8 +189,11 @@ describe("Test week handling", function() {
         result1[4].getDate().should.equal(22);
         result1[4].getMonth().should.equal(1);
         result1[4].getFullYear().should.equal(2019);
+        result1[5].getDate().should.equal(23);
+        result1[5].getMonth().should.equal(1);
+        result1[5].getFullYear().should.equal(2019);
 
-        var result2 = [];
+        let result2 = [];
         calendar_controller.getPreviousWeek(weekTest2).forEach(day => {
             day =  new Date(day.getFullYear(), day.getMonth(), day.getDate());
             result2 = result2.concat(day);
@@ -201,14 +214,17 @@ describe("Test week handling", function() {
         result2[4].getDate().should.equal(22);
         result2[4].getMonth().should.equal(2);
         result2[4].getFullYear().should.equal(2019);
+        result2[5].getDate().should.equal(23);
+        result2[5].getMonth().should.equal(2);
+        result2[5].getFullYear().should.equal(2019);
 
     });
 
     it ("Should return the correct next week given a well formed week", function() {
-        const weekTest3 = [(new Date(2019, 01, 25)), (new Date(2019, 01, 26)), (new Date(2019, 01, 27)),
-                           (new Date(2019, 01, 28)), (new Date(2019, 02, 1))];
+        const weekTest3 = [(new Date(2019, 1, 25)), (new Date(2019, 1, 26)), (new Date(2019, 1, 27)),
+                           (new Date(2019, 1, 28)), (new Date(2019, 2, 1)), (new Date(2019,2,2))];
 
-        var result3 = [];
+        let result3 = [];
         calendar_controller.getNextWeek(weekTest3).forEach(day => {
             day = new Date(day.getFullYear(), day.getMonth(), day.getDate());
             result3 = result3.concat(day);
@@ -229,11 +245,14 @@ describe("Test week handling", function() {
         result3[4].getDate().should.equal(8);
         result3[4].getMonth().should.equal(2);
         result3[4].getFullYear().should.equal(2019);
+        result3[5].getDate().should.equal(9);
+        result3[5].getMonth().should.equal(2);
+        result3[5].getFullYear().should.equal(2019);
 
-        const weekTest4 = [(new Date(2019, 02, 25)), (new Date(2019, 02, 26)), (new Date(2019, 02, 27)),
-                           (new Date(2019, 02, 28)), (new Date(2019, 02, 29))];
+        const weekTest4 = [(new Date(2019, 2, 25)), (new Date(2019, 2, 26)), (new Date(2019, 2, 27)),
+                           (new Date(2019, 2, 28)), (new Date(2019, 2, 29)), (new Date(2019,2,30))];
 
-        var result4 = []
+        let result4 = []
         calendar_controller.getNextWeek(weekTest4).forEach(day => {
             day = new Date(day.getFullYear(), day.getMonth(), day.getDate());
             result4 = result4.concat(day);
@@ -254,6 +273,9 @@ describe("Test week handling", function() {
         result4[4].getDate().should.equal(5);
         result4[4].getMonth().should.equal(3);
         result4[4].getFullYear().should.equal(2019);
+        result4[5].getDate().should.equal(6);
+        result4[5].getMonth().should.equal(3);
+        result4[5].getFullYear().should.equal(2019);
     });
 
 });

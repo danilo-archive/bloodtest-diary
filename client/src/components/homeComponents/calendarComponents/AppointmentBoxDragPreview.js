@@ -3,6 +3,7 @@ import AppointmentBox from './AppointmentBox.js';
 
 const styles = {
     display: 'inline-block',
+    transform: "rotate(3.5deg)",
 
 }
 
@@ -15,6 +16,9 @@ export default class AppointmentBoxDragPreview extends React.Component{
                 type={this.props.item.completed_status}
                 name={`${this.props.item.patient_name}`}
                 dueDate={this.props.item.dueDate}
+                default_colour={this.props.item.default_colour}
+                patient_colour={this.props.item.patient_colour}
+                test_colour={this.props.item.test_colour}
             />
          </div>
       );

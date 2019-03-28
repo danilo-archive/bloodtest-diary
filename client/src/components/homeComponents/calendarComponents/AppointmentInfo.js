@@ -5,7 +5,7 @@ const NameDiv = styled.div`
   width: 100%;
   height: auto;
   color: #646464;
-  font-family: "Rajdhani", sans-serif;
+  
   font-size: 130%;
   white-space: nowrap;
   flex-grow: 1;

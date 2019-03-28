@@ -6,11 +6,7 @@ const TableHead = styled.th`
     padding: 5px;
     word-break: break-all;
     color: black;
-    border-collapse: collapse;
-    :first-child {
-      border: none;
-    }
-    border-left: 1px solid #ddd;
+    background: white;
 `;
 
 const Input = styled.input.attrs({ type: "text" })`

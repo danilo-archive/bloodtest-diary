@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import Modal from "./Modal";
 import { ModalProvider } from "styled-react-modal";
-import "./Modal.css";
 import Navbar from "./homeComponents/navbar";
 import OverduePatients from "./homeComponents/overduePatients";
 import WeeklyCalendar from "./homeComponents/weeklyCalendar";
@@ -10,12 +9,17 @@ import OngoingWeekly from "./homeComponents/ongoingWeekly";
 import AddTest from "./homeComponents/addTest/AddTestView";
 import VerticalLine from "./homeComponents/calendarComponents/VerticalLine";
 import LoadingAnimation from "./loadingScreen/loadingAnimation";
+import { openAlert } from "./Alert.js";
+import EmailModal from "./homeComponents/emailModal/EmailModal.js";
+import ColorPicker from "./homeComponents/calendarComponents/ColorPicker.js";
 
 import EditTest from "./homeComponents/editTest/EditTestView";
+import PatientProfile from "./patientsComponents/PatientProfile.js";
 import {
   getNextDates,
   getMondayOfWeek,
   getCurrentWeek,
+  getWeekDays,
   getPreviousWeek,
   getNextWeek
 } from "../lib/calendar-controller";
@@ -24,7 +28,46 @@ import { group, getNumberOfTestsInGroup } from "../lib/overdue-controller.js";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DragDropContext } from "react-dnd";
 import CustomDragLayer from "./homeComponents/CustomDragLayer.js";
-import "./home.css";
+import "../styles/global.css";
+
+const Dashboard = styled.div`
+  border: blue 0px solid;
+  height: calc(103vh - 88px);
+  width: auto;
+  position: relative;
+  top: 20px;
+  padding: 1% 1% 1% 1%;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+`;
+const RightSideDash = styled.div`
+  border: red 0 solid;
+  height: 100%;
+  width: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+
+  flex-grow: 5;
+  flex-shrink: 1;
+`;
+const BottomSideDash = styled.div`
+  border: green 0 solid;
+  height: auto;
+  width: auto;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+
+
+  flex-grow: 1;
+  flex-shrink: 1;
+`;
 
 class Home extends Component {
   constructor(props) {
@@ -33,6 +76,7 @@ class Home extends Component {
     this.serverConnect.joinMainPage();
 
     this.state = {
+      under12: this.serverConnect.isUnderTwelve(),
       dashboardReady: false,
       overdueReady: false,
       weekDays: getCurrentWeek(),
@@ -41,131 +85,114 @@ class Home extends Component {
       calendar: {},
       openAddTestModal: false,
       openEditTestModal: false,
+      openEmailModal: false,
+      openEditPatientModal: false,
       editTestId: undefined,
-      editToken: undefined
+      editToken: undefined,
+      notified: undefined,
+      notNotified: undefined,
+      editPatientId: undefined,
+      editPatientToken: undefined
     };
-  }
-
-  onPatientsClick(event) {
-    this.props.history.push("patients");
   }
 
   componentDidMount = () => {
     this.initOverduePanel();
     this.updateDashboard();
     this.initCallbacks();
-
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrevious = this.handlePrevious.bind(this);
-    this.onPatientsClick = this.onPatientsClick.bind(this);
-
-    this.onAddTestOpenModal = this.onAddTestOpenModal.bind(this);
-    this.onAddTestCloseModal = this.onAddTestCloseModal.bind(this);
   };
 
   initCallbacks() {
     this.initOnTestAdded();
-    this.initOnTestStatusChange();
   }
 
   initOnTestAdded() {
     this.serverConnect.setOnTestAdded(newTest => {
       this.updateDashboard();
-    });
-  }
-
-  initOnTestStatusChange() {
-    this.serverConnect.setOnTestStatusChange((id, status) => {
-      this.modifyTest(id, test => {
-        test.completed_status = status;
-        return test;
-      });
-    });
-  }
-
-  initOnTestEdit() {
-    this.serverConnect.setOnTestEdit((id, newTest) => {
-      this.modifyTest(id, test => {
-        test = newTest;
-        return newTest;
-      });
+      this.initOverduePanel();
     });
   }
 
   initOverduePanel() {
     this.serverConnect.getOverdueTests(res => {
-      this.setState({
-        overdueTests: res,
-        overdueReady: true
-      });
+      if (res.success) {
+        this.setState({
+          overdueTests: res.response,
+          overdueReady: true
+        });
+      } else {
+        this.handleInvalidResponseError(res);
+      }
     });
   }
 
-  updateDashboard(newWeek = undefined) {
+  handleInvalidResponseError = (res, error) => {
+    if (res.errorType === "authentication") {
+      openAlert(
+        "Authentication failed.",
+        "confirmationAlert",
+        "Go back to login",
+        () => {
+          this.logout();
+        }
+      );
+    } else {
+      openAlert(
+        `${error ? error : "Unknown error occurred."}`,
+        "confirmationAlert",
+        "OK",
+        () => {
+          return;
+        }
+      );
+    }
+  };
+
+  updateDashboard = (newWeek = undefined) => {
     let monday = newWeek ? newWeek[0] : this.state.weekDays[0];
     newWeek = newWeek ? newWeek : this.state.weekDays;
     this.serverConnect.getTestsInWeek(monday, res => {
-      this.setState({
-        ongoingTests: res[5],
-        calendar: res.slice(0, 5),
-        dashboardReady: true,
-        weekDays: newWeek
-      });
+      if (res.success) {
+        this.setState({
+          ongoingTests: res.response[5],
+          calendar: res.response.slice(0, 5),
+          dashboardReady: true,
+          weekDays: newWeek
+        });
+      } else {
+        this.handleInvalidResponseError(res);
+      }
     });
+  };
+
+  refresh = event => {
+    this.updateDashboard();
+    this.initOverduePanel();
+  };
+
+  onPatientsClick = event => {
+    this.props.history.push("patients");
+  };
+
+  logout = event => {
+    this.serverConnect.logout(res => {
+      this.props.history.replace("");
+    });
+  };
+
+  jumpToWeek = day => {
+    this.updateDashboard(getWeekDays(day));
   }
 
-  modifyTest(id, modificationFunction) {
-    for (var i = 0; i < this.state.overdueTests.length; ++i) {
-      let group = this.state.overdueTests[i];
-      for (var j = 0; j < group.tests.length; ++j) {
-        var test = group.tests[j];
-        if (test.test_id === id) {
-          let newOverdueTests = [...this.state.overdueTests];
-          let testToModify = newOverdueTests[i].tests[j];
-          let modifiedTest = modificationFunction(testToModify);
-          newOverdueTests[i].tests[j] = modifiedTest;
-          this.setState({ overdueTests: newOverdueTests });
-        }
-      }
-    }
-    // check if it's ongoing
-    for (var i = 0; i < this.state.ongoingTests.length; ++i) {
-      var test = this.state.ongoingTests[i];
-      if (test.test_id === id) {
-        let newOngoingTests = [...this.state.ongoingTests];
-        let testToModify = newOngoingTests[i];
-        let modifiedTest = modificationFunction(testToModify);
-        newOngoingTests[i] = modifiedTest;
-        this.setState({ ongoingTests: newOngoingTests });
-        return;
-      }
-    }
-    //check if it's in the current calendar
-    for (var i = 0; i < this.state.calendar.length; ++i) {
-      var day = this.state.calendar[i];
-      for (var j = 0; j < day.length; ++j) {
-        var test = day[j];
-        if (test.test_id === id) {
-          let newCalendar = [...this.state.calendar];
-          let testToModify = newCalendar[i][j];
-          let modifiedTest = modificationFunction(testToModify);
-          newCalendar[i][j] = modifiedTest;
-          this.setState({ calendar: newCalendar });
-          return;
-        }
-      }
-    }
-  }
-
-  handleNext(event) {
+  handleNext = event => {
     let nextWeek = getNextWeek([...this.state.weekDays]);
     this.updateDashboard(nextWeek);
-  }
+  };
 
-  handlePrevious(event) {
+  handlePrevious = event => {
     let previousWeek = getPreviousWeek([...this.state.weekDays]);
     this.updateDashboard(previousWeek);
-  }
+  };
 
   onAddTestOpenModal = selectedDate => {
     this.setState({ openAddTestModal: true, selectedDate });
@@ -176,80 +203,124 @@ class Home extends Component {
   };
 
   onEditTestOpenModal = testId => {
-    this.serverConnect.requestTestEditing(testId, token => {
-      if (token != undefined) {
+    this.serverConnect.requestTestEditing(testId, res => {
+      if (res.success) {
         this.setState({
           openEditTestModal: true,
           editTestId: testId,
-          editToken: token
+          editToken: res.token
         });
+      } else {
+        this.handleInvalidResponseError(
+          res,
+          "Somebody is already editing this test."
+        );
       }
     });
   };
 
   onEditTestCloseModal = () => {
-    const {editToken, editTestId} = this.state;
+    const { editToken, editTestId } = this.state;
     this.serverConnect.discardTestEditing(editTestId, editToken, res => {
-        this.setState({
-          openEditTestModal: false,
-          editTestId: undefined,
-          editToken: undefined
-        });
+      this.setState({
+        openEditTestModal: false,
+        editTestId: undefined,
+        editToken: undefined
+      });
     });
-
   };
 
-  // ----------------- ADDED TEST METHODS --------------------------
+  openEmailModal = () => {
+    this.serverConnect.getOverdueReminderGroups(res => {
+      if (res.success) {
+        this.setState({
+          openEmailModal: true,
+          notNotified: res.response.notReminded,
+          notified: res.response.reminded
+        });
+      } else {
+        this.handleInvalidResponseError(res);
+      }
+      //this.setState({openEmailModal: true});
+    });
+  };
 
-  moveTest(from, to, test) {}
+  onEmailCloseModal = () => {
+    this.setState({ openEmailModal: false });
+  };
 
-  handleDrop = (section, testId) => {};
-  //
+  openEditPatientModal = id => {
+    this.serverConnect.requestPatientEditing(id, res => {
+      if (res.token){
+          this.setState({editPatientId: id, openEditPatientModal: true, editPatientToken: res.token});
+      }else{
+          this.handleInvalidResponseError(res, "Somebody is already editing this patient.");
+      }
+    });
+  }
+
+  onCloseEditPatientModal = () => {
+    this.serverConnect.discardPatientEditing(this.state.editPatientId, this.state.editPatientToken, res => {
+      this.setState({editPatientId: undefined, openEditPatientModal: false, editPatientToken: undefined});
+    });
+  }
+
   render() {
     if (this.state.dashboardReady && this.state.overdueReady) {
       return (
         <ModalProvider>
-          <div className={"home"}>
-            <div className={"dashboard"}>
-              <CustomDragLayer snapToGrid={true} />
-              <div className={"overduePatients"}>
-                <OverduePatients
+            <CustomDragLayer snapToGrid={true} />
+            <Dashboard>
+               <OverduePatients
+                  openEmailModal={this.openEmailModal}
                   notificationNumber={getNumberOfTestsInGroup(
                     this.state.overdueTests
                   )}
                   anytimeAppointments={this.state.overdueTests}
                   editTest={this.onEditTestOpenModal}
-                />
-              </div>
-              <div className={"rightSideDash"}>
-                <div className={"navbar"}>
+                  editPatient={this.openEditPatientModal}
+                  handleError={this.handleInvalidResponseError}
+                  openEmailModal={this.openEmailModal}
+              />
+              <RightSideDash>
                   <Navbar
+                    handleError={this.handleInvalidResponseError}
+                    over12={!this.state.under12}
+                    setUnder12={check => {
+                      check
+                        ? this.serverConnect.setUnderTwelve()
+                        : this.serverConnect.setOverTwelve();
+                      this.setState({ under12: !check });
+                      this.refresh();
+                    }}
+                    page="Dashboard"
+                    onDayPick={this.jumpToWeek}
                     onPrev={this.handlePrevious}
                     onNext={this.handleNext}
                     onPatientsClick={this.onPatientsClick}
+                    onSignoutClick={this.logout}
+                    refresh={this.refresh}
                   />
-                </div>
-                <div className={"bottomSideDash"}>
-                  <div className={"homecalendar"}>
+                <BottomSideDash>
                     <WeeklyCalendar
                       calendar={this.state.calendar}
                       weekDays={this.state.weekDays}
                       openModal={this.onAddTestOpenModal}
                       editTest={this.onEditTestOpenModal}
+                      editPatient={this.openEditPatientModal}
+                      handleError={this.handleInvalidResponseError}
                     />
-                  </div>
-                  <div className={"divider"} />
-                  <div className={"ongoingWeekly"}>
                     <OngoingWeekly
                       currentMonday={this.currentMonday}
                       date={this.state.weekDays[5]}
                       notificationNumber={this.state.ongoingTests.length}
                       anytimeAppointments={this.state.ongoingTests}
                       editTest={this.onEditTestOpenModal}
+                      editPatient={this.openEditPatientModal}
+                      handleError={this.handleInvalidResponseError}
                     />
-                  </div>
-                </div>
-              </div>
+                </BottomSideDash>
+              </RightSideDash>
               <Modal
                 open={this.state.openAddTestModal}
                 onClose={this.onAddTestCloseModal}
@@ -260,26 +331,51 @@ class Home extends Component {
                 <AddTest
                   selectedDate={this.state.selectedDate}
                   closeModal={this.onAddTestCloseModal}
+                  logout={this.logout}
                 />
               </Modal>
               <Modal
                 open={this.state.openEditTestModal}
                 onClose={this.onEditTestCloseModal}
                 showCloseIcon={false}
-                styles={modalStyles}
-                classNames={{
-                  modal: "modal"
-                }}
                 center
               >
                 <EditTest
                   testId={this.state.editTestId}
                   closeModal={this.onEditTestCloseModal}
+                  openModal={this.onEditTestOpenModal}
                   token={this.state.editToken}
                 />
               </Modal>
-            </div>
-          </div>
+              <Modal
+                open={this.state.openEmailModal}
+                onClose={this.onEmailCloseModal}
+                showCloseIcon={false}
+                center
+              >
+                <EmailModal
+                  closeModal={this.onEmailCloseModal}
+                  notNotified={this.state.notNotified}
+                  notified={this.state.notified}
+                  handleError={this.handleInvalidResponseError}
+                />
+              </Modal>
+              <Modal
+                  open={this.state.openEditPatientModal}
+                  onClose={this.onCloseEditPatientModal}
+                  showCloseIcon={false}
+                  style={modalStyles}
+                  center
+              >
+                <PatientProfile
+                    patientId={this.state.editPatientId}
+                    closeModal={this.onCloseEditPatientModal}
+                    editToken={this.state.editPatientToken}
+                    purpose={"Edit patient"}
+                    handleError={this.handleInvalidResponseError}
+                />
+              </Modal>
+            </Dashboard>
         </ModalProvider>
       );
     } else {
