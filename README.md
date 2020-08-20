@@ -2,6 +2,9 @@
 
 Electron app to manage appointments, email reminders, and basic patient information.
 
+## Watch the demo! 📹📒
+[![Demo](http://img.youtube.com/vi/GqomBW5LLBo/0.jpg)](https://www.youtube.com/watch?v=GqomBW5LLBo "Demo")
+
 ## Table of Contents
   * [Images](#images)
     + [Main Screen](#main-screen)
