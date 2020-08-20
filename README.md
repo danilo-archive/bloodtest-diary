@@ -1,5 +1,40 @@
 # BLOOD TEST DIARY
 
+Electron app to manage appointments, email reminders, and basic patient information.
+
+## Table of Contents
+  * [Images](#images)
+    + [Main Screen](#main-screen)
+    + [Login Screen](#login-screen)
+  * [Architecture diagram](#architecture-diagram)
+  * [Requirements](#requirements)
+    + [Node and npm](#node-and-npm)
+      - [Node installation on OS X](#node-installation-on-os-x)
+      - [Node installation on Linux](#node-installation-on-linux)
+      - [Node installation on Windows](#node-installation-on-windows)
+    + [How to use code quality and testing tools](#how-to-use-code-quality-and-testing-tools)
+      - [ESLint:](#eslint-)
+      - [Mocha, Chai, and Instanbul](#mocha--chai--and-instanbul)
+    + [Configure app](#configure-app)
+      - [Server connection](#server-connection)
+      - [Email sender](#email-sender)
+- [Instructions for running](#instructions-for-running)
+  * [Languages & tools](#languages---tools)
+  * [Authors](#authors)
+  <hr />
+  
+## Images
+
+### Main Screen
+![main screen](docs/main-screen.png)
+
+### Login Screen
+![login screen](docs/login-screen.png)
+
+
+## Architecture diagram
+![architecture](docs/architecture.png)
+
 ## Requirements
 
 For development, you will only need [Node.js](http://nodejs.org/) and [npm](https://npmjs.org/) installed on your environment.
