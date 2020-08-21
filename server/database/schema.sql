@@ -14,9 +14,11 @@ CREATE DATABASE IF NOT EXISTS BloodTestDB;
 USE BloodTestDB;
 
 -- Create user that is used in the DBMS to avoid using root.
+
+CREATE USER IF NOT EXISTS 'bloodTestAdmin'@'localhost'
+    IDENTIFIED WITH mysql_native_password BY "Blood_admin1";
 GRANT ALL PRIVILEGES ON BloodTestDB.*
-    TO 'bloodTestAdmin'@localhost
-    IDENTIFIED BY "Blood_admin1";
+    TO 'bloodTestAdmin'@'localhost';
 
 
 DROP TABLE IF EXISTS Test;
