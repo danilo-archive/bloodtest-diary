@@ -171,7 +171,7 @@ To run the application follow these steps:
 - [mysql](https://www.npmjs.com/package/mysql) for managing and creating a relational database
 - [mocha-sinon](https://www.npmjs.com/package/mocha-sinon) used for integration between mocha and sinon, allowing for automatic cleanup of spies
 - [proxyquire](https://www.npmjs.com/package/proxyquire) used to proxy nodejs's require in order to make overriding dependencies
-- [mjml] (https://mjml.io/) used for email formatting
+- [mjml](https://mjml.io/) used for email formatting
 
 <hr>
 
